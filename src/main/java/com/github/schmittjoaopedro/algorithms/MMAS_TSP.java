@@ -3,34 +3,32 @@ package com.github.schmittjoaopedro.algorithms;
 import com.github.schmittjoaopedro.aco.MMAS;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.GraphFactory;
-import com.github.schmittjoaopedro.tools.DBGP;
 import com.github.schmittjoaopedro.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
+import com.github.schmittjoaopedro.utils.Maths;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MMAS_ADTSP {
+public class MMAS_TSP {
 
     private String problemInstance;
 
     private Graph graph;
 
-    private DBGP dbgp;
-
     private MMAS mmas;
 
     private int maxIterations;
+
+    private int statisticInterval = 1;
 
     private int seed;
 
     private double rho;
 
-    private double magnitude;
-
-    private double frequency;
+    private boolean showLog = true;
 
     private boolean useLocalSearch = false;
 
@@ -38,15 +36,12 @@ public class MMAS_ADTSP {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_ADTSP(String problemInstance, double magnitude, double frequency, double rho, int maxIterations, int seed) {
+    public MMAS_TSP(String problemInstance, double rho, int maxIterations, int seed) {
         this.problemInstance = problemInstance;
-        this.magnitude = magnitude;
-        this.frequency = frequency;
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.seed = seed;
         graph = GraphFactory.createGraphFromTSP(new File(problemInstance));
-        dbgp = new DBGP(graph);
         mmas = new MMAS(graph);
         iterationStatistics = new ArrayList<>(maxIterations);
     }
@@ -54,12 +49,6 @@ public class MMAS_ADTSP {
     public void run() {
         // Initialization DBGP
         globalStatistics.startTimer();
-        dbgp.setFrequency(frequency);
-        dbgp.setMagnitude(magnitude);
-        dbgp.setUpperBound(2.0);
-        dbgp.setLowerBound(0.0);
-        dbgp.setRandom(new Random(seed));
-        dbgp.initializeEnvironment();
         globalStatistics.endTimer("DBGP Initialization");
 
         // Initialization MMAS
@@ -113,21 +102,55 @@ public class MMAS_ADTSP {
             mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
             // Statistics
-            iterationStatistic.setIteration(i);
-            iterationStatistic.setBestSoFar(mmas.getBestSoFar().getCost());
-            iterationStatistic.setDiversity(mmas.calculateDiversity());
-            iterationStatistic.setBranchFactor(mmas.getCalculatedBranchFact());
-            iterationStatistic.setIterationBest(mmas.findBest().getCost());
-            iterationStatistic.setIterationWorst(mmas.findWorst().getCost());
-            iterationStatistic.setIterationMean(mmas.getMean());
-            iterationStatistics.add(iterationStatistic);
-
-            if (hasBest) {
-                System.out.println(iterationStatistic);
+            if (i % statisticInterval == 0) {
+                iterationStatistic.setIteration(i);
+                iterationStatistic.setBestSoFar(mmas.getBestSoFar().getCost());
+                iterationStatistic.setDiversity(mmas.calculateDiversity());
+                iterationStatistic.setBranchFactor(mmas.getCalculatedBranchFact());
+                iterationStatistic.setIterationBest(mmas.findBest().getCost());
+                iterationStatistic.setIterationWorst(mmas.findWorst().getCost());
+                iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
+                iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
+                iterationStatistics.add(iterationStatistic);
+                if (showLog) {
+                    System.out.println(iterationStatistic);
+                }
             }
         }
         globalStatistics.endTimer("MMAS Execution");
-
+        globalStatistics.setBestSoFar(mmas.getBestSoFar().getCost());
+        globalStatistics.setBestRoute(mmas.getBestSoFar().getTour());
     }
 
+    public List<IterationStatistic> getIterationStatistics() {
+        return iterationStatistics;
+    }
+
+    public void setIterationStatistics(List<IterationStatistic> iterationStatistics) {
+        this.iterationStatistics = iterationStatistics;
+    }
+
+    public GlobalStatistics getGlobalStatistics() {
+        return globalStatistics;
+    }
+
+    public void setGlobalStatistics(GlobalStatistics globalStatistics) {
+        this.globalStatistics = globalStatistics;
+    }
+
+    public boolean isShowLog() {
+        return showLog;
+    }
+
+    public void setShowLog(boolean showLog) {
+        this.showLog = showLog;
+    }
+
+    public int getStatisticInterval() {
+        return statisticInterval;
+    }
+
+    public void setStatisticInterval(int statisticInterval) {
+        this.statisticInterval = statisticInterval;
+    }
 }

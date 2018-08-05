@@ -1,6 +1,6 @@
 package com.github.schmittjoaopedro;
 
-import com.github.schmittjoaopedro.algorithms.MMAS_ADTSP;
+import com.github.schmittjoaopedro.algorithms.MMAS_TSP;
 
 public class App {
 
@@ -8,10 +8,8 @@ public class App {
 
         String problemInstance = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\tsp\\kroA100.tsp";
 
-        MMAS_ADTSP algorithm = new MMAS_ADTSP(
+        MMAS_TSP algorithm = new MMAS_TSP(
                 problemInstance, // Problem instance
-                0.5, // Magnitude
-                100, // Frequency
                 0.02, // Evaporation (rho)
                 1500, // Max iterations
                 1 // Seed

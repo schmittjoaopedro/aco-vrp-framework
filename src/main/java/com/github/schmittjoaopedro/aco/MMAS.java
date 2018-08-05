@@ -6,6 +6,10 @@ import com.github.schmittjoaopedro.graph.Vertex;
 
 import java.util.*;
 
+/**
+ * Adapted from Dorigo and Stutzle MMAS original implementation to work with graph structures
+ * of adjacent lists.
+ */
 public class MMAS {
 
     private static final double EPSILON = 0.1;
@@ -243,6 +247,7 @@ public class MMAS {
             if (calculatedBranchFact < branchFac && getCurrentIteration() - restartFoundBest > 250) {
                 restartBest.setCost(Double.MAX_VALUE);
                 initPheromoneTrails(trailMax);
+                computeTotalInfo();
                 restartIteration = getCurrentIteration();
             }
         }
@@ -250,15 +255,12 @@ public class MMAS {
 
     public double calculateDiversity() {
         double avgDistance = 0.0;
-        for (Ant k : antPopulation) {
-            for (Ant j : antPopulation) {
-                if (k != j) {
-                    avgDistance += (double) distanceBetweenAnts(k, j);
-                }
+        for (int k = 0; k < antPopulation.size() - 1; k++) {
+            for (int j = k + 1; j < antPopulation.size(); j++) {
+                avgDistance += (double) distanceBetweenAnts(antPopulation.get(k), antPopulation.get(j));
             }
         }
-        avgDistance /= ((double) nAnts * (double) (nAnts - 1) / 2.);
-        return avgDistance;
+        return avgDistance / ((double) nAnts * (double) (nAnts - 1) / 2.0);
     }
 
     private int distanceBetweenAnts(Ant a1, Ant a2) {
@@ -471,14 +473,6 @@ public class MMAS {
             }
         }
         return ant;
-    }
-
-    public double getMean() {
-        double cost = 0.0;
-        for (Ant ant : antPopulation) {
-            cost += ant.getCost();
-        }
-        return cost / (double) nAnts;
     }
 
     public void pheromoneUpdate() {

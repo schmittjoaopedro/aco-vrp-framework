@@ -17,6 +17,8 @@ public class IterationStatistic {
 
     private double iterationMean;
 
+    private double iterationSd;
+
     private double diversity;
 
     private double branchFactor;
@@ -89,6 +91,14 @@ public class IterationStatistic {
         this.bestSoFar = bestSoFar;
     }
 
+    public double getIterationSd() {
+        return iterationSd;
+    }
+
+    public void setIterationSd(double iterationSd) {
+        this.iterationSd = iterationSd;
+    }
+
     @Override
     public String toString() {
         StringBuilder log = new StringBuilder();
@@ -98,7 +108,7 @@ public class IterationStatistic {
         log.append("IT. BEST: " + StringUtils.rightPad(String.format("%.2f", this.getIterationBest()), 15));
         log.append("IT. MEAN: " + StringUtils.rightPad(String.format("%.2f", this.getIterationMean()), 15));
         log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format("%.2f", this.getBranchFactor()), 15));
-        log.append("Div: " + StringUtils.rightPad(String.format("%.2f", this.getDiversity()), 15));
+        log.append("DIV: " + StringUtils.rightPad(String.format("%.2f", this.getDiversity()), 15));
         return log.toString();
     }
 }

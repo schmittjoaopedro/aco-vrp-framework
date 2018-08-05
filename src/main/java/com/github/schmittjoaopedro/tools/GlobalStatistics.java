@@ -1,6 +1,10 @@
 package com.github.schmittjoaopedro.tools;
 
+import com.github.schmittjoaopedro.graph.Vertex;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GlobalStatistics {
@@ -8,6 +12,8 @@ public class GlobalStatistics {
     private Map<String, Long> timeStatistics = new HashMap<>();
 
     private Long currentTime;
+
+    private List<Vertex> bestRoute = new ArrayList<>();
 
     private double bestSoFar;
 
@@ -25,5 +31,13 @@ public class GlobalStatistics {
 
     public void setBestSoFar(double bestSoFar) {
         this.bestSoFar = bestSoFar;
+    }
+
+    public List<Vertex> getBestRoute() {
+        return bestRoute;
+    }
+
+    public void setBestRoute(List<Vertex> bestRoute) {
+        this.bestRoute = bestRoute;
     }
 }
