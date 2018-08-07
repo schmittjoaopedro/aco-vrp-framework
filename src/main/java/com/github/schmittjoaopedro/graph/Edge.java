@@ -2,7 +2,7 @@ package com.github.schmittjoaopedro.graph;
 
 public class Edge {
 
-    private Object id;
+    private Integer id;
 
     private double cost;
 
@@ -10,15 +10,15 @@ public class Edge {
 
     private Vertex to;
 
-    public Edge(Object id) {
+    public Edge(Integer id) {
         this.id = id;
     }
 
-    public Object getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -44,5 +44,13 @@ public class Edge {
 
     public void setTo(Vertex to) {
         this.to = to;
+    }
+
+    public int getFromId() {
+        return (int) getFrom().getId();
+    }
+
+    public int getToId() {
+        return (int) getTo().getId();
     }
 }

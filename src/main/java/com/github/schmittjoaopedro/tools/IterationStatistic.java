@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.tools;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class IterationStatistic {
@@ -103,12 +104,13 @@ public class IterationStatistic {
     public String toString() {
         StringBuilder log = new StringBuilder();
         log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
-        log.append("BSF: " + StringUtils.rightPad(String.format("%.2f", this.getBestSoFar()), 15));
-        log.append("IT. WORST: " + StringUtils.rightPad(String.format("%.2f", this.getIterationWorst()), 15));
-        log.append("IT. BEST: " + StringUtils.rightPad(String.format("%.2f", this.getIterationBest()), 15));
-        log.append("IT. MEAN: " + StringUtils.rightPad(String.format("%.2f", this.getIterationMean()), 15));
-        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format("%.2f", this.getBranchFactor()), 15));
-        log.append("DIV: " + StringUtils.rightPad(String.format("%.2f", this.getDiversity()), 15));
+        log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 15));
+        log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 15));
+        log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 15));
+        log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 15));
+        log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 15));
+        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBranchFactor()), 15));
+        log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 15));
         return log.toString();
     }
 }

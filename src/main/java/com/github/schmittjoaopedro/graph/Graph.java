@@ -29,21 +29,14 @@ public class Graph {
     }
 
     public Vertex getVertex(Object id) {
-        Validation.check(id == null, "Id can't be null");
-        Validation.check(!vertices.containsKey(id), "Vertex: " + id + " not registered");
         return vertices.get(id);
     }
 
     public Edge getEdge(Object fromId, Object toId) {
-        Validation.check(fromId == null || toId == null, "Both ID's can't be null");
-        Validation.check(!vertices.containsKey(fromId), "Vertex: " + fromId + " not registered");
-        Validation.check(!vertices.containsKey(toId), "Vertex: " + toId + " not registered");
         return vertices.get(fromId).getAdj().get(toId);
     }
 
     public Iterator<Edge> getAdj(Object fromId) {
-        Validation.check(fromId == null, "ID can't be null.");
-        Validation.check(!vertices.containsKey(fromId), "Vertex: " + fromId + " not registered");
         return vertices.get(fromId).getAdj().values().iterator();
     }
 

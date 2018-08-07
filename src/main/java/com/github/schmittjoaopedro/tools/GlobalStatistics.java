@@ -40,4 +40,8 @@ public class GlobalStatistics {
     public void setBestRoute(List<Vertex> bestRoute) {
         this.bestRoute = bestRoute;
     }
+
+    public Map<String, Long> getTimeStatistics() {
+        return timeStatistics;
+    }
 }

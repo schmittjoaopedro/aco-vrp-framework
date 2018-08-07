@@ -1,35 +1,26 @@
 package com.github.schmittjoaopedro.aco;
 
-import com.github.schmittjoaopedro.graph.Vertex;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class Ant {
 
-    private List<Vertex> tour;
+    private int[] tour;
 
-    private Set<Vertex> visited;
+    private boolean[] visited;
 
     private Double cost;
 
-    public List<Vertex> getTour() {
-        if (tour == null) tour = new ArrayList<>();
+    public int[] getTour() {
         return tour;
     }
 
-    public void setTour(List<Vertex> tour) {
+    public void setTour(int[] tour) {
         this.tour = tour;
     }
 
-    public Set<Vertex> getVisited() {
-        if (visited == null) visited = new HashSet<>();
+    public boolean[] getVisited() {
         return visited;
     }
 
-    public void setVisited(Set<Vertex> visited) {
+    public void setVisited(boolean[] visited) {
         this.visited = visited;
     }
 

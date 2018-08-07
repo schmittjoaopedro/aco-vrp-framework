@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MMAS_TSP {
+public class MMAS_ATSP {
 
     private Graph graph;
 
@@ -35,7 +35,7 @@ public class MMAS_TSP {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_TSP(String problemInstance, double rho, int maxIterations, int seed) {
+    public MMAS_ATSP(String problemInstance, double rho, int maxIterations, int seed) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.seed = seed;
@@ -56,7 +56,6 @@ public class MMAS_TSP {
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));
-        mmas.setSymmetric(true);
         mmas.computeNNList();
         mmas.initHeuristicInfo();
         mmas.initTry();

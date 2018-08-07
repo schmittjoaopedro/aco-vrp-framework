@@ -4,7 +4,10 @@ import com.github.schmittjoaopedro.graph.Edge;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.Vertex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Adapted from Dorigo and Stutzle MMAS original implementation to work with graph structures
@@ -54,11 +57,11 @@ public class MMAS {
 
     private Graph graph;
 
-    private Map<Edge, Double> pheromone;
+    private double[][] pheromone;
 
-    private Map<Edge, Double> heuristic;
+    private double[][] heuristic;
 
-    private Map<Edge, Double> total;
+    private double[][] total;
 
     private Vertex[][] nnList;
 
@@ -67,6 +70,8 @@ public class MMAS {
     private double branchFac = 1.00001;
 
     private boolean symmetric = false;
+
+    private double probabilities[];
 
     public MMAS(Graph graph) {
         this.graph = graph;
@@ -82,18 +87,19 @@ public class MMAS {
     }
 
     public void allocateStructures() {
-        pheromone = new HashMap<>();
-        heuristic = new HashMap<>();
-        total = new HashMap<>();
+        pheromone = new double[graph.getVertexCount()][graph.getVertexCount()];
+        heuristic = new double[graph.getVertexCount()][graph.getVertexCount()];
+        total = new double[graph.getVertexCount()][graph.getVertexCount()];
         Iterator<Edge> edges = graph.getEdges();
         Edge edge;
         while (edges.hasNext()) {
             edge = edges.next();
-            pheromone.put(edge, 0.0);
-            heuristic.put(edge, 0.0);
-            total.put(edge, 0.0);
+            pheromone[edge.getFromId()][edge.getToId()] = 0.0;
+            heuristic[edge.getFromId()][edge.getToId()] = 0.0;
+            total[edge.getFromId()][edge.getToId()] = 0.0;
         }
         nnList = new Vertex[graph.getVertexCount()][depth];
+        probabilities = new double[depth + 1];
 
     }
 
@@ -110,8 +116,10 @@ public class MMAS {
 
     private void initPheromoneTrails(double initialTrail) {
         Iterator<Edge> edges = graph.getEdges();
+        Edge edge;
         while (edges.hasNext()) {
-            pheromone.put(edges.next(), initialTrail);
+            edge = edges.next();
+            pheromone[edge.getFromId()][edge.getToId()] = initialTrail;
         }
     }
 
@@ -120,7 +128,7 @@ public class MMAS {
         Edge edge;
         while (edges.hasNext()) {
             edge = edges.next();
-            heuristic.put(edge, 1.0 / (edge.getCost() + EPSILON));
+            heuristic[edge.getFromId()][edge.getToId()] = 1.0 / (edge.getCost() + EPSILON);
         }
     }
 
@@ -175,7 +183,7 @@ public class MMAS {
             phase++;
             chooseClosestNext(ant, phase);
         }
-        ant.getTour().add(graph.getVertexCount(), ant.getTour().get(0));
+        ant.getTour()[graph.getVertexCount()] = ant.getTour()[0];
         ant.setCost(fitnessEvaluation(ant.getTour()));
         help = ant.getCost();
         antEmptyMemory(ant);
@@ -183,40 +191,40 @@ public class MMAS {
     }
 
     private void antEmptyMemory(Ant ant) {
-        ant.getTour().clear();
-        ant.getVisited().clear();
+        ant.setTour(new int[graph.getVertexCount() + 1]);
+        ant.setVisited(new boolean[graph.getVertexCount()]);
         ant.setCost(null);
     }
 
     private void placeAnt(Ant ant, int step) {
         int rnd = (int) (random.nextDouble() * (double) graph.getVertexCount());
-        ant.getTour().add(step, graph.getVertex(rnd));
-        ant.getVisited().add(graph.getVertex(rnd));
+        ant.getTour()[step] = rnd;
+        ant.getVisited()[rnd] = true;
     }
 
     private void chooseClosestNext(Ant ant, int phase) {
         Vertex next = null;
-        Vertex current = ant.getTour().get(phase - 1);
+        Vertex current = graph.getVertex(ant.getTour()[phase - 1]);
         double min = Double.MAX_VALUE;
         Iterator<Edge> adj = current.getEdges();
         Edge edge;
         while (adj.hasNext()) {
             edge = adj.next();
-            if (!ant.getVisited().contains(edge.getTo())) {
+            if (!ant.getVisited()[edge.getToId()]) {
                 if (edge.getCost() < min) {
                     next = edge.getTo();
                     min = edge.getCost();
                 }
             }
         }
-        ant.getTour().add(phase, next);
-        ant.getVisited().add(next);
+        ant.getTour()[phase] = next.getId();
+        ant.getVisited()[next.getId()] = true;
     }
 
-    private double fitnessEvaluation(List<Vertex> tour) {
+    private double fitnessEvaluation(int[] tour) {
         Double cost = 0.0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            cost += graph.getEdge(tour.get(i).getId(), tour.get(i + 1).getId()).getCost();
+            cost += graph.getEdge(tour[i], tour[i + 1]).getCost();
         }
         return cost;
     }
@@ -236,7 +244,7 @@ public class MMAS {
             }
         }
         for (Ant ant : antPopulation) {
-            ant.getTour().add(ant.getTour().get(0));
+            ant.getTour()[graph.getVertexCount()] = ant.getTour()[0];
             ant.setCost(fitnessEvaluation(ant.getTour()));
         }
     }
@@ -268,19 +276,19 @@ public class MMAS {
         int distance = 0;
         int[] pos2 = new int[graph.getVertexCount()];
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            pos2[(int) a2.getTour().get(i).getId()] = i;
+            pos2[a2.getTour()[i]] = i;
         }
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            int j = (int) a1.getTour().get(i).getId();
-            int h = (int) a1.getTour().get(i + 1).getId();
+            int j = a1.getTour()[i];
+            int h = a1.getTour()[i + 1];
             pos = pos2[j];
             if (pos - 1 < 0)
                 prev = graph.getVertexCount() - 1;
             else
                 prev = pos - 1;
-            if ((int) a2.getTour().get(pos + 1).getId() == h)
+            if (a2.getTour()[pos + 1] == h)
                 ; /* do nothing, edge is common with best solution found so far */
-            else if ((int) a2.getTour().get(prev).getId() == h)
+            else if (a2.getTour()[prev] == h)
                 ; /* do nothing, edge is common with best solution found so far */
             else { /* edge (j,h) does not occur in ant a2 */
                 distance++;
@@ -291,22 +299,20 @@ public class MMAS {
 
     private void neighbourChooseAndMoveToNext(Ant ant, int phase) {
         Vertex help;
-        int current;
+        int current = ant.getTour()[phase - 1];
         int select = 0;
         double rnd;
         double partialSum;
         double sumProb = 0.0;
-        double probabilities[] = new double[depth + 1];
         if ((q_0 > 0.0) && (random.nextDouble() < q_0)) {
             neighbourChooseBestNext(ant, phase);
             return;
         }
-        current = (int) ant.getTour().get(phase - 1).getId();
         for (int i = 0; i < depth; i++) {
-            if (ant.getVisited().contains(nnList[current][i])) {
+            if (ant.getVisited()[nnList[current][i].getId()]) {
                 probabilities[i] = 0.0;
             } else {
-                probabilities[i] = total.get(graph.getEdge(current, nnList[current][i].getId()));
+                probabilities[i] = total[current][nnList[current][i].getId()];
                 sumProb += probabilities[i];
             }
         }
@@ -324,8 +330,8 @@ public class MMAS {
                 return;
             }
             help = nnList[current][select];
-            ant.getTour().add(phase, help);
-            ant.getVisited().add(help);
+            ant.getTour()[phase] = help.getId();
+            ant.getVisited()[help.getId()] = true;
         }
     }
 
@@ -336,12 +342,12 @@ public class MMAS {
         double valueBest;
         double help;
         next = graph.getVertexCount();
-        current = (int) ant.getTour().get(phase - 1).getId();
+        current = ant.getTour()[phase - 1];
         valueBest = -1.0;
         for (int i = 0; i < depth; i++) {
-            temp = (int) nnList[current][i].getId();
-            if (!ant.getVisited().contains(graph.getVertex(temp))) {
-                help = total.get(graph.getEdge(current, temp));
+            temp = nnList[current][i].getId();
+            if (!ant.getVisited()[temp]) {
+                help = total[current][temp];
                 if (help > valueBest) {
                     valueBest = help;
                     next = temp;
@@ -351,33 +357,36 @@ public class MMAS {
         if (next == graph.getVertexCount()) {
             chooseBestNext(ant, phase);
         } else {
-            ant.getTour().add(phase, graph.getVertex(next));
-            ant.getVisited().add(graph.getVertex(next));
+            ant.getTour()[phase] = next;
+            ant.getVisited()[next] = true;
         }
     }
 
     void chooseBestNext(Ant ant, int phase) {
-        int current = (int) ant.getTour().get(phase - 1).getId();
+        int current = ant.getTour()[phase - 1];
         int next = graph.getVertexCount();
         double valueBest = -1.0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            if (!ant.getVisited().contains(graph.getVertex(i))) {
-                if (total.get(graph.getEdge(current, i)) > valueBest) {
+            if (!ant.getVisited()[i]) {
+                if (total[current][i] > valueBest) {
                     next = i;
-                    valueBest = total.get(graph.getEdge(current, i));
+                    valueBest = total[current][i];
                 }
             }
         }
-        ant.getTour().add(phase, graph.getVertex(next));
-        ant.getVisited().add(graph.getVertex(next));
+        ant.getTour()[phase] = next;
+        ant.getVisited()[next] = true;
     }
 
     public void computeTotalInfo() {
         Iterator<Edge> edges = graph.getEdges();
         Edge edge;
+        int fromId, toId;
         while (edges.hasNext()) {
             edge = edges.next();
-            total.put(edge, Math.pow(pheromone.get(edge), alpha) * Math.pow(heuristic.get(edge), beta));
+            fromId = edge.getFromId();
+            toId = edge.getToId();
+            total[fromId][toId] = Math.pow(pheromone[fromId][toId], alpha) * Math.pow(heuristic[fromId][toId], beta);
         }
     }
 
@@ -422,17 +431,17 @@ public class MMAS {
         double avg = 0.0;
         double numBranches[] = new double[graph.getVertexCount()];
         for (int m = 0; m < graph.getVertexCount(); m++) {
-            min = pheromone.get(graph.getEdge(m, nnList[m][1].getId()));
+            min = pheromone[m][nnList[m][1].getId()];
             max = min;
             for (int i = 1; i < depth; i++) {
-                if (pheromone.get(graph.getEdge(m, nnList[m][i].getId())) > max)
-                    max = pheromone.get(graph.getEdge(m, nnList[m][i].getId()));
-                if (pheromone.get(graph.getEdge(m, nnList[m][i].getId())) < min)
-                    min = pheromone.get(graph.getEdge(m, nnList[m][i].getId()));
+                if (pheromone[m][nnList[m][i].getId()] > max)
+                    max = pheromone[m][nnList[m][i].getId()];
+                if (pheromone[m][nnList[m][i].getId()] < min)
+                    min = pheromone[m][nnList[m][i].getId()];
             }
             cutoff = min + l * (max - min);
             for (int i = 0; i < depth; i++) {
-                if (pheromone.get(graph.getEdge(m, nnList[m][i].getId())) > cutoff)
+                if (pheromone[m][nnList[m][i].getId()] > cutoff)
                     numBranches[m] += 1.0;
             }
         }
@@ -444,9 +453,11 @@ public class MMAS {
 
     private void copyFromTo(Ant from, Ant to) {
         antEmptyMemory(to);
-        for (Vertex vertex : from.getTour()) {
-            to.getTour().add(vertex);
-            to.getVisited().add(vertex);
+        for (int i = 0; i < from.getTour().length; i++) {
+            to.getTour()[i] = from.getTour()[i];
+            if (i < to.getVisited().length) {
+                to.getVisited()[i] = true;
+            }
         }
         to.setCost(from.getCost());
     }
@@ -508,7 +519,7 @@ public class MMAS {
         Edge edge;
         while (edges.hasNext()) {
             edge = edges.next();
-            pheromone.put(edge, (1.0 - rho) * pheromone.get(edge));
+            pheromone[edge.getFromId()][edge.getToId()] = (1.0 - rho) * pheromone[edge.getFromId()][edge.getToId()];
         }
     }
 
@@ -517,10 +528,10 @@ public class MMAS {
         Edge edge;
         while (edges.hasNext()) {
             edge = edges.next();
-            if (pheromone.get(edge) < trailMin) {
-                pheromone.put(edge, trailMin);
-            } else if (pheromone.get(edge) > trailMax) {
-                pheromone.put(edge, trailMax);
+            if (pheromone[edge.getFromId()][edge.getToId()] < trailMin) {
+                pheromone[edge.getFromId()][edge.getToId()] = trailMin;
+            } else if (pheromone[edge.getFromId()][edge.getToId()] > trailMax) {
+                pheromone[edge.getFromId()][edge.getToId()] = trailMax;
             }
         }
     }
@@ -528,11 +539,11 @@ public class MMAS {
     private void globalPheromoneDeposit(Ant ant) {
         double dTau = 1.0 / ant.getCost();
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            int j = (int) ant.getTour().get(i).getId();
-            int h = (int) ant.getTour().get(i + 1).getId();
-            pheromone.put(graph.getEdge(j, h), pheromone.get(graph.getEdge(j, h)) + dTau);
+            int j = ant.getTour()[i];
+            int h = ant.getTour()[i + 1];
+            pheromone[j][h] = pheromone[j][h] + dTau;
             if (symmetric) {
-                pheromone.put(graph.getEdge(h, j), pheromone.get(graph.getEdge(h, j)) + dTau);
+                pheromone[h][j] = pheromone[h][j] + dTau;
             }
         }
     }
@@ -653,15 +664,4 @@ public class MMAS {
         this.symmetric = symmetric;
     }
 
-    public Map<Edge, Double> getPheromone() {
-        return pheromone;
-    }
-
-    public Map<Edge, Double> getHeuristic() {
-        return heuristic;
-    }
-
-    public Map<Edge, Double> getTotal() {
-        return total;
-    }
 }

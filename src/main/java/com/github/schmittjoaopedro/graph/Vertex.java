@@ -6,24 +6,24 @@ import java.util.Map;
 
 public class Vertex {
 
-    private Object id;
+    private Integer id;
 
     private double x;
 
     private double y;
 
-    private Map<Object, Edge> adj = new HashMap<>();
+    private Map<Integer, Edge> adj = new HashMap<>();
 
-    public Vertex(Object id) {
+    public Vertex(Integer id) {
         super();
         setId(id);
     }
 
-    public Object getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -43,7 +43,7 @@ public class Vertex {
         this.y = y;
     }
 
-    public Map<Object, Edge> getAdj() {
+    public Map<Integer, Edge> getAdj() {
         return adj;
     }
 
