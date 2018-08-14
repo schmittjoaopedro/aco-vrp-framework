@@ -26,7 +26,9 @@ public class MMAS_ADTSP implements Runnable {
 
     private int statisticInterval = 1;
 
-    private int seed;
+    private int mmasSeed;
+
+    private int dbgpSeed;
 
     private double rho;
 
@@ -42,12 +44,11 @@ public class MMAS_ADTSP implements Runnable {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_ADTSP(String problemInstance, double rho, int maxIterations, int seed, double magnitude, int frequency) {
+    public MMAS_ADTSP(String problemInstance, double rho, int maxIterations, double magnitude, int frequency) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.magnitude = magnitude;
         this.frequency = frequency;
-        this.seed = seed;
         graph = GraphFactory.createGraphFromTSP(new File(problemInstance));
         mmas = new MMAS(graph);
         dbgp = new DBGP(graph);
@@ -59,7 +60,7 @@ public class MMAS_ADTSP implements Runnable {
         // Initialization DBGP
         dbgp.setLowerBound(0.0);
         dbgp.setUpperBound(2.0);
-        dbgp.setRandom(new Random(1));
+        dbgp.setRandom(new Random(getDbgpSeed()));
         dbgp.setMagnitude(magnitude);
         dbgp.setFrequency(frequency);
         dbgp.initializeEnvironment();
@@ -74,7 +75,7 @@ public class MMAS_ADTSP implements Runnable {
         mmas.setEPSILON(0.000000000000000000000001);
         mmas.allocateAnts();
         mmas.allocateStructures();
-        mmas.setRandom(new Random(seed));
+        mmas.setRandom(new Random(getMmasSeed()));
         mmas.computeNNList();
         mmas.initHeuristicInfo();
         mmas.initTry();
@@ -171,5 +172,21 @@ public class MMAS_ADTSP implements Runnable {
 
     public void setStatisticInterval(int statisticInterval) {
         this.statisticInterval = statisticInterval;
+    }
+
+    public int getMmasSeed() {
+        return mmasSeed;
+    }
+
+    public void setMmasSeed(int mmasSeed) {
+        this.mmasSeed = mmasSeed;
+    }
+
+    public int getDbgpSeed() {
+        return dbgpSeed;
+    }
+
+    public void setDbgpSeed(int dbgpSeed) {
+        this.dbgpSeed = dbgpSeed;
     }
 }
