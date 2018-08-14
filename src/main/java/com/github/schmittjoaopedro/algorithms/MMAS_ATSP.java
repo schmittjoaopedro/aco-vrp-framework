@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MMAS_ATSP {
+public class MMAS_ATSP implements Runnable {
 
     private Graph graph;
 
@@ -44,6 +44,7 @@ public class MMAS_ATSP {
         iterationStatistics = new ArrayList<>(maxIterations);
     }
 
+    @Override
     public void run() {
         // Initialization MMAS
         globalStatistics.startTimer();
@@ -69,7 +70,6 @@ public class MMAS_ATSP {
             // Construction
             iterationStatistic.startTimer();
             mmas.constructSolutions();
-
             iterationStatistic.endTimer("Construction");
             // Daemon
             iterationStatistic.startTimer();

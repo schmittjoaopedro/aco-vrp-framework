@@ -2,7 +2,6 @@ package com.github.schmittjoaopedro.tools;
 
 import com.github.schmittjoaopedro.graph.Edge;
 import com.github.schmittjoaopedro.graph.Graph;
-import com.github.schmittjoaopedro.utils.Maths;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +32,12 @@ public class DBGP {
     }
 
     public void initializeEnvironment() {
+        initializeTrafficFactors();
+        addRandomChange();
+        computeDistances();
+    }
+
+    public void initializeTrafficFactors() {
         Iterator<Edge> edges = graph.getEdges();
         Edge edge;
         while (edges.hasNext()) {
@@ -40,23 +45,39 @@ public class DBGP {
             this.originalCosts.put(edge, edge.getCost());
             this.trafficFactors.put(edge, 1.0);
         }
-        addRandomChange();
-        computeDistances();
+    }
+
+    public boolean applyChanges(int iteration) {
+        if (iteration % frequency == 0) {
+            addRandomChange();
+            computeDistances();
+            return true;
+        }
+        return false;
     }
 
     private void addRandomChange() {
-        for (Edge edge : trafficFactors.keySet()) {
-            if (random.nextDouble() <= magnitude) {
-                trafficFactors.put(edge, getRandomBound());
-            } else {
-                trafficFactors.put(edge, 1.0);
+        Edge edge;
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            for (int j = 0; j < graph.getVertexCount(); j++) {
+                if (i != j) {
+                    edge = graph.getEdge(i, j);
+                    if (random.nextDouble() <= magnitude) {
+                        trafficFactors.put(edge, 1.0 + getRandomBound());
+                    } else {
+                        trafficFactors.put(edge, 1.0);
+                    }
+                }
             }
         }
     }
 
     private void computeDistances() {
-        for (Edge edge : trafficFactors.keySet()) {
-            edge.setCost(Maths.getTSPEuclideanDistance(edge.getFrom(), edge.getTo()));
+        Iterator<Edge> edges = graph.getEdges();
+        Edge edge;
+        while (edges.hasNext()) {
+            edge = edges.next();
+            edge.setCost(originalCosts.get(edge) * trafficFactors.get(edge));
         }
     }
 

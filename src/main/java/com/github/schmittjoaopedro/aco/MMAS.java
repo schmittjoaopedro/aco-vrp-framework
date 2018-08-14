@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class MMAS {
 
-    private static final double EPSILON = 0.1;
+    private double EPSILON = 0.1;
 
     private double alpha;
 
@@ -47,7 +47,7 @@ public class MMAS {
 
     private int uGb = Integer.MAX_VALUE;
 
-    private List<Ant> antPopulation = new ArrayList<>();
+    private List<Ant> antPopulation;
 
     private Ant bestSoFar;
 
@@ -78,6 +78,7 @@ public class MMAS {
     }
 
     public void allocateAnts() {
+        antPopulation = new ArrayList<>();
         for (int i = 0; i < getnAnts(); i++) {
             antPopulation.add(i, new Ant());
         }
@@ -221,8 +222,8 @@ public class MMAS {
         ant.getVisited()[next.getId()] = true;
     }
 
-    private double fitnessEvaluation(int[] tour) {
-        Double cost = 0.0;
+    public double fitnessEvaluation(int[] tour) {
+        double cost = 0.0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
             cost += graph.getEdge(tour[i], tour[i + 1]).getCost();
         }
@@ -662,6 +663,18 @@ public class MMAS {
 
     public void setSymmetric(boolean symmetric) {
         this.symmetric = symmetric;
+    }
+
+    public double getEPSILON() {
+        return EPSILON;
+    }
+
+    public void setEPSILON(double EPSILON) {
+        this.EPSILON = EPSILON;
+    }
+
+    public Vertex[][] getNnList() {
+        return nnList;
     }
 
 }

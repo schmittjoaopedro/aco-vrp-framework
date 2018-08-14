@@ -2,10 +2,9 @@ package com.github.schmittjoaopedro;
 
 import com.github.schmittjoaopedro.algorithms.MMAS_ATSP;
 import com.github.schmittjoaopedro.graph.Vertex;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.text.DecimalFormat;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +15,7 @@ public class MMAS_ATSP_Test {
 
     private String kroA200;
 
-    @BeforeEach
+    @Before
     public void beforeClass() {
         kroA100 = getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile();
         kroA200 = getClass().getClassLoader().getResource("tsp/KroA200.tsp").getFile();
