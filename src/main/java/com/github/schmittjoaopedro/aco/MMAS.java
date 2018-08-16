@@ -191,7 +191,7 @@ public class MMAS {
         return help;
     }
 
-    private void antEmptyMemory(Ant ant) {
+    public void antEmptyMemory(Ant ant) {
         ant.setTour(new int[graph.getVertexCount() + 1]);
         ant.setVisited(new boolean[graph.getVertexCount()]);
         ant.setCost(null);
@@ -452,7 +452,7 @@ public class MMAS {
         return (avg / (double) (graph.getVertexCount() * 2));
     }
 
-    private void copyFromTo(Ant from, Ant to) {
+    public void copyFromTo(Ant from, Ant to) {
         antEmptyMemory(to);
         for (int i = 0; i < from.getTour().length; i++) {
             to.getTour()[i] = from.getTour()[i];
@@ -537,7 +537,7 @@ public class MMAS {
         }
     }
 
-    private void globalPheromoneDeposit(Ant ant) {
+    public void globalPheromoneDeposit(Ant ant) {
         double dTau = 1.0 / ant.getCost();
         for (int i = 0; i < graph.getVertexCount(); i++) {
             int j = ant.getTour()[i];
@@ -641,6 +641,10 @@ public class MMAS {
         return uGb;
     }
 
+    public void setuGb(int uGb) {
+        this.uGb = uGb;
+    }
+
     public List<Ant> getAntPopulation() {
         return antPopulation;
     }
@@ -677,4 +681,11 @@ public class MMAS {
         return nnList;
     }
 
+    public double[][] getPheromone() {
+        return pheromone;
+    }
+
+    public void setPheromone(double[][] pheromone) {
+        this.pheromone = pheromone;
+    }
 }
