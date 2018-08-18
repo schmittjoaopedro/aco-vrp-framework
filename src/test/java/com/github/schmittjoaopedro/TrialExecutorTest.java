@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro;
 
 import com.github.schmittjoaopedro.algorithms.MMAS_ADTSP;
-import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tools.TrialExecutor;
 import org.junit.Test;
@@ -20,6 +19,8 @@ public class TrialExecutorTest {
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 1000, 0.75, 100);
+            //MMAS_MEM_MADTSP mmas_adtsp = new MMAS_MEM_MADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 100, 0.1, 10);
+            //MMAS_MADTSP mmas_adtsp = new MMAS_MADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 100, 0.1, 10);
             mmas_adtsp.setDbgpSeed(1);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -30,9 +31,13 @@ public class TrialExecutorTest {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
+            //results.add(((MMAS_MEM_MADTSP) algs.get(i)).getIterationStatistics());
+            //results.add(((MMAS_MADTSP) algs.get(i)).getIterationStatistics());
             results.add(((MMAS_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
+
+        printTest(result);
 
         checkValues(result, 1, 46497.295563813444, 3619.6582887632603, 0.0, 57.23085714285714, 39702.02092143756);
         checkValues(result, 50, 36977.67030563103, 3690.4982791248212, 0.5096666666666666, 13.151183673469388, 32357.342481832096);
@@ -68,7 +73,7 @@ public class TrialExecutorTest {
 
     private void printTest(List<IterationStatistic> results) {
         for (IterationStatistic iter : results) {
-            System.out.println(
+            /*System.out.println(
                     "checkValues(mmas_adtsp, " +
                             ((int) iter.getIteration()) + ", " +
                             iter.getIterationMean() + ", " +
@@ -76,7 +81,8 @@ public class TrialExecutorTest {
                             iter.getBranchFactor() + ", " +
                             iter.getDiversity() + ", " +
                             iter.getBestSoFar() + ");"
-            );
+            );*/
+            System.out.println(iter);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.aco;
 
 import com.github.schmittjoaopedro.graph.Graph;
+import com.github.schmittjoaopedro.tools.MVBS;
 
 import java.util.*;
 
@@ -19,6 +20,8 @@ public class MMAS_MEM_Memory {
     private Graph graph;
 
     private MMAS mmas;
+
+    private MVBS mvbs;
 
     public MMAS_MEM_Memory(Graph graph, MMAS mmas) {
         this.graph = graph;
@@ -60,7 +63,7 @@ public class MMAS_MEM_Memory {
         }
         Arrays.sort(shortMemory, Comparator.comparing(Ant::getCost));
         for (int i = 0; i < shortMemorySize; ++i) {
-            if (/*!isValidAnt(this.shortMemory[i]) ||*/ sortedAnts[i].getCost() < shortMemory[i].getCost()) {
+            if (!isValidAnt(shortMemory[i]) || sortedAnts[i].getCost() < shortMemory[i].getCost()) {
                 mmas.copyFromTo(sortedAnts[i], shortMemory[i]);
             }
         }
@@ -122,6 +125,14 @@ public class MMAS_MEM_Memory {
         return copyAnt;
     }
 
+    private boolean isValidAnt(Ant ant) {
+        if (mvbs != null) {
+            return mvbs.isValid(ant);
+        } else {
+            return true;
+        }
+    }
+
     public int getShortMemorySize() {
         return shortMemorySize;
     }
@@ -152,5 +163,13 @@ public class MMAS_MEM_Memory {
 
     public void setMutationProbability(double mutationProbability) {
         this.mutationProbability = mutationProbability;
+    }
+
+    public MVBS getMvbs() {
+        return mvbs;
+    }
+
+    public void setMvbs(MVBS mvbs) {
+        this.mvbs = mvbs;
     }
 }

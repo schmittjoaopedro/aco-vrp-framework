@@ -6,6 +6,8 @@ public class Edge {
 
     private double cost;
 
+    private boolean editable = true;
+
     private Vertex from;
 
     private Vertex to;
@@ -27,7 +29,9 @@ public class Edge {
     }
 
     public void setCost(double cost) {
-        this.cost = cost;
+        if (this.isEditable()) {
+            this.cost = cost;
+        }
     }
 
     public Vertex getFrom() {
@@ -52,5 +56,13 @@ public class Edge {
 
     public int getToId() {
         return (int) getTo().getId();
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 }

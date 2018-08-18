@@ -26,6 +26,10 @@ public class IterationStatistic {
 
     private double bestSoFar;
 
+    private int[] tour;
+
+    private int[] mvsbTour;
+
     private Long currentTime;
 
     public void startTimer() {
@@ -98,6 +102,22 @@ public class IterationStatistic {
 
     public void setIterationSd(double iterationSd) {
         this.iterationSd = iterationSd;
+    }
+
+    public int[] getTour() {
+        return tour;
+    }
+
+    public void setTour(int[] tour) {
+        this.tour = tour;
+    }
+
+    public int[] getMvsbTour() {
+        return mvsbTour;
+    }
+
+    public void setMvsbTour(int[] mvsbTour) {
+        this.mvsbTour = mvsbTour;
     }
 
     @Override

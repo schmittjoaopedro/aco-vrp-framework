@@ -12,6 +12,22 @@ import java.util.Random;
 /**
  * Adapted from Dorigo and Stutzle MMAS original implementation to work with graph structures
  * of adjacent lists.
+ *
+ * Heuristic from: http://www.aco-metaheuristic.org/aco-code/public-software.html
+ * Software based on: http://adibaba.github.io/ACOTSPJava/
+ *
+ * Algorithm reference:
+ *
+ * - T. Stützle and H. H. Hoos, Improving the Ant System: A detailed report on the MAX-MIN Ant System.
+ *   Technical report AIDA-96-12, FG Intellektik, FB Informatik, TU Darmstadt, 1996. TR.AIDA-96-12.ps.gz
+ *   Later published in part as The Max-Min Ant System and Local Search for the Travelling Salesman Problem,
+ *   IEEE International Conference on Evolutionary Computation, Piscataway, T. Bäck, Z. Michalewicz and
+ *   X. Yao (Eds.), IEEE Press, pp. 309-314, 1997. ICEC97.ps.gz
+ *
+ * - Max-Min Ant System T. Stützle and H. H. Hoos, MAX-MIN Ant System. Future Generation Computer Systems.
+ *   16(8):889--914,2000.
+ *
+ * -
  */
 public class MMAS {
 
@@ -197,7 +213,7 @@ public class MMAS {
         ant.setCost(null);
     }
 
-    private void placeAnt(Ant ant, int step) {
+    public void placeAnt(Ant ant, int step) {
         int rnd = (int) (random.nextDouble() * (double) graph.getVertexCount());
         ant.getTour()[step] = rnd;
         ant.getVisited()[rnd] = true;
@@ -298,7 +314,7 @@ public class MMAS {
         return distance;
     }
 
-    private void neighbourChooseAndMoveToNext(Ant ant, int phase) {
+    public void neighbourChooseAndMoveToNext(Ant ant, int phase) {
         Vertex help;
         int current = ant.getTour()[phase - 1];
         int select = 0;

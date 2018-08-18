@@ -8,6 +8,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Dynamic Benchmark Generator Problem used in:
+ *
+ * - M. Mavrovouniotis, F. M. Müller, S. Yang. Ant colony optimization with local search for
+ *   dynamic traveling salesman problems. IEEE Transactions on Cybernetics, vol. 47, no. 7,
+ *   pp. 1743-1756, 2017.
+ */
 public class DBGP {
 
     private double magnitude;
