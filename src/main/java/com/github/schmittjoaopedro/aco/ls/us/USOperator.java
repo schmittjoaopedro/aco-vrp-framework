@@ -17,7 +17,7 @@ public class USOperator {
 
     private int problemSize;
     private int tourLength;
-    private CoordinatesGenius tspFile;
+    private coordG tspFile;
     private int[] tour;
     private double cost;
     private Graph graph;
@@ -27,41 +27,41 @@ public class USOperator {
         problemSize = graph.getVertexCount();
         tourLength = route.size();
         // Init structure
-        tspFile = new CoordinatesGenius();
+        tspFile = new coordG();
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            tspFile.setXYValues(graph.getVertexCount(), i, graph.getVertex(i).getX(), graph.getVertex(i).getY());
+            tspFile.xyvalues(graph.getVertexCount(), i, graph.getVertex(i).getX(), graph.getVertex(i).getY());
         }
         this.cost = cost;
         tour = new int[tourLength];
         for (int i = 0; i < tourLength; i++) {
             tour[i] = route.get(i).getId();
         }
-        tspFile.distances(graph);
+        tspFile.distances();
     }
 
     public void optimize() {
         // Init genius
-        TurnsElem element;
-        RouteGenius genius = new RouteGenius();
+        tourneelem element;
+        routeG genius = new routeG();
         genius.initialize();
-        genius.initNeighborhood(tspFile.task);
+        genius.initnneighbour(tspFile.task);
         // Take the best ant for the considered iteration;
-        genius.littleTurns(tour[0], tspFile.g); //initial
-        genius.addNextNode(tour[0], tspFile.task, tspFile.d);
+        genius.petittourne(tour[0], tspFile.g); //initial
+        genius.ajoutenoeudprox(tour[0], tspFile.task, tspFile.d);
         for (int i = 1; i < problemSize; i++) {
-            genius.addOneTurns(tour[i], tspFile.g);
-            genius.addNextNode(tour[i], tspFile.task, tspFile.d);
+            genius.ajoute_a_tourne(tour[i], tspFile.g);
+            genius.ajoutenoeudprox(tour[i], tspFile.task, tspFile.d);
         } //copy the tour and calculates the nearest neighbours of the nodes.
 
-        if (!genius.numberedTurns()) {
+        if (!genius.numerote_tourne()) {
             //do nothing
         } else {
-            genius.routeCopy(tspFile.task, tspFile.g, tspFile.d, cost);
+            genius.route_copy(tspFile.task, tspFile.g, tspFile.d, cost);
             //COPY THE RESULTING TOUR
             element = genius.t.ptr;
             for (int i = 0; i < problemSize; i++) {
-                tour[i] = element.node - 1;
-                element = element.next;
+                tour[i] = element.noeud - 1;
+                element = element.prochain;
             }
             tour[problemSize] = tour[0];
         }
