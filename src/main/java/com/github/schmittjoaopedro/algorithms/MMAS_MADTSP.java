@@ -123,6 +123,7 @@ public class MMAS_MADTSP implements Runnable {
             mmas.checkPheromoneTrailLimits();
             mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
+            mvbs.moveNext(i, mmas.getBestSoFar());
             // Statistics
             if (i % statisticInterval == 0) {
                 iterationStatistic.setIteration(i);
@@ -134,12 +135,12 @@ public class MMAS_MADTSP implements Runnable {
                 iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
                 iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
                 iterationStatistic.setTour(mmas.getBestSoFar().getTour().clone());
+                iterationStatistic.setMvsbTour(mvbs.getTour().clone());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
                 }
             }
-            mvbs.moveNext(i, mmas.getBestSoFar());
             if (i < maxIterations && dbgp.applyChanges(i)) {
                 mmas.getBestSoFar().setCost(Double.MAX_VALUE);
             }
@@ -199,5 +200,13 @@ public class MMAS_MADTSP implements Runnable {
 
     public void setDbgpSeed(int dbgpSeed) {
         this.dbgpSeed = dbgpSeed;
+    }
+
+    public MVBS getMvbs() {
+        return mvbs;
+    }
+
+    public void setMvbs(MVBS mvbs) {
+        this.mvbs = mvbs;
     }
 }

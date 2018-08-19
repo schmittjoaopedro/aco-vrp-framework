@@ -19,8 +19,6 @@ public class TrialExecutorTest {
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 1000, 0.75, 100);
-            //MMAS_MEM_MADTSP mmas_adtsp = new MMAS_MEM_MADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 100, 0.1, 10);
-            //MMAS_MADTSP mmas_adtsp = new MMAS_MADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 100, 0.1, 10);
             mmas_adtsp.setDbgpSeed(1);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -31,8 +29,6 @@ public class TrialExecutorTest {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            //results.add(((MMAS_MEM_MADTSP) algs.get(i)).getIterationStatistics());
-            //results.add(((MMAS_MADTSP) algs.get(i)).getIterationStatistics());
             results.add(((MMAS_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);

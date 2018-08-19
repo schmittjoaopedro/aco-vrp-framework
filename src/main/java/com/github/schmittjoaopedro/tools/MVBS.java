@@ -34,7 +34,7 @@ public class MVBS {
     }
 
     public void moveNext(int iteration, Ant ant) {
-        if ((iteration - 1) % intervalTime == 0 || iteration == maxIterations) {
+        if (((iteration - 1) % intervalTime == 0 || iteration == maxIterations) && phase < graph.getVertexCount()) {
             phase++;
             tour[phase] = ant.getTour()[phase];
             visited[tour[phase]] = true;
