@@ -6,6 +6,7 @@ import com.github.schmittjoaopedro.graph.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Adapted from C++ version proposed in:

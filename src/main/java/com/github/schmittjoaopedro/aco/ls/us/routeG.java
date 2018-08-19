@@ -122,7 +122,6 @@ public class routeG {
     /*********************************************************************************************/
     void ajoutenoeudprox(int aj, int n, double d[][])
     {
-
         int i, nmaximum = 0, j;
         int k1;
 
@@ -653,6 +652,7 @@ public class routeG {
                                 som1 = som2;
                             }
                             //                 delta = min ( delta, nouvdelta );
+                            System.out.println(nouvdelta + " < " + delta + " = " + 1);
                             if (nouvdelta < delta)
                             {
                                 delta = nouvdelta;
@@ -698,6 +698,7 @@ public class routeG {
                                         som1 = som2;
                                     }
                                     //                        delta = min ( delta, nouvdelta );
+                                    System.out.println(nouvdelta + " < " + delta + " = " + 2);
                                     if (nouvdelta < delta)
                                     {
                                         delta = nouvdelta;
@@ -759,6 +760,7 @@ public class routeG {
                                 som1 = som2;
                             }
                             //                  delta = min ( delta,nouvdelta );
+                            System.out.println(nouvdelta + " < " + delta + " = " + 3);
                             if (nouvdelta < delta)
                             {
                                 delta = nouvdelta;
@@ -804,6 +806,7 @@ public class routeG {
                                         som1 = som2;
                                     }
                                     //                         delta = min ( delta, nouvdelta );
+                                    System.out.println(nouvdelta + " < " + delta + " = " + 4);
                                     if (nouvdelta < delta)
                                     {
                                         delta = nouvdelta;
@@ -914,8 +917,8 @@ public class routeG {
                 g2[i].x = g[i].x;
                 g2[i].y = g[i].y;
                 g2[i].ptrtourne = null;
-                t2.noeudinterne[i] = t.noeudinterne[i];
             }
+            t2.noeudinterne[i] = t.noeudinterne[i];
         }
         for (int i = 1; i <= n; i++)
         {
@@ -974,9 +977,9 @@ public class routeG {
                         if (g[i] != null) {
                             g2[i].x = g[i].x;
                             g2[i].y = g[i].y;
-                            g2[i].ptrtourne = null;
-                            t2.noeudinterne[i] = t.noeudinterne[i];
                         }
+                        g2[i].ptrtourne = null;
+                        t2.noeudinterne[i] = t.noeudinterne[i];
                     }
                     for (int i = 1; i <= n; i++)
                     {
@@ -1018,8 +1021,8 @@ public class routeG {
                     g[i].x = g2[i].x;
                     g[i].y = g2[i].y;
                     g[i].ptrtourne = null;
-                    t.noeudinterne[i] = t2.noeudinterne[i];
                 }
+                t.noeudinterne[i] = t2.noeudinterne[i];
             }
             for (int i = 1; i <= n; i++)
             {
