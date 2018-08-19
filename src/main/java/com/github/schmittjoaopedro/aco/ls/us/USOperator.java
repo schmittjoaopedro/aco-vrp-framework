@@ -12,6 +12,10 @@ import java.util.List;
  *
  * M. Mavrovouniotis, F. M. Müller, S. Yang. Ant colony optimization with local search for dynamic traveling
  * salesman problems. IEEE Transactions on Cybernetics, vol. 47, no. 7, pp. 1743-1756, 2017.
+ * -> https://mavrovouniotis.github.io/Codes/MMAS_US.zip
+ *
+ * To compare these tests with the C program, remember that the random number generator can generate 0. Tho evict
+ * this problem, run the algorithm with magnitude = -0.1
  */
 public class USOperator {
 
