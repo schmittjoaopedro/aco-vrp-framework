@@ -19,18 +19,19 @@ public class USOperator {
     private int tourLength;
     private CoordinatesGenius tspFile;
     private int[] tour;
+    private double cost;
     private Graph graph;
 
-    public void init(Graph graph, List<Vertex> route) {
+    public void init(Graph graph, List<Vertex> route, double cost) {
         this.graph = graph;
         problemSize = graph.getVertexCount();
         tourLength = route.size();
         // Init structure
-        CoordinatesGenius.MAX_N = problemSize;
         tspFile = new CoordinatesGenius();
         for (int i = 0; i < graph.getVertexCount(); i++) {
             tspFile.setXYValues(graph.getVertexCount(), i, graph.getVertex(i).getX(), graph.getVertex(i).getY());
         }
+        this.cost = cost;
         tour = new int[tourLength];
         for (int i = 0; i < tourLength; i++) {
             tour[i] = route.get(i).getId();
@@ -55,7 +56,7 @@ public class USOperator {
         if (!genius.numberedTurns()) {
             //do nothing
         } else {
-            genius.routeCopy(tspFile.task, tspFile.g, tspFile.d, tourLength);
+            genius.routeCopy(tspFile.task, tspFile.g, tspFile.d, cost);
             //COPY THE RESULTING TOUR
             element = genius.t.ptr;
             for (int i = 0; i < problemSize; i++) {

@@ -709,10 +709,12 @@ public class RouteGenius {
 
         for (int i = 1; i <= CoordinatesGenius.MAX_N; i++) {
             g2[i] = new Coordinate();
-            g2[i].x = g[i].x;
-            g2[i].y = g[i].y;
-            g2[i].turnsElem = null;
-            t2.nodeIntern[i] = t.nodeIntern[i];
+            if (g[i] != null) {
+                g2[i].x = g[i].x;
+                g2[i].y = g[i].y;
+                g2[i].turnsElem = null;
+                t2.nodeIntern[i] = t.nodeIntern[i];
+            }
         }
         for (int i = 1; i <= n; i++) {
             if (g2[i].turnsElem == null) g2[i].turnsElem = new TurnsElem();
@@ -748,10 +750,12 @@ public class RouteGenius {
                     exc = cost_t;
                     cpt = 0;
                     for (int i = 1; i <= CoordinatesGenius.MAX_N; i++) {
-                        g2[i].x = g[i].x;
-                        g2[i].y = g[i].y;
-                        g2[i].turnsElem = null;
-                        t2.nodeIntern[i] = t.nodeIntern[i];
+                        if (g[i] != null) {
+                            g2[i].x = g[i].x;
+                            g2[i].y = g[i].y;
+                            g2[i].turnsElem = null;
+                            t2.nodeIntern[i] = t.nodeIntern[i];
+                        }
                     }
                     for (int i = 1; i <= n; i++) {
                         if (g2[i].turnsElem == null) {
@@ -780,10 +784,12 @@ public class RouteGenius {
             cpt++;
 
             for (int i = 1; i <= CoordinatesGenius.MAX_N; i++) {
-                g[i].x = g2[i].x;
-                g[i].y = g2[i].y;
-                g[i].turnsElem = null;
-                t.nodeIntern[i] = t2.nodeIntern[i];
+                if (g[i] != null) {
+                    g[i].x = g2[i].x;
+                    g[i].y = g2[i].y;
+                    g[i].turnsElem = null;
+                    t.nodeIntern[i] = t2.nodeIntern[i];
+                }
             }
             for (int i = 1; i <= n; i++) {
                 if (g[i].turnsElem == null) g[i].turnsElem = new TurnsElem();
