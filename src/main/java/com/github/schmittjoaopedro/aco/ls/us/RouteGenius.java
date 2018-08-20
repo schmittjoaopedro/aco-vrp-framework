@@ -14,28 +14,28 @@ public class RouteGenius {
 
     public NextNode[] p2 = new NextNode[CoordinatesGenius.MAX_N + 1];
 
-    double deltaIn;
+    public double deltaIn;
 
-    double deltaOut;
+    public double deltaOut;
 
-    int getNext(int a, Coordinate g[]) {
+    public int getNext(int a, Coordinate g[]) {
         return (g[a].turnsElem.next.node);
     }
 
-    int getPrev(int a, Coordinate g[]) {
+    public int getPrev(int a, Coordinate g[]) {
         return (g[a].turnsElem.prev.node);
     }
 
-    int getRank(int a, Coordinate g[]) {
+    public int getRank(int a, Coordinate g[]) {
         return (g[a].turnsElem.rank);
     }
 
-    void link(int n1, int n2, Coordinate g[]) {
+    public void link(int n1, int n2, Coordinate g[]) {
         g[n1].turnsElem.next = g[n2].turnsElem;
         g[n2].turnsElem.prev = g[n1].turnsElem;
     }
 
-    void inverse(int depart, int arrive, Coordinate g[]) {
+    public void inverse(int depart, int arrive, Coordinate g[]) {
         TurnsElem d, a, p, pp;
         int lng = 0;
         d = g[arrive].turnsElem;
@@ -168,7 +168,6 @@ public class RouteGenius {
         int i, j;
         boolean indTrue;
         int en[] = new int[CoordinatesGenius.MAX_N + 1];
-
         for (i = 0; i <= CoordinatesGenius.MAX_N; i++) {
             en[i] = 0;
         }
@@ -194,19 +193,13 @@ public class RouteGenius {
         }
     }
 
-    private void addX(int x, int k1, Coordinate g[], double d[][]) {
-
-        int som1, som2, i, j, k, l, xi, xj, xk, xl,
-                x_prev_nj, x_next_ni, ni, nl, nk, nj,
-                next_ni = 0, next_nj, next_nl = 0, next_nk,
-                prev_nk, prev_nl = 0, prev_nj, prev_ni = 0,
-                xk1, yk1,
-                neighbor_x_seen, neighbor_x2_seen, nl_worth;
-
+    private void add(int x, int k1, Coordinate g[], double d[][]) {
+        int som1, som2, i, j, k, l, xi, xj, xk, xl, x_prev_nj, x_next_ni, ni, nl, nk, nj,
+                next_ni = 0, next_nj, next_nl = 0, next_nk, prev_nk, prev_nl = 0, prev_nj, prev_ni = 0,
+                xk1, yk1, neighbor_x_seen, neighbor_x2_seen, nl_worth;
         double delta, newDelta;
-
         TurnsElem px;
-
+        Nodes nodes = new Nodes();
         nl = 0;
         xi = 0;
         xj = 0;
@@ -215,9 +208,6 @@ public class RouteGenius {
         xk1 = Math.min(t.nodesNumber, k1);
         yk1 = Math.min(t.nodesNumber - 1, k1);
         delta = MAX_REAL;
-
-        Nodes nodes = new Nodes();
-
         for (i = 1; i <= xk1; i++) {
             ni = p2[x].nn[i];
             if (t.nodeIntern[ni] == 1) {
@@ -451,18 +441,14 @@ public class RouteGenius {
                 link(nodes.x, nodes.j, g);
                 break;
         }
-
     }
 
-    private void removeX(int x, int k1, Coordinate g[], double d[][]) {
+    private void remove(int x, Coordinate g[], double d[][]) {
         Nodes nodes = new Nodes();
         double delta, newDelta;
-
         int ni, ni2, ni3, nj, nk, nl, j, k, l, xi, xj, xk, xl, xi2,
                 next_nj, next_nl, next_nk, prev_nj, prev_nl, prev_nk, som1, som2,
-                seen_ni2, seem_ni3,
-                xk1, o;
-
+                seen_ni2, seem_ni3, xk1, o;
         xk1 = Math.min(MAX_K, t.nodesNumber - 1);
         delta = MAX_REAL;
         if (t.ptr.node == x) {
@@ -574,7 +560,6 @@ public class RouteGenius {
                 } /* END OF for (l = 1;((l <= xk1) || (!seem_ni3));l++) */
             } /* END OF if (nj != x) */
         } /* END OF for (j =1 ; ((j <= xk1) || (!seen_ni2)) ; j++) */
-
         for (j = 1; j <= xk1; j++) {
             nj = p2[ni2].nn[j];
             if (nj != x) {
@@ -653,7 +638,6 @@ public class RouteGenius {
                 } /* END OF for (l = 1 ; l <= xk1 ; l++) */
             } /* END OF if (nj != x) */
         } /* END OF for (j = 1 ; j <= xk1 ; j++) */
-
         deltaOut = delta;
         t.nodesNumber--;
         t.nodeIntern[x] = 0;
@@ -690,23 +674,18 @@ public class RouteGenius {
                 break;
         }
         numberedTurns();
-
-    } /* END OF remove X */
+    }
 
     public void routeCopy(int n, Coordinate g[], double d[][], double tour) {
         Coordinate g2[] = new Coordinate[CoordinatesGenius.MAX_N + 1];
         Turns t2 = new Turns();
         TurnsElem pt;
         TurnsElem w;
-
         int x, cpt;
         int neigh;
-
         double exc, cost_t;
-
         cpt = 0;
         neigh = MAX_K;
-
         for (int i = 1; i <= CoordinatesGenius.MAX_N; i++) {
             g2[i] = new Coordinate();
             if (g[i] != null) {
@@ -727,7 +706,6 @@ public class RouteGenius {
         }
         t2.nodesNumber = t.nodesNumber;
         t2.ptr = g2[1].turnsElem;
-
         /********************numbered turns 2***********************************/
         w = t2.ptr;
         for (int i = 1; i <= CoordinatesGenius.MAX_N; i++) {
@@ -739,9 +717,9 @@ public class RouteGenius {
         exc = tour;
         x = 1;
         do {
-            removeX(x, neigh, g, d);
+            remove(x, g, d);
             neigh++;
-            addX(x, neigh, g, d);
+            add(x, neigh, g, d);
             numberedTurns();
             neigh--;
             if ((deltaOut + deltaIn) < 0) {
@@ -782,7 +760,6 @@ public class RouteGenius {
             }
             x = getNext(x, g2);
             cpt++;
-
             for (int i = 1; i <= CoordinatesGenius.MAX_N; i++) {
                 if (g[i] != null) {
                     g[i].x = g2[i].x;
@@ -805,5 +782,4 @@ public class RouteGenius {
             numberedTurns();
         } while (cpt != n);
     }
-
 }

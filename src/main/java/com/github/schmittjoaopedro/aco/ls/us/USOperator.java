@@ -20,22 +20,26 @@ import java.util.List;
 public class USOperator {
 
     private int problemSize;
+
     private int tourLength;
+
     private CoordinatesGenius tspFile;
+
     private int[] tour;
+
     private double cost;
+
     private Graph graph;
 
     public void init(Graph graph, List<Vertex> route, double cost) {
         this.graph = graph;
+        this.cost = cost;
         problemSize = graph.getVertexCount();
         tourLength = route.size();
-        // Init structure
         tspFile = new CoordinatesGenius();
         for (int i = 0; i < graph.getVertexCount(); i++) {
             tspFile.setXYValues(graph.getVertexCount(), i, graph.getVertex(i).getX(), graph.getVertex(i).getY());
         }
-        this.cost = cost;
         tour = new int[tourLength];
         for (int i = 0; i < tourLength; i++) {
             tour[i] = route.get(i).getId();
@@ -49,19 +53,15 @@ public class USOperator {
         RouteGenius genius = new RouteGenius();
         genius.initialize();
         genius.initNeighborhood(tspFile.task);
-        // Take the best ant for the considered iteration;
-        genius.littleTurns(tour[0], tspFile.g); //initial
+        genius.littleTurns(tour[0], tspFile.g);
         genius.addNextNode(tour[0], tspFile.task, tspFile.d);
         for (int i = 1; i < problemSize; i++) {
             genius.addOneTurns(tour[i], tspFile.g);
             genius.addNextNode(tour[i], tspFile.task, tspFile.d);
         } //copy the tour and calculates the nearest neighbours of the nodes.
 
-        if (!genius.numberedTurns()) {
-            //do nothing
-        } else {
+        if (genius.numberedTurns()) {
             genius.routeCopy(tspFile.task, tspFile.g, tspFile.d, cost);
-            //COPY THE RESULTING TOUR
             element = genius.t.ptr;
             for (int i = 0; i < problemSize; i++) {
                 tour[i] = element.node - 1;

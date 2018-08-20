@@ -6,6 +6,6 @@ public class NextNode {
 
     public int theMostFarWay;
 
-    double maxDist;
+    public double maxDist;
 
 }
