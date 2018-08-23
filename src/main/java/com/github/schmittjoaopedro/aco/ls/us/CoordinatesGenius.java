@@ -4,13 +4,25 @@ import com.github.schmittjoaopedro.graph.Graph;
 
 public class CoordinatesGenius {
 
-    public static int MAX_N = 500;
+    public int MAX_N;
 
     public int task;
 
-    public Coordinate g[] = new Coordinate[MAX_N + 1];
+    public Coordinate g[];
 
-    public double d[][] = new double[MAX_N + 1][MAX_N + 1];
+    public double d[][];
+
+    public CoordinatesGenius() {
+        MAX_N = 500;
+        g = new Coordinate[MAX_N + 1];
+        d = new double[MAX_N + 1][MAX_N + 1];
+    }
+
+    public CoordinatesGenius(int MAX_N) {
+        this.MAX_N = MAX_N;
+        g = new Coordinate[MAX_N + 1];
+        d = new double[MAX_N + 1][MAX_N + 1];
+    }
 
     public void setXYValues(int n, int cities, double x, double y) {
         task = n;

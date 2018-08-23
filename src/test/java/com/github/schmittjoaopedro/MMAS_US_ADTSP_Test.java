@@ -1598,7 +1598,7 @@ public class MMAS_US_ADTSP_Test {
         checkValues(mmas_us_adtsp, 995, 36574.607978723005, 3070.84497717268, 0.48, 20.951020408163266, 30861.6762026146);
         checkValues(mmas_us_adtsp, 1000, 35657.31539556832, 3632.4844667854045, 0.62, 15.104489795918367, 30037.470211150598);
 
-        assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(15000);
         assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 

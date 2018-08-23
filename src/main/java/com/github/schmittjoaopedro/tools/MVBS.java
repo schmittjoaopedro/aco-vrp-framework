@@ -107,4 +107,20 @@ public class MVBS {
     public void setAccumulativeCost(double accumulativeCost) {
         this.accumulativeCost = accumulativeCost;
     }
+
+    public boolean[] getVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean[] visited) {
+        this.visited = visited;
+    }
+
+    public int getPhase() {
+        return phase;
+    }
+
+    public void setPhase(int phase) {
+        this.phase = phase;
+    }
 }

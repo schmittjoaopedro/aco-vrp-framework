@@ -1,19 +1,17 @@
 package com.github.schmittjoaopedro.aco.ls.us;
 
 
+import com.github.schmittjoaopedro.graph.Edge;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.Vertex;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Adapted from C++ version proposed in:
- *
+ * <p>
  * M. Mavrovouniotis, F. M. Müller, S. Yang. Ant colony optimization with local search for dynamic traveling
  * salesman problems. IEEE Transactions on Cybernetics, vol. 47, no. 7, pp. 1743-1756, 2017.
  * -> https://mavrovouniotis.github.io/Codes/MMAS_US.zip
- *
+ * <p>
  * To compare these tests with the C program, remember that the random number generator can generate 0. Tho evict
  * this problem, run the algorithm with magnitude = -0.1
  */
@@ -21,7 +19,7 @@ public class USOperator {
 
     private int problemSize;
 
-    private int tourLength;
+    private RouteGenius genius;
 
     private CoordinatesGenius tspFile;
 
@@ -31,26 +29,80 @@ public class USOperator {
 
     private Graph graph;
 
-    public void init(Graph graph, List<Vertex> route, double cost) {
+    private int subTourMap[];
+
+    private int[] route;
+
+    private int phase;
+
+    private boolean subTourOptimization = false;
+
+    public void init(Graph graph, int[] tour) {
         this.graph = graph;
-        this.cost = cost;
+        this.cost = fitnessEvaluation(tour);
         problemSize = graph.getVertexCount();
-        tourLength = route.size();
-        tspFile = new CoordinatesGenius();
+        this.tour = tour;
+        tspFile = new CoordinatesGenius(graph.getVertexCount());
         for (int i = 0; i < graph.getVertexCount(); i++) {
             tspFile.setXYValues(graph.getVertexCount(), i, graph.getVertex(i).getX(), graph.getVertex(i).getY());
         }
-        tour = new int[tourLength];
-        for (int i = 0; i < tourLength; i++) {
-            tour[i] = route.get(i).getId();
-        }
         tspFile.distances(graph);
+        genius = new RouteGenius(tspFile);
+    }
+
+    public boolean init(Graph graph, int[] route, int phase) {
+        if (phase < 0) {
+            init(graph, route);
+            return true;
+        } else if (graph.getVertexCount() - phase > 5) {
+            this.phase = phase;
+            this.route = route;
+            int subTourLength = graph.getVertexCount() - phase;
+            subTourMap = new int[subTourLength];
+            subTourMap[0] = route[phase];
+            for (int i = 1; i < subTourLength; i++) {
+                subTourMap[i] = route[phase + i];
+            }
+            Graph newGraph = new Graph();
+            for (int i = 0; i < subTourLength; i++) {
+                Vertex vertex = new Vertex(i);
+                vertex.setX(graph.getVertex(subTourMap[i]).getX());
+                vertex.setY(graph.getVertex(subTourMap[i]).getY());
+                newGraph.addVertex(vertex);
+            }
+            int edgeId = 0;
+            for (int i = 0; i < subTourLength; i++) {
+                for (int j = 0; j < subTourLength; j++) {
+                    if (i != j) {
+                        Edge edge = new Edge(edgeId++);
+                        edge.setFrom(newGraph.getVertex(i));
+                        edge.setTo(newGraph.getVertex(j));
+                        edge.setCost(graph.getEdge(subTourMap[i], subTourMap[j]).getCost());
+                        edge.getFrom().getAdj().put(edge.getToId(), edge);
+                        newGraph.addEdge(edge);
+                    }
+                }
+            }
+            for (int i = 1; i < subTourLength; i++) {
+                newGraph.getEdge(i, 0).setCost(graph.getEdge(subTourMap[i], route[0]).getCost());
+            }
+            int[] vertexTour = new int[subTourMap.length + 1];
+            for (int i = 0; i < subTourMap.length; i++) {
+                vertexTour[i] = i;
+            }
+            vertexTour[subTourMap.length] = vertexTour[0];
+            init(newGraph, vertexTour);
+            genius = new RouteGenius(tspFile, 3, Math.min(15, subTourLength));
+            subTourOptimization = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void optimize() {
         // Init genius
-        TurnsElem element;
-        RouteGenius genius = new RouteGenius();
+        TourElem element;
         genius.initialize();
         genius.initNeighborhood(tspFile.task);
         genius.littleTurns(tour[0], tspFile.g);
@@ -71,11 +123,22 @@ public class USOperator {
         }
     }
 
-    public List<Vertex> getResult() {
-        List<Vertex> optimized = new ArrayList<>();
-        for(int i = 0; i < tour.length; i++) {
-            optimized.add(graph.getVertex(tour[i]));
+    public int[] getResult() {
+        if (subTourOptimization) {
+            for (int i = 1; i < subTourMap.length; i++) {
+                route[phase + i] = subTourMap[tour[i]];
+            }
+            return route;
+        } else {
+            return tour;
         }
-        return optimized;
+    }
+
+    private double fitnessEvaluation(int[] tour) {
+        double cost = 0.0;
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            cost += graph.getEdge(tour[i], tour[i + 1]).getCost();
+        }
+        return cost;
     }
 }

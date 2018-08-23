@@ -1,13 +1,13 @@
 package com.github.schmittjoaopedro.aco.ls.us;
 
-public class TurnsElem {
+public class TourElem {
 
     public int node;
 
     public int rank;
 
-    public TurnsElem prev;
+    public TourElem prev;
 
-    public TurnsElem next;
+    public TourElem next;
 
 }

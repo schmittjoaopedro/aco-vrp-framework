@@ -6,6 +6,6 @@ public class Coordinate {
 
     public double y;
 
-    public TurnsElem turnsElem;
+    public TourElem tourElem;
 
 }

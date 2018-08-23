@@ -2,10 +2,10 @@ package com.github.schmittjoaopedro.aco.ls.us;
 
 public class NextNode {
 
-    public int nn[] = new int[RouteGenius.MAX_K1];
+    public int nn[];
 
-    public int theMostFarWay;
+    public int theMostFarWay; // Used to build the nn list
 
-    public double maxDist;
+    public double maxDist; // Used to build the nn list
 
 }

@@ -1,27 +1,25 @@
 package com.github.schmittjoaopedro;
 
-import com.github.schmittjoaopedro.aco.MMAS;
 import com.github.schmittjoaopedro.aco.ls.us.USOperator;
+import com.github.schmittjoaopedro.graph.Edge;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
-
-import static org.assertj.core.api.Assertions.*;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Compatible with the C++ version proposed in:
- *
+ * <p>
  * M. Mavrovouniotis, F. M. Müller, S. Yang. Ant colony optimization with local search for dynamic traveling
  * salesman problems. IEEE Transactions on Cybernetics, vol. 47, no. 7, pp. 1743-1756, 2017.
  * -> https://mavrovouniotis.github.io/Codes/MMAS_US.zip
- *
+ * <p>
  * To compare these tests with the C program, remember that the random number generator can generate 0. Tho evict
  * this problem, run the algorithm with magnitude = -0.1
  */
@@ -39,18 +37,19 @@ public class US_Test {
         kroA150 = getClass().getClassLoader().getResource("tsp/kroA150.tsp").getFile();
         kroA200 = getClass().getClassLoader().getResource("tsp/kroA200.tsp").getFile();
     }
+
     @Test
     public void test_unstringing_stringing_kroA100_route_in_order_asc() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        List<Vertex> route = new ArrayList<>();
+        int[] route = new int[graph.getVertexCount() + 1];
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            route.add(graph.getVertex(i));
+            route[i] = i;
         }
-        route.add(route.get(0));
+        route[graph.getVertexCount()] = 0;
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(191387);
         assertThat(getTourString(route)).isEqualTo("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 0]");
         USOperator us = new USOperator();
-        us.init(graph, route, fitnessEvaluation(graph, route));
+        us.init(graph, route);
         us.optimize();
         route = us.getResult();
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(23314);
@@ -61,15 +60,15 @@ public class US_Test {
     @Test
     public void test_unstringing_stringing_kroA150_route_in_order_asc() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA150));
-        List<Vertex> route = new ArrayList<>();
+        int[] route = new int[graph.getVertexCount() + 1];
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            route.add(graph.getVertex(i));
+            route[i] = i;
         }
-        route.add(route.get(0));
+        route[graph.getVertexCount()] = 0;
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(287844);
         assertThat(getTourString(route)).isEqualTo("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 0]");
         USOperator us = new USOperator();
-        us.init(graph, route, fitnessEvaluation(graph, route));
+        us.init(graph, route);
         us.optimize();
         route = us.getResult();
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(26885);
@@ -79,15 +78,15 @@ public class US_Test {
     @Test
     public void test_unstringing_stringing_kroA200_route_in_order_asc() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
-        List<Vertex> route = new ArrayList<>();
+        int[] route = new int[graph.getVertexCount() + 1];
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            route.add(graph.getVertex(i));
+            route[i] = i;
         }
-        route.add(route.get(0));
+        route[graph.getVertexCount()] = 0;
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(373938);
         assertThat(getTourString(route)).isEqualTo("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 0]");
         USOperator us = new USOperator();
-        us.init(graph, route, fitnessEvaluation(graph, route));
+        us.init(graph, route);
         us.optimize();
         route = us.getResult();
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(30496);
@@ -97,22 +96,23 @@ public class US_Test {
     @Test
     public void test_unstringing_stringing_kroA100_route_parity() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        List<Vertex> route = new ArrayList<>();
+        int[] route = new int[graph.getVertexCount() + 1];
+        int counter = 0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
             if (i % 2 == 0) {
-                route.add(graph.getVertex(i));
+                route[counter++] = i;
             }
         }
         for (int i = 0; i < graph.getVertexCount(); i++) {
             if (i % 2 != 0) {
-                route.add(graph.getVertex(i));
+                route[counter++] = i;
             }
         }
-        route.add(route.get(0));
+        route[graph.getVertexCount()] = 0;
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(159833);
         assertThat(getTourString(route)).isEqualTo("[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 0]");
         USOperator us = new USOperator();
-        us.init(graph, route, fitnessEvaluation(graph, route));
+        us.init(graph, route);
         us.optimize();
         route = us.getResult();
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(21794);
@@ -123,22 +123,23 @@ public class US_Test {
     @Test
     public void test_unstringing_stringing_kroA150_route_parity() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA150));
-        List<Vertex> route = new ArrayList<>();
+        int[] route = new int[graph.getVertexCount() + 1];
+        int counter = 0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
             if (i % 2 == 0) {
-                route.add(graph.getVertex(i));
+                route[counter++] = i;
             }
         }
         for (int i = 0; i < graph.getVertexCount(); i++) {
             if (i % 2 != 0) {
-                route.add(graph.getVertex(i));
+                route[counter++] = i;
             }
         }
-        route.add(route.get(0));
+        route[graph.getVertexCount()] = 0;
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(246711);
         assertThat(getTourString(route)).isEqualTo("[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105, 107, 109, 111, 113, 115, 117, 119, 121, 123, 125, 127, 129, 131, 133, 135, 137, 139, 141, 143, 145, 147, 149, 0]");
         USOperator us = new USOperator();
-        us.init(graph, route, fitnessEvaluation(graph, route));
+        us.init(graph, route);
         us.optimize();
         route = us.getResult();
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(28294);
@@ -148,40 +149,99 @@ public class US_Test {
     @Test
     public void test_unstringing_stringing_kroA200_route_parity() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
-        List<Vertex> route = new ArrayList<>();
+        int[] route = new int[graph.getVertexCount() + 1];
+        int counter = 0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
             if (i % 2 == 0) {
-                route.add(graph.getVertex(i));
+                route[counter++] = i;
             }
         }
         for (int i = 0; i < graph.getVertexCount(); i++) {
             if (i % 2 != 0) {
-                route.add(graph.getVertex(i));
+                route[counter++] = i;
             }
         }
-        route.add(route.get(0));
+        route[graph.getVertexCount()] = 0;
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(340562);
         assertThat(getTourString(route)).isEqualTo("[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 150, 152, 154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, 194, 196, 198, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91, 93, 95, 97, 99, 101, 103, 105, 107, 109, 111, 113, 115, 117, 119, 121, 123, 125, 127, 129, 131, 133, 135, 137, 139, 141, 143, 145, 147, 149, 151, 153, 155, 157, 159, 161, 163, 165, 167, 169, 171, 173, 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 0]");
         USOperator us = new USOperator();
-        us.init(graph, route, fitnessEvaluation(graph, route));
+        us.init(graph, route);
         us.optimize();
         route = us.getResult();
         assertThat(fitnessEvaluation(graph, route)).isEqualTo(30303);
         assertThat(getTourString(route)).isEqualTo("[0, 84, 144, 190, 26, 197, 122, 14, 12, 78, 159, 161, 63, 19, 54, 41, 134, 185, 126, 111, 119, 46, 30, 66, 176, 64, 79, 76, 157, 192, 127, 166, 29, 67, 168, 34, 1, 180, 124, 160, 150, 186, 156, 106, 108, 5, 53, 74, 154, 182, 21, 133, 7, 16, 24, 142, 89, 33, 57, 140, 170, 199, 147, 87, 97, 113, 102, 145, 128, 82, 61, 184, 167, 49, 85, 138, 71, 129, 38, 27, 37, 70, 55, 151, 177, 195, 4, 104, 42, 136, 132, 175, 112, 194, 181, 93, 94, 90, 149, 172, 22, 143, 69, 75, 101, 163, 139, 20, 153, 88, 40, 58, 2, 72, 188, 130, 179, 141, 68, 107, 13, 191, 59, 100, 3, 162, 92, 105, 148, 189, 18, 98, 91, 9, 174, 35, 56, 73, 99, 155, 32, 44, 196, 80, 96, 47, 169, 83, 10, 51, 86, 125, 95, 165, 164, 103, 118, 65, 152, 43, 187, 115, 121, 193, 50, 62, 178, 15, 117, 123, 137, 8, 77, 81, 6, 198, 25, 60, 135, 31, 23, 158, 173, 120, 45, 171, 28, 183, 36, 109, 17, 48, 11, 146, 39, 131, 110, 116, 114, 52, 0]");
     }
 
-    private double fitnessEvaluation(Graph graph, List<Vertex> route) {
+    @Test
+    @Ignore
+    public void eternal_loop_test() {
+        Graph graph = new Graph();
+        addVertex(graph, 0, 1393.0, 1368.0);
+        addVertex(graph, 1, 1625.0, 1651.0);
+        addVertex(graph, 2, 1424.0, 1728.0);
+        addVertex(graph, 3, 1247.0, 1945.0);
+        addVertex(graph, 4, 1234.0, 1946.0);
+        addVertex(graph, 5, 1251.0, 1832.0);
+        addVertex(graph, 6, 929.0, 1766.0);
+        addVertex(graph, 7, 1787.0, 1009.0);
+        addVertex(graph, 8, 1795.0, 962.0);
+        addVertex(graph, 9, 1917.0, 687.0);
+
+        addEdge(graph, 0, new double[]{0.0, 366.0, 361.0, 595.0, 599.0, 485.0, 611.0, 875.6343871174662, 571.0, 910.0082238716822});
+        addEdge(graph, 1, new double[]{1927.002332823819, 0.0, 246.0304294961538, 479.0, 490.0, 570.1165542442657, 705.0, 1040.3091995749821, 911.0896580954092, 2256.025272420235});
+        addEdge(graph, 2, new double[]{880.5189980553982, 215.0, 0.0, 280.0, 781.2338069842648, 202.0, 496.0, 805.0, 851.0, 2940.0784876087364});
+        addEdge(graph, 3, new double[]{2740.575750864771, 1235.2050119397086, 280.0, 0.0, 13.0, 229.8297036515996, 365.0, 2660.6817160963956, 2909.4989726694057, 2333.341216606503});
+        addEdge(graph, 4, new double[]{1018.0, 490.0, 375.1276882974077, 13.0, 0.0, 115.0, 376.21582350271683, 1171.1410585305293, 1133.0, 1995.379322405805});
+        addEdge(graph, 5, new double[]{2013.691444088283, 605.9896505907768, 311.31551316443523, 113.0, 141.919622307118, 0.0, 396.07122434231457, 982.0, 1026.0, 1325.0});
+        addEdge(graph, 6, new double[]{942.0, 705.0, 805.9093134981456, 365.0, 657.1166490020089, 329.0, 0.0, 1162.2402132460068, 3027.3696851150085, 1685.2115044851967});
+        addEdge(graph, 7, new double[]{608.7798072513575, 1575.7953841371364, 805.0, 2576.1775551547, 1767.5359254029322, 2847.0027055359715, 2773.507336217307, 0.0, 134.23738707697896, 796.7984551072398});
+        addEdge(graph, 8, new double[]{416.0, 1354.4820151510723, 2504.6809967493355, 1653.7573500967962, 1133.0, 2667.4207147192114, 2338.6814453712955, 103.98598005408093, 0.0, 301.0});
+        addEdge(graph, 9, new double[]{593.0, 2016.6100150026998, 1736.956221514316, 3231.0289740550916, 1432.0, 3892.7711543941473, 4349.640702920234, 550.1834099685329, 560.1089506010246, 0.0});
+
+        int[] route = new int[graph.getVertexCount() + 1];
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            route[i] = i;
+        }
+        route[graph.getVertexCount()] = 0;
+
+        USOperator us = new USOperator();
+        us.init(graph, route);
+        us.optimize();
+        route = us.getResult();
+        assertThat(fitnessEvaluation(graph, route)).isEqualTo(30303);
+    }
+
+    private void addVertex(Graph g, int id, double x, double y) {
+        Vertex vertex = new Vertex(id);
+        vertex.setX(x);
+        vertex.setY(y);
+        g.addVertex(vertex);
+    }
+
+    private void addEdge(Graph g, int id, double... costs) {
+        for (int i = 0; i < g.getVertexCount(); i++) {
+            if (i == id) continue;
+            Edge edge = new Edge(g.getEdgesSize());
+            edge.setFrom(g.getVertex(id));
+            edge.setTo(g.getVertex(i));
+            edge.setCost(costs[i]);
+            g.addEdge(edge);
+            edge.getFrom().getAdj().put(edge.getToId(), edge);
+        }
+    }
+
+    private double fitnessEvaluation(Graph graph, int[] route) {
         double cost = 0.0;
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            cost += graph.getEdge(route.get(i).getId(), route.get(i + 1).getId()).getCost();
+            cost += graph.getEdge(route[i], route[i + 1]).getCost();
         }
         return cost;
     }
 
-    private String getTourString(List<Vertex> route) {
+    private String getTourString(int[] route) {
         StringBuilder tour = new StringBuilder("[");
-        for (Vertex vertex : route) {
-            tour.append(vertex.getId()).append(", ");
+        for (int vertex : route) {
+            tour.append(vertex).append(", ");
         }
         tour.delete(tour.length() - 2, tour.length()).append("]");
         return tour.toString();

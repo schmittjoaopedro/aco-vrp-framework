@@ -3,20 +3,22 @@ package com.github.schmittjoaopedro.algorithms;
 import com.github.schmittjoaopedro.aco.Ant;
 import com.github.schmittjoaopedro.aco.MMAS;
 import com.github.schmittjoaopedro.aco.ls.us.USOperator;
+import com.github.schmittjoaopedro.graph.Edge;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.DBGP;
 import com.github.schmittjoaopedro.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
+import com.github.schmittjoaopedro.tools.MVBS;
 import com.github.schmittjoaopedro.utils.Maths;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-public class MMAS_US_ADTSP implements Runnable {
+public class MMAS_US_MADTSP implements Runnable {
+
+    private MVBS mvbs;
 
     private USOperator usOperator;
 
@@ -48,7 +50,7 @@ public class MMAS_US_ADTSP implements Runnable {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_US_ADTSP(String problemInstance, double rho, int maxIterations, double magnitude, int frequency) {
+    public MMAS_US_MADTSP(String problemInstance, double rho, int maxIterations, double magnitude, int frequency) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.magnitude = magnitude;
@@ -85,6 +87,12 @@ public class MMAS_US_ADTSP implements Runnable {
         mmas.initTry();
         usOperator = new USOperator();
         globalStatistics.endTimer("MMAS Initialization");
+        // Initialization moving vehicle benchmark simulator
+        globalStatistics.startTimer();
+        mvbs = new MVBS(graph, mmas);
+        mvbs.setMaxIterations(maxIterations);
+        mvbs.initialize();
+        globalStatistics.endTimer("MVBS Initialization");
         // Execute MMAS
         globalStatistics.startTimer();
         for (int i = 1; i <= maxIterations; i++) {
@@ -95,7 +103,7 @@ public class MMAS_US_ADTSP implements Runnable {
             mmas.computeNNList();
             mmas.initHeuristicInfo();
             mmas.computeTotalInfo();
-            mmas.constructSolutions();
+            mvbs.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
             iterationStatistic.startTimer();
@@ -120,6 +128,7 @@ public class MMAS_US_ADTSP implements Runnable {
             mmas.checkPheromoneTrailLimits();
             mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
+            mvbs.moveNext(i, mmas.getBestSoFar());
             // Statistics
             if (i % statisticInterval == 0) {
                 iterationStatistic.setIteration(i);
@@ -130,6 +139,8 @@ public class MMAS_US_ADTSP implements Runnable {
                 iterationStatistic.setIterationWorst(mmas.findWorst().getCost());
                 iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
                 iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
+                iterationStatistic.setTour(mmas.getBestSoFar().getTour().clone());
+                iterationStatistic.setMvsbTour(mvbs.getTour().clone());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
@@ -150,12 +161,17 @@ public class MMAS_US_ADTSP implements Runnable {
 
     public void executeLocalSearch() {
         Ant iterationBest = mmas.findBest();
-        usOperator.init(graph, iterationBest.getTour().clone());
-        usOperator.optimize();
-        iterationBest.setTour(usOperator.getResult());
-        iterationBest.setCost(mmas.fitnessEvaluation(iterationBest.getTour()));
-        mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
-        mmas.copyFromTo(iterationBest, mmas.getRestartBest());
+        if (usOperator.init(graph, iterationBest.getTour().clone(), mvbs.getPhase())) {
+            usOperator.optimize();
+            iterationBest.setTour(usOperator.getResult());
+            double old = iterationBest.getCost();
+            iterationBest.setCost(mmas.fitnessEvaluation(iterationBest.getTour()));
+            if (old < iterationBest.getCost()) {
+                System.exit(0);
+            }
+            mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
+            mmas.copyFromTo(iterationBest, mmas.getRestartBest());
+        }
     }
 
     public List<IterationStatistic> getIterationStatistics() {

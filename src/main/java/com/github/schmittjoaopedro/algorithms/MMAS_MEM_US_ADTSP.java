@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.algorithms;
 
 import com.github.schmittjoaopedro.aco.Ant;
 import com.github.schmittjoaopedro.aco.MMAS;
+import com.github.schmittjoaopedro.aco.MMAS_MEM_Memory;
 import com.github.schmittjoaopedro.aco.ls.us.USOperator;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.GraphFactory;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class MMAS_US_ADTSP implements Runnable {
+public class MMAS_MEM_US_ADTSP implements Runnable {
 
     private USOperator usOperator;
 
@@ -25,6 +26,8 @@ public class MMAS_US_ADTSP implements Runnable {
     private Graph graph;
 
     private MMAS mmas;
+
+    private MMAS_MEM_Memory memory;
 
     private int maxIterations;
 
@@ -44,17 +47,20 @@ public class MMAS_US_ADTSP implements Runnable {
 
     private boolean useLocalSearch = true;
 
+    private boolean changed = false;
+
     private List<IterationStatistic> iterationStatistics;
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_US_ADTSP(String problemInstance, double rho, int maxIterations, double magnitude, int frequency) {
+    public MMAS_MEM_US_ADTSP(String problemInstance, double rho, int maxIterations, double magnitude, int frequency) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.magnitude = magnitude;
         this.frequency = frequency;
         graph = GraphFactory.createGraphFromTSP(new File(problemInstance));
         mmas = new MMAS(graph);
+        memory = new MMAS_MEM_Memory(graph, mmas);
         dbgp = new DBGP(graph);
         iterationStatistics = new ArrayList<>(maxIterations);
     }
@@ -62,13 +68,16 @@ public class MMAS_US_ADTSP implements Runnable {
     @Override
     public void run() {
         // Initialization DBGP
+        globalStatistics.startTimer();
         dbgp.setLowerBound(0.0);
         dbgp.setUpperBound(2.0);
         dbgp.setRandom(new Random(getDbgpSeed()));
         dbgp.setMagnitude(magnitude);
         dbgp.setFrequency(frequency);
         dbgp.initializeEnvironment();
+        globalStatistics.endTimer("DBGP Initialization");
         // Initialization MMAS
+        Random random = new Random(getMmasSeed());
         globalStatistics.startTimer();
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
@@ -79,12 +88,20 @@ public class MMAS_US_ADTSP implements Runnable {
         mmas.setEPSILON(0.000000000000000000000001);
         mmas.allocateAnts();
         mmas.allocateStructures();
-        mmas.setRandom(new Random(getMmasSeed()));
+        mmas.setRandom(random);
         mmas.computeNNList();
         mmas.initHeuristicInfo();
         mmas.initTry();
         usOperator = new USOperator();
         globalStatistics.endTimer("MMAS Initialization");
+        //Initialization memory
+        globalStatistics.startTimer();
+        memory.setShortMemorySize(4);
+        memory.setMutationProbability(0.01);
+        memory.setImmigrantRate(0.4);
+        memory.setRandom(random);
+        memory.initialize();
+        globalStatistics.endTimer("MEMORY Initialization");
         // Execute MMAS
         globalStatistics.startTimer();
         for (int i = 1; i <= maxIterations; i++) {
@@ -113,7 +130,13 @@ public class MMAS_US_ADTSP implements Runnable {
             // Pheromone
             iterationStatistic.startTimer();
             mmas.evaporation();
-            mmas.pheromoneUpdate();
+            if (changed) {
+                mmas.setRho(0.02);
+                memory.updateShortTermMemory();
+                memory.pheromoneUpdate(i);
+            } else {
+                mmas.pheromoneUpdate();
+            }
             if (useLocalSearch) {
                 mmas.updateUGB();
             }
@@ -136,6 +159,7 @@ public class MMAS_US_ADTSP implements Runnable {
                 }
             }
             if (dbgp.applyChanges(i) && i < maxIterations) {
+                repairSolution();
                 mmas.getBestSoFar().setCost(Double.MAX_VALUE);
             }
         }
@@ -156,6 +180,22 @@ public class MMAS_US_ADTSP implements Runnable {
         iterationBest.setCost(mmas.fitnessEvaluation(iterationBest.getTour()));
         mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
         mmas.copyFromTo(iterationBest, mmas.getRestartBest());
+    }
+
+    private List<Vertex> getVertexTour(Ant ant) {
+        List<Vertex> tour = new ArrayList<>();
+        for (int city : ant.getTour()) {
+            tour.add(graph.getVertex(city));
+        }
+        return tour;
+    }
+
+    private void repairSolution() {
+        double originalCost = mmas.getBestSoFar().getCost();
+        mmas.getBestSoFar().setCost(mmas.fitnessEvaluation(mmas.getBestSoFar().getTour()));
+        if (originalCost != mmas.getBestSoFar().getCost()) {
+            changed = true;
+        }
     }
 
     public List<IterationStatistic> getIterationStatistics() {

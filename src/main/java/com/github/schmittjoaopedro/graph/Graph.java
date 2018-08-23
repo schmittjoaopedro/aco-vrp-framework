@@ -47,4 +47,8 @@ public class Graph {
     public int getVertexCount() {
         return vertices.size();
     }
+
+    public int getEdgesSize() {
+        return edges.size();
+    }
 }
