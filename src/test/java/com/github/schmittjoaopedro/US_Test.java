@@ -6,7 +6,6 @@ import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -173,8 +172,7 @@ public class US_Test {
     }
 
     @Test
-    @Ignore
-    public void eternal_loop_test() {
+    public void eternal_loop_test_due_to_double_usage() {
         Graph graph = new Graph();
         addVertex(graph, 0, 1393.0, 1368.0);
         addVertex(graph, 1, 1625.0, 1651.0);
@@ -203,13 +201,85 @@ public class US_Test {
             route[i] = i;
         }
         route[graph.getVertexCount()] = 0;
-
+        assertThat(fitnessEvaluation(graph, route)).isEqualTo(3606.5792541614537);
         USOperator us = new USOperator();
         us.init(graph, route);
         us.optimize();
         route = us.getResult();
-        assertThat(fitnessEvaluation(graph, route)).isEqualTo(30303);
+        assertThat(fitnessEvaluation(graph, route)).isEqualTo(3506.723853321856);
+        assertThat(getTourString(route)).isEqualTo("[0, 1, 2, 5, 3, 4, 6, 7, 8, 9, 0]");
     }
+
+    @Test
+    public void few_vertices_to_execute_us_test() {
+        Graph graph = new Graph();
+
+        addVertex(graph, 0, 2678.0, 1825.0);
+        addVertex(graph, 1, 2597.0, 1830.0);
+        addVertex(graph, 2, 2573.0, 1969.0);
+        addVertex(graph, 3, 1424.0, 1728.0);
+        addVertex(graph, 4, 1393.0, 1368.0);
+        addVertex(graph, 5, 1724.0, 1642.0);
+
+        addEdge(graph, 0, new double[]{0.0, 81.0, 471.0690943652884, 2987.8136878846585, 1896.9566327780308, 2546.4633818669936});
+        addEdge(graph, 1, new double[]{1508.0, 0.0, 206.06261057843287, 2285.1841979989163, 3469.787173650955, 1792.423169887199});
+        addEdge(graph, 2, new double[]{1576.0, 141.0, 0.0, 1174.0, 1324.0, 2463.2213921129605});
+        addEdge(graph, 3, new double[]{790.0, 1177.0, 1719.5585923433525, 0.0, 361.0, 716.5902443544664});
+        addEdge(graph, 4, new double[]{855.6359692656566, 1290.0, 1324.0, 391.75284227934867, 0.0, 430.0});
+        addEdge(graph, 5, new double[]{783.0, 893.0, 910.0, 796.3129478887017, 430.0, 0.0});
+
+        int[] route = new int[graph.getVertexCount() + 1];
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            route[i] = i;
+        }
+        route[graph.getVertexCount()] = 0;
+        assertThat(fitnessEvaluation(graph, route)).isEqualTo(3035.062610578433);
+
+        USOperator us = new USOperator();
+        assertThat(us.init(graph, route)).isFalse();
+    }
+
+    @Test
+    public void eternal_loop_test() {
+        Graph graph = new Graph();
+
+        addVertex(graph, 0, 178.0, 24.0);
+        addVertex(graph, 1, 241.0, 341.0);
+        addVertex(graph, 2, 457.0, 334.0);
+        addVertex(graph, 3, 776.0, 392.0);
+        addVertex(graph, 4, 839.0, 620.0);
+        addVertex(graph, 5, 953.0, 268.0);
+        addVertex(graph, 6, 1178.0, 100.0);
+        addVertex(graph, 7, 1256.0, 61.0);
+        addVertex(graph, 8, 1429.0, 134.0);
+        addVertex(graph, 9, 1323.0, 280.0);
+
+        addEdge(graph, 0, new double[]{0.0, 900.0620925455916, 1211.2323945258895, 1359.1588235781057, 1729.5632819696002, 813.0, 2970.5950447626465, 1079.0, 2843.6801218060277, 3044.1064571351308});
+        addEdge(graph, 1, new double[]{1286.0, 0.0, 281.74406380296176, 537.0, 1252.7864153157623, 786.4170177209927, 967.0, 2792.004622093467, 1612.1302860995813, 1084.0});
+        addEdge(graph, 2, new double[]{1670.8834457854196, 216.0, 0.0, 334.1730777037129, 477.0, 500.0, 758.0, 844.0, 1292.8086372840896, 868.0});
+        addEdge(graph, 3, new double[]{2201.695317866939, 871.3897525916698, 324.0, 0.0, 237.0, 611.1898891517641, 497.0, 583.0, 702.0, 671.966107970392});
+        addEdge(graph, 4, new double[]{628.0, 1379.884019939828, 1064.1688453443126, 237.0, 0.0, 634.1111406890833, 621.0, 1078.86722820482, 764.0, 1413.8168064096124});
+        addEdge(graph, 5, new double[]{2045.6748205734464, 723.0525901863624, 500.0, 487.4461530864222, 1009.3055331870214, 0.0, 281.0, 367.0, 1283.105788034829, 965.6670689518158});
+        addEdge(graph, 6, new double[]{1455.356029235959, 2329.691092648013, 758.0, 1369.6398378152921, 718.6983247969229, 691.267866164247, 0.0, 225.8960395832207, 253.0, 231.0});
+        addEdge(graph, 7, new double[]{2464.243953635703, 2398.766456375107, 1628.5610430655327, 824.429918560779, 697.0, 709.2948949970747, 250.44996507920138, 0.0, 188.0, 617.988873989192});
+        addEdge(graph, 8, new double[]{806.0, 1206.0, 992.0, 1745.63472204523, 2040.549780850201, 495.0, 548.0697944810614, 206.3930332572461, 0.0, 333.1141012849151});
+        addEdge(graph, 9, new double[]{661.0, 2371.058915729798, 1708.508264109688, 1036.232861045186, 1674.615643905726, 726.6351151690391, 679.5784341617549, 576.8431008085734, 527.6165853671087, 0.0});
+
+        int[] route = new int[graph.getVertexCount() + 1];
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            route[i] = i;
+        }
+        route[graph.getVertexCount()] = 0;
+        assertThat(fitnessEvaluation(graph, route)).isEqualTo(4076.1005156094852);
+        USOperator us = new USOperator();
+        us.setStopEternalLoops(true);
+        us.init(graph, route);
+        us.optimize();
+        route = us.getResult();
+        assertThat(fitnessEvaluation(graph, route)).isEqualTo(4076.1005156094852);
+        assertThat(getTourString(route)).isEqualTo("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]");
+    }
+
 
     private void addVertex(Graph g, int id, double x, double y) {
         Vertex vertex = new Vertex(id);

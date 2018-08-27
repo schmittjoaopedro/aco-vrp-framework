@@ -2,10 +2,7 @@ package com.github.schmittjoaopedro.tools;
 
 import com.github.schmittjoaopedro.graph.Vertex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GlobalStatistics {
 
@@ -38,6 +35,13 @@ public class GlobalStatistics {
     }
 
     public void setBestRoute(List<Vertex> bestRoute) {
+        Set<Integer> bestRouteValidator = new HashSet<>();
+        for (Vertex vertex : bestRoute) {
+            bestRouteValidator.add(vertex.getId());
+        }
+        if (bestRouteValidator.size() != bestRoute.size() - 1) {
+            throw new RuntimeException("Invalid best route");
+        }
         this.bestRoute = bestRoute;
     }
 

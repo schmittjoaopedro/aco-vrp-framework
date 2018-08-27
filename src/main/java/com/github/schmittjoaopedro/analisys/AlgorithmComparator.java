@@ -19,11 +19,11 @@ public class AlgorithmComparator {
     public static void main(String[] args) throws Exception {
         for (String test : new String[]{"KroA100", "KroA150", "KroA200"}) {
 
-//            executeMMASUSTest(test, 0.1, 10);
-//            executeMMASMEMTest(test, 0.1, 10);
+            executeMMASUSTest(test, 0.1, 10);
+            executeMMASMEMTest(test, 0.1, 10);
 
-//            executeMMASUSTest(test, 0.1, 100);
-//            executeMMASMEMTest(test, 0.1, 100);
+            executeMMASUSTest(test, 0.1, 100);
+            executeMMASMEMTest(test, 0.1, 100);
 
             executeMMASUSTest(test, 0.5, 10);
             executeMMASMEMTest(test, 0.5, 10);

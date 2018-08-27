@@ -1,12 +1,15 @@
 package com.github.schmittjoaopedro.aco.ls.us;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class RouteGenius {
 
     public int MAX_K;
 
     public int MAX_K1;
 
-    public double MAX_REAL = 1.7e38;
+    public float MAX_REAL = Float.MAX_VALUE;
 
     public Tour t;
 
@@ -14,9 +17,13 @@ public class RouteGenius {
 
     public NextNode[] p2;
 
-    public double deltaIn;
+    public float deltaIn;
 
-    public double deltaOut;
+    public float deltaOut;
+
+    public boolean findEternalLoops = false;
+
+    private Set<String> loopDetector = new HashSet<>();
 
     private CoordinatesGenius coordinatesGenius;
 
@@ -104,11 +111,11 @@ public class RouteGenius {
         g[city + 1].tourElem = t.ptr;
     }
 
-    public void addNextNode(int aj, int n, double d[][]) {
+    public void addNextNode(int aj, int n, float d[][]) {
         int nMaximum = 0;
         int k1;
-        double vMaximum;
-        double dist;
+        float vMaximum;
+        float dist;
         k1 = MAX_K;
         aj = aj + 1;
         for (int i = 1; i <= n; i++) {
@@ -215,11 +222,11 @@ public class RouteGenius {
         }
     }
 
-    private void add(int x, int k1, Coordinate g[], double d[][]) {
+    private void add(int x, int k1, Coordinate g[], float d[][]) {
         int som1, som2, i, j, k, l, xi, xj, xk, xl, x_prev_nj, x_next_ni, ni, nl, nk, nj,
                 next_ni = 0, next_nj, next_nl = 0, next_nk, prev_nk, prev_nl = 0, prev_nj, prev_ni = 0,
                 xk1, yk1, neighbor_x_seen, neighbor_x2_seen, nl_worth;
-        double delta, newDelta;
+        float delta, newDelta;
         TourElem px;
         Nodes nodes = new Nodes();
         nl = 0;
@@ -427,6 +434,20 @@ public class RouteGenius {
         px.node = nodes.x;
         t.nodesNumber++;
         t.nodeIntern[nodes.x] = 1;
+        /*System.out.printf("Stringing = %d\n", nodes.typeToAdd);
+        System.out.printf("i = %d\n", nodes.i);
+        System.out.printf("j = %d\n", nodes.j);
+        System.out.printf("k = %d\n", nodes.k);
+        System.out.printf("l = %d\n", nodes.l);
+        System.out.printf("pi = %d\n", nodes.pi);
+        System.out.printf("pj = %d\n", nodes.pj);
+        System.out.printf("pk = %d\n", nodes.pk);
+        System.out.printf("pl = %d\n", nodes.pl);
+        System.out.printf("si = %d\n", nodes.si);
+        System.out.printf("sj = %d\n", nodes.sj);
+        System.out.printf("sk = %d\n", nodes.sk);
+        System.out.printf("sl = %d\n", nodes.sl);
+        System.out.printf("x = %d\n", nodes.x);*/
         switch (nodes.typeToAdd) {
             case 1:
                 link(nodes.i, nodes.x, g);
@@ -465,9 +486,9 @@ public class RouteGenius {
         }
     }
 
-    private void remove(int x, Coordinate g[], double d[][]) {
+    private void remove(int x, Coordinate g[], float d[][]) {
         Nodes nodes = new Nodes();
-        double delta, newDelta;
+        float delta, newDelta;
         int ni, ni2, ni3, nj, nk, nl, j, k, l, xi, xj, xk, xl, xi2,
                 next_nj, next_nl, next_nk, prev_nj, prev_nl, prev_nk, som1, som2,
                 seen_ni2, seem_ni3, xk1, o;
@@ -663,6 +684,19 @@ public class RouteGenius {
         deltaOut = delta;
         t.nodesNumber--;
         t.nodeIntern[x] = 0;
+        /*System.out.printf("Unstringing = %d\n", nodes.typeToDel);
+        System.out.printf("i = %d\n", nodes.i);
+        System.out.printf("i2 = %d\n", nodes.i2);
+        System.out.printf("j = %d\n", nodes.j);
+        System.out.printf("k = %d\n", nodes.k);
+        System.out.printf("l = %d\n", nodes.l);
+        System.out.printf("pj = %d\n", nodes.pj);
+        System.out.printf("pk = %d\n", nodes.pk);
+        System.out.printf("pl = %d\n", nodes.pl);
+        System.out.printf("sj = %d\n", nodes.sj);
+        System.out.printf("sk = %d\n", nodes.sk);
+        System.out.printf("sl = %d\n", nodes.sl);
+        System.out.printf("x = %d\n", nodes.x);*/
         switch (nodes.typeToDel) {
             case 1:
                 link(nodes.i, nodes.j, g);
@@ -698,7 +732,7 @@ public class RouteGenius {
         numberedTurns();
     }
 
-    public void routeCopy(int n, Coordinate g[], double d[][], double tour) {
+    public void routeCopy(int n, Coordinate g[], float d[][], double tour) {
         Coordinate g2[] = new Coordinate[coordinatesGenius.MAX_N + 1];
         Tour t2 = new Tour();
         t2.nodeIntern = new int[coordinatesGenius.MAX_N + 1];
@@ -706,10 +740,10 @@ public class RouteGenius {
         TourElem w;
         int x, cpt;
         int neigh;
-        double exc, cost_t;
+        float exc, cost_t;
         cpt = 0;
         neigh = MAX_K;
-        for (int i = 1; i <= coordinatesGenius.MAX_N; i++) {
+        for (int i = 0; i <= coordinatesGenius.MAX_N; i++) {
             g2[i] = new Coordinate();
             if (g[i] != null) {
                 g2[i].x = g[i].x;
@@ -737,7 +771,7 @@ public class RouteGenius {
             if (w == t2.ptr) break;
         }
         /******************End of numbered turns 2********************************/
-        exc = tour;
+        exc = (float) tour;
         x = 1;
         do {
             remove(x, g, d);
@@ -803,6 +837,13 @@ public class RouteGenius {
             t.nodesNumber = t2.nodesNumber;
             t.ptr = g[1].tourElem;
             numberedTurns();
+            if (findEternalLoops) {
+                if (loopDetector.contains(deltaOut + "+" + deltaIn)) {
+                    break;
+                }  else {
+                    loopDetector.add(deltaOut + "+" + deltaIn);
+                }
+            }
         } while (cpt != n);
     }
 }

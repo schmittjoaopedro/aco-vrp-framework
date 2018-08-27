@@ -3,7 +3,6 @@ package com.github.schmittjoaopedro.algorithms;
 import com.github.schmittjoaopedro.aco.Ant;
 import com.github.schmittjoaopedro.aco.MMAS;
 import com.github.schmittjoaopedro.aco.ls.us.USOperator;
-import com.github.schmittjoaopedro.graph.Edge;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
@@ -86,6 +85,7 @@ public class MMAS_US_MADTSP implements Runnable {
         mmas.initHeuristicInfo();
         mmas.initTry();
         usOperator = new USOperator();
+        usOperator.setStopEternalLoops(true);
         globalStatistics.endTimer("MMAS Initialization");
         // Initialization moving vehicle benchmark simulator
         globalStatistics.startTimer();
@@ -220,5 +220,13 @@ public class MMAS_US_MADTSP implements Runnable {
 
     public void setDbgpSeed(int dbgpSeed) {
         this.dbgpSeed = dbgpSeed;
+    }
+
+    public MVBS getMvbs() {
+        return mvbs;
+    }
+
+    public void setMvbs(MVBS mvbs) {
+        this.mvbs = mvbs;
     }
 }
