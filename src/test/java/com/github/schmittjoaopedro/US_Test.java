@@ -239,6 +239,187 @@ public class US_Test {
         assertThat(us.init(graph, route)).isFalse();
     }
 
+    /**
+     * The same test executed in the original version in C++ from Mavrovouniotis et al. causes the same behavior.
+     *
+     *  Code in C++ to execute:
+     *  int main(int argc, char *argv[]) {
+     *
+     * 	problem_size = 10;
+     *
+     * 	double** dists = generate_2D_matrix_double(problem_size, problem_size);
+     *
+     * 	tsp_file.xyvalues(problem_size, 0, 178.0, 24.0);
+     * 	tsp_file.xyvalues(problem_size, 1, 241.0, 341.0);
+     * 	tsp_file.xyvalues(problem_size, 2, 457.0, 334.0);
+     * 	tsp_file.xyvalues(problem_size, 3, 776.0, 392.0);
+     * 	tsp_file.xyvalues(problem_size, 4, 839.0, 620.0);
+     * 	tsp_file.xyvalues(problem_size, 5, 953.0, 268.0);
+     * 	tsp_file.xyvalues(problem_size, 6, 1178.0, 100.0);
+     * 	tsp_file.xyvalues(problem_size, 7, 1256.0, 61.0);
+     * 	tsp_file.xyvalues(problem_size, 8, 1429.0, 134.0);
+     * 	tsp_file.xyvalues(problem_size, 9, 1323.0, 280.0);
+     *
+     * 	dists[0][0] = 0.0;
+     * 	dists[0][1] = 900.0620925455916;
+     * 	dists[0][2] = 1211.2323945258895;
+     * 	dists[0][3] = 1359.1588235781057;
+     * 	dists[0][4] = 1729.5632819696002;
+     * 	dists[0][5] = 813.0;
+     * 	dists[0][6] = 2970.5950447626465;
+     * 	dists[0][7] = 1079.0;
+     * 	dists[0][8] = 2843.6801218060277;
+     * 	dists[0][9] = 3044.1064571351308;
+     *
+     * 	dists[1][0] = 1286.0;
+     * 	dists[1][1] = 0.0;
+     * 	dists[1][2] = 281.74406380296176;
+     * 	dists[1][3] = 537.0;
+     * 	dists[1][4] = 1252.7864153157623;
+     * 	dists[1][5] = 786.4170177209927;
+     * 	dists[1][6] = 967.0;
+     * 	dists[1][7] = 2792.004622093467;
+     * 	dists[1][8] = 1612.1302860995813;
+     * 	dists[1][9] = 1084.0;
+     *
+     * 	dists[2][0] = 1670.8834457854196;
+     * 	dists[2][1] = 216.0;
+     * 	dists[2][2] = 0.0;
+     * 	dists[2][3] = 334.1730777037129;
+     * 	dists[2][4] = 477.0;
+     * 	dists[2][5] = 500.0;
+     * 	dists[2][6] = 758.0;
+     * 	dists[2][7] = 844.0;
+     * 	dists[2][8] = 1292.8086372840896;
+     * 	dists[2][9] = 868.0;
+     *
+     * 	dists[3][0] = 2201.695317866939;
+     * 	dists[3][1] = 871.3897525916698;
+     * 	dists[3][2] = 324.0;
+     * 	dists[3][3] = 0.0;
+     * 	dists[3][4] = 237.0;
+     * 	dists[3][5] = 611.1898891517641;
+     * 	dists[3][6] = 497.0;
+     * 	dists[3][7] = 583.0;
+     * 	dists[3][8] = 702.0;
+     * 	dists[3][9] = 671.966107970392;
+     *
+     * 	dists[4][0] = 628.0;
+     * 	dists[4][1] = 1379.884019939828;
+     * 	dists[4][2] = 1064.1688453443126;
+     * 	dists[4][3] = 237.0;
+     * 	dists[4][4] = 0.0;
+     * 	dists[4][5] = 634.1111406890833;
+     * 	dists[4][6] = 621.0;
+     * 	dists[4][7] = 1078.86722820482;
+     * 	dists[4][8] = 764.0;
+     * 	dists[4][9] = 1413.8168064096124;
+     *
+     * 	dists[5][0] = 2045.6748205734464;
+     * 	dists[5][1] = 723.0525901863624;
+     * 	dists[5][2] = 500.0;
+     * 	dists[5][3] = 487.4461530864222;
+     * 	dists[5][4] = 1009.3055331870214;
+     * 	dists[5][5] = 0.0;
+     * 	dists[5][6] = 281.0;
+     * 	dists[5][7] = 367.0;
+     * 	dists[5][8] = 1283.105788034829;
+     * 	dists[5][9] = 965.6670689518158;
+     *
+     * 	dists[6][0] = 1455.356029235959;
+     * 	dists[6][1] = 2329.691092648013;
+     * 	dists[6][2] = 758.0;
+     * 	dists[6][3] = 1369.6398378152921;
+     * 	dists[6][4] = 718.6983247969229;
+     * 	dists[6][5] = 691.267866164247;
+     * 	dists[6][6] = 0.0;
+     * 	dists[6][7] = 225.8960395832207;
+     * 	dists[6][8] = 253.0;
+     * 	dists[6][9] = 231.0;
+     *
+     * 	dists[7][0] = 2464.243953635703;
+     * 	dists[7][1] = 2398.766456375107;
+     * 	dists[7][2] = 1628.5610430655327;
+     * 	dists[7][3] = 824.429918560779;
+     * 	dists[7][4] = 697.0;
+     * 	dists[7][5] = 709.2948949970747;
+     * 	dists[7][6] = 250.44996507920138;
+     * 	dists[7][7] = 0.0;
+     * 	dists[7][8] = 188.0;
+     * 	dists[7][9] = 617.988873989192;
+     *
+     * 	dists[8][0] = 806.0;
+     * 	dists[8][1] = 1206.0;
+     * 	dists[8][2] = 992.0;
+     * 	dists[8][3] = 1745.63472204523;
+     * 	dists[8][4] = 2040.549780850201;
+     * 	dists[8][5] = 495.0;
+     * 	dists[8][6] = 548.0697944810614;
+     * 	dists[8][7] = 206.3930332572461;
+     * 	dists[8][8] = 0.0;
+     * 	dists[8][9] = 333.1141012849151;
+     *
+     * 	dists[9][0] = 661.0;
+     * 	dists[9][1] = 2371.058915729798;
+     * 	dists[9][2] = 1708.508264109688;
+     * 	dists[9][3] = 1036.232861045186;
+     * 	dists[9][4] = 1674.615643905726;
+     * 	dists[9][5] = 726.6351151690391;
+     * 	dists[9][6] = 679.5784341617549;
+     * 	dists[9][7] = 576.8431008085734;
+     * 	dists[9][8] = 527.6165853671087;
+     * 	dists[9][9] = 0.0;
+     *
+     * 	int tour[11] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+     *
+     * 	double tour_length = 0.0;
+     * 	for (int i = 0; i < problem_size; i++) {
+     * 		tour_length += dists[tour[i]][tour[i + 1]];
+     *        }
+     * 	printf("Costs = %f\n", tour_length);
+     *
+     * 	tsp_file.distances(dists);
+     *
+     * 	genius.initialize();
+     * 	genius.initnneighbour(tsp_file.task);
+     * 	// Take the best ant for the considered interation;
+     * 	genius.petittourne(tour[0], tsp_file.g); //initial
+     * 	genius.ajoutenoeudprox(tour[0], tsp_file.task, tsp_file.d);
+     * 	for (int i = 1; i < problem_size; i++) {
+     * 		genius.ajoute_a_tourne(tour[i], tsp_file.g);
+     * 		genius.ajoutenoeudprox(tour[i], tsp_file.task, tsp_file.d);
+     *    } //copy the tour and calculates the nearest neighbours of the nodes.
+     *
+     * 	  //if (!genius.numerote_tourne()) return 1;
+     * 	if (!genius.numerote_tourne()) {
+     * 		//do nothing
+     *    }
+     * 	else {
+     * 		//viz = MAXK;
+     * 		genius.route_copy(tsp_file.task, tsp_file.g, tsp_file.d, tour_length);
+     * 		//genius.showroute(problem_size);
+     * 		//COPY THE RESULTING TOUR
+     * 		pri = genius.t.ptr;
+     * 		for (int i = 0; i < problem_size; i++) {
+     * 			tour[i] = pri->noeud - 1;
+     * 			//cout << "ant[" << i << "]= " << ant_population[best_sol].tour[i] << "\n";
+     * 			pri = pri->prochain;
+     *        }
+     * 		tour[problem_size] = tour[0];
+     *
+     * 		tour_length = 0.0;
+     * 		for (int i = 0; i < problem_size; i++) {
+     * 			tour_length += dists[tour[i]][tour[i + 1]];
+     * 			printf("%d -> %d ; ", tour[i], tour[i + 1]);
+     *        }
+     *
+     * 		printf("\nCosts = %f\n", tour_length);
+     *    }
+     *
+     * 	return 0;
+     * }
+     *
+     */
     @Test
     public void eternal_loop_test() {
         Graph graph = new Graph();

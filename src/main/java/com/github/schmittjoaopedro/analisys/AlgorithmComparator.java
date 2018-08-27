@@ -122,7 +122,7 @@ public class AlgorithmComparator {
             mmas_us_madtsp.setDbgpSeed(1);
             mmas_us_madtsp.setMmasSeed(i);
             mmas_us_madtsp.setStatisticInterval(1);
-            mmas_us_madtsp.setShowLog(true);
+            mmas_us_madtsp.setShowLog(false);
             algs.add(mmas_us_madtsp);
         }
         TrialExecutor trialExecutor = new TrialExecutor();
