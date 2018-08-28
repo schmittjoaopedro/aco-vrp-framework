@@ -2323,7 +2323,7 @@ public class MMAS_US_MADTSP_Test {
         assertThat(getTourString(mmas_us_madtsp.getIterationStatistics().get(990).getMvsbTour())).isEqualTo("[0, 5, 62, 48, 18, 89, 78, 17, 23, 37, 98, 35, 58, 16, 14, 10, 31, 44, 90, 97, 22, 76, 59, 61, 85, 26, 34, 19, 11, 54, 82, 33, 42, 45, 28, 13, 2, 40, 70, 99, 47, 51, 77, 95, 36, 4, 12, 32, 75, 94, 81, 43, 39, 53, 1, 63, 68, 49, 72, 67, 38, 29, 84, 80, 50, 8, 56, 6, 86, 60, 24, 57, 92, 27, 66, 91, 7, 41, 88, 30, 79, 55, 96, 74, 73, 20, 46, 71, 9, 83, 52, 87, 15, 21, 93, 69, 3, 65, 25, 64, 0]");
         assertThat(getTourString(mmas_us_madtsp.getIterationStatistics().get(999).getMvsbTour())).isEqualTo("[0, 5, 62, 48, 18, 89, 78, 17, 23, 37, 98, 35, 58, 16, 14, 10, 31, 44, 90, 97, 22, 76, 59, 61, 85, 26, 34, 19, 11, 54, 82, 33, 42, 45, 28, 13, 2, 40, 70, 99, 47, 51, 77, 95, 36, 4, 12, 32, 75, 94, 81, 43, 39, 53, 1, 63, 68, 49, 72, 67, 38, 29, 84, 80, 50, 8, 56, 6, 86, 60, 24, 57, 92, 27, 66, 91, 7, 41, 88, 30, 79, 55, 96, 74, 73, 20, 46, 71, 9, 83, 52, 87, 15, 21, 93, 69, 3, 65, 25, 64, 0]");
 
-        assertThat(mmas_us_madtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_us_madtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(15000);
         assertThat(mmas_us_madtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 

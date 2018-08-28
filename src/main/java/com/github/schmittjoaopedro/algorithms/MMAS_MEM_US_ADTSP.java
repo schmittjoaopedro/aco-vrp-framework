@@ -10,6 +10,7 @@ import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.DBGP;
 import com.github.schmittjoaopedro.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
+import com.github.schmittjoaopedro.tools.MVBS;
 import com.github.schmittjoaopedro.utils.Maths;
 
 import java.io.File;
@@ -93,6 +94,7 @@ public class MMAS_MEM_US_ADTSP implements Runnable {
         mmas.initHeuristicInfo();
         mmas.initTry();
         usOperator = new USOperator();
+        usOperator.setStopEternalLoops(true);
         globalStatistics.endTimer("MMAS Initialization");
         //Initialization memory
         globalStatistics.startTimer();
@@ -153,6 +155,7 @@ public class MMAS_MEM_US_ADTSP implements Runnable {
                 iterationStatistic.setIterationWorst(mmas.findWorst().getCost());
                 iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
                 iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
+                iterationStatistic.setTour(mmas.getBestSoFar().getTour().clone());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
@@ -180,14 +183,6 @@ public class MMAS_MEM_US_ADTSP implements Runnable {
         iterationBest.setCost(mmas.fitnessEvaluation(iterationBest.getTour()));
         mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
         mmas.copyFromTo(iterationBest, mmas.getRestartBest());
-    }
-
-    private List<Vertex> getVertexTour(Ant ant) {
-        List<Vertex> tour = new ArrayList<>();
-        for (int city : ant.getTour()) {
-            tour.add(graph.getVertex(city));
-        }
-        return tour;
     }
 
     private void repairSolution() {

@@ -1,9 +1,6 @@
 package com.github.schmittjoaopedro.analisys;
 
-import com.github.schmittjoaopedro.algorithms.MMAS_ADTSP;
-import com.github.schmittjoaopedro.algorithms.MMAS_MEM_ADTSP;
-import com.github.schmittjoaopedro.algorithms.MMAS_MEM_US_ADTSP;
-import com.github.schmittjoaopedro.algorithms.MMAS_US_ADTSP;
+import com.github.schmittjoaopedro.algorithms.*;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tools.TrialExecutor;
 import org.apache.commons.io.FileUtils;
@@ -18,24 +15,13 @@ public class AlgorithmComparator {
 
     public static void main(String[] args) throws Exception {
         for (String test : new String[]{"KroA100", "KroA150", "KroA200"}) {
-
-            executeMMASUSTest(test, 0.1, 10);
-            executeMMASMEMTest(test, 0.1, 10);
-
-            executeMMASUSTest(test, 0.1, 100);
-            executeMMASMEMTest(test, 0.1, 100);
-
-            executeMMASUSTest(test, 0.5, 10);
-            executeMMASMEMTest(test, 0.5, 10);
-
-            executeMMASUSTest(test, 0.5, 100);
-            executeMMASMEMTest(test, 0.5, 100);
-
-            executeMMASUSTest(test, 0.75, 10);
-            executeMMASMEMTest(test, 0.75, 10);
-
-            executeMMASUSTest(test, 0.75, 100);
-            executeMMASMEMTest(test, 0.75, 100);
+            for (int freq : new int[]{10, 100}) {
+                for (double mag : new double[]{0.1, 0.5, 0.75}) {
+                    executeMMASUSTest(test, mag, freq);
+                    executeMMASMEMTest(test, mag, freq);
+                    executeMMASMEMUSTest(test, mag, freq);
+                }
+            }
         }
     }
 
