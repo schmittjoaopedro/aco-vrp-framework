@@ -1,11 +1,14 @@
 package com.github.schmittjoaopedro;
 
 import com.github.schmittjoaopedro.algorithms.MMAS_US_ADTSP;
+import com.github.schmittjoaopedro.graph.Graph;
+import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +27,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_1_freq_10() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA100, 0.8, 1000, 0.1, 10);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.1, 10);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -334,13 +338,14 @@ public class MMAS_US_ADTSP_Test {
         checkValues(mmas_us_adtsp, 995, 25829.196018072547, 3046.1395887137533, 0.515, 14.82938775510204, 22464.163319370993);
         checkValues(mmas_us_adtsp, 1000, 26037.70263849319, 2886.4114923915877, 0.495, 13.426938775510203, 22464.163319370993);
 
-        assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(15000);
         assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_1_freq_100() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA100, 0.8, 1000, 0.1, 100);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.1, 100);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -386,7 +391,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_5_freq_10() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA100, 0.8, 1000, 0.5, 10);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.5, 10);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -696,13 +702,14 @@ public class MMAS_US_ADTSP_Test {
         checkValues(mmas_us_adtsp, 995, 34647.3530193216, 3178.9677760413697, 0.51, 24.51918367346939, 28964.29393331913);
         checkValues(mmas_us_adtsp, 1000, 34625.31162864604, 3317.437057027389, 0.715, 20.762448979591838, 27235.1928325407);
 
-        assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(15000);
         assertThat(mmas_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_5_freq_100() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA100, 0.8, 1000, 0.5, 100);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.5, 100);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -748,7 +755,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_75_freq_10() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA100, 0.8, 1000, 0.75, 10);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.75, 10);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1064,7 +1072,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_75_freq_100() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA100, 0.8, 1000, 0.75, 100);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.75, 100);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1110,7 +1119,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_1_freq_10() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA200, 0.8, 100, 0.1, 10);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 100, 0.1, 10);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1156,7 +1166,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_1_freq_100() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA200, 0.8, 1000, 0.1, 100);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.1, 100);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1202,7 +1213,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_5_freq_10() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA200, 0.8, 100, 0.5, 10);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 100, 0.5, 10);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1248,7 +1260,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_5_freq_100() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA200, 0.8, 1000, 0.5, 100);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.5, 100);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1294,7 +1307,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_75_freq_10() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA200, 0.8, 100, 0.75, 10);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 100, 0.75, 10);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);
@@ -1340,7 +1354,8 @@ public class MMAS_US_ADTSP_Test {
 
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_75_freq_100() {
-        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(kroA200, 0.8, 1000, 0.75, 100);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, 0.75, 100);
         mmas_us_adtsp.setMmasSeed(1);
         mmas_us_adtsp.setDbgpSeed(1);
         mmas_us_adtsp.setStatisticInterval(1);

@@ -47,12 +47,12 @@ public class MMAS_MADTSP implements Runnable {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_MADTSP(String problemInstance, double rho, int maxIterations, double magnitude, int frequency) {
+    public MMAS_MADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.magnitude = magnitude;
         this.frequency = frequency;
-        graph = GraphFactory.createGraphFromTSP(new File(problemInstance));
+        this.graph = graph;
         mmas = new MMAS(graph);
         dbgp = new DBGP(graph);
         iterationStatistics = new ArrayList<>(maxIterations);

@@ -1,10 +1,13 @@
 package com.github.schmittjoaopedro;
 
 import com.github.schmittjoaopedro.algorithms.MMAS_ATSP;
+import com.github.schmittjoaopedro.graph.Graph;
+import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +26,8 @@ public class MMAS_ATSP_Test {
 
     @Test
     public void test_MMAS_ATSP_kroA100_with_seed_1() {
-        MMAS_ATSP mmas_atsp = new MMAS_ATSP(kroA100, 0.02, 1500, 1);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
+        MMAS_ATSP mmas_atsp = new MMAS_ATSP(graph, 0.02, 1500, 1);
         mmas_atsp.setStatisticInterval(100);
         mmas_atsp.run();
         assertThat(mmas_atsp.getGlobalStatistics().getBestSoFar()).isEqualTo(21793);
@@ -159,7 +163,8 @@ public class MMAS_ATSP_Test {
 
     @Test
     public void test_MMAS_ATSP_kroA200_with_seed_1() {
-        MMAS_ATSP mmas_atsp = new MMAS_ATSP(kroA200, 0.02, 1500, 1);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_ATSP mmas_atsp = new MMAS_ATSP(graph, 0.02, 1500, 1);
         mmas_atsp.setStatisticInterval(100);
         mmas_atsp.run();
         assertThat(mmas_atsp.getGlobalStatistics().getBestSoFar()).isEqualTo(30670);
@@ -295,7 +300,8 @@ public class MMAS_ATSP_Test {
 
     @Test
     public void test_MMAS_ATSP_kroA200_with_seed_2() {
-        MMAS_ATSP mmas_atsp = new MMAS_ATSP(kroA200, 0.02, 1500, 2);
+        Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
+        MMAS_ATSP mmas_atsp = new MMAS_ATSP(graph, 0.02, 1500, 2);
         mmas_atsp.setStatisticInterval(100);
         mmas_atsp.run();
         assertThat(mmas_atsp.getGlobalStatistics().getBestSoFar()).isEqualTo(30958.0);

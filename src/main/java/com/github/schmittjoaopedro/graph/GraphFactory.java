@@ -14,10 +14,14 @@ public final class GraphFactory {
             Graph graph = new Graph();
             FileInputStream fisTargetFile = new FileInputStream(file);
             String fileContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\n");
+            String distanceType = "EUC_2D";
             boolean started = false;
             for (int l = 0; l < fileContent.length; l++) {
                 if (fileContent[l].equals("EOF")) {
                     break;
+                }
+                if (fileContent[l].startsWith("EDGE_WEIGHT_TYPE")) {
+                    distanceType = fileContent[l].split(":")[1].trim();
                 }
                 if (started) {
                     String[] data = fileContent[l].split(" ");
@@ -42,9 +46,59 @@ public final class GraphFactory {
                         edge.setFrom(i);
                         i.getAdj().put(j.getId(), edge);
                         edge.setTo(j);
-                        edge.setCost(Maths.getTSPEuclideanDistance(i, j));
+                        if (distanceType.equals("EUC_2D")) {
+                            edge.setCost(Maths.getTSPEuclideanDistance(i, j));
+                        } else if (distanceType.equals("GEO")) {
+                            edge.setCost(Maths.getTSPGeoDistance(i, j));
+                        } else {
+                            throw new RuntimeException("Distance type not defined!");
+                        }
                         graph.addEdge(edge);
                     }
+                }
+            }
+            return graph;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Graph createGraphFromJoinville(File file) {
+        try {
+            Graph graph = new Graph();
+            FileInputStream fisTargetFile = new FileInputStream(file);
+            String fileContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\n");
+            boolean coordinates = false;
+            boolean distances = false;
+            int edgesId = 0;
+            for (String line : fileContent) {
+                if (line.equals("EOF")) break;
+                if (line.equals("Vertices (X Y)")) {
+                    coordinates = true;
+                    distances = false;
+                    continue;
+                }
+                if (line.equals("Costs (N1 N2 COST)")) {
+                    coordinates = false;
+                    distances = true;
+                    continue;
+                }
+                if (coordinates) {
+                    String[] data = line.split(" ");
+                    Vertex vertex = new Vertex(Integer.valueOf(data[0]));
+                    vertex.setX(Double.valueOf(data[1]));
+                    vertex.setY(Double.valueOf(data[2]));
+                    graph.addVertex(vertex);
+                }
+                if (distances) {
+                    String[] data = line.split(" ");
+                    Edge edge = new Edge(edgesId++);
+                    edge.setFrom(graph.getVertex(Integer.valueOf(data[0])));
+                    edge.setTo(graph.getVertex(Integer.valueOf(data[1])));
+                    edge.setCost(Double.valueOf(data[2]));
+                    edge.getFrom().getAdj().put(edge.getToId(), edge);
+                    graph.addEdge(edge);
                 }
             }
             return graph;

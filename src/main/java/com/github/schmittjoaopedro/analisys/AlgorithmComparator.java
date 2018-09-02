@@ -1,10 +1,13 @@
 package com.github.schmittjoaopedro.analisys;
 
 import com.github.schmittjoaopedro.algorithms.*;
+import com.github.schmittjoaopedro.graph.Graph;
+import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tools.TrialExecutor;
 import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,9 @@ public class AlgorithmComparator {
         int trials = 30;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile(), 0.8, 1000, mag, freq);
+            File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile());
+            Graph graph = GraphFactory.createGraphFromTSP(file);
+            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, mag, freq);
             mmas_adtsp.setDbgpSeed(1);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -54,7 +59,9 @@ public class AlgorithmComparator {
         int trials = 30;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile(), 0.8, 1000, mag, freq);
+            File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile());
+            Graph graph = GraphFactory.createGraphFromTSP(file);
+            MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, mag, freq);
             mmas_mem_adtsp.setDbgpSeed(1);
             mmas_mem_adtsp.setMmasSeed(i);
             mmas_mem_adtsp.setStatisticInterval(1);
@@ -79,7 +86,9 @@ public class AlgorithmComparator {
         int trials = 30;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            MMAS_MEM_US_ADTSP mmas_mem_us_adtsp = new MMAS_MEM_US_ADTSP(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile(), 0.8, 1000, mag, freq);
+            File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile());
+            Graph graph = GraphFactory.createGraphFromTSP(file);
+            MMAS_MEM_US_ADTSP mmas_mem_us_adtsp = new MMAS_MEM_US_ADTSP(graph, 0.8, 1000, mag, freq);
             mmas_mem_us_adtsp.setDbgpSeed(1);
             mmas_mem_us_adtsp.setMmasSeed(i);
             mmas_mem_us_adtsp.setStatisticInterval(1);
@@ -104,7 +113,9 @@ public class AlgorithmComparator {
         int trials = 30;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile(), 0.8, 1000, mag, freq);
+            File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance + ".tsp").getFile());
+            Graph graph = GraphFactory.createGraphFromTSP(file);
+            MMAS_US_ADTSP mmas_us_adtsp = new MMAS_US_ADTSP(graph, 0.8, 1000, mag, freq);
             mmas_us_adtsp.setDbgpSeed(1);
             mmas_us_adtsp.setMmasSeed(i);
             mmas_us_adtsp.setStatisticInterval(1);

@@ -50,4 +50,9 @@ public class Vertex {
     public Iterator<Edge> getEdges() {
         return adj.values().iterator();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + " (" + getId() + ")";
+    }
 }

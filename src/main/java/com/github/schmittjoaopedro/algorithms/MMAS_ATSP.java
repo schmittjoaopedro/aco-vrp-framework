@@ -35,11 +35,11 @@ public class MMAS_ATSP implements Runnable {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_ATSP(String problemInstance, double rho, int maxIterations, int seed) {
+    public MMAS_ATSP(Graph graph, double rho, int maxIterations, int seed) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.seed = seed;
-        graph = GraphFactory.createGraphFromTSP(new File(problemInstance));
+        this.graph = graph;
         mmas = new MMAS(graph);
         iterationStatistics = new ArrayList<>(maxIterations);
     }

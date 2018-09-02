@@ -1,10 +1,13 @@
 package com.github.schmittjoaopedro;
 
 import com.github.schmittjoaopedro.algorithms.MMAS_ADTSP;
+import com.github.schmittjoaopedro.graph.Graph;
+import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tools.TrialExecutor;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +21,8 @@ public class TrialExecutorTest {
         int trials = 15;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile(), 0.8, 1000, 0.75, 100);
+            Graph graph = GraphFactory.createGraphFromTSP(new File(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile()));
+            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100);
             mmas_adtsp.setDbgpSeed(1);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
