@@ -189,12 +189,9 @@ public class MMAS_MEM_US_MADTSP implements Runnable {
         Ant iterationBest = mmas.findBest();
         if (usOperator.init(graph, iterationBest.getTour().clone(), mvbs.getPhase())) {
             usOperator.optimize();
+            double newCost = mmas.fitnessEvaluation(usOperator.getResult());
             iterationBest.setTour(usOperator.getResult());
-            double old = iterationBest.getCost();
-            iterationBest.setCost(mmas.fitnessEvaluation(iterationBest.getTour()));
-            if (old < iterationBest.getCost()) {
-                System.exit(0);
-            }
+            iterationBest.setCost(newCost);
             mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
             mmas.copyFromTo(iterationBest, mmas.getRestartBest());
         }
