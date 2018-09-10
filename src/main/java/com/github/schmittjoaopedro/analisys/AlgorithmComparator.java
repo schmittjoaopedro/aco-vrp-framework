@@ -17,25 +17,27 @@ public class AlgorithmComparator {
     private static final String resultsPath = "C:\\Temp";
 
     public static void main(String[] args) throws Exception {
-        for (String test : new String[]{"joinville78.vrp", "joinville125.vrp"}) {
-            for (int freq : new int[]{10, 100}) {
+        for (int freq : new int[]{100}) {
+            for (String test : new String[]{"KroA150.tsp", "KroA200.tsp"}) {
                 for (double mag : new double[]{0.1, 0.5, 0.75}) {
-                    executeMMASMEMUSTest(test, mag, freq);
-                    executeMMASUSTest(test, mag, freq);
+                    //executeMMASMEMUSTest(test, mag, freq);
+                    //executeMMASUSTest(test, mag, freq);
+                    executeMMASTest(test, mag, freq, 0.02);
+                    executeMMASTest(test, mag, freq, 0.8);
                     executeMMASMEMTest(test, mag, freq);
                 }
             }
         }
     }
 
-    private static void executeMMASTest(String testInstance, double mag, int freq) throws Exception {
+    private static void executeMMASTest(String testInstance, double mag, int freq, double rho) throws Exception {
         int trials = 30;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
             Graph graph = GraphFactory.createGraphFromTSP(file);
-            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, mag, freq);
-            mmas_adtsp.setDbgpSeed(1);
+            MMAS_CADTSP mmas_adtsp = new MMAS_CADTSP(graph, rho, 100 * freq, mag, freq, 4);
+            mmas_adtsp.setDbgpSeed(i);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
             mmas_adtsp.setShowLog(false);
@@ -45,14 +47,14 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_ADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_CADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         StringBuilder finalResult = new StringBuilder();
         for (IterationStatistic iter : result) {
             finalResult.append(iter.toString()).append('\n');
         }
-        FileUtils.writeStringToFile(Paths.get(resultsPath, "MMAS_" + testInstance + "_mag_" + mag + "_freq_" + freq + ".txt").toFile(), finalResult.toString(), "UTF-8");
+        FileUtils.writeStringToFile(Paths.get(resultsPath, "MMAS_CYCLE_ADTSP_" + rho + "_" + testInstance + "_mag_" + mag + "_freq_" + freq + ".txt").toFile(), finalResult.toString(), "UTF-8");
     }
 
     private static void executeMMASMEMTest(String testInstance, double mag, int freq) throws Exception {
@@ -60,9 +62,9 @@ public class AlgorithmComparator {
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
-            Graph graph = GraphFactory.createGraphFromJoinville(file);
-            MMAS_MEM_MADTSP mmas_mem_adtsp = new MMAS_MEM_MADTSP(graph, 0.8, 1000, mag, freq);
-            mmas_mem_adtsp.setDbgpSeed(1);
+            Graph graph = GraphFactory.createGraphFromTSP(file);
+            MMAS_MEM_CADTSP mmas_mem_adtsp = new MMAS_MEM_CADTSP(graph, 0.8, 100 * freq, mag, freq, 4);
+            mmas_mem_adtsp.setDbgpSeed(i);
             mmas_mem_adtsp.setMmasSeed(i);
             mmas_mem_adtsp.setStatisticInterval(1);
             mmas_mem_adtsp.setShowLog(false);
@@ -72,14 +74,14 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_MEM_MADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_MEM_CADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         StringBuilder finalResult = new StringBuilder();
         for (IterationStatistic iter : result) {
             finalResult.append(iter.toString()).append('\n');
         }
-        FileUtils.writeStringToFile(Paths.get(resultsPath, "MMAS_MEM_" + testInstance + "_mag_" + mag + "_freq_" + freq + ".txt").toFile(), finalResult.toString(), "UTF-8");
+        FileUtils.writeStringToFile(Paths.get(resultsPath, "MMAS_CYCLE_ADTSP_MEM_" + testInstance + "_mag_" + mag + "_freq_" + freq + ".txt").toFile(), finalResult.toString(), "UTF-8");
     }
 
     private static void executeMMASMEMUSTest(String testInstance, double mag, int freq) throws Exception {

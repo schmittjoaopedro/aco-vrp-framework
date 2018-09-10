@@ -4,18 +4,20 @@ import com.github.schmittjoaopedro.aco.Ant;
 import com.github.schmittjoaopedro.aco.MMAS;
 import com.github.schmittjoaopedro.aco.ls.us.USOperator;
 import com.github.schmittjoaopedro.graph.Graph;
-import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.DBGP;
 import com.github.schmittjoaopedro.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
 import com.github.schmittjoaopedro.utils.Maths;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Max-Min Ant System with Unstringing and Stringing Local Search Operator for the Asymmetric and Dynamic
+ * Travelling Salesman Problem
+ */
 public class MMAS_US_ADTSP implements Runnable {
 
     private USOperator usOperator;
@@ -135,7 +137,7 @@ public class MMAS_US_ADTSP implements Runnable {
                     System.out.println(iterationStatistic);
                 }
             }
-            if (dbgp.applyChanges(i) && i < maxIterations) {
+            if (dbgp.applyNewChanges(i) && i < maxIterations) {
                 mmas.getBestSoFar().setCost(Double.MAX_VALUE);
             }
         }

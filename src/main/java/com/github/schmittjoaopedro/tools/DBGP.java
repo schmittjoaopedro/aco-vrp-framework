@@ -54,7 +54,7 @@ public class DBGP {
         }
     }
 
-    public boolean applyChanges(int iteration) {
+    public boolean applyNewChanges(int iteration) {
         if (iteration % frequency == 0) {
             addRandomChange();
             computeDistances();
@@ -63,7 +63,15 @@ public class DBGP {
         return false;
     }
 
-    private void addRandomChange() {
+    public boolean applyCurrentChanges(int iteration) {
+        if (iteration % frequency == 0) {
+            computeDistances();
+            return true;
+        }
+        return false;
+    }
+
+    public void addRandomChange() {
         Edge edge;
         for (int i = 0; i < graph.getVertexCount(); i++) {
             for (int j = 0; j < graph.getVertexCount(); j++) {

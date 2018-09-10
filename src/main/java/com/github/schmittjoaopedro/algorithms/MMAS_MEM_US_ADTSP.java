@@ -5,19 +5,20 @@ import com.github.schmittjoaopedro.aco.MMAS;
 import com.github.schmittjoaopedro.aco.MMAS_MEM_Memory;
 import com.github.schmittjoaopedro.aco.ls.us.USOperator;
 import com.github.schmittjoaopedro.graph.Graph;
-import com.github.schmittjoaopedro.graph.GraphFactory;
 import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.DBGP;
 import com.github.schmittjoaopedro.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
-import com.github.schmittjoaopedro.tools.MVBS;
 import com.github.schmittjoaopedro.utils.Maths;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Max-Min Ant System with Memory and Unstringing and Stringing Local Search Operator for the Asymmetric and Dynamic
+ * Travelling Salesman Problem
+ */
 public class MMAS_MEM_US_ADTSP implements Runnable {
 
     private USOperator usOperator;
@@ -161,7 +162,7 @@ public class MMAS_MEM_US_ADTSP implements Runnable {
                     System.out.println(iterationStatistic);
                 }
             }
-            if (dbgp.applyChanges(i) && i < maxIterations) {
+            if (dbgp.applyNewChanges(i) && i < maxIterations) {
                 repairSolution();
                 mmas.getBestSoFar().setCost(Double.MAX_VALUE);
             }

@@ -1,29 +1,23 @@
 package com.github.schmittjoaopedro.algorithms;
 
-import com.github.schmittjoaopedro.aco.Ant;
 import com.github.schmittjoaopedro.aco.MMAS;
-import com.github.schmittjoaopedro.aco.ls.us.USOperator;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.DBGP;
 import com.github.schmittjoaopedro.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tools.IterationStatistic;
-import com.github.schmittjoaopedro.tools.MVBS;
 import com.github.schmittjoaopedro.utils.Maths;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
- * Max-Min Ant System with Unstringing and Stringing Local Search Operator for the Asymmetric and Dynamic
- * Travelling Salesman Problem with Moving Vehicle
+ * Max-Min Ant System for the Cycled Asymmetric and Dynamic Travelling Salesman Problem
  */
-public class MMAS_US_MADTSP implements Runnable {
+public class MMAS_CADTSP implements Runnable {
 
-    private MVBS mvbs;
-
-    private USOperator usOperator;
-
-    private DBGP dbgp;
+    private DBGP dbgp[];
 
     private Graph graph;
 
@@ -43,22 +37,25 @@ public class MMAS_US_MADTSP implements Runnable {
 
     private int frequency;
 
+    private int cycleSize;
+
     private boolean showLog = true;
 
-    private boolean useLocalSearch = true;
+    private boolean useLocalSearch = false;
 
     private List<IterationStatistic> iterationStatistics;
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_US_MADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency) {
+    public MMAS_CADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency, int cycleSize) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.magnitude = magnitude;
         this.frequency = frequency;
+        this.cycleSize = cycleSize;
         this.graph = graph;
         mmas = new MMAS(graph);
-        dbgp = new DBGP(graph);
+        dbgp = new DBGP[cycleSize];
         iterationStatistics = new ArrayList<>(maxIterations);
     }
 
@@ -66,12 +63,20 @@ public class MMAS_US_MADTSP implements Runnable {
     public void run() {
         // Initialization DBGP
         globalStatistics.startTimer();
-        dbgp.setLowerBound(0.0);
-        dbgp.setUpperBound(2.0);
-        dbgp.setRandom(new Random(getDbgpSeed()));
-        dbgp.setMagnitude(magnitude);
-        dbgp.setFrequency(frequency);
-        dbgp.initializeEnvironment();
+        Random dbgpRandom = new Random(getDbgpSeed());
+        int cycleTurn = cycleSize - 1;
+        for (; cycleTurn >= 0; cycleTurn--) { // Reverse order, for that the first position starts adding random change
+            dbgp[cycleTurn] = new DBGP(graph);
+            dbgp[cycleTurn].setLowerBound(0.0);
+            dbgp[cycleTurn].setUpperBound(2.0);
+            dbgp[cycleTurn].setRandom(dbgpRandom);
+            dbgp[cycleTurn].setMagnitude(magnitude);
+            dbgp[cycleTurn].setFrequency(frequency);
+            dbgp[cycleTurn].initializeTrafficFactors(); // We can't change the graph while starting DBGP
+            dbgp[cycleTurn].addRandomChange();
+        }
+        dbgp[0].applyCurrentChanges(0); // First environment
+        cycleTurn = ++cycleTurn % cycleSize; // Next environment
         globalStatistics.endTimer("DBGP Initialization");
         // Initialization MMAS
         globalStatistics.startTimer();
@@ -88,15 +93,7 @@ public class MMAS_US_MADTSP implements Runnable {
         mmas.computeNNList();
         mmas.initHeuristicInfo();
         mmas.initTry();
-        usOperator = new USOperator();
-        usOperator.setStopEternalLoops(true);
         globalStatistics.endTimer("MMAS Initialization");
-        // Initialization moving vehicle benchmark simulator
-        globalStatistics.startTimer();
-        mvbs = new MVBS(graph, mmas);
-        mvbs.setMaxIterations(maxIterations);
-        mvbs.initialize();
-        globalStatistics.endTimer("MVBS Initialization");
         // Execute MMAS
         globalStatistics.startTimer();
         for (int i = 1; i <= maxIterations; i++) {
@@ -107,14 +104,13 @@ public class MMAS_US_MADTSP implements Runnable {
             mmas.computeNNList();
             mmas.initHeuristicInfo();
             mmas.computeTotalInfo();
-            mvbs.constructSolutions();
+            mmas.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
             iterationStatistic.startTimer();
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
                 if (useLocalSearch) {
-                    executeLocalSearch();
                     mmas.setPheromoneBoundsForLS();
                 } else {
                     mmas.setPheromoneBounds();
@@ -132,7 +128,6 @@ public class MMAS_US_MADTSP implements Runnable {
             mmas.checkPheromoneTrailLimits();
             mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
-            mvbs.moveNext(i, mmas.getBestSoFar());
             // Statistics
             if (i % statisticInterval == 0) {
                 iterationStatistic.setIteration(i);
@@ -144,13 +139,13 @@ public class MMAS_US_MADTSP implements Runnable {
                 iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
                 iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
                 iterationStatistic.setTour(mmas.getBestSoFar().getTour().clone());
-                iterationStatistic.setMvsbTour(mvbs.getTour().clone());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
                 }
             }
-            if (dbgp.applyNewChanges(i) && i < maxIterations) {
+            if (i < maxIterations && dbgp[cycleTurn].applyCurrentChanges(i)) {
+                cycleTurn = ++cycleTurn % cycleSize;  // Next environment
                 mmas.getBestSoFar().setCost(Double.MAX_VALUE);
             }
         }
@@ -161,18 +156,6 @@ public class MMAS_US_MADTSP implements Runnable {
             tour.add(graph.getVertex(vertexId));
         }
         globalStatistics.setBestRoute(tour);
-    }
-
-    public void executeLocalSearch() {
-        Ant iterationBest = mmas.findBest();
-        if (usOperator.init(graph, iterationBest.getTour().clone(), mvbs.getPhase())) {
-            usOperator.optimize();
-            double newCost = mmas.fitnessEvaluation(usOperator.getResult());
-            iterationBest.setTour(usOperator.getResult());
-            iterationBest.setCost(newCost);
-            mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
-            mmas.copyFromTo(iterationBest, mmas.getRestartBest());
-        }
     }
 
     public List<IterationStatistic> getIterationStatistics() {
@@ -221,13 +204,5 @@ public class MMAS_US_MADTSP implements Runnable {
 
     public void setDbgpSeed(int dbgpSeed) {
         this.dbgpSeed = dbgpSeed;
-    }
-
-    public MVBS getMvbs() {
-        return mvbs;
-    }
-
-    public void setMvbs(MVBS mvbs) {
-        this.mvbs = mvbs;
     }
 }

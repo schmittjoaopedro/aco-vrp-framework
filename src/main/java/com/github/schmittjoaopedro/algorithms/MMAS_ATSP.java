@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Max-Min Ant System for the Asymmetric Travelling Salesman Problem
+ */
 public class MMAS_ATSP implements Runnable {
 
     private Graph graph;

@@ -1,8 +1,7 @@
 package com.github.schmittjoaopedro.algorithms;
 
-import com.github.schmittjoaopedro.aco.Ant;
 import com.github.schmittjoaopedro.aco.MMAS;
-import com.github.schmittjoaopedro.aco.ls.us.USOperator;
+import com.github.schmittjoaopedro.aco.MMAS_MEM_Memory;
 import com.github.schmittjoaopedro.graph.Graph;
 import com.github.schmittjoaopedro.graph.Vertex;
 import com.github.schmittjoaopedro.tools.DBGP;
@@ -11,23 +10,27 @@ import com.github.schmittjoaopedro.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tools.MVBS;
 import com.github.schmittjoaopedro.utils.Maths;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
- * Max-Min Ant System with Unstringing and Stringing Local Search Operator for the Asymmetric and Dynamic
- * Travelling Salesman Problem with Moving Vehicle
+ * Max-Min Ant System with Memory for the Cycled Asymmetric and Dynamic Travelling Salesman Problem with Moving Vehicle.
+ *
+ * The difference between this version and the version proposed in BRACIS is the time when the vehicle finish moving.
+ * This version was adjusted to guarantee that the vehicle finish to visit all clients of the route.
  */
-public class MMAS_US_MADTSP implements Runnable {
+public class MMAS_MEM_CMADTSP implements Runnable {
 
     private MVBS mvbs;
 
-    private USOperator usOperator;
-
-    private DBGP dbgp;
+    private DBGP dbgp[];
 
     private Graph graph;
 
     private MMAS mmas;
+
+    private MMAS_MEM_Memory memory;
 
     private int maxIterations;
 
@@ -43,22 +46,28 @@ public class MMAS_US_MADTSP implements Runnable {
 
     private int frequency;
 
+    private int cycleSize;
+
     private boolean showLog = true;
 
-    private boolean useLocalSearch = true;
+    private boolean useLocalSearch = false;
+
+    private boolean changed = false;
 
     private List<IterationStatistic> iterationStatistics;
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_US_MADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency) {
+    public MMAS_MEM_CMADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency, int cycleSize) {
         this.maxIterations = maxIterations;
         this.rho = rho;
         this.magnitude = magnitude;
         this.frequency = frequency;
+        this.cycleSize = cycleSize;
         this.graph = graph;
         mmas = new MMAS(graph);
-        dbgp = new DBGP(graph);
+        memory = new MMAS_MEM_Memory(graph, mmas);
+        dbgp = new DBGP[cycleSize];
         iterationStatistics = new ArrayList<>(maxIterations);
     }
 
@@ -66,14 +75,23 @@ public class MMAS_US_MADTSP implements Runnable {
     public void run() {
         // Initialization DBGP
         globalStatistics.startTimer();
-        dbgp.setLowerBound(0.0);
-        dbgp.setUpperBound(2.0);
-        dbgp.setRandom(new Random(getDbgpSeed()));
-        dbgp.setMagnitude(magnitude);
-        dbgp.setFrequency(frequency);
-        dbgp.initializeEnvironment();
+        Random dbgpRandom = new Random(getDbgpSeed());
+        int cycleTurn = cycleSize - 1;
+        for (; cycleTurn >= 0; cycleTurn--) { // Reverse order, for that the first position starts adding random change
+            dbgp[cycleTurn] = new DBGP(graph);
+            dbgp[cycleTurn].setLowerBound(0.0);
+            dbgp[cycleTurn].setUpperBound(2.0);
+            dbgp[cycleTurn].setRandom(dbgpRandom);
+            dbgp[cycleTurn].setMagnitude(magnitude);
+            dbgp[cycleTurn].setFrequency(frequency);
+            dbgp[cycleTurn].initializeTrafficFactors(); // We can't change the graph while starting DBGP
+            dbgp[cycleTurn].addRandomChange();
+        }
+        dbgp[0].applyCurrentChanges(0); // First environment
+        cycleTurn = ++cycleTurn % cycleSize; // Next environment
         globalStatistics.endTimer("DBGP Initialization");
         // Initialization MMAS
+        Random random = new Random(getMmasSeed());
         globalStatistics.startTimer();
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
@@ -84,12 +102,10 @@ public class MMAS_US_MADTSP implements Runnable {
         mmas.setEPSILON(0.000000000000000000000001);
         mmas.allocateAnts();
         mmas.allocateStructures();
-        mmas.setRandom(new Random(getMmasSeed()));
+        mmas.setRandom(random);
         mmas.computeNNList();
         mmas.initHeuristicInfo();
         mmas.initTry();
-        usOperator = new USOperator();
-        usOperator.setStopEternalLoops(true);
         globalStatistics.endTimer("MMAS Initialization");
         // Initialization moving vehicle benchmark simulator
         globalStatistics.startTimer();
@@ -97,6 +113,15 @@ public class MMAS_US_MADTSP implements Runnable {
         mvbs.setMaxIterations(maxIterations);
         mvbs.initialize();
         globalStatistics.endTimer("MVBS Initialization");
+        // Initialization memory
+        globalStatistics.startTimer();
+        memory.setShortMemorySize(4);
+        memory.setMutationProbability(0.01);
+        memory.setImmigrantRate(0.4);
+        memory.setRandom(random);
+        memory.setMvbs(mvbs);
+        memory.initialize();
+        globalStatistics.endTimer("MEMORY Initialization");
         // Execute MMAS
         globalStatistics.startTimer();
         for (int i = 1; i <= maxIterations; i++) {
@@ -114,7 +139,6 @@ public class MMAS_US_MADTSP implements Runnable {
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
                 if (useLocalSearch) {
-                    executeLocalSearch();
                     mmas.setPheromoneBoundsForLS();
                 } else {
                     mmas.setPheromoneBounds();
@@ -125,7 +149,13 @@ public class MMAS_US_MADTSP implements Runnable {
             // Pheromone
             iterationStatistic.startTimer();
             mmas.evaporation();
-            mmas.pheromoneUpdate();
+            if (changed) {
+                mmas.setRho(0.02);
+                memory.updateShortTermMemory();
+                memory.pheromoneUpdate(i);
+            } else {
+                mmas.pheromoneUpdate();
+            }
             if (useLocalSearch) {
                 mmas.updateUGB();
             }
@@ -150,9 +180,10 @@ public class MMAS_US_MADTSP implements Runnable {
                     System.out.println(iterationStatistic);
                 }
             }
-            if (dbgp.applyNewChanges(i) && i < maxIterations) {
-                mmas.getBestSoFar().setCost(Double.MAX_VALUE);
+            if (i < maxIterations && dbgp[cycleTurn].applyCurrentChanges(i)) {
+                cycleTurn = ++cycleTurn % cycleSize;  // Next environment
             }
+            repairSolution();
         }
         globalStatistics.endTimer("MMAS Execution");
         globalStatistics.setBestSoFar(mmas.getBestSoFar().getCost());
@@ -163,15 +194,11 @@ public class MMAS_US_MADTSP implements Runnable {
         globalStatistics.setBestRoute(tour);
     }
 
-    public void executeLocalSearch() {
-        Ant iterationBest = mmas.findBest();
-        if (usOperator.init(graph, iterationBest.getTour().clone(), mvbs.getPhase())) {
-            usOperator.optimize();
-            double newCost = mmas.fitnessEvaluation(usOperator.getResult());
-            iterationBest.setTour(usOperator.getResult());
-            iterationBest.setCost(newCost);
-            mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
-            mmas.copyFromTo(iterationBest, mmas.getRestartBest());
+    private void repairSolution() {
+        double originalCost = mmas.getBestSoFar().getCost();
+        mmas.getBestSoFar().setCost(mmas.fitnessEvaluation(mmas.getBestSoFar().getTour()));
+        if (originalCost != mmas.getBestSoFar().getCost()) {
+            changed = true;
         }
     }
 
