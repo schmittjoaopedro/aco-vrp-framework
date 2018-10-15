@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
+import java.util.ArrayList;
+
 public class Utilities {
 
     private int seed;
@@ -14,6 +16,44 @@ public class Utilities {
 
     public void setSeed(int seed) {
         this.seed = seed;
+    }
+
+    public boolean checkFeasibility(Ant ant, VRPTW vrp, Controller controller, boolean printNoNodes) {
+        int currentCity, prevCity, addedNodes = 0;
+        double currentQuantity, currentTime;
+        double distance, arrivalTime, beginService;
+        ArrayList<Request> reqList = vrp.getRequests();
+        for (int indexTour = 0; indexTour < ant.getUsedVehicles(); indexTour++) {
+            currentQuantity = reqList.get(0).getDemand();
+            currentTime = 0.0;
+            for (int currentPos = 1; currentPos < ant.getTours().get(indexTour).size(); currentPos++) {
+                if (currentPos < ant.getTours().get(indexTour).size() - 1) {
+                    addedNodes++;
+                }
+                prevCity = ant.getTours().get(indexTour).get(currentPos - 1);
+                currentCity = ant.getTours().get(indexTour).get(currentPos);
+                currentQuantity += reqList.get(currentCity + 1).getDemand();
+
+                distance = vrp.getProblem().getDistance()[prevCity + 1][currentCity + 1];
+                arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
+                beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
+                if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
+                    System.out.println("Time window constraint violated");
+                    return false;
+                }
+                currentTime = beginService;
+            }
+            if (currentQuantity > vrp.getCapacity()) {
+                System.out.println("Capacity constraint violated");
+                return false;
+            }
+        }
+        if (printNoNodes) {
+            System.out.println("Added nodes=" + addedNodes);
+        }
+        controller.setAddedNodes(addedNodes);
+        return true;
+
     }
 
     // Recursive routine (quicksort) for sorting one array; second array does the same sequence of swaps

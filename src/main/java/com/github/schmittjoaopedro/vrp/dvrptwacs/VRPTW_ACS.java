@@ -35,6 +35,55 @@ public class VRPTW_ACS {
         }
     }
 
+    public void chooseClosestNN(Ant ant, int indexSalesman, VRPTW vrp) {
+        int currentCity, nextCity;
+        double distance, distanceDepot, arrivalTime, arrivalTimeDepot, beginService, beginServiceDepot;
+        double timeDifference, deliveryUrgency, bestBeginService = 0, minValue, metricValue;
+        double distances[][] = vrp.getProblem().getDistance();
+        ArrayList<Request> reqList = vrp.getRequests();
+        ArrayList<Integer> idKnownRequests = vrp.getIdAvailableRequests();
+        while (ant.getToVisit() > 0) {
+            nextCity = vrp.getN();
+            int lastPos = ant.getTours().get(indexSalesman).size() - 1;
+            currentCity = ant.getTours().get(indexSalesman).get(lastPos);
+            currentCity++;
+            minValue = Integer.MAX_VALUE;
+            for (int city : idKnownRequests) {
+                if (!ant.getVisited()[city]) { // City already not visited
+                    distance = distances[currentCity][city + 1];
+                    arrivalTime = ant.getCurrentTime().get(indexSalesman) + reqList.get(currentCity).getServiceTime() + distance;
+                    beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
+                    distanceDepot = distances[city + 1][0];
+                    arrivalTimeDepot = beginService + reqList.get(city + 1).getServiceTime() + distanceDepot;
+                    beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
+                    if (isFeasible(vrp, ant, city, beginService, beginServiceDepot, indexSalesman)) {
+                        // Compute the value of the "closeness" metric; this metric tries to account
+                        // for both geographical and temporal closeness of customers
+                        timeDifference = beginService - ant.getBeginService()[currentCity] - reqList.get(currentCity).getServiceTime();
+                        deliveryUrgency = reqList.get(city + 1).getEndWindow() - (ant.getBeginService()[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
+                        metricValue = getWeight1() * distance + getWeight2() * timeDifference + getWeight3() * deliveryUrgency;
+                        if (metricValue < minValue) {
+                            nextCity = city;
+                            minValue = metricValue;
+                            bestBeginService = beginService;
+                        }
+                    }
+                }
+            }
+            // No more nodes can be feasible added in the tour
+            if (nextCity == vrp.getN()) {
+                break;
+            } else {
+                ant.getTours().get(indexSalesman).add(nextCity);
+                ant.getVisited()[nextCity] = true;
+                ant.setToVisit(ant.getToVisit() - 1);
+                ant.getCurrentTime().set(indexSalesman, bestBeginService);
+                ant.getBeginService()[nextCity + 1] = bestBeginService;
+                ant.getCurrentTime().set(indexSalesman, ant.getCurrentQuantity().get(indexSalesman) + reqList.get(nextCity + 1).getDemand());
+            }
+        }
+    }
+
     // Generate a nearest neighbor tour and compute tour length using only the available nodes (nodes known so far)
     public double getNNTourCost(Ants ants, VRPTW instance, double scalingValue) {
         int step;

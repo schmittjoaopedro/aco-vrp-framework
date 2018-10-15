@@ -93,13 +93,25 @@ public class VRPTW {
         getProblem().setDistance(distances);
     }
 
-    // Compute the tour length of tour t taking also into account the depot city
+    // Compute the tour length of tour t taking also into account the depot city (depot at beginning and end positions)
     public double computeTourLength(ArrayList<Integer> tour) {
         double sum = 0;
         if (tour.size() > 1) {
             for (int i = 0; i < tour.size() - 1; i++) {
                 sum += problem.getDistance()[tour.get(i) + 1][tour.get(i + 1) + 1];
             }
+        }
+        return sum;
+    }
+
+    public double computeTourLengthDepotOnlyInFirstPosition(ArrayList<Integer> tour) {
+        double sum = 0;
+        if (tour.size() > 1) {
+            sum += getProblem().getDistance()[0][tour.get(1) + 1];
+            for (int i = 1; i < tour.size() - 2; i++) {
+                sum += problem.getDistance()[tour.get(i) + 1][tour.get(i + 1) + 1];
+            }
+            sum += problem.getDistance()[tour.get(tour.size() - 2) + 1][0];
         }
         return sum;
     }

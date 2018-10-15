@@ -38,6 +38,11 @@ public class InOut {
     // Iteration in which best solution is found.
     private int foundBest;
 
+    private int noEvaluation;
+
+    // Counter for the total number of feasible solutions.
+    private int noSolutions;
+
     private DistanceType distanceType;
 
     private double pheromonePreservation;
@@ -197,5 +202,21 @@ public class InOut {
 
     public void setFoundBest(int foundBest) {
         this.foundBest = foundBest;
+    }
+
+    public int getNoEvaluation() {
+        return noEvaluation;
+    }
+
+    public void setNoEvaluation(int noEvaluation) {
+        this.noEvaluation = noEvaluation;
+    }
+
+    public int getNoSolutions() {
+        return noSolutions;
+    }
+
+    public void setNoSolutions(int noSolutions) {
+        this.noSolutions = noSolutions;
     }
 }
