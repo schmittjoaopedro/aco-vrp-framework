@@ -5,20 +5,10 @@ import java.util.Random;
 
 public class Utilities {
 
-    private int seed;
-
     private Random random;
 
     public double doubleTruncate(double x) {
         return (double) ((int) x);
-    }
-
-    public int getSeed() {
-        return seed;
-    }
-
-    public void setSeed(int seed) {
-        this.seed = seed;
     }
 
     public boolean checkFeasibility(Ant ant, VRPTW vrp, Controller controller, boolean printNoNodes) {

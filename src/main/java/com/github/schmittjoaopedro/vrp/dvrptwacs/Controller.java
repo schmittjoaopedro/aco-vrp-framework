@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 public class Controller {
 
+    // The scaling value is used to scale all time-related values.
+    private double scalingValue;
+
     private int addedNodes;
 
     private int idLastAvailableNode;
@@ -233,5 +236,13 @@ public class Controller {
 
     public void setIdLastAvailableNode(int idLastAvailableNode) {
         this.idLastAvailableNode = idLastAvailableNode;
+    }
+
+    public double getScalingValue() {
+        return scalingValue;
+    }
+
+    public void setScalingValue(double scalingValue) {
+        this.scalingValue = scalingValue;
     }
 }

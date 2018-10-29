@@ -15,7 +15,7 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_c101_0_5_test() {
-        Program dvrptwSolver = new Program(rootDirectory, "c101", 0.5);
+        Program dvrptwSolver = new Program(rootDirectory, "r103", 0.1, 1);
         dvrptwSolver.execute();
     }
 

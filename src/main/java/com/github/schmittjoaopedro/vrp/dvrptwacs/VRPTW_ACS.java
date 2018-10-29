@@ -604,6 +604,54 @@ public class VRPTW_ACS {
         return values;
     }
 
+    // Manage some statistical information about the trial, especially if a new best solution
+    //(best-so-far) is found and adjust some parameters if a new best solution is found
+    public void updateStatistics(VRPTW instance, Ants ants, InOut inOut, Timer timer) {
+        double scalingValue, scalarValue = 0.0;
+        Object obj = new Object();
+        double round1, round2;
+        double tempNo = Math.pow(10, 10);
+        Ant itBestAnt = ants.findBest();
+        if (isLsSearch()) {
+            itBestAnt = localSearchOperator.relocateMultipleRouteIterated(ants, itBestAnt, instance);
+            itBestAnt = localSearchOperator.exchangeMultipleRouteIterated(ants, itBestAnt, instance);
+        }
+        synchronized (obj) {
+            round1 = Math.round(itBestAnt.getTotalTourLength() * tempNo) / tempNo;
+            round2 = Math.round(ants.getBestSoFarAnt().getTotalTourLength() * tempNo) / tempNo;
+            if ((itBestAnt.getUsedVehicles() < ants.getBestSoFarAnt().getUsedVehicles()) ||
+                    ((itBestAnt.getUsedVehicles() == ants.getBestSoFarAnt().getUsedVehicles()) && (round1 < round2))
+                    || ((round1 < round2) && (ants.getBestSoFarAnt().getTotalTourLength() == Double.MAX_VALUE))) {
+                inOut.setTimeUsed(timer.elapsedTime()); // Best solution found after time_used
+                ants.copyFromTo(itBestAnt, ants.getBestSoFarAnt(), instance);
+                scalingValue = controller.getScalingValue();
+                if (scalingValue != 0) {
+                    scalarValue = ants.getBestSoFarAnt().getTotalTourLength() / scalingValue;
+                }
+                System.out.println("Updated Best so far ant >> No. of used vehicles=" + ants.getBestSoFarAnt().getUsedVehicles() + " total tours length=" + ants.getBestSoFarAnt().getTotalTourLength() + " (scalled value = " + scalarValue + ")");
+            }
+        }
+    }
+
+    // Manage global Ants.pheromone trail update for the ACO algorithms.
+    // reinforces the edges used in ant's solution as in ACS.
+    public void pheromoneTrailUpdate(Ants ants) {
+        Ant a = ants.getBestSoFarAnt();
+        int i, j, h, k, size;
+        double d_tau = 1.0 / a.getTotalTourLength();
+        for (i = 0; i < a.getUsedVehicles(); i++) {
+            size = a.getTours().get(i).size();
+            for (k = 0; k < size - 1; k++) {
+                j = a.getTours().get(i).get(k);
+                h = a.getTours().get(i).get(k + 1);
+                j++;
+                h++;
+                ants.getPheromone()[j][h] = (1.0 - ants.getRho()) * ants.getPheromone()[j][h] + ants.getRho() * d_tau;
+                ants.getPheromone()[h][j] = ants.getPheromone()[j][h];
+            }
+        }
+    }
+
     public boolean isLsSearch() {
         return lsSearch;
     }

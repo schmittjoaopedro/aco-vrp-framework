@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
+import java.sql.Time;
+
 public class VRPTW_ACS_Thread extends Thread {
 
     private VRPTW_ACS vrpAcs;
@@ -14,11 +16,13 @@ public class VRPTW_ACS_Thread extends Thread {
 
     private InOut inOut;
 
+    private Timer timer;
+
     private boolean isRunning = true;
 
     private boolean threadRestarted;
 
-    public VRPTW_ACS_Thread(boolean threadStopped, VRPTW_ACS vrpAcs, VRPTW vrpInstance, Ants ants, InOut inOut, Controller controller, Utilities utilities) {
+    public VRPTW_ACS_Thread(boolean threadStopped, VRPTW_ACS vrpAcs, VRPTW vrpInstance, Ants ants, InOut inOut, Controller controller, Utilities utilities, Timer timer) {
         super();
         setVrpAcs(vrpAcs);
         setVrpInstance(vrpInstance);
@@ -27,6 +31,7 @@ public class VRPTW_ACS_Thread extends Thread {
         setInOut(inOut);
         setController(controller);
         setUtilities(utilities);
+        setTimer(timer);
     }
 
     /**
@@ -51,9 +56,8 @@ public class VRPTW_ACS_Thread extends Thread {
             // Increase evaluations counter
             inOut.setNoEvaluation(inOut.getNoEvaluation() + 1);
             counter++;
-            updateStatistics(vrpInstance);
-            pheromoneTrailUpdate();
-            searchControlAndStatistics();
+            vrpAcs.updateStatistics(vrpInstance, ants, inOut, timer);
+            vrpAcs.pheromoneTrailUpdate(ants);
             // Force the ant colony thread to stop its execution
             if (counter > 300) {
                 isRunning = false;
@@ -119,5 +123,13 @@ public class VRPTW_ACS_Thread extends Thread {
 
     public void setUtilities(Utilities utilities) {
         this.utilities = utilities;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 }

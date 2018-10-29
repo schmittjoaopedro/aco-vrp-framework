@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * The controller is the central part of the algorithm, which reads the benchmark data,
@@ -26,9 +27,6 @@ public class Program {
     // Dynamic level, which gives the proportion of the dynamic requests (available time > 0) from the DVRPTW instance.
     private double dynamicLevel = 0.1; //0.0  //0.1  //0.5  //1.0
 
-    // The scaling value is used to scale all time-related values.
-    private double scalingValue;
-
     private int addedNodes;
 
     private VRPTW vrpInstance;
@@ -46,7 +44,7 @@ public class Program {
 
     private Controller controller;
 
-    public Program(String rootDirectory, String vrpInstanceName, double dynamicLevel) {
+    public Program(String rootDirectory, String vrpInstanceName, double dynamicLevel, long seed) {
         super();
         setRootDirectory(rootDirectory);
         setVrpInstanceName(vrpInstanceName);
@@ -54,6 +52,7 @@ public class Program {
         setInOut(new InOut());
         setAnts(new Ants());
         setUtilities(new Utilities());
+        getUtilities().setRandom(new Random(seed));
         setTimer(new Timer());
         setController(new Controller());
         setVrptwAcs(new VRPTW_ACS(controller, true));
@@ -93,22 +92,22 @@ public class Program {
             // Compute the scaling value with which we can scale all time-related values.
             // First record is assumed to defined the depot demand.
             Request depotReq = vrpInstance.getRequests().get(0);
-            scalingValue = (double) workingDay / (depotReq.getEndWindow() - depotReq.getStartWindow());
+            controller.setScalingValue((double) workingDay / (depotReq.getEndWindow() - depotReq.getStartWindow()));
 
             // Adjust distances between nodes (cities) according to this scale value
-            inOut.initProgram(trial, vrpInstance, scalingValue, ants, utilities);
+            inOut.initProgram(trial, vrpInstance, controller.getScalingValue(), ants, utilities);
 
             // Adjust for each request, all the time related values according to the length of the working day we are simulating
-            if (scalingValue != 0) {
-                System.out.println("Scaling value = " + scalingValue);
+            if (controller.getScalingValue() != 0) {
+                System.out.println("Scaling value = " + controller.getScalingValue());
                 for (Request request : vrpInstance.getRequests()) {
-                    newStartWindow = request.getStartWindow() * scalingValue;
+                    newStartWindow = request.getStartWindow() * controller.getScalingValue();
                     request.setStartWindow(newStartWindow);
-                    newEndWindow = request.getEndWindow() * scalingValue;
+                    newEndWindow = request.getEndWindow() * controller.getScalingValue();
                     request.setEndWindow(newEndWindow);
-                    newServiceTime = request.getServiceTime() * scalingValue;
+                    newServiceTime = request.getServiceTime() * controller.getScalingValue();
                     request.setServiceTime(newServiceTime);
-                    newAvailableTime = request.getAvailableTime() * scalingValue;
+                    newAvailableTime = request.getAvailableTime() * controller.getScalingValue();
                     request.setAvailableTime(newAvailableTime);
                 }
             }
@@ -129,7 +128,7 @@ public class Program {
             startTime = System.currentTimeMillis();
 
             // Start the ant colony optimization in another thread
-            VRPTW_ACS_Thread worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants, inOut, controller, utilities);
+            VRPTW_ACS_Thread worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants, inOut, controller, utilities, timer);
             worker.start();
             // Check periodically if the problem has changed and new nodes (customer requests) became available
             // or there are nodes from the best so far solution that must be marked as committed
@@ -206,8 +205,8 @@ public class Program {
                         }
                         ants.getBestSoFarAnt().setTotalTourLength(sum);
                         double scaledValue = 0.0;
-                        if (scalingValue != 0) {
-                            scaledValue = ants.getBestSoFarAnt().getTotalTourLength() / scalingValue;
+                        if (controller.getScalingValue() != 0) {
+                            scaledValue = ants.getBestSoFarAnt().getTotalTourLength() / controller.getScalingValue();
                         }
                         System.out.println("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.getBestSoFarAnt().getUsedVehicles() +
                                 " total tours length=" + ants.getBestSoFarAnt().getTotalTourLength() + " (scalled value = " + scaledValue + ")");
@@ -218,7 +217,7 @@ public class Program {
                 // Restart the colony thread
                 if (threadStopped) {
                     // Restart the ant colony thread
-                    worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants, inOut, controller, utilities);
+                    worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants, inOut, controller, utilities, timer);
                     worker.start();
                     threadStopped = false;
                 }
@@ -237,8 +236,8 @@ public class Program {
                 }
             }
             double scaledValue = 0.0;
-            if (scalingValue != 0) {
-                scaledValue = ants.getBestSoFarAnt().getTotalTourLength() / scalingValue;
+            if (controller.getScalingValue() != 0) {
+                scaledValue = ants.getBestSoFarAnt().getTotalTourLength() / controller.getScalingValue();
             }
             System.out.println("Final best solution >> No. of used vehicles=" + ants.getBestSoFarAnt().getUsedVehicles() +
                     " total tours length=" + ants.getBestSoFarAnt().getTotalTourLength() + " (scalled value = " + scaledValue + ")");
@@ -295,7 +294,7 @@ public class Program {
         if (numAvailableNodes == 0) {
             ants.setTrail0(1.0);
         } else {
-            ants.setTrail0(1.0 / ((double) (numAvailableNodes + 1) * vrptwAcs.getNNTourCost(ants, vrpInstance, scalingValue)));
+            ants.setTrail0(1.0 / ((double) (numAvailableNodes + 1) * vrptwAcs.getNNTourCost(ants, vrpInstance, controller.getScalingValue())));
         }
         ants.initPheromoneTrails(ants.getTrail0());
 
@@ -307,14 +306,6 @@ public class Program {
 
     public void setRootDirectory(String rootDirectory) {
         this.rootDirectory = rootDirectory;
-    }
-
-    public double getScalingValue() {
-        return scalingValue;
-    }
-
-    public void setScalingValue(double scalingValue) {
-        this.scalingValue = scalingValue;
     }
 
     public int getWorkingDay() {

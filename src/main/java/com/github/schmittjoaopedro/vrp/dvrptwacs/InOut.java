@@ -77,8 +77,6 @@ public class InOut {
         setBranchingFactor(1.00001);
         setDistanceType(DistanceType.EUC_2D);
         setPheromonePreservation(0.3);
-        // Utilities parameters.
-        utilities.setSeed((int) System.currentTimeMillis());
     }
 
     private void setDefaultACSParameters(Ants ants) {

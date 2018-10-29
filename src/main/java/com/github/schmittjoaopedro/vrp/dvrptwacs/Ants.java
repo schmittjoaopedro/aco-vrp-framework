@@ -174,6 +174,34 @@ public class Ants {
         return ant;
     }
 
+    // Find the best ant of the current iteration (the one with the lowest number of used vehicles and
+    // with smaller total traveled distance)
+    public Ant findBest() {
+        double min1, min2;
+        int k1, k2, k2Min;
+        // First detect the ant which uses the minimum number of vehicles
+        min1 = ants[0].getUsedVehicles();
+        for (k1 = 1; k1 < getNumAnts(); k1++) {
+            if (ants[k1].getUsedVehicles() < min1) {
+                min1 = ants[k1].getUsedVehicles();
+            }
+        }
+        // Among the vehicles which use the minimum number of vehicles, select the best ant as the one with the minimum
+        // total distance for its traveled tours
+        min2 = Double.MAX_VALUE;
+        k2Min = 0;
+        for (k2 = 0; k2 < getNumAnts(); k2++) {
+            if (ants[k2].getUsedVehicles() == min1) {
+                if (ants[k2].getTotalTourLength() < min2) {
+                    min2 = ants[k2].getTotalTourLength();
+                    k2Min = k2;
+                }
+            }
+
+        }
+        return ants[k2Min];
+    }
+
     public boolean[] getCommittedNodes() {
         return committedNodes;
     }
