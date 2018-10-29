@@ -30,8 +30,8 @@ public class Ants {
     // Number of ants.
     private int numAnts;
 
-    // Length of nearest neighbor lists for the ants' solution construction.
-    private int numNearestAnts;
+    // Define the nearest neighbor size
+    private int nnAnts;
 
     // Parameter for evaporation used in global pheromone update.
     private double rho;
@@ -86,6 +86,18 @@ public class Ants {
         restartBestAnt.setLongestTourLength(Double.MAX_VALUE);
     }
 
+    // Removes some pheromone on edge just passed by the ant
+    public void localAcsPheromoneUpdate(Ant a, int indexSalesman) {
+        int lastPos = a.getTours().get(indexSalesman).size() - 1;
+        int j = a.getTours().get(indexSalesman).get(lastPos);
+        int h = a.getTours().get(indexSalesman).get(lastPos - 1);
+        j++;
+        h++;
+        // Still additional parameter has to be introduced
+        pheromone[h][j] = (1. - getLocalRho()) * pheromone[h][j] + getLocalRho() * getTrail0();
+        pheromone[j][h] = pheromone[h][j];
+    }
+
     // Copy solution from ant a1 into ant a2
     public void copyFromTo(Ant a1, Ant a2, VRPTW instance) {
         a2.emptyMemory(instance);
@@ -120,6 +132,23 @@ public class Ants {
         a2.setUsedVehicles(a1.getUsedVehicles());
         for (int i = 0; i < (instance.getN() + 1); i++) {
             a2.getBeginService()[i] = a1.getBeginService()[i];
+        }
+    }
+
+    // Preserve some of the pheromone level on the edges between available nodes
+    public void preservePheromones(VRPTW vrp, double pheromonePreservation) {
+        for (int i = 0; i < (vrp.getN() + 1); i++) {
+            for (int j = 0; j <= i; j++) {
+                if (vrp.getIdAvailableRequests().contains(i - 1) && vrp.getIdAvailableRequests().contains(j - 1)
+                        || (i == 0 && vrp.getIdAvailableRequests().contains(j - 1))
+                        || (j == 0 && vrp.getIdAvailableRequests().contains(i - 1))) {
+                    pheromone[i][j] = pheromone[i][j] * (1 - pheromonePreservation) + pheromonePreservation * trail0;
+                    pheromone[j][i] = pheromone[i][j];
+                } else {
+                    pheromone[i][j] = trail0;
+                    pheromone[j][i] = pheromone[i][j];
+                }
+            }
         }
     }
 
@@ -193,14 +222,6 @@ public class Ants {
         this.numAnts = numAnts;
     }
 
-    public int getNumNearestAnts() {
-        return numNearestAnts;
-    }
-
-    public void setNumNearestAnts(int numNearestAnts) {
-        this.numNearestAnts = numNearestAnts;
-    }
-
     public double getRho() {
         return rho;
     }
@@ -255,5 +276,13 @@ public class Ants {
 
     public void setTrail0(double trail0) {
         this.trail0 = trail0;
+    }
+
+    public int getNnAnts() {
+        return nnAnts;
+    }
+
+    public void setNnAnts(int nnAnts) {
+        this.nnAnts = nnAnts;
     }
 }

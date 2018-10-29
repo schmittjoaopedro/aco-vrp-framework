@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 public class LocalSearchOperator {
 
+    private Controller controller;
+
+    public LocalSearchOperator(Controller controller) {
+        this.controller = controller;
+    }
+
     /**
      * Skip committed (defined) nodes.
      * This method is performed multiple times until no further improvement (which minimizes most the
@@ -27,7 +33,7 @@ public class LocalSearchOperator {
 
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.getBestSoFarAnt().getUsedVehicles(); index++) {
-            lastPos = Controller.getLastCommittedPos(index, ants);
+            lastPos = controller.getLastCommittedPos(index, ants);
             lastCommittedIndexes.add(lastPos);
         }
 
@@ -247,7 +253,7 @@ public class LocalSearchOperator {
 
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.getBestSoFarAnt().getUsedVehicles(); index++) {
-            lastPos = Controller.getLastCommittedPos(index, ants);
+            lastPos = controller.getLastCommittedPos(index, ants);
             lastCommittedIndexes.add(lastPos);
         }
 

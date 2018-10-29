@@ -62,7 +62,7 @@ public class InOut {
     private void setDefaultParameters(Ants ants, Utilities utilities) {
         // Ants parameters.
         ants.setNumAnts(25);
-        ants.setNumNearestAnts(20);
+        ants.setNnAnts(20);
         ants.setAlpha(1.0);
         ants.setBeta(2.0);
         ants.setRho(0.5);
@@ -84,7 +84,7 @@ public class InOut {
     private void setDefaultACSParameters(Ants ants) {
         // Number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction.
         ants.setNumAnts(10);
-        ants.setNumNearestAnts(20);
+        ants.setNnAnts(20);
         ants.setAlpha(1.0);
         ants.setBeta(1.0);
         ants.setRho(0.9);

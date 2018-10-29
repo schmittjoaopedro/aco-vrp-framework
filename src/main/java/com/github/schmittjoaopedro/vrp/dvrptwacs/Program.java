@@ -55,7 +55,8 @@ public class Program {
         setAnts(new Ants());
         setUtilities(new Utilities());
         setTimer(new Timer());
-        setVrptwAcs(new VRPTW_ACS(true));
+        setController(new Controller());
+        setVrptwAcs(new VRPTW_ACS(controller, true));
     }
 
     public void execute() {
@@ -128,7 +129,7 @@ public class Program {
             startTime = System.currentTimeMillis();
 
             // Start the ant colony optimization in another thread
-            VRPTW_ACS_Thread worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants);
+            VRPTW_ACS_Thread worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants, inOut, controller, utilities);
             worker.start();
             // Check periodically if the problem has changed and new nodes (customer requests) became available
             // or there are nodes from the best so far solution that must be marked as committed
@@ -217,7 +218,7 @@ public class Program {
                 // Restart the colony thread
                 if (threadStopped) {
                     // Restart the ant colony thread
-                    worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants);
+                    worker = new VRPTW_ACS_Thread(threadStopped, vrptwAcs, vrpInstance, ants, inOut, controller, utilities);
                     worker.start();
                     threadStopped = false;
                 }
@@ -267,7 +268,7 @@ public class Program {
         // Skip over committed (defined) nodes when performing insertion heuristic
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.getBestSoFarAnt().getUsedVehicles(); index++) {
-            int lastPos = Controller.getLastCommittedPos(index, ants);
+            int lastPos = controller.getLastCommittedPos(index, ants);
             lastCommittedIndexes.add(lastPos);
         }
         InsertionHeuristic.insertUnRoutedCustomers(ants.getBestSoFarAnt(), vrpInstance, unRoutedList, indexTour, lastCommittedIndexes);
@@ -402,5 +403,13 @@ public class Program {
 
     public void setTimer(Timer timer) {
         this.timer = timer;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 }

@@ -6,6 +6,10 @@ public class VRPTW_ACS_Thread extends Thread {
 
     private VRPTW vrpInstance;
 
+    private Controller controller;
+
+    private Utilities utilities;
+
     private Ants ants;
 
     private InOut inOut;
@@ -14,13 +18,15 @@ public class VRPTW_ACS_Thread extends Thread {
 
     private boolean threadRestarted;
 
-    public VRPTW_ACS_Thread(boolean threadStopped, VRPTW_ACS vrpAcs, VRPTW vrpInstance, Ants ants, InOut inOut) {
+    public VRPTW_ACS_Thread(boolean threadStopped, VRPTW_ACS vrpAcs, VRPTW vrpInstance, Ants ants, InOut inOut, Controller controller, Utilities utilities) {
         super();
         setVrpAcs(vrpAcs);
         setVrpInstance(vrpInstance);
         setAnts(ants);
         setThreadRestarted(threadStopped);
         setInOut(inOut);
+        setController(controller);
+        setUtilities(utilities);
     }
 
     /**
@@ -38,10 +44,10 @@ public class VRPTW_ACS_Thread extends Thread {
                 int noAvailableNodes = vrpInstance.getIdAvailableRequests().size();
                 ants.setTrail0(1.0 / ((double) (noAvailableNodes + 1) * ants.getBestSoFarAnt().getTotalTourLength()));
                 // Preserve a certain amount of the pheromones from the previous run of the ant colony
-                ants.preservePheromones(vrpInstance);
+                ants.preservePheromones(vrpInstance, inOut.getPheromonePreservation());
             }
             // Do the optimization task (work)
-            constructSolutions(vrpInstance);
+            vrpAcs.constructSolutions(vrpInstance, ants, inOut, utilities);
             // Increase evaluations counter
             inOut.setNoEvaluation(inOut.getNoEvaluation() + 1);
             counter++;
@@ -97,5 +103,21 @@ public class VRPTW_ACS_Thread extends Thread {
 
     public void setInOut(InOut inOut) {
         this.inOut = inOut;
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    public Utilities getUtilities() {
+        return utilities;
+    }
+
+    public void setUtilities(Utilities utilities) {
+        this.utilities = utilities;
     }
 }

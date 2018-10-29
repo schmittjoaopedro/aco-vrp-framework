@@ -85,7 +85,7 @@ public class Ant {
     private boolean addedEmptyTour;
 
     public Ant() {
-       super();
+        super();
     }
 
     public void emptyMemory(VRPTW instance) {
@@ -123,6 +123,20 @@ public class Ant {
         }
         // The another node is the depot, which is by default visited by each salesman and added in its tour
         setToVisit(instance.getIdAvailableRequests().size());
+    }
+
+    public double computeToursAmplitude() {
+        double min = getTourLengths().get(0);
+        double max = getTourLengths().get(0);
+        for (int i = 1; i < getTours().size(); i++) {
+            if (getTourLengths().get(i) < min) {
+                min = getTourLengths().get(i);
+            }
+            if (getTourLengths().get(i) > max) {
+                max = getTourLengths().get(i);
+            }
+        }
+        return (max - min);
     }
 
     public ArrayList<ArrayList<Integer>> getTours() {

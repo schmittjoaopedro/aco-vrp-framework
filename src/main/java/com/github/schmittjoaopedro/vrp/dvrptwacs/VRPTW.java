@@ -35,11 +35,10 @@ public class VRPTW {
         int size = getN();
         double[] distanceVector = new double[size + 1];
         int[] helpVector = new int[size + 1];
-        int nn = ants.getNumNearestAnts();
+        int nn = ants.getNnAnts();
         if (nn >= size + 1) {
             nn = size - 2;
         }
-        ants.setNumNearestAnts(nn);
         int[][] nNear = new int[size + 1][nn];
         int[][] nNearAll = new int[size + 1][nn]; // Include also the depot city
         for (int node = 0; node < size + 1; node++) { // Compute candidate-sets for all nodes

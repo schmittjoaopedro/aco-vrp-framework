@@ -1,10 +1,13 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Utilities {
 
     private int seed;
+
+    private Random random;
 
     public double doubleTruncate(double x) {
         return (double) ((int) x);
@@ -71,6 +74,14 @@ public class Utilities {
         sort2(v, v2, last + 1, right);
     }
 
+    // Generate a random number that is uniformly distributed in [0,1]
+    public double random01() {
+        if (random == null) {
+            random = new Random();
+        }
+        return random.nextDouble();
+    }
+
     // Auxiliary routine for sorting an integer array
     private void swap2(double v[], int v2[], int i, int j) {
         double tmp1;
@@ -83,5 +94,13 @@ public class Utilities {
         tmp2 = v2[i];
         v2[i] = v2[j];
         v2[j] = tmp2;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
     }
 }
