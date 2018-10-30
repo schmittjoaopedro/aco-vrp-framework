@@ -15,9 +15,14 @@ public class LoggerOutput {
 
     public static void log(String message) {
         if (print) {
-            System.out.println(message);
+            //System.out.println(message);
+            System.out.println("assertThat(LoggerOutput.get(lineCount++)).isEqualTo(\"" + message + "\");");
         }
         logOutput.add(message);
+    }
+
+    public static String get(int i) {
+        return logOutput.get(i);
     }
 
     public List<String> getLog() {

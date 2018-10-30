@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.dvrptwacs;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * ACO algorithms for the TSP
@@ -57,12 +58,12 @@ public class Parse {
         if (antSystem.equals("u")) {
             Ants.as_flag = true;
             InOut.set_default_as_parameters();
-            System.out.println("\nRun basic Ant System #" + (runNumber + 1));
+            LoggerOutput.log("\nRun basic Ant System #" + (runNumber + 1));
         }
         if (antSystem.equals("z")) {
             Ants.acs_flag = true;
             InOut.set_default_acs_parameters();
-            System.out.println("\nRun Ant Colony System #" + (runNumber + 1));
+            LoggerOutput.log("\nRun Ant Colony System #" + (runNumber + 1));
         }
 
     }
