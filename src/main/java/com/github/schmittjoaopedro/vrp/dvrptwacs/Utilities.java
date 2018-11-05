@@ -59,31 +59,29 @@ public class Utilities {
      * Germany
      ***************************************************************************/
 
-    private static Random random;
-
-    static int rowIndex = 1;
+    private Random random;
 
     //for setting the content to be inserted in the Excel file
-    private static String tours[];
-    private static int nrCities[];
-    private static double subtoursCost[];
-    private static double totalCost;
-    private static double longestSubtour;
-    private static double amplitude;
+    private String tours[];
+    private int nrCities[];
+    private double subtoursCost[];
+    private double totalCost;
+    private double longestSubtour;
+    private double amplitude;
 
     //for verbose output: save at each 5 iteration the best (minimum) total cost of all m subtours
-    private static ArrayList<Double> iterTotalCost;
+    private ArrayList<Double> iterTotalCost;
 
     //for verbose output: save at each 5 iteration the cost of the longest tour and the number of the corresponding iteration
-    private static ArrayList<Double> iterLongestCost;
-    private static ArrayList<Integer> iterNumber;
+    private ArrayList<Double> iterLongestCost;
+    private ArrayList<Integer> iterNumber;
 
     //for displaying text with color at console of Linux based systems
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_RED = "\u001B[31m";
+    public final String ANSI_RESET = "\u001B[0m";
+    public final String ANSI_RED = "\u001B[31m";
 
     //auxiliary routine for sorting an integer array
-    static void swap2(double v[], int v2[], int i, int j) {
+    public void swap2(double v[], int v2[], int i, int j) {
         double tmp1;
         int tmp2;
 
@@ -97,7 +95,7 @@ public class Utilities {
     }
 
     //recursive routine (quicksort) for sorting one array; second array does the same sequence of swaps
-    static void sort2(double v[], int v2[], int left, int right) {
+    public void sort2(double v[], int v2[], int left, int right) {
         int k, last;
 
         if (left >= right)
@@ -113,7 +111,7 @@ public class Utilities {
     }
 
     //auxiliary routine for sorting an integer array and a double array
-    static void swap2_(Double v[], Integer v2[], int i, int j) {
+    public void swap2_(Double v[], Integer v2[], int i, int j) {
         double tmp1;
         int tmp2;
 
@@ -127,7 +125,7 @@ public class Utilities {
     }
 
     //recursive routine (quicksort) for sorting one array; second array does the same sequence of swaps
-    static void sort2_(Double v[], Integer v2[], int left, int right) {
+    public void sort2_(Double v[], Integer v2[], int left, int right) {
         int k, last;
 
         if (left >= right)
@@ -143,7 +141,7 @@ public class Utilities {
     }
 
     //generate a random number that is uniformly distributed in [0,1]
-    static double random01() {
+    public double random01() {
         if (random == null) {
             random = new Random();
         }
@@ -151,11 +149,11 @@ public class Utilities {
         return random.nextDouble();
     }
 
-    static void setSeed(int seed) {
+    public void setSeed(int seed) {
         random = new Random(seed);
     }
 
-    static double mean() {
+    public double mean() {
         double sum = 0.0;
         for (Ant ant : Ants.ants) {
             sum += ant.total_tour_length;
@@ -163,76 +161,76 @@ public class Utilities {
         return sum / Ants.n_ants;
     }
 
-    public static String[] getTours() {
+    public String[] getTours() {
         return tours;
     }
 
-    public static void setTours(String[] tours) {
-        Utilities.tours = tours;
+    public void setTours(String[] tours) {
+        this.tours = tours;
     }
 
-    public static int[] getNrCities() {
+    public int[] getNrCities() {
         return nrCities;
     }
 
-    public static void setNrCities(int[] nrCities) {
-        Utilities.nrCities = nrCities;
+    public void setNrCities(int[] nrCities) {
+        this.nrCities = nrCities;
     }
 
-    public static double[] getSubtoursCost() {
+    public double[] getSubtoursCost() {
         return subtoursCost;
     }
 
-    public static void setSubtoursCost(double[] subtoursCost) {
-        Utilities.subtoursCost = subtoursCost;
+    public void setSubtoursCost(double[] subtoursCost) {
+        this.subtoursCost = subtoursCost;
     }
 
-    public static double getTotalCost() {
+    public double getTotalCost() {
         return totalCost;
     }
 
-    public static void setTotalCost(double totalCost) {
-        Utilities.totalCost = totalCost;
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
     }
 
-    public static ArrayList<Double> getIterTotalCost() {
+    public ArrayList<Double> getIterTotalCost() {
         return iterTotalCost;
     }
 
-    public static void setIterTotalCost(ArrayList<Double> iterTotalCost) {
-        Utilities.iterTotalCost = iterTotalCost;
+    public void setIterTotalCost(ArrayList<Double> iterTotalCost) {
+        this.iterTotalCost = iterTotalCost;
     }
 
-    public static ArrayList<Double> getIterLongestCost() {
+    public ArrayList<Double> getIterLongestCost() {
         return iterLongestCost;
     }
 
-    public static ArrayList<Integer> getIterNumber() {
+    public ArrayList<Integer> getIterNumber() {
         return iterNumber;
     }
 
-    public static void setIterLongestCost(ArrayList<Double> iterLongestCost) {
-        Utilities.iterLongestCost = iterLongestCost;
+    public void setIterLongestCost(ArrayList<Double> iterLongestCost) {
+        this.iterLongestCost = iterLongestCost;
     }
 
-    public static void setIterNumber(ArrayList<Integer> iterNumber) {
-        Utilities.iterNumber = iterNumber;
+    public void setIterNumber(ArrayList<Integer> iterNumber) {
+        this.iterNumber = iterNumber;
     }
 
-    public static double getLongestSubtour() {
+    public double getLongestSubtour() {
         return longestSubtour;
     }
 
-    public static void setLongestSubtour(double longestSubtour) {
-        Utilities.longestSubtour = longestSubtour;
+    public void setLongestSubtour(double longestSubtour) {
+        this.longestSubtour = longestSubtour;
     }
 
-    public static double getAmplitude() {
+    public double getAmplitude() {
         return amplitude;
     }
 
-    public static void setAmplitude(double amplitude) {
-        Utilities.amplitude = amplitude;
+    public void setAmplitude(double amplitude) {
+        this.amplitude = amplitude;
     }
 
     public static ArrayList<ArrayList<Integer>> readSolution(String fileName) {

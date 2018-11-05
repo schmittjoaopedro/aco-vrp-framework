@@ -57,6 +57,7 @@ public class VRPTW {
      * Germany
      ***************************************************************************/
 
+    private Utilities utilities;
 
     //maximum number of vehicle allowed for constructing the solution or the size of the vehicle fleet
     private int nrVehicles;
@@ -96,18 +97,20 @@ public class VRPTW {
 
     }
 
-    static Problem instance;
+    public Problem instance;
 
-    public VRPTW() {}
+    public VRPTW(Utilities utilities) {
+        this.utilities = utilities;
+    }
 
-    public VRPTW(int nrVehicles_, int capacity_) {
+    public VRPTW(int nrVehicles_, int capacity_, Utilities utilities) {
+        this.utilities = utilities;
         this.nrVehicles = nrVehicles_;
         this.capacity = capacity_;
     }
 
-    public VRPTW(int nrVehicles_, int capacity_, ArrayList<Request> list) {
-        this(nrVehicles_, capacity_);
-
+    public VRPTW(int nrVehicles_, int capacity_, ArrayList<Request> list, Utilities utilities) {
+        this(nrVehicles_, capacity_, utilities);
         this.requests = new ArrayList<Request>(list.size());
         for (int i = 0; i < list.size(); i++) {
             this.requests.set(i, list.get(i));
@@ -170,11 +173,11 @@ public class VRPTW {
      */
 
     //compute Euclidean distances between two nodes rounded to next integer for TSPLIB instances
-    static double euclidianDistance(int i, int j) {
+    public double euclidianDistance(int i, int j) {
         double xd = 0, yd = 0;
 
-        xd = VRPTW.instance.nodes[i].x - VRPTW.instance.nodes[j].x;
-        yd = VRPTW.instance.nodes[i].y - VRPTW.instance.nodes[j].y;
+        xd = instance.nodes[i].x - instance.nodes[j].x;
+        yd = instance.nodes[i].y - instance.nodes[j].y;
 
         double r = Math.sqrt(xd * xd + yd * yd);
 
@@ -182,7 +185,7 @@ public class VRPTW {
     }
 
     //compute ceiling distance between two nodes rounded to next integer for TSPLIB instances
-    static int ceil_distance(int i, int j) {
+    public int ceil_distance(int i, int j) {
         double xd = instance.nodes[i].x - instance.nodes[j].x;
         double yd = instance.nodes[i].y - instance.nodes[j].y;
         double r = Math.sqrt(xd * xd + yd * yd);
@@ -191,7 +194,7 @@ public class VRPTW {
     }
 
     //compute geometric distance between two nodes rounded to next integer for TSPLIB instances
-    static int geo_distance(int i, int j)
+    public int geo_distance(int i, int j)
     {
         double deg, min;
         double lati, latj, longi, longj;
@@ -221,7 +224,7 @@ public class VRPTW {
     }
 
     //compute ATT distance between two nodes rounded to next integer for TSPLIB instances
-    static int att_distance(int i, int j)
+    public int att_distance(int i, int j)
     {
         double xd = instance.nodes[i].x - instance.nodes[j].x;
         double yd = instance.nodes[i].y - instance.nodes[j].y;
@@ -237,7 +240,7 @@ public class VRPTW {
     }
 
     //computes the matrix of all intercity/inter customers distances
-    static double[][] compute_distances(double scalingValue)
+    public double[][] compute_distances(double scalingValue)
     {
         int i, j;
         int size = VRPTW.n;
@@ -264,7 +267,7 @@ public class VRPTW {
     }
 
     //computes nearest neighbor lists of depth nn for each city
-    static int[][][] compute_nn_lists(VRPTW vrp) {
+    public int[][][] compute_nn_lists() {
         int i, node, nn, count1, count2;
 
         int size = VRPTW.n;
@@ -282,12 +285,12 @@ public class VRPTW {
 
         for (node = 0; node < size + 1; node++) { /* compute candidate-sets for all nodes */
             for (i = 0; i < size + 1; i++) { /* Copy distances from nodes to the others */
-                distance_vector[i] = VRPTW.instance.distance[node][i];
+                distance_vector[i] = instance.distance[node][i];
                 //distance_vector[i] = 0.9 * VRPTW.instance.distance[node][i] + 0.1 * vrp.getRequests().get(i).getEndWindow();
                 help_vector[i] = i;
             }
             distance_vector[node] = Integer.MAX_VALUE; /* city itself is not nearest neighbor */
-            Utilities.sort2(distance_vector, help_vector, 0, size);
+            utilities.sort2(distance_vector, help_vector, 0, size);
 
             count1 = 0; i = -1;
             while (count1 < nn) {
@@ -322,13 +325,13 @@ public class VRPTW {
     }
 
     //compute the tour length of tour t taking also into account the depot city
-    static double compute_tour_length(ArrayList<Integer> t) {
+    public double compute_tour_length(ArrayList<Integer> t) {
         int i;
         double sum = 0;
 
         if (t.size() > 1) {
             for (i = 0; i < t.size() - 1; i++) {
-                sum += VRPTW.instance.distance[t.get(i) + 1][t.get(i + 1) + 1];
+                sum += instance.distance[t.get(i) + 1][t.get(i + 1) + 1];
             }
         }
 
@@ -336,29 +339,29 @@ public class VRPTW {
     }
 
     //compute the tour length of tour t taking also into account the depot city
-    static double compute_tour_length1(ArrayList<Integer> t) {
+    public double compute_tour_length1(ArrayList<Integer> t) {
         int i;
         double sum = 0;
 
         if (t.size() > 1) {
             for (i = 0; i < t.size() - 1; i++) {
-                sum += VRPTW.instance.distance[t.get(i)][t.get(i + 1)];
+                sum += instance.distance[t.get(i)][t.get(i + 1)];
             }
         }
 
         return sum;
     }
 
-    static double compute_tour_length_(ArrayList<Integer> t) {
+    public double compute_tour_length_(ArrayList<Integer> t) {
         int i;
         double sum = 0;
 
         if (t.size() > 1) {
-            sum += VRPTW.instance.distance[0][t.get(1) + 1];
+            sum += instance.distance[0][t.get(1) + 1];
             for (i = 1; i < t.size() - 2; i++) {
-                sum += VRPTW.instance.distance[t.get(i) + 1][t.get(i + 1) + 1];
+                sum += instance.distance[t.get(i) + 1][t.get(i + 1) + 1];
             }
-            sum += VRPTW.instance.distance[t.get(t.size() - 2) + 1][0];
+            sum += instance.distance[t.get(t.size() - 2) + 1][0];
         }
 
         return sum;

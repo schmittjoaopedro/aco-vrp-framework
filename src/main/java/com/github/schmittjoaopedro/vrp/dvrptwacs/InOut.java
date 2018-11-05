@@ -144,7 +144,7 @@ public class InOut {
     }
 
     //compute the average node lambda-branching factor, where l designates the lambda value
-    static double node_branching(double l) {
+    static double node_branching(double l, VRPTW vrptw) {
         int i, m;
         double min, max, cutoff;
         double avg;
@@ -154,18 +154,18 @@ public class InOut {
 
         for (m = 0; m < (VRPTW.n + 1); m++) {
             /* determine max, min to calculate the cutoff value */
-            min = Ants.pheromone[m][VRPTW.instance.nn_list[m][0]];
-            max = Ants.pheromone[m][VRPTW.instance.nn_list[m][0]];
+            min = Ants.pheromone[m][vrptw.instance.nn_list[m][0]];
+            max = Ants.pheromone[m][vrptw.instance.nn_list[m][0]];
             for (i = 1; i < Ants.nn_ants; i++) {
-                if (Ants.pheromone[m][VRPTW.instance.nn_list[m][i]] > max)
-                    max = Ants.pheromone[m][VRPTW.instance.nn_list[m][i]];
-                if (Ants.pheromone[m][VRPTW.instance.nn_list[m][i]] < min)
-                    min = Ants.pheromone[m][VRPTW.instance.nn_list[m][i]];
+                if (Ants.pheromone[m][vrptw.instance.nn_list[m][i]] > max)
+                    max = Ants.pheromone[m][vrptw.instance.nn_list[m][i]];
+                if (Ants.pheromone[m][vrptw.instance.nn_list[m][i]] < min)
+                    min = Ants.pheromone[m][vrptw.instance.nn_list[m][i]];
             }
             cutoff = min + l * (max - min);
 
             for (i = 0; i < Ants.nn_ants; i++) {
-                if (Ants.pheromone[m][VRPTW.instance.nn_list[m][i]] > cutoff)
+                if (Ants.pheromone[m][vrptw.instance.nn_list[m][i]] > cutoff)
                     num_branches[m] += 1.;
             }
         }
@@ -198,72 +198,8 @@ public class InOut {
         return (float)var/(float)array.length;
     }
 
-    // save some statistical information on a trial once it finishes
-    static void exit_try(int ntry) {
-        //String[] toursText = new String[MTsp.m];
-        //int[] nrCities = new int[MTsp.m];
-        double[] subtoursCost = new double[Ants.best_so_far_ant.usedVehicles];
-        double totalCost, longestSubtour, amplitude;
-
-        System.out.println("\nRun #" + (ntry + 1));
-        //System.out.println("\nRun #" + (ntry + 1) + ": " + ParetoFront.bestSoFarPareto.size() + " solutions found in the best so far Pareto set");
-        //System.out.println("\n nn_ants = " + Ants.nn_ants);
-    	/*System.out.print("\nBest so far ant: tour lenghts are: ");
-    	for (int index = 0; index < MTsp.m; index++) {
-    		System.out.print(Ants.best_so_far_ant.tour_lengths[index] + " ");
-    	}*/
-        System.out.println("\nBest so far ant >> " +  Ants.best_so_far_ant.usedVehicles + " used vehicles; final tours traveled by each salesman:");
-        for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            //System.out.print("\ntour(" + index + "): ");
-            //print depot city
-			/*System.out.print("1 ");
-			StringBuilder sb = new StringBuilder();
-			sb.append("1 ");*/
-
-            int tourLength =  Ants.best_so_far_ant.tours.get(index).size();
-            int count = 0;
-            for (int i = 0; i < tourLength; i++) {
-                int city = Ants.best_so_far_ant.tours.get(index).get(i);
-                city = city + 1;  //so as to correspond to the city indexes from the mtsp input file
-                System.out.print(city + " ");
-                //sb.append(city + " ");
-            }
-            System.out.println();
-            count = tourLength - 2; //excluding the 2 depots cities from the start and end of tour
-            //System.out.print(" (#" + count + ") Total cost: " + Ants.best_so_far_ant.tour_lengths.get(index) + "\n");
-            //sb.append("1  (#" + count + ")\n");
-            //subtoursCost[index] = Ants.best_so_far_ant.tour_lengths.get(index);
-            //toursText[index] = sb.toString();
-            //nrCities[index] = count;
-        }
-        //System.out.println("Variance of tour costs is: " + variance(costs));
-
-        double length = 0;
-        System.out.println("\nBest solution >> total tour length: " + Ants.best_so_far_ant.total_tour_length + ", longest tour length: " + Ants.best_so_far_ant.longest_tour_length + ", found at iteration " + found_best);
-        length = Ants.best_so_far_ant.total_tour_length;
-        totalCost = length;
-        longestSubtour = Ants.best_so_far_ant.longest_tour_length;
-        amplitude = Ants.best_so_far_ant.costObjectives[1];
-        //System.out.println("Cities to be visited: " + Ants.best_so_far_ant.toVisit);
-	    /*System.out.print("Visited cities: ");
-	    for (int i = 0; i < VRPTW.n; i++) {
-	    	System.out.print(Ants.best_so_far_ant.visited[i] + ", ");
-	    }*/
-
-        ////System.out.println("\nTotal sum of tour lengths is: " + length);
-
-		/*Utilities.setTours(toursText);
-		Utilities.setNrCities(nrCities);
-		Utilities.setSubtoursCost(subtoursCost);*/
-
-        Utilities.setTotalCost(totalCost);
-        Utilities.setLongestSubtour(longestSubtour);
-        Utilities.setAmplitude(amplitude);
-
-    }
-
     //initialize the program
-    static void init_program(String antSystem, int runNumber, VRPTW instance, double scalingValue) {
+    static void init_program(String antSystem, int runNumber, VRPTW vrptw, double scalingValue) {
 
         set_default_parameters();
         Parse.parse_commandline(antSystem, runNumber);
@@ -272,8 +208,8 @@ public class InOut {
         if (Ants.n_ants < 0)
             Ants.n_ants = VRPTW.n;
 
-        VRPTW.instance.distance = VRPTW.compute_distances(scalingValue);
-        Ants.allocate_ants(instance);
+        vrptw.instance.distance = vrptw.compute_distances(scalingValue);
+        Ants.allocate_ants(vrptw);
     }
 
 }

@@ -26,9 +26,9 @@ public class DataReader {
      * Read the data from the given file
      * @return the data from the file
      */
-    public VRPTW read() {
-        VRPTW vrp = new VRPTW();
-        VRPTW.instance = new VRPTW.Problem();
+    public VRPTW read(Utilities utilities) {
+        VRPTW vrp = new VRPTW(utilities);
+        vrp.instance = new VRPTW.Problem();
         ArrayList<Request> reqList = new ArrayList<Request>();
         ArrayList<Request> dynamicReqList = new ArrayList<Request>();
         ArrayList<Integer> availableNodes = new ArrayList<Integer>();
@@ -42,7 +42,7 @@ public class DataReader {
             BufferedReader in = null;
 
             if (file.exists()) {
-                VRPTW.instance.name = fileName;
+                vrp.instance.name = fileName;
                 try {
                     in = new BufferedReader(new FileReader(file));
                     String line = in.readLine();
@@ -75,12 +75,12 @@ public class DataReader {
                 int nrCustomerRequests = reqList.size() - 1;
                 VRPTW.n = nrCustomerRequests;
 
-                VRPTW.instance.nodes = new VRPTW.Point[reqList.size()];
+                vrp.instance.nodes = new VRPTW.Point[reqList.size()];
                 for (int i = 0; i < reqList.size(); i++) {
-                    VRPTW.instance.nodes[i] = new VRPTW.Point();
+                    vrp.instance.nodes[i] = new VRPTW.Point();
                     Request r = reqList.get(i);
-                    VRPTW.instance.nodes[i].x = r.getxCoord();
-                    VRPTW.instance.nodes[i].y = r.getyCoord();
+                    vrp.instance.nodes[i].x = r.getxCoord();
+                    vrp.instance.nodes[i].y = r.getyCoord();
                 }
             }
 

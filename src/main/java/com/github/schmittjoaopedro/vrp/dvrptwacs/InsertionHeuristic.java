@@ -90,7 +90,7 @@ public class InsertionHeuristic {
                     previousCity = a.tours.get(index).get(i - 1);
                     value1 = new Double(reqList.get(city + 1).getStartWindow());
                     //value2 = a.earliestTime.get(index).get(i - 1) + VRPTW.instance.distance[previousCity + 1][city + 1];
-                    value2 = a.earliestTime.get(index).get(i - 1) + VRPTW.instance.distance[previousCity + 1][city + 1] + reqList.get(previousCity + 1).getServiceTime();
+                    value2 = a.earliestTime.get(index).get(i - 1) + vrp.instance.distance[previousCity + 1][city + 1] + reqList.get(previousCity + 1).getServiceTime();
                     value = Math.max(value1, value2);
                     a.earliestTime.get(index).add(i, value);
                 }
@@ -107,7 +107,7 @@ public class InsertionHeuristic {
                     value = new Double(reqList.get(0).getEndWindow());
                     value1 = new Double(reqList.get(city + 1).getEndWindow());
                     //value2 = a.latestTime.get(index).get(i + 1) - VRPTW.instance.distance[city + 1][nextCity + 1];
-                    value2 = value - VRPTW.instance.distance[city + 1][0] - reqList.get(city + 1).getServiceTime();
+                    value2 = value - vrp.instance.distance[city + 1][0] - reqList.get(city + 1).getServiceTime();
                     value = Math.min(value1, value2);
                     a.latestTime.get(index).set(i, value);
                 }
@@ -115,7 +115,7 @@ public class InsertionHeuristic {
                     nextCity = a.tours.get(index).get(i + 1);
                     value1 = new Double(reqList.get(city + 1).getEndWindow());
                     //value2 = a.latestTime.get(index).get(i + 1) - VRPTW.instance.distance[city + 1][nextCity + 1];
-                    value2 = a.latestTime.get(index).get(i + 1) - VRPTW.instance.distance[city + 1][nextCity + 1] - reqList.get(city + 1).getServiceTime();
+                    value2 = a.latestTime.get(index).get(i + 1) - vrp.instance.distance[city + 1][nextCity + 1] - reqList.get(city + 1).getServiceTime();
                     value = Math.min(value1, value2);
                     a.latestTime.get(index).set(i, value);
                 }
@@ -137,7 +137,7 @@ public class InsertionHeuristic {
             nextCity = a.tours.get(bestIndexTour).get(k + 1);
             oldLatestTime = a.latestTime.get(bestIndexTour).get(k);
             //value1 = a.latestTime.get(bestIndexTour).get(k + 1) - VRPTW.instance.distance[previousCity + 1][nextCity + 1];
-            value1 = a.latestTime.get(bestIndexTour).get(k + 1) - VRPTW.instance.distance[previousCity + 1][nextCity + 1] - reqList.get(previousCity + 1).getServiceTime();
+            value1 = a.latestTime.get(bestIndexTour).get(k + 1) - vrp.instance.distance[previousCity + 1][nextCity + 1] - reqList.get(previousCity + 1).getServiceTime();
             newLatestTime = Math.min(oldLatestTime, value1);
             if (oldLatestTime != newLatestTime) {
                 a.latestTime.get(bestIndexTour).set(k, newLatestTime);
@@ -152,7 +152,7 @@ public class InsertionHeuristic {
             nextCity = a.tours.get(bestIndexTour).get(k);
             oldEarliestTime = a.earliestTime.get(bestIndexTour).get(k);
             //value2 = a.earliestTime.get(bestIndexTour).get(k - 1) + VRPTW.instance.distance[previousCity + 1][nextCity + 1];
-            value2 = a.earliestTime.get(bestIndexTour).get(k - 1) + VRPTW.instance.distance[previousCity + 1][nextCity + 1] + reqList.get(previousCity + 1).getServiceTime();
+            value2 = a.earliestTime.get(bestIndexTour).get(k - 1) + vrp.instance.distance[previousCity + 1][nextCity + 1] + reqList.get(previousCity + 1).getServiceTime();
             newEarliestTime = Math.max(oldEarliestTime, value2);
             if (oldEarliestTime != newEarliestTime) {
                 a.earliestTime.get(bestIndexTour).set(k, newEarliestTime);
@@ -178,7 +178,7 @@ public class InsertionHeuristic {
             currentCity = a.tours.get(indexTour).get(currentPos);
             currentQuantity += reqList.get(currentCity + 1).getDemand();
 
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -195,7 +195,7 @@ public class InsertionHeuristic {
         currentQuantity += reqList.get(currentCity + 1).getDemand();
         //currentTime = a.beginService[prevCity + 1];
 
-        distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+        distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
         arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
         beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
         if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -208,7 +208,7 @@ public class InsertionHeuristic {
         currentCity = a.tours.get(indexTour).get(nextPos);
         currentQuantity += reqList.get(currentCity + 1).getDemand();
 
-        distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+        distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
         arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
         beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
         if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -222,7 +222,7 @@ public class InsertionHeuristic {
             currentCity = a.tours.get(indexTour).get(currentPos);
             currentQuantity += reqList.get(currentCity + 1).getDemand();
 
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -251,15 +251,15 @@ public class InsertionHeuristic {
         int previousCity = a.tours.get(indexTour).get(previousPos);
         int nextCity = a.tours.get(indexTour).get(nextPos);
         currentQuantity = a.currentQuantity.get(indexTour) + reqList.get(customer + 1).getDemand();
-        arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + VRPTW.instance.distance[previousCity + 1][customer + 1];
+        arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + vrp.instance.distance[previousCity + 1][customer + 1];
         beginService = Math.max(arrivalTime, reqList.get(customer + 1).getStartWindow());
         value1 = new Double(reqList.get(customer + 1).getStartWindow());
         //value2 = a.earliestTime.get(indexTour).get(previousPos) + VRPTW.instance.distance[previousCity + 1][customer + 1];
-        value2 = a.earliestTime.get(indexTour).get(previousPos) + VRPTW.instance.distance[previousCity + 1][customer + 1] + reqList.get(previousCity + 1).getServiceTime();
+        value2 = a.earliestTime.get(indexTour).get(previousPos) + vrp.instance.distance[previousCity + 1][customer + 1] + reqList.get(previousCity + 1).getServiceTime();
         earliestTime = Math.max(value1, value2);
         value3 = new Double(reqList.get(customer + 1).getEndWindow());
         //value4 = a.latestTime.get(indexTour).get(nextPos) - VRPTW.instance.distance[customer + 1][nextCity + 1];
-        value4 = a.latestTime.get(indexTour).get(nextPos) - VRPTW.instance.distance[customer + 1][nextCity + 1] - reqList.get(customer + 1).getServiceTime();
+        value4 = a.latestTime.get(indexTour).get(nextPos) - vrp.instance.distance[customer + 1][nextCity + 1] - reqList.get(customer + 1).getServiceTime();
         latestTime = Math.min(value3, value4);
         //arrivalTime1 = beginService + reqList.get(customer + 1).getServiceTime() + VRPTW.instance.distance[customer + 1][nextCity + 1];
 
@@ -329,10 +329,10 @@ public class InsertionHeuristic {
                                 //compute the score (value) for the c1 metric
                                 previousCity = a.tours.get(indexTour).get(pos - 1);
                                 nextCity = a.tours.get(indexTour).get(pos);
-                                c11 = VRPTW.instance.distance[previousCity + 1][customer + 1] + VRPTW.instance.distance[customer + 1][nextCity + 1] - mu * VRPTW.instance.distance[previousCity + 1][nextCity + 1];
-                                arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + VRPTW.instance.distance[previousCity + 1][customer + 1];
+                                c11 = vrp.instance.distance[previousCity + 1][customer + 1] + vrp.instance.distance[customer + 1][nextCity + 1] - mu * vrp.instance.distance[previousCity + 1][nextCity + 1];
+                                arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + vrp.instance.distance[previousCity + 1][customer + 1];
                                 beginService = Math.max(arrivalTime, reqList.get(customer + 1).getStartWindow());
-                                newArrivalTime = beginService + reqList.get(customer + 1).getServiceTime() + VRPTW.instance.distance[customer + 1][nextCity + 1];
+                                newArrivalTime = beginService + reqList.get(customer + 1).getServiceTime() + vrp.instance.distance[customer + 1][nextCity + 1];
                                 newBeginService = Math.max(newArrivalTime, reqList.get(nextCity + 1).getStartWindow());
                                 oldBeginService = a.beginService[nextCity + 1];
                                 c12 = newBeginService - oldBeginService;
@@ -363,7 +363,7 @@ public class InsertionHeuristic {
                     insert = bestInsertions.get(i);
                     cust = insert.getCustomer();
                     c1_= insert.getScore();
-                    c2 = lambda * VRPTW.instance.distance[0][cust + 1] - c1_;
+                    c2 = lambda * vrp.instance.distance[0][cust + 1] - c1_;
                     //c2 = c1_;
                     if (c2 < bestC2Score) {
                         bestC2Score = c2;
@@ -393,11 +393,11 @@ public class InsertionHeuristic {
                 nextCity = a.tours.get(bestIndexTour).get(bestPos + 1);
                 value1 = new Double(reqList.get(bestCustomer + 1).getStartWindow());
                 //value2 = a.earliestTime.get(bestIndexTour).get(bestPos - 1) + VRPTW.instance.distance[previousCity + 1][bestCustomer + 1];
-                value2 = a.earliestTime.get(bestIndexTour).get(bestPos - 1) + VRPTW.instance.distance[previousCity + 1][bestCustomer + 1] + reqList.get(previousCity + 1).getServiceTime();
+                value2 = a.earliestTime.get(bestIndexTour).get(bestPos - 1) + vrp.instance.distance[previousCity + 1][bestCustomer + 1] + reqList.get(previousCity + 1).getServiceTime();
                 earliestTime = Math.max(value1, value2);
                 value3 = new Double(reqList.get(bestCustomer + 1).getEndWindow());
                 //value4 = a.latestTime.get(bestIndexTour).get(bestPos) - VRPTW.instance.distance[bestCustomer + 1][nextCity + 1];
-                value4 = a.latestTime.get(bestIndexTour).get(bestPos) - VRPTW.instance.distance[bestCustomer + 1][nextCity + 1] - reqList.get(bestCustomer + 1).getServiceTime();
+                value4 = a.latestTime.get(bestIndexTour).get(bestPos) - vrp.instance.distance[bestCustomer + 1][nextCity + 1] - reqList.get(bestCustomer + 1).getServiceTime();
                 latestTime = Math.min(value3, value4);
                 a.earliestTime.get(bestIndexTour).add(bestPos, earliestTime);
                 a.latestTime.get(bestIndexTour).add(bestPos, latestTime);
@@ -409,7 +409,7 @@ public class InsertionHeuristic {
                 for (int j = bestPos; j < a.tours.get(bestIndexTour).size(); j++) {
                     previousCity = a.tours.get(bestIndexTour).get(j - 1);
                     cust = a.tours.get(bestIndexTour).get(j);
-                    arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + VRPTW.instance.distance[previousCity + 1][cust + 1];
+                    arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + vrp.instance.distance[previousCity + 1][cust + 1];
                     beginService = Math.max(arrivalTime, reqList.get(cust + 1).getStartWindow());
                     a.beginService[cust + 1] = beginService;
                 }

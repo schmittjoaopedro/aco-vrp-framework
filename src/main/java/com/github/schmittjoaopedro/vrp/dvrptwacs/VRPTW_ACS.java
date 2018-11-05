@@ -166,10 +166,10 @@ public class VRPTW_ACS implements Runnable {
     }
 
     //add to the ant's solution the committed nodes from each tour of the best so far solution
-    public void addCommitedNodes(Ant a, VRPTW instance) {
+    public void addCommitedNodes(Ant a, VRPTW vrptw) {
         int index, city, current_city;
         double distance, arrivalTime, beginService;
-        ArrayList<Request> reqList = instance.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         int startIndex = 1, pos;
 
         ArrayList<Integer> lastCommitedIndexes = new ArrayList<Integer>();
@@ -202,7 +202,7 @@ public class VRPTW_ACS implements Runnable {
                 //add in the ant's i-th tour all the committed nodes from the i-th tour of the best so far solution
                 for (int j = 1; j <= index; j++) {
                     city = Ants.best_so_far_ant.tours.get(i).get(j);
-                    distance = VRPTW.instance.distance[current_city][city + 1];
+                    distance = vrptw.instance.distance[current_city][city + 1];
                     arrivalTime = a.currentTime.get(i) + reqList.get(current_city).getServiceTime() + distance;
                     beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
                     if (beginService > reqList.get(city + 1).getEndWindow()) {
@@ -246,14 +246,14 @@ public class VRPTW_ACS implements Runnable {
 
     //manage the solution construction phase (construct a set of complete and closed tours, one
     //for each vehicle)
-    public void construct_solutions(VRPTW instance) {
+    public void construct_solutions(VRPTW vrptw) {
         int k; /* counter variable */
         int step; /* counter of the number of construction steps */
         int values[] = new int[2];
 
         /* Mark all cities as unvisited */
         for (k = 0; k < Ants.n_ants; k++) {
-            Ants.ant_empty_memory(Ants.ants[k], instance);
+            Ants.ant_empty_memory(Ants.ants[k], vrptw);
         }
 
         step = 0;
@@ -271,7 +271,7 @@ public class VRPTW_ACS implements Runnable {
         //initialize ant solution with the committed nodes (if any) from each tour of the best so far solution
         if (checkCommitedTours()) {
             for (k = 0; k < Ants.n_ants; k++) {
-                addCommitedNodes(Ants.ants[k], instance);
+                addCommitedNodes(Ants.ants[k], vrptw);
                 //System.out.println("After addCommitedNodes");
             }
         }
@@ -282,7 +282,7 @@ public class VRPTW_ACS implements Runnable {
                     //choose for each ant in a probabilistic way by some type of roullette wheel selection
                     //which salesman to consider next, that will visit a city
                     //salesman = (int)(Math.random() * MTsp.m);
-                    values = ants.neighbour_choose_and_move_to_next(Ants.ants[k], instance);
+                    values = ants.neighbour_choose_and_move_to_next(Ants.ants[k], vrptw);
                     if (values[0] != -1) {
                         if (Ants.acs_flag)
                             Ants.local_acs_pheromone_update(Ants.ants[k], values[1]);
@@ -304,7 +304,7 @@ public class VRPTW_ACS implements Runnable {
                 step = Ants.ants[k].tours.get(i).size();
                 Ants.ants[k].tours.get(i).add(step, -1);
 
-                Ants.ants[k].tour_lengths.set(i, VRPTW.compute_tour_length_(Ants.ants[k].tours.get(i)));
+                Ants.ants[k].tour_lengths.set(i, vrptw.compute_tour_length_(Ants.ants[k].tours.get(i)));
                 Ants.ants[k].total_tour_length += Ants.ants[k].tour_lengths.get(i);
                 if (longestTourLength < Ants.ants[k].tour_lengths.get(i)) {
                     longestTourLength = Ants.ants[k].tour_lengths.get(i);
@@ -414,7 +414,7 @@ public class VRPTW_ACS implements Runnable {
                 prevCity = a.tours.get(indexTourSource).get(pos - 1);
                 currentCity = a.tours.get(indexTourSource).get(pos);
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -448,14 +448,14 @@ public class VRPTW_ACS implements Runnable {
         previousCity = a.tours.get(indexTourDestination).get(j - 1);
         nextCity = a.tours.get(indexTourDestination).get(j);
 
-        arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + VRPTW.instance.distance[previousCity + 1][city + 1];
+        arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + vrp.instance.distance[previousCity + 1][city + 1];
         beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
         if (beginService > reqList.get(city + 1).getEndWindow()) {
             return false;
         }
         currentTime = beginService;
 
-        arrivalTime = currentTime + reqList.get(city + 1).getServiceTime() + VRPTW.instance.distance[city + 1][nextCity + 1];
+        arrivalTime = currentTime + reqList.get(city + 1).getServiceTime() + vrp.instance.distance[city + 1][nextCity + 1];
         beginService = Math.max(arrivalTime, reqList.get(nextCity + 1).getStartWindow());
         if (beginService > reqList.get(nextCity + 1).getEndWindow()) {
             return false;
@@ -466,7 +466,7 @@ public class VRPTW_ACS implements Runnable {
         for (int pos = j + 1; pos < a.tours.get(indexTourDestination).size(); pos++) {
             prevCity = a.tours.get(indexTourDestination).get(pos - 1);
             currentCity = a.tours.get(indexTourDestination).get(pos);
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -491,7 +491,7 @@ public class VRPTW_ACS implements Runnable {
             if (pos == i) {
                 currentTime = a.beginService[prevCity + 1];
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             currentTime = beginService;
@@ -509,7 +509,7 @@ public class VRPTW_ACS implements Runnable {
             if (pos == j) {
                 currentTime = a.beginService[prevCity + 1];
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             currentTime = beginService;
@@ -525,12 +525,12 @@ public class VRPTW_ACS implements Runnable {
     //skip committed (defined) nodes
     //relocateMultipleRoute is performed only once and the best improvement (which minimizes most the
     //total traveled distance) is applied
-    public Ant relocateMultipleRoute(Ant a, VRPTW instance) {
+    public Ant relocateMultipleRoute(Ant a, VRPTW vrptw) {
         boolean feasible = false;
         int city, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
         double newQuantity1, newQuantity2, newDistance1, newDistance2, newTotalDistance;
-        ArrayList<Request> reqList = instance.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         int lastPos;
 
         Ant bestImprovedAnt = new Ant();
@@ -546,7 +546,7 @@ public class VRPTW_ACS implements Runnable {
         }
         bestImprovedAnt.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        bestImprovedAnt.toVisit = instance.getIdAvailableRequests().size();
+        bestImprovedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         bestImprovedAnt.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             bestImprovedAnt.costObjectives[indexObj] = 0;
@@ -567,7 +567,7 @@ public class VRPTW_ACS implements Runnable {
         }
         temp.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = instance.getIdAvailableRequests().size();
+        temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             temp.costObjectives[indexObj] = 0;
@@ -575,8 +575,8 @@ public class VRPTW_ACS implements Runnable {
         temp.earliestTime = new ArrayList(temp.usedVehicles);
         temp.latestTime = new ArrayList(temp.usedVehicles);
 
-        Ants.copy_from_to(a, bestImprovedAnt, instance);
-        Ants.copy_from_to(a, temp, instance);
+        Ants.copy_from_to(a, bestImprovedAnt, vrptw);
+        Ants.copy_from_to(a, temp, vrptw);
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
@@ -606,7 +606,7 @@ public class VRPTW_ACS implements Runnable {
                     for (int i = startIndexSource; i < a.tours.get(indexTourSource).size() - 1; i++) {
                         for (int j = startIndexDestination; j < a.tours.get(indexTourDestination).size(); j++) {
                             //check if results a feasible solution (i.e. no time window constraint is violated)
-                            feasible = checkFeasibleTourRelocationMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                            feasible = checkFeasibleTourRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                             if (feasible) {
                                 //obtain the neighbour solution corresponding to the relocation operator
                                 city = temp.tours.get(indexTourSource).get(i);
@@ -620,16 +620,16 @@ public class VRPTW_ACS implements Runnable {
 
                                 //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                 //also update the current time of the source and destination tours
-                                updateBeginServiceRelocationMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                updateBeginServiceRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
 
                                 //update total traveled distance and lengths of source and destination tours
                                 sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                 sourceNextCity = temp.tours.get(indexTourSource).get(i);
-                                newDistance1 = temp.tour_lengths.get(indexTourSource) - VRPTW.instance.distance[sourcePrevCity + 1][city + 1] - VRPTW.instance.distance[city + 1][sourceNextCity + 1] + VRPTW.instance.distance[sourcePrevCity + 1][sourceNextCity + 1];
+                                newDistance1 = temp.tour_lengths.get(indexTourSource) - vrptw.instance.distance[sourcePrevCity + 1][city + 1] - vrptw.instance.distance[city + 1][sourceNextCity + 1] + vrptw.instance.distance[sourcePrevCity + 1][sourceNextCity + 1];
 
                                 destinationPrevCity = temp.tours.get(indexTourDestination).get(j - 1);
                                 destinationNextCity = temp.tours.get(indexTourDestination).get(j + 1);
-                                newDistance2 = temp.tour_lengths.get(indexTourDestination) - VRPTW.instance.distance[destinationPrevCity + 1][destinationNextCity + 1] + VRPTW.instance.distance[destinationPrevCity + 1][city + 1] + VRPTW.instance.distance[city + 1][destinationNextCity + 1];
+                                newDistance2 = temp.tour_lengths.get(indexTourDestination) - vrptw.instance.distance[destinationPrevCity + 1][destinationNextCity + 1] + vrptw.instance.distance[destinationPrevCity + 1][city + 1] + vrptw.instance.distance[city + 1][destinationNextCity + 1];
 
                                 newTotalDistance = temp.total_tour_length - temp.tour_lengths.get(indexTourSource) - temp.tour_lengths.get(indexTourDestination) + newDistance1 + newDistance2;
                                 temp.total_tour_length = newTotalDistance;
@@ -645,11 +645,11 @@ public class VRPTW_ACS implements Runnable {
                                 //if some improvement is obtained in the total traveled distance
                                 if ((temp.total_tour_length < bestImprovedAnt.total_tour_length)
                                         || (temp.usedVehicles < bestImprovedAnt.usedVehicles)) {
-                                    Ants.copy_from_to(temp, bestImprovedAnt, instance);
+                                    Ants.copy_from_to(temp, bestImprovedAnt, vrptw);
                                 }
 
                                 //restore previous solution constructed by ant
-                                Ants.copy_from_to(a, temp, instance);
+                                Ants.copy_from_to(a, temp, vrptw);
                             }
 
                         }
@@ -682,12 +682,12 @@ public class VRPTW_ACS implements Runnable {
     //skip committed (defined) nodes
     //relocateMultipleRouteIterated is performed multiple times until no further improvement (which minimizes most the
     //total traveled distance or reduces the number of used vehicles) is possible
-    public Ant relocateMultipleRouteIterated(Ant a, VRPTW instance) {
+    public Ant relocateMultipleRouteIterated(Ant a, VRPTW vrptw) {
         boolean feasible = false;
         int city, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
         double newQuantity1, newQuantity2, newDistance1, newDistance2, newTotalDistance;
-        ArrayList<Request> reqList = instance.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         boolean foundImprovement = true, isValid;
         int lastPos;
         double tempNo = Math.pow(10, 10);
@@ -706,7 +706,7 @@ public class VRPTW_ACS implements Runnable {
         }
         improvedAnt.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        improvedAnt.toVisit = instance.getIdAvailableRequests().size();
+        improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         improvedAnt.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             improvedAnt.costObjectives[indexObj] = 0;
@@ -727,7 +727,7 @@ public class VRPTW_ACS implements Runnable {
         }
         temp.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = instance.getIdAvailableRequests().size();
+        temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             temp.costObjectives[indexObj] = 0;
@@ -735,8 +735,8 @@ public class VRPTW_ACS implements Runnable {
         temp.earliestTime = new ArrayList(temp.usedVehicles);
         temp.latestTime = new ArrayList(temp.usedVehicles);
 
-        Ants.copy_from_to(a, improvedAnt, instance);
-        Ants.copy_from_to(a, temp, instance);
+        Ants.copy_from_to(a, improvedAnt, vrptw);
+        Ants.copy_from_to(a, temp, vrptw);
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
@@ -754,8 +754,8 @@ public class VRPTW_ACS implements Runnable {
                 System.out.println("Inside relocateMultipleRouteIterated; count=" + count);
             }
 
-            Ants.copy_from_to(improvedAnt, a, instance);
-            Ants.copy_from_to(improvedAnt, temp, instance);
+            Ants.copy_from_to(improvedAnt, a, vrptw);
+            Ants.copy_from_to(improvedAnt, temp, vrptw);
 
             for (int indexTourSource = 0; indexTourSource < temp.usedVehicles; indexTourSource++) {
                 for (int indexTourDestination = 0; indexTourDestination < temp.usedVehicles; indexTourDestination++) {
@@ -778,7 +778,7 @@ public class VRPTW_ACS implements Runnable {
                         for (int i = startIndexSource; i < temp.tours.get(indexTourSource).size() - 1; i++) {
                             for (int j = startIndexDestination; j < temp.tours.get(indexTourDestination).size(); j++) {
                                 //check if results a feasible solution (i.e. no time window constraint is violated)
-                                feasible = checkFeasibleTourRelocationMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                feasible = checkFeasibleTourRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                                 if (feasible) {
                                     //obtain the neighbour solution corresponding to the relocation operator
                                     city = temp.tours.get(indexTourSource).get(i);
@@ -797,16 +797,16 @@ public class VRPTW_ACS implements Runnable {
 
                                     //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                     //also update the current time of the source and destination tours
-                                    updateBeginServiceRelocationMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                    updateBeginServiceRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
 
                                     //update total traveled distance and lengths of source and destination tours
                                     sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                     sourceNextCity = temp.tours.get(indexTourSource).get(i);
-                                    newDistance1 = temp.tour_lengths.get(indexTourSource) - VRPTW.instance.distance[sourcePrevCity + 1][city + 1] - VRPTW.instance.distance[city + 1][sourceNextCity + 1] + VRPTW.instance.distance[sourcePrevCity + 1][sourceNextCity + 1];
+                                    newDistance1 = temp.tour_lengths.get(indexTourSource) - vrptw.instance.distance[sourcePrevCity + 1][city + 1] - vrptw.instance.distance[city + 1][sourceNextCity + 1] + vrptw.instance.distance[sourcePrevCity + 1][sourceNextCity + 1];
 
                                     destinationPrevCity = temp.tours.get(indexTourDestination).get(j - 1);
                                     destinationNextCity = temp.tours.get(indexTourDestination).get(j + 1);
-                                    newDistance2 = temp.tour_lengths.get(indexTourDestination) - VRPTW.instance.distance[destinationPrevCity + 1][destinationNextCity + 1] + VRPTW.instance.distance[destinationPrevCity + 1][city + 1] + VRPTW.instance.distance[city + 1][destinationNextCity + 1];
+                                    newDistance2 = temp.tour_lengths.get(indexTourDestination) - vrptw.instance.distance[destinationPrevCity + 1][destinationNextCity + 1] + vrptw.instance.distance[destinationPrevCity + 1][city + 1] + vrptw.instance.distance[city + 1][destinationNextCity + 1];
 
                                     newTotalDistance = temp.total_tour_length - temp.tour_lengths.get(indexTourSource) - temp.tour_lengths.get(indexTourDestination) + newDistance1 + newDistance2;
                                     temp.total_tour_length = newTotalDistance;
@@ -830,12 +830,12 @@ public class VRPTW_ACS implements Runnable {
                                     //if some improvement is obtained in the total traveled distance
                                     if (((round1 < round2) && (temp.usedVehicles == improvedAnt.usedVehicles))
                                             || (temp.usedVehicles < improvedAnt.usedVehicles)) {
-                                        Ants.copy_from_to(temp, improvedAnt, instance);
+                                        Ants.copy_from_to(temp, improvedAnt, vrptw);
                                         foundImprovement = true;
                                     }
 
                                     //restore previous solution constructed by ant
-                                    Ants.copy_from_to(a, temp, instance);
+                                    Ants.copy_from_to(a, temp, vrptw);
                                 }
 
                             }
@@ -855,12 +855,12 @@ public class VRPTW_ACS implements Runnable {
     //total traveled distance or reduces the number of used vehicles) is possible
     //try to relocate nodes from the tour having the minimum number of visited nodes, in an attempt
     //to reduce (minimize) the number of tours (i.e. used vehicles)
-    public Ant relocateMultipleRouteIteratedShortest(Ant a, VRPTW instance) {
+    public Ant relocateMultipleRouteIteratedShortest(Ant a, VRPTW vrptw) {
         boolean feasible = false;
         int city, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
         double newQuantity1, newQuantity2, newDistance1, newDistance2, newTotalDistance;
-        ArrayList<Request> reqList = instance.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         boolean foundImprovement = true;
         int indexTourSource, lastPos;
 
@@ -877,7 +877,7 @@ public class VRPTW_ACS implements Runnable {
         }
         improvedAnt.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        improvedAnt.toVisit = instance.getIdAvailableRequests().size();
+        improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         improvedAnt.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             improvedAnt.costObjectives[indexObj] = 0;
@@ -898,7 +898,7 @@ public class VRPTW_ACS implements Runnable {
         }
         temp.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = instance.getIdAvailableRequests().size();
+        temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             temp.costObjectives[indexObj] = 0;
@@ -906,8 +906,8 @@ public class VRPTW_ACS implements Runnable {
         temp.earliestTime = new ArrayList(temp.usedVehicles);
         temp.latestTime = new ArrayList(temp.usedVehicles);
 
-        Ants.copy_from_to(a, improvedAnt, instance);
-        Ants.copy_from_to(a, temp, instance);
+        Ants.copy_from_to(a, improvedAnt, vrptw);
+        Ants.copy_from_to(a, temp, vrptw);
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
@@ -918,8 +918,8 @@ public class VRPTW_ACS implements Runnable {
         while (foundImprovement) {
             foundImprovement = false;
 
-            Ants.copy_from_to(improvedAnt, a, instance);
-            Ants.copy_from_to(a, temp, instance);
+            Ants.copy_from_to(improvedAnt, a, vrptw);
+            Ants.copy_from_to(a, temp, vrptw);
 
             indexTourSource = findShortestTour(a);
             for (int indexTourDestination = 0; indexTourDestination < a.usedVehicles; indexTourDestination++) {
@@ -942,7 +942,7 @@ public class VRPTW_ACS implements Runnable {
                     for (int i = startIndexSource; i < a.tours.get(indexTourSource).size() - 1; i++) {
                         for (int j = startIndexDestination; j < a.tours.get(indexTourDestination).size(); j++) {
                             //check if results a feasible solution (i.e. no time window constraint is violated)
-                            feasible = checkFeasibleTourRelocationMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                            feasible = checkFeasibleTourRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                             if (feasible) {
                                 //obtain the neighbour solution corresponding to the relocation operator
                                 city = temp.tours.get(indexTourSource).get(i);
@@ -956,16 +956,16 @@ public class VRPTW_ACS implements Runnable {
 
                                 //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                 //also update the current time of the source and destination tours
-                                updateBeginServiceRelocationMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                updateBeginServiceRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
 
                                 //update total traveled distance and lengths of source and destination tours
                                 sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                 sourceNextCity = temp.tours.get(indexTourSource).get(i);
-                                newDistance1 = temp.tour_lengths.get(indexTourSource) - VRPTW.instance.distance[sourcePrevCity + 1][city + 1] - VRPTW.instance.distance[city + 1][sourceNextCity + 1] + VRPTW.instance.distance[sourcePrevCity + 1][sourceNextCity + 1];
+                                newDistance1 = temp.tour_lengths.get(indexTourSource) - vrptw.instance.distance[sourcePrevCity + 1][city + 1] - vrptw.instance.distance[city + 1][sourceNextCity + 1] + vrptw.instance.distance[sourcePrevCity + 1][sourceNextCity + 1];
 
                                 destinationPrevCity = temp.tours.get(indexTourDestination).get(j - 1);
                                 destinationNextCity = temp.tours.get(indexTourDestination).get(j + 1);
-                                newDistance2 = temp.tour_lengths.get(indexTourDestination) - VRPTW.instance.distance[destinationPrevCity + 1][destinationNextCity + 1] + VRPTW.instance.distance[destinationPrevCity + 1][city + 1] + VRPTW.instance.distance[city + 1][destinationNextCity + 1];
+                                newDistance2 = temp.tour_lengths.get(indexTourDestination) - vrptw.instance.distance[destinationPrevCity + 1][destinationNextCity + 1] + vrptw.instance.distance[destinationPrevCity + 1][city + 1] + vrptw.instance.distance[city + 1][destinationNextCity + 1];
 
                                 newTotalDistance = temp.total_tour_length - temp.tour_lengths.get(indexTourSource) - temp.tour_lengths.get(indexTourDestination) + newDistance1 + newDistance2;
                                 temp.total_tour_length = newTotalDistance;
@@ -981,12 +981,12 @@ public class VRPTW_ACS implements Runnable {
                                 //if some improvement is obtained in the total traveled distance
                                 if (((temp.total_tour_length < improvedAnt.total_tour_length) && (temp.usedVehicles == improvedAnt.usedVehicles))
                                         || (temp.usedVehicles < improvedAnt.usedVehicles)) {
-                                    Ants.copy_from_to(temp, improvedAnt, instance);
+                                    Ants.copy_from_to(temp, improvedAnt, vrptw);
                                     foundImprovement = true;
                                 }
 
                                 //restore previous solution constructed by ant
-                                Ants.copy_from_to(a, temp, instance);
+                                Ants.copy_from_to(a, temp, vrptw);
                             }
 
                         }
@@ -1034,7 +1034,7 @@ public class VRPTW_ACS implements Runnable {
                 prevCity = a.tours.get(indexTourSource).get(pos - 1);
                 currentCity = a.tours.get(indexTourSource).get(pos);
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -1058,7 +1058,7 @@ public class VRPTW_ACS implements Runnable {
                 prevCity = a.tours.get(indexTourDestination).get(pos - 1);
                 currentCity = a.tours.get(indexTourDestination).get(pos);
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -1083,7 +1083,7 @@ public class VRPTW_ACS implements Runnable {
             if (pos == i) {
                 currentTime = a.beginService[prevCity + 1];
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             currentTime = beginService;
@@ -1100,7 +1100,7 @@ public class VRPTW_ACS implements Runnable {
             if (pos == j) {
                 currentTime = a.beginService[prevCity + 1];
             }
-            distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             currentTime = beginService;
@@ -1113,12 +1113,12 @@ public class VRPTW_ACS implements Runnable {
 
     }
 
-    public Ant exchangeMultipleRoute(Ant a, VRPTW instance) {
+    public Ant exchangeMultipleRoute(Ant a, VRPTW vrptw) {
         boolean feasible = false;
         int city1, city2, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
         double newQuantity1, newQuantity2, newDistance1, newDistance2, newTotalDistance;
-        ArrayList<Request> reqList = instance.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         int lastPos;
 
         Ant bestImprovedAnt = new Ant();
@@ -1134,7 +1134,7 @@ public class VRPTW_ACS implements Runnable {
         }
         bestImprovedAnt.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        bestImprovedAnt.toVisit = instance.getIdAvailableRequests().size();
+        bestImprovedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         bestImprovedAnt.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             bestImprovedAnt.costObjectives[indexObj] = 0;
@@ -1155,7 +1155,7 @@ public class VRPTW_ACS implements Runnable {
         }
         temp.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = instance.getIdAvailableRequests().size();
+        temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             temp.costObjectives[indexObj] = 0;
@@ -1163,8 +1163,8 @@ public class VRPTW_ACS implements Runnable {
         temp.earliestTime = new ArrayList(temp.usedVehicles);
         temp.latestTime = new ArrayList(temp.usedVehicles);
 
-        Ants.copy_from_to(a, bestImprovedAnt, instance);
-        Ants.copy_from_to(a, temp, instance);
+        Ants.copy_from_to(a, bestImprovedAnt, vrptw);
+        Ants.copy_from_to(a, temp, vrptw);
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
@@ -1194,7 +1194,7 @@ public class VRPTW_ACS implements Runnable {
                         for (int j = startIndexDestination; j < a.tours.get(indexTourDestination).size() - 1; j++) {
                             if (indexTourSource <= indexTourDestination) {
                                 //check if results a feasible solution (i.e. no time window constraint is violated)
-                                feasible = checkFeasibleTourExchangeMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                feasible = checkFeasibleTourExchangeMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                                 if (feasible) {
                                     //obtain the neighbour solution corresponding to the relocation operator
                                     city1 = temp.tours.get(indexTourSource).get(i);
@@ -1209,16 +1209,16 @@ public class VRPTW_ACS implements Runnable {
 
                                     //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                     //also update the current time of the source and destination tours
-                                    updateBeginServiceExchangeMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                    updateBeginServiceExchangeMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
 
                                     //update total traveled distance and lengths of source and destination tours
                                     sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                     sourceNextCity = temp.tours.get(indexTourSource).get(i + 1);
-                                    newDistance1 = temp.tour_lengths.get(indexTourSource) - VRPTW.instance.distance[sourcePrevCity + 1][city1 + 1] - VRPTW.instance.distance[city1 + 1][sourceNextCity + 1] + VRPTW.instance.distance[sourcePrevCity + 1][city2 + 1] + VRPTW.instance.distance[city2 + 1][sourceNextCity + 1];
+                                    newDistance1 = temp.tour_lengths.get(indexTourSource) - vrptw.instance.distance[sourcePrevCity + 1][city1 + 1] - vrptw.instance.distance[city1 + 1][sourceNextCity + 1] + vrptw.instance.distance[sourcePrevCity + 1][city2 + 1] + vrptw.instance.distance[city2 + 1][sourceNextCity + 1];
 
                                     destinationPrevCity = temp.tours.get(indexTourDestination).get(j - 1);
                                     destinationNextCity = temp.tours.get(indexTourDestination).get(j + 1);
-                                    newDistance2 = temp.tour_lengths.get(indexTourDestination) - VRPTW.instance.distance[destinationPrevCity + 1][city2 + 1] - VRPTW.instance.distance[city2 + 1][destinationNextCity + 1] + VRPTW.instance.distance[destinationPrevCity + 1][city1 + 1] + VRPTW.instance.distance[city1 + 1][destinationNextCity + 1];
+                                    newDistance2 = temp.tour_lengths.get(indexTourDestination) - vrptw.instance.distance[destinationPrevCity + 1][city2 + 1] - vrptw.instance.distance[city2 + 1][destinationNextCity + 1] + vrptw.instance.distance[destinationPrevCity + 1][city1 + 1] + vrptw.instance.distance[city1 + 1][destinationNextCity + 1];
 
                                     newTotalDistance = temp.total_tour_length - temp.tour_lengths.get(indexTourSource) - temp.tour_lengths.get(indexTourDestination) + newDistance1 + newDistance2;
                                     temp.total_tour_length = newTotalDistance;
@@ -1227,11 +1227,11 @@ public class VRPTW_ACS implements Runnable {
 
                                     //if some improvement is obtained in the total traveled distance
                                     if (temp.total_tour_length < bestImprovedAnt.total_tour_length) {
-                                        Ants.copy_from_to(temp, bestImprovedAnt, instance);
+                                        Ants.copy_from_to(temp, bestImprovedAnt, vrptw);
                                     }
 
                                     //restore previous solution constructed by ant
-                                    Ants.copy_from_to(a, temp, instance);
+                                    Ants.copy_from_to(a, temp, vrptw);
                                 }
                             }
 
@@ -1245,12 +1245,12 @@ public class VRPTW_ACS implements Runnable {
         return bestImprovedAnt;
     }
 
-    public Ant exchangeMultipleRouteIterated(Ant a, VRPTW instance) {
+    public Ant exchangeMultipleRouteIterated(Ant a, VRPTW vrptw) {
         boolean feasible = false;
         int city1, city2, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
         double newQuantity1, newQuantity2, newDistance1, newDistance2, newTotalDistance;
-        ArrayList<Request> reqList = instance.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         boolean foundImprovement = true, isValid;
         int lastPos;
         double tempNo = Math.pow(10, 10);
@@ -1269,7 +1269,7 @@ public class VRPTW_ACS implements Runnable {
         }
         improvedAnt.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        improvedAnt.toVisit = instance.getIdAvailableRequests().size();
+        improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         improvedAnt.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             improvedAnt.costObjectives[indexObj] = 0;
@@ -1290,7 +1290,7 @@ public class VRPTW_ACS implements Runnable {
         }
         temp.visited = new boolean[VRPTW.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = instance.getIdAvailableRequests().size();
+        temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             temp.costObjectives[indexObj] = 0;
@@ -1298,8 +1298,8 @@ public class VRPTW_ACS implements Runnable {
         temp.earliestTime = new ArrayList(temp.usedVehicles);
         temp.latestTime = new ArrayList(temp.usedVehicles);
 
-        Ants.copy_from_to(a, improvedAnt, instance);
-        Ants.copy_from_to(a, temp, instance);
+        Ants.copy_from_to(a, improvedAnt, vrptw);
+        Ants.copy_from_to(a, temp, vrptw);
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
@@ -1316,8 +1316,8 @@ public class VRPTW_ACS implements Runnable {
                 System.out.println("Inside exchangeMultipleRouteIterated; count=" + count);
             }
 
-            Ants.copy_from_to(improvedAnt, a, instance);
-            Ants.copy_from_to(improvedAnt, temp, instance);
+            Ants.copy_from_to(improvedAnt, a, vrptw);
+            Ants.copy_from_to(improvedAnt, temp, vrptw);
 
             for (int indexTourSource = 0; indexTourSource < (temp.usedVehicles - 1); indexTourSource++) {
                 for (int indexTourDestination = indexTourSource + 1; indexTourDestination < temp.usedVehicles; indexTourDestination++) {
@@ -1341,7 +1341,7 @@ public class VRPTW_ACS implements Runnable {
                             for (int j = startIndexDestination; j < temp.tours.get(indexTourDestination).size() - 1; j++) {
                                 if (indexTourSource <= indexTourDestination) {
                                     //check if results a feasible solution (i.e. no time window constraint is violated)
-                                    feasible = checkFeasibleTourExchangeMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                    feasible = checkFeasibleTourExchangeMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                                     if (feasible) {
                                         //obtain the neighbour solution corresponding to the relocation operator
                                         city1 = temp.tours.get(indexTourSource).get(i);
@@ -1361,16 +1361,16 @@ public class VRPTW_ACS implements Runnable {
 
                                         //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                         //also update the current time of the source and destination tours
-                                        updateBeginServiceExchangeMultiple(temp, instance, indexTourSource, indexTourDestination, i, j);
+                                        updateBeginServiceExchangeMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
 
                                         //update total traveled distance and lengths of source and destination tours
                                         sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                         sourceNextCity = temp.tours.get(indexTourSource).get(i + 1);
-                                        newDistance1 = temp.tour_lengths.get(indexTourSource) - VRPTW.instance.distance[sourcePrevCity + 1][city1 + 1] - VRPTW.instance.distance[city1 + 1][sourceNextCity + 1] + VRPTW.instance.distance[sourcePrevCity + 1][city2 + 1] + VRPTW.instance.distance[city2 + 1][sourceNextCity + 1];
+                                        newDistance1 = temp.tour_lengths.get(indexTourSource) - vrptw.instance.distance[sourcePrevCity + 1][city1 + 1] - vrptw.instance.distance[city1 + 1][sourceNextCity + 1] + vrptw.instance.distance[sourcePrevCity + 1][city2 + 1] + vrptw.instance.distance[city2 + 1][sourceNextCity + 1];
 
                                         destinationPrevCity = temp.tours.get(indexTourDestination).get(j - 1);
                                         destinationNextCity = temp.tours.get(indexTourDestination).get(j + 1);
-                                        newDistance2 = temp.tour_lengths.get(indexTourDestination) - VRPTW.instance.distance[destinationPrevCity + 1][city2 + 1] - VRPTW.instance.distance[city2 + 1][destinationNextCity + 1] + VRPTW.instance.distance[destinationPrevCity + 1][city1 + 1] + VRPTW.instance.distance[city1 + 1][destinationNextCity + 1];
+                                        newDistance2 = temp.tour_lengths.get(indexTourDestination) - vrptw.instance.distance[destinationPrevCity + 1][city2 + 1] - vrptw.instance.distance[city2 + 1][destinationNextCity + 1] + vrptw.instance.distance[destinationPrevCity + 1][city1 + 1] + vrptw.instance.distance[city1 + 1][destinationNextCity + 1];
 
                                         newTotalDistance = temp.total_tour_length - temp.tour_lengths.get(indexTourSource) - temp.tour_lengths.get(indexTourDestination) + newDistance1 + newDistance2;
                                         temp.total_tour_length = newTotalDistance;
@@ -1383,12 +1383,12 @@ public class VRPTW_ACS implements Runnable {
                                         round2 = Math.round(improvedAnt.total_tour_length * tempNo) / tempNo;
                                         //if some improvement is obtained in the total traveled distance
                                         if (round1 < round2) {
-                                            Ants.copy_from_to(temp, improvedAnt, instance);
+                                            Ants.copy_from_to(temp, improvedAnt, vrptw);
                                             foundImprovement = true;
                                         }
 
                                         //restore previous solution constructed by ant
-                                        Ants.copy_from_to(a, temp, instance);
+                                        Ants.copy_from_to(a, temp, vrptw);
                                     }
                                 }
 
@@ -1405,7 +1405,7 @@ public class VRPTW_ACS implements Runnable {
 
     //manage some statistical information about the trial, especially if a new best solution
     //(best-so-far) is found and adjust some parameters if a new best solution is found
-    public void update_statistics(VRPTW instance) {
+    public void update_statistics(VRPTW vrptw) {
         int iteration_best_ant;
         double scalingValue, scalledValue = 0.0, sum;
         Object obj = new Object();
@@ -1427,13 +1427,13 @@ public class VRPTW_ACS implements Runnable {
     	    	System.out.println("Before relocateMultipleRouteIterated: The resulted solution is not valid (feasible)..");
     	    }*/
             //apply multiple route relocation and exchange iterated local search operators for the iteration best ant
-            a = relocateMultipleRouteIterated(a, instance);
+            a = relocateMultipleRouteIterated(a, vrptw);
         	/*isValid = Utilities.checkFeasibility(a, instance, false);
     	    if (!isValid) {
     	    	System.out.println("After relocateMultipleRouteIterated: The resulted solution is not valid (feasible)..");
     	    }*/
             //System.out.println("Exited relocateMultipleRouteIterated");
-            a = exchangeMultipleRouteIterated(a, instance);
+            a = exchangeMultipleRouteIterated(a, vrptw);
             //System.out.println("Exited exchangeMultipleRouteIterated");
         	/*isValid = Utilities.checkFeasibility(a, instance, false);
     	    if (!isValid) {
@@ -1453,7 +1453,7 @@ public class VRPTW_ACS implements Runnable {
 			    		Ants.lastCommitted.remove(a.usedVehicles);
 			    	}
 			    }*/
-                Ants.copy_from_to(a, Ants.best_so_far_ant, instance);
+                Ants.copy_from_to(a, Ants.best_so_far_ant, vrptw);
 
                 scalingValue = controller.getScalingValue();
                 if (scalingValue != 0) {
@@ -1739,11 +1739,11 @@ public class VRPTW_ACS implements Runnable {
 
 
     //generate a nearest neighbor tour and compute tour length using only the available nodes (nodes known so far)
-    public double nn_tour(VRPTW instance) {
+    public double nn_tour(VRPTW vrptw) {
         int step, salesman = 0;
         double sum = 0, sum1 = 0, scalledValue = 0, noVehicles = 1.0;
 
-        ants.ant_empty_memory(Ants.ants[0], instance);
+        ants.ant_empty_memory(Ants.ants[0], vrptw);
         step = 0;
 
         for (int i = 0; i < Ants.ants[0].usedVehicles; i++) {
@@ -1756,7 +1756,7 @@ public class VRPTW_ACS implements Runnable {
         //there are still left available (known) cities to be visited
         while (Ants.ants[0].toVisit > 0) {
             salesman = Ants.ants[0].usedVehicles - 1;
-            ants.choose_closest_next(Ants.ants[0], salesman, instance);
+            ants.choose_closest_next(Ants.ants[0], salesman, vrptw);
         }
 
         //System.out.println("Cities to be visited: " + ants[0].toVisit);
@@ -1765,7 +1765,7 @@ public class VRPTW_ACS implements Runnable {
         for (int i = 0; i < nrTours; i++) {
             step = Ants.ants[0].tours.get(i).size();
             Ants.ants[0].tours.get(i).add(step, -1);
-            Ants.ants[0].tour_lengths.set(i, VRPTW.compute_tour_length(Ants.ants[0].tours.get(i)));
+            Ants.ants[0].tour_lengths.set(i, vrptw.compute_tour_length(Ants.ants[0].tours.get(i)));
             sum1 += Ants.ants[0].tour_lengths.get(i);
         }
 
@@ -1773,12 +1773,12 @@ public class VRPTW_ACS implements Runnable {
 
         if (VRPTW_ACS.ls_flag) {
             //ants[0] = VRPTW_ACS.local_search(ants[0], instance);
-            Ants.ants[0] = relocateMultipleRouteIterated(Ants.ants[0], instance);
-            Ants.ants[0] = exchangeMultipleRouteIterated(Ants.ants[0], instance);
+            Ants.ants[0] = relocateMultipleRouteIterated(Ants.ants[0], vrptw);
+            Ants.ants[0] = exchangeMultipleRouteIterated(Ants.ants[0], vrptw);
 
             //compute new distances and update longest tour
             for (int l = 0; l < Ants.ants[0].usedVehicles; l++) {
-                Ants.ants[0].tour_lengths.set(l, VRPTW.compute_tour_length(Ants.ants[0].tours.get(l)));
+                Ants.ants[0].tour_lengths.set(l, vrptw.compute_tour_length(Ants.ants[0].tours.get(l)));
                 sum += Ants.ants[0].tour_lengths.get(l);
             }
             Ants.ants[0].total_tour_length = sum;
@@ -1808,14 +1808,14 @@ public class VRPTW_ACS implements Runnable {
 		}*/
 
         //initialize best solution so far with this solution constructed by the nearest neighbour heuristic
-        Ants.copy_from_to(Ants.ants[0], Ants.best_so_far_ant, instance);
+        Ants.copy_from_to(Ants.ants[0], Ants.best_so_far_ant, vrptw);
 
 		/*for (int j = 0; j < Ants.best_so_far_ant.usedVehicles; j++) {
 			lastCommitted.add(j, 0);
 		}*/
 
         //sum = ants[0].total_tour_length;
-        ants.ant_empty_memory(Ants.ants[0], instance);
+        ants.ant_empty_memory(Ants.ants[0], vrptw);
 
         //return sum;
         //double value = sum1 * noVehicles;
