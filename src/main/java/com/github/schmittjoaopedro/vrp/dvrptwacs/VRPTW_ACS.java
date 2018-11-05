@@ -74,9 +74,13 @@ public class VRPTW_ACS implements Runnable {
      * Germany
      ***************************************************************************/
 
+    private InOut inOut;
+
     private Controller controller;
 
     private Ants ants;
+
+    private Timer timer;
 
     private boolean isRunning = true;
 
@@ -90,18 +94,20 @@ public class VRPTW_ACS implements Runnable {
 
     private VRPTW vrptw;
 
-    public VRPTW_ACS(boolean threadStopped, VRPTW vrptw, Controller controller, Ants ants) {
+    public VRPTW_ACS(boolean threadStopped, VRPTW vrptw, Controller controller, Ants ants, InOut inOut, Timer timer) {
         this.threadRestarted = threadStopped;
         this.vrptw = vrptw;
         this.controller = controller;
         this.ants = ants;
+        this.inOut = inOut;
+        this.timer = timer;
     }
 
     //checks whether termination condition is met
-    static boolean termination_condition() {
+    public boolean termination_condition() {
         //return (((InOut.n_tours >= InOut.max_tours) && (Timer.elapsed_time() >= InOut.max_time)) || (Ants.best_so_far_ant.tour_length <= InOut.optimal));
         //return ((InOut.n_tours >= InOut.max_tours) && (Timer.elapsed_time() >= InOut.max_time));
-        return (InOut.iteration >= InOut.max_iterations);
+        return (inOut.iteration >= inOut.max_iterations);
         //return Timer.elapsed_time() >= InOut.max_time;
     }
 
@@ -296,7 +302,7 @@ public class VRPTW_ACS implements Runnable {
         double longestTourLength;
         int idLongestTour = 0;
         for (k = 0; k < ants.n_ants; k++) {
-            InOut.noSolutions++;
+            inOut.noSolutions++;
             longestTourLength = Double.MIN_VALUE;
             for (int i = 0; i < ants.ants[k].usedVehicles; i++) {
                 step = ants.ants[k].tours.get(i).size();
@@ -318,24 +324,24 @@ public class VRPTW_ACS implements Runnable {
             ants.ants[k].costObjectives[0] = ants.ants[k].total_tour_length;
             ants.ants[k].costObjectives[1] = ants.computeToursAmplitude(ants.ants[k]);
         }
-        InOut.n_tours += (ants.n_ants * ants.ants[0].usedVehicles); //each ant constructs a complete and closed tour
+        inOut.n_tours += (ants.n_ants * ants.ants[0].usedVehicles); //each ant constructs a complete and closed tour
     }
 
     //initialize variables appropriately when starting a trial
     public void init_try(VRPTW vrptw) {
 
-        Timer.start_timers();
-        InOut.time_used = Timer.elapsed_time();
-        InOut.time_passed = InOut.time_used;
+        timer.start_timers();
+        inOut.time_used = timer.elapsed_time();
+        inOut.time_passed = inOut.time_used;
         int noAvailableNodes;
 
         /* Initialize variables concerning statistics etc. */
-        InOut.n_tours = 1;
-        InOut.iteration = 1;
+        inOut.n_tours = 1;
+        inOut.iteration = 1;
         ants.best_so_far_ant.total_tour_length = Double.MAX_VALUE;
         ants.restart_best_ant.total_tour_length = Double.MAX_VALUE;
-        InOut.found_best = 0;
-        InOut.lambda = 0.05;
+        inOut.found_best = 0;
+        inOut.lambda = 0.05;
 
         /*
          * Initialize the Pheromone trails, only if ACS is used, Ants.pheromones
@@ -1445,7 +1451,7 @@ public class VRPTW_ACS implements Runnable {
             if ((a.usedVehicles < ants.best_so_far_ant.usedVehicles) || ((a.usedVehicles == ants.best_so_far_ant.usedVehicles) && (round1 < round2))
                     || ((round1 < round2) && (ants.best_so_far_ant.total_tour_length == Double.MAX_VALUE))) {
 
-                InOut.time_used = Timer.elapsed_time();  //best solution found after time_used
+                inOut.time_used = timer.elapsed_time();  //best solution found after time_used
 			    /*if (a.usedVehicles < Ants.best_so_far_ant.usedVehicles) {
 			    	for (int i = a.usedVehicles; i < Ants.best_so_far_ant.usedVehicles; i++) {
 			    		Ants.lastCommitted.remove(a.usedVehicles);
@@ -1543,12 +1549,12 @@ public class VRPTW_ACS implements Runnable {
         if ((a.usedVehicles < ants.best_so_far_ant.usedVehicles) || (a.usedVehicles == ants.best_so_far_ant.usedVehicles) && (a.total_tour_length < ants.best_so_far_ant.total_tour_length)
                 || ((a.total_tour_length < ants.best_so_far_ant.total_tour_length) && (ants.best_so_far_ant.total_tour_length == Double.MAX_VALUE))) {
 
-            InOut.time_used = Timer.elapsed_time();  //best solution found after time_used
+            inOut.time_used = timer.elapsed_time();  //best solution found after time_used
             ants.copy_from_to(a, ants.best_so_far_ant, instance);
             ants.copy_from_to(a, ants.restart_best_ant, instance);
 
-            InOut.found_best = InOut.iteration;
-            InOut.restart_found_best = InOut.iteration;
+            inOut.found_best = inOut.iteration;
+            inOut.restart_found_best = inOut.iteration;
             //InOut.branching_factor = InOut.node_branching(InOut.lambda);
             //System.out.println("Iter: " + InOut.iteration + " Best ant -> longest tour=" + Ants.best_so_far_ant.longest_tour_length + ", b_fac " + InOut.branching_factor);
             //System.out.println("Iter: " + InOut.iteration + " Best ant -> longest tour=" + Ants.best_so_far_ant.longest_tour_length);
@@ -1559,7 +1565,7 @@ public class VRPTW_ACS implements Runnable {
                 || ((a.total_tour_length < ants.restart_best_ant.total_tour_length) && (ants.restart_best_ant.total_tour_length == Double.MAX_VALUE))) {
             ants.copy_from_to(a, ants.restart_best_ant, instance);
 
-            InOut.restart_found_best = InOut.iteration;
+            inOut.restart_found_best = inOut.iteration;
             //System.out.println("Iter: " + InOut.iteration + " Restart best ant >> No. of used vehicles=" + Ants.restart_best_ant.usedVehicles + " total tours length=" + Ants.restart_best_ant.total_tour_length);
         }
 
@@ -1621,13 +1627,13 @@ public class VRPTW_ACS implements Runnable {
         double initTrail;
 
         if (saveDetailedOutput) {
-            if ((InOut.iteration % 5) == 0) {
+            if ((inOut.iteration % 5) == 0) {
                 //System.out.println("TSP(" + tspIndex + "): best tour length so far " + Ants.best_so_far_ant[tspIndex].tour_length + ", iteration: " + InOut.iteration);
                 longestCost = ants.best_so_far_ant.total_tour_length;
 
                 iterLongestCost.add(longestCost);
                 if (trial == 0) {
-                    iterNumber.add(InOut.iteration);
+                    iterNumber.add(inOut.iteration);
                 }
             }
         }
@@ -1713,7 +1719,7 @@ public class VRPTW_ACS implements Runnable {
             //do the optimization task (work)
             construct_solutions(vrptw);
             //increase evaluations counter
-            InOut.noEvaluations++;
+            inOut.noEvaluations++;
             counter++;
 
 
@@ -1727,7 +1733,7 @@ public class VRPTW_ACS implements Runnable {
             if (counter > 300) {
                 isRunning = false;
             }
-            if (InOut.isDiscreteTime) {
+            if (inOut.isDiscreteTime) {
                 counter = 0;
                 break;
             }

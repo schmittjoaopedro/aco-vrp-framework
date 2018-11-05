@@ -22,8 +22,7 @@ public class DVRPTW_ACS_Test {
     public void dynamic_vrp_time_window_acs_r103_0_1_test() {
         LoggerOutput.reset();
         LoggerOutput.setPrint(true);
-        InOut.isDiscreteTime = true;
-        Controller controller = new Controller("z", rootDirectory, "r103", 0.1, 1);
+        Controller controller = new Controller("z", rootDirectory, "r103", 0.1, 1, true);
         controller.execute();
 
         int lineCount = 0;
@@ -124,8 +123,7 @@ public class DVRPTW_ACS_Test {
     @Test
     public void dynamic_vrp_time_window_acs_r201_0_5_test() {
         LoggerOutput.reset();
-        InOut.isDiscreteTime = true;
-        Controller controller = new Controller("z", rootDirectory, "r201", 0.5, 1);
+        Controller controller = new Controller("z", rootDirectory, "r201", 0.5, 1, true);
         controller.execute();
 
         int lineCount = 0;
@@ -312,8 +310,7 @@ public class DVRPTW_ACS_Test {
     @Test
     public void dynamic_vrp_time_window_acs_c101_0_5_test() {
         LoggerOutput.reset();
-        InOut.isDiscreteTime = true;
-        Controller controller = new Controller("z", rootDirectory, "c101", 0.5, 1);
+        Controller controller = new Controller("z", rootDirectory, "c101", 0.5, 1, true);
         controller.execute();
 
         int lineCount = 0;
@@ -471,8 +468,7 @@ public class DVRPTW_ACS_Test {
     @Test
     public void dynamic_vrp_time_window_acs_c202_0_5_test() {
         LoggerOutput.reset();
-        InOut.isDiscreteTime = true;
-        Controller controller = new Controller("z", rootDirectory, "c202", 0.5, 1);
+        Controller controller = new Controller("z", rootDirectory, "c202", 0.5, 1, true);
         controller.execute();
 
         int lineCount = 0;
@@ -640,8 +636,7 @@ public class DVRPTW_ACS_Test {
     @Test
     public void dynamic_vrp_time_window_acs_rc101_0_1_test() {
         LoggerOutput.reset();
-        InOut.isDiscreteTime = true;
-        Controller controller = new Controller("z", rootDirectory, "rc101", 0.1, 1);
+        Controller controller = new Controller("z", rootDirectory, "rc101", 0.1, 1, true);
         controller.execute();
 
         int lineCount = 0;
@@ -777,8 +772,7 @@ public class DVRPTW_ACS_Test {
     @Test
     public void dynamic_vrp_time_window_acs_rc202_1_0_test() {
         LoggerOutput.reset();
-        InOut.isDiscreteTime = true;
-        Controller controller = new Controller("z", rootDirectory, "rc202", 1.0, 1);
+        Controller controller = new Controller("z", rootDirectory, "rc202", 1.0, 1, true);
         controller.execute();
 
         int lineCount = 0;

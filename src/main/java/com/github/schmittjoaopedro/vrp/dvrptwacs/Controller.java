@@ -19,6 +19,8 @@ public class Controller {
 
     private Utilities utilities;
 
+    private Timer timer;
+
     private InOut inOut;
 
     //number of time slices
@@ -42,15 +44,16 @@ public class Controller {
 
     private VRPTW vrptw;
 
-    public Controller(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed) {
+    public Controller(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed, boolean isDiscreteTime) {
         this.vrpInstance = instanceName;
         this.dynamicLevel = magnitude;
         this.rootDirectory = rootDirectory;
         this.antSystem = antSystem;
         this.utilities = new Utilities();
         this.utilities.setSeed(seed);
-        this.ants = new Ants(this, this.utilities);
-        this.inOut = new InOut();
+        this.inOut = new InOut(isDiscreteTime);
+        this.ants = new Ants(this, this.utilities, this.inOut);
+        this.timer = new Timer(this.inOut);
     }
 
     public double getScalingValue() {
@@ -269,21 +272,21 @@ public class Controller {
             //Ants.total = new double[MTsp.n + 1][MTsp.n + 1];
 
             //VRPTW_ACS.generateInitialWeights();
-            this.vrptw_acs = new VRPTW_ACS(threadStopped, vrptw, this, ants);
+            this.vrptw_acs = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer);
             vrptw_acs.init_try(vrptw);
 
             currentTimeSlice = 1;
             idLastAvailableNode = 0;
             addedNodes = 0;
-            InOut.noEvaluations = 0;
-            InOut.noSolutions = 0;
+            inOut.noEvaluations = 0;
+            inOut.noSolutions = 0;
             double lengthTimeSlice = (double) workingDay / (double) noTimeSlices;
-            startTime = Timer.getCurrentTime();
+            startTime = timer.getCurrentTime();
 
             //start the ant colony
-            VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrptw, this, ants);
+            VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer);
             Thread t = null;
-            if (!InOut.isDiscreteTime) {
+            if (!inOut.isDiscreteTime) {
                 t = new Thread(worker);
                 t.start();
             }
@@ -292,8 +295,8 @@ public class Controller {
             //or there are nodes from the best so far solution that must be marked as committed
             do {
                 //compute current time up to this point
-                InOut.currentTimeSlice = currentTimeSlice;
-                endTime = Timer.getCurrentTime();
+                inOut.currentTimeSlice = currentTimeSlice;
+                endTime = timer.getCurrentTime();
                 currentTime = (endTime - startTime) / 1000.0;
     	   /*if (currentTimeSlice >= 30) {
     		   System.out.println("Trial " + (trial + 1) + " Before if: computed current time=" + currentTime + " currentTimeSlice=" + currentTimeSlice + " lengthTimeSlice=" + lengthTimeSlice);
@@ -442,14 +445,14 @@ public class Controller {
                 //restart the colony thread
                 if (threadStopped) {
                     //restart the ant colony thread
-                    worker = new VRPTW_ACS(threadStopped, vrptw, this, ants);
-                    if (!InOut.isDiscreteTime) {
+                    worker = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer);
+                    if (!inOut.isDiscreteTime) {
                         t = new Thread(worker);
                         t.start();
                     }
                     threadStopped = false;
                 }
-                if (InOut.isDiscreteTime) {
+                if (inOut.isDiscreteTime) {
                     worker.run();
                 }
                 if (currentTime >= workingDay) {
@@ -495,8 +498,8 @@ public class Controller {
                 }
                 LoggerOutput.log(finalRouteStr);
             }
-            LoggerOutput.log("Total number of evaluations: " + InOut.noEvaluations);
-            LoggerOutput.log("Total number of feasible solutions: " + InOut.noSolutions);
+            LoggerOutput.log("Total number of evaluations: " + inOut.noEvaluations);
+            LoggerOutput.log("Total number of feasible solutions: " + inOut.noSolutions);
             //System.out.println("Working day is over..");
             boolean isValid = checkFeasibility(ants.best_so_far_ant, vrptw, true);
             if (isValid) {

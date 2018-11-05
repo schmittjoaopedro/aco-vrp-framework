@@ -60,6 +60,8 @@ public class Ants {
 
     private Controller controller;
 
+    private InOut inOut;
+
     public final int MAX_ANTS = 1024;
     public final int MAX_NEIGHBOURS = 512;
 
@@ -106,9 +108,10 @@ public class Ants {
 
     public double trail_0; /* initial pheromone level in ACS */
 
-    public Ants(Controller controller, Utilities utilities) {
+    public Ants(Controller controller, Utilities utilities, InOut inOut) {
         this.controller = controller;
         this.utilities = utilities;
+        this.inOut = inOut;
     }
 
     public double HEURISTIC(VRPTW vrptw, int m, int n) {
@@ -266,7 +269,7 @@ public class Ants {
                 if (vrptw.getIdAvailableRequests().contains(i - 1) && vrptw.getIdAvailableRequests().contains(j - 1)
                         || ((i == 0) && vrptw.getIdAvailableRequests().contains(j - 1))
                         || ((j == 0) && vrptw.getIdAvailableRequests().contains(i - 1)))	{
-                    pheromone[i][j] = pheromone[i][j] * (1 - InOut.pheromonePreservation) + InOut.pheromonePreservation * trail_0;
+                    pheromone[i][j] = pheromone[i][j] * (1 - inOut.pheromonePreservation) + inOut.pheromonePreservation * trail_0;
                     pheromone[j][i] = pheromone[i][j];
                 }
                 else {
@@ -956,7 +959,7 @@ public class Ants {
                 while (partial_sum <= rnd) {
                     i++;
                     if (i < 0) {
-                        System.out.println("Iter=" + InOut.iteration + " Test: indexSalesman= " + indexSalesman + " i= " + i);
+                        System.out.println("Iter=" + inOut.iteration + " Test: indexSalesman= " + indexSalesman + " i= " + i);
                         partial_sum += Double.POSITIVE_INFINITY;
                         forcedEnd = true;
                         break;

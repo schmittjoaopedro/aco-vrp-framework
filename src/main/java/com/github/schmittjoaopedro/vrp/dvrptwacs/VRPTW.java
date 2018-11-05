@@ -222,7 +222,7 @@ public class VRPTW {
     }
 
     //computes the matrix of all intercity/inter customers distances
-    public double[][] compute_distances(double scalingValue)
+    public double[][] compute_distances(double scalingValue, InOut inOut)
     {
         int i, j;
         int size = n;
@@ -231,16 +231,16 @@ public class VRPTW {
 
         for (i = 0; i < size + 1; i++) {
             for (j = 0; j < size + 1; j++) {
-                if (InOut.distance_type == Distance_type.ATT) {
+                if (inOut.distance_type == Distance_type.ATT) {
                     matrix[i][j] = att_distance(i, j);
-                } else if (InOut.distance_type == Distance_type.CEIL_2D) {
+                } else if (inOut.distance_type == Distance_type.CEIL_2D) {
                     matrix[i][j] = ceil_distance(i, j);
-                } else if (InOut.distance_type == Distance_type.EUC_2D) {
+                } else if (inOut.distance_type == Distance_type.EUC_2D) {
                     matrix[i][j] = euclidianDistance(i, j);
                     if (scalingValue != 0) {
                         matrix[i][j] *= scalingValue;
                     }
-                } else if (InOut.distance_type == Distance_type.GEO) {
+                } else if (inOut.distance_type == Distance_type.GEO) {
                     matrix[i][j] = geo_distance(i, j);
                 }
             }

@@ -53,22 +53,28 @@ public class Timer {
      * Germany
      ***************************************************************************/
 
-    private static long startTime;
+    private long startTime;
+
+    private InOut inOut;
+
+    public Timer(InOut inOut) {
+        this.inOut = inOut;
+    }
 
     //virtual and real time of day are computed and stored to allow at later time the computation of the elapsed time
-    static void start_timers() {
+    public void start_timers() {
         startTime = getCurrentTime();
     }
 
     //return the time used in seconds (virtual or real, depending on type)
-    static double elapsed_time() {
+    public double elapsed_time() {
         return (getCurrentTime() - startTime) / 1000.0;
     }
 
-    static long getCurrentTime() {
-        if (InOut.isDiscreteTime) {
-            double x = InOut.currentTimeSlice;
-            double noSolCur = InOut.noSolutions;
+    public long getCurrentTime() {
+        if (inOut.isDiscreteTime) {
+            double x = inOut.currentTimeSlice;
+            double noSolCur = inOut.noSolutions;
             double noSolEst = getNoSolEstimated(x);
             long time = (long) ((((x - 1) + (noSolCur / noSolEst)) / 50.0) * 100.0 * 1000.0);
             return Math.max(time, 0);
@@ -77,7 +83,7 @@ public class Timer {
         }
     }
 
-    private static double getNoSolEstimated(double x) {
+    public static double getNoSolEstimated(double x) {
         // Calculated with Excel
         return 0.0195 * Math.pow(x, 4.0) - 0.6707 * Math.pow(x, 3.0) + 18.528 * Math.pow(x, 2) + 20.967 * x + 12.558;
     }

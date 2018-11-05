@@ -55,42 +55,50 @@ public class InOut {
 
     enum Distance_type {EUC_2D, CEIL_2D, GEO, ATT};
 
-    static Distance_type distance_type;
+    public Distance_type distance_type;
 
-    static int best_in_try;
-    static int best_found_at;
-    static double time_best_found;
-    static double time_total_run;
+    public int best_in_try;
+    public int best_found_at;
+    public double time_best_found;
+    public double time_total_run;
 
-    static int n_try; /* try counter */
-    static int n_tours; /* counter of number constructed tours */
-    static int iteration; /* iteration counter */
-    static int max_tries; /* maximum number of independent tries */
-    static int max_tours; /* maximum number of tour constructions in one try */
-    public static int max_iterations; /* maximum number of iterations */
+    public int n_try; /* try counter */
+    public int n_tours; /* counter of number constructed tours */
+    public int iteration; /* iteration counter */
+    public int max_tries; /* maximum number of independent tries */
+    public int max_tours; /* maximum number of tour constructions in one try */
+    public int max_iterations; /* maximum number of iterations */
 
-    static double max_time; /* maximal allowed run time of a try */
-    static double time_used; /* time used until some given event */
-    static double time_passed; /* time passed until some moment */
-    static int currentTimeSlice;
-    static int optimal; /* optimal solution or bound to find */
+    public double max_time; /* maximal allowed run time of a try */
+    public double time_used; /* time used until some given event */
+    public double time_passed; /* time passed until some moment */
+    public int currentTimeSlice;
+    public int optimal; /* optimal solution or bound to find */
 
-    static double branching_factor; /* average node branching factor when searching */
-    static double branch_fac; /* If branching factor < branch_fac => update trails */
-    static double lambda; /* Parameter to determine branching factor */
+    public double branching_factor; /* average node branching factor when searching */
+    public double branch_fac; /* If branching factor < branch_fac => update trails */
+    public double lambda; /* Parameter to determine branching factor */
 
-    static int found_best; /* iteration in which best solution is found */
-    static int restart_found_best; /* iteration in which restart-best solution is found */
+    public int found_best; /* iteration in which best solution is found */
+    public int restart_found_best; /* iteration in which restart-best solution is found */
 
-    static String inputFile;
-    static int opt;
+    public String inputFile;
+    public int opt;
 
-    static double pheromonePreservation;
-    static int noEvaluations = 0;
-    static int noSolutions = 0;   /* counter for the total number of feasible solutions */
-    public static boolean isDiscreteTime = false;
+    public double pheromonePreservation;
+    public int noEvaluations = 0;
+    public int noSolutions = 0;   /* counter for the total number of feasible solutions */
+    public boolean isDiscreteTime = false;
 
-    static void set_default_as_parameters(Ants ants) {
+    public InOut() {
+        super();
+    }
+
+    public InOut(boolean isDiscreteTime) {
+        this.isDiscreteTime = isDiscreteTime;
+    }
+
+    public void set_default_as_parameters(Ants ants) {
         /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
         ants.n_ants = -1;
         ants.nn_ants = 20;
@@ -101,7 +109,7 @@ public class InOut {
         ants.q_0 = 0.0;
     }
 
-    static void set_default_acs_parameters(Ants ants) {
+    public void set_default_acs_parameters(Ants ants) {
         /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
         ants.n_ants = 10;   //10  //1
         //Ants.nn_ants = 15;
@@ -117,7 +125,7 @@ public class InOut {
     }
 
     //set default parameter settings
-    static void set_default_parameters(Ants ants) {
+    public void set_default_parameters(Ants ants) {
         /* number of ants and number of nearest neighbors in tour construction */
         ants.n_ants = 25;
         ants.nn_ants = 20;
@@ -178,7 +186,7 @@ public class InOut {
         return (avg / (double) ((vrptw.n + 1) * 2));
     }
 
-    public static float average(int[] array) {
+    public float average(int[] array) {
         int sum = 0;
 
 
@@ -188,7 +196,7 @@ public class InOut {
         return (float)sum / (float)array.length;
     }
 
-    public static float variance(int[] array){
+    public float variance(int[] array){
         double var = 0;
 
         double average = average(array);
@@ -202,13 +210,13 @@ public class InOut {
     public void init_program(String antSystem, int runNumber, VRPTW vrptw, double scalingValue, Ants ants) {
 
         set_default_parameters(ants);
-        Parse.parse_commandline(antSystem, runNumber, ants);
+        Parse.parse_commandline(antSystem, runNumber, ants, this);
 
         //compute distance matrix between cities and allocate ants
         if (ants.n_ants < 0)
             ants.n_ants = vrptw.n;
 
-        vrptw.instance.distance = vrptw.compute_distances(scalingValue);
+        vrptw.instance.distance = vrptw.compute_distances(scalingValue, this);
         ants.allocate_ants(vrptw);
     }
 
