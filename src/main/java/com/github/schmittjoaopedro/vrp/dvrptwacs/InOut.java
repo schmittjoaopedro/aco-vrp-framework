@@ -150,9 +150,9 @@ public class InOut {
         double avg;
         double[] num_branches;
 
-        num_branches = new double[VRPTW.n + 1];
+        num_branches = new double[vrptw.n + 1];
 
-        for (m = 0; m < (VRPTW.n + 1); m++) {
+        for (m = 0; m < (vrptw.n + 1); m++) {
             /* determine max, min to calculate the cutoff value */
             min = Ants.pheromone[m][vrptw.instance.nn_list[m][0]];
             max = Ants.pheromone[m][vrptw.instance.nn_list[m][0]];
@@ -170,12 +170,12 @@ public class InOut {
             }
         }
         avg = 0.;
-        for (m = 0; m < (VRPTW.n + 1); m++) {
+        for (m = 0; m < (vrptw.n + 1); m++) {
             avg += num_branches[m];
         }
 
         /* Norm branching factor to minimal value 1 */
-        return (avg / (double) ((VRPTW.n + 1) * 2));
+        return (avg / (double) ((vrptw.n + 1) * 2));
     }
 
     public static float average(int[] array) {
@@ -206,7 +206,7 @@ public class InOut {
 
         //compute distance matrix between cities and allocate ants
         if (Ants.n_ants < 0)
-            Ants.n_ants = VRPTW.n;
+            Ants.n_ants = vrptw.n;
 
         vrptw.instance.distance = vrptw.compute_distances(scalingValue);
         Ants.allocate_ants(vrptw);

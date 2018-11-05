@@ -90,11 +90,11 @@ public class VRPTW_ACS implements Runnable {
     //indicates whether the thread was restarted from outside
     private boolean threadRestarted;
 
-    private VRPTW vrpInstance;
+    private VRPTW vrptw;
 
-    public VRPTW_ACS(boolean threadStopped, VRPTW vrpInstance_, Controller controller, Ants ants) {
+    public VRPTW_ACS(boolean threadStopped, VRPTW vrptw, Controller controller, Ants ants) {
         this.threadRestarted = threadStopped;
-        this.vrpInstance = vrpInstance_;
+        this.vrptw = vrptw;
         this.controller = controller;
         this.ants = ants;
     }
@@ -324,7 +324,7 @@ public class VRPTW_ACS implements Runnable {
     }
 
     //initialize variables appropriately when starting a trial
-    public void init_try(VRPTW instance) {
+    public void init_try(VRPTW vrptw) {
 
         Timer.start_timers();
         InOut.time_used = Timer.elapsed_time();
@@ -344,24 +344,24 @@ public class VRPTW_ACS implements Runnable {
          * have to be initialized differently
          */
         if (!(Ants.acs_flag)) {
-            Ants.trail_0 = 1. / ((Ants.rho) * nn_tour(instance));
+            Ants.trail_0 = 1. / ((Ants.rho) * nn_tour(vrptw));
             /*
              * in the original papers on Ant System it is not exactly defined what the
              * initial value of the Ants.pheromones is. Here we set it to some
              * small constant, analogously as done in MAX-MIN Ant System.
              */
-            Ants.init_pheromone_trails(Ants.trail_0);
+            Ants.init_pheromone_trails(vrptw, Ants.trail_0);
         }
         if (Ants.acs_flag) {
-            noAvailableNodes = instance.getIdAvailableRequests().size();
+            noAvailableNodes = vrptw.getIdAvailableRequests().size();
             //if no cities are available except the depot, set the pheromone levels to a static value
             if (noAvailableNodes == 0) {
                 Ants.trail_0 = 1.0;
             }
             else {
-                Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) nn_tour(instance));
+                Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) nn_tour(vrptw));
             }
-            Ants.init_pheromone_trails(Ants.trail_0);
+            Ants.init_pheromone_trails(vrptw, Ants.trail_0);
         }
 
         /* Calculate combined information Ants.pheromone times heuristic information */
@@ -390,16 +390,16 @@ public class VRPTW_ACS implements Runnable {
         return a;
     }
 
-    static boolean checkFeasibleTourRelocationMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
+    static boolean checkFeasibleTourRelocationMultiple(Ant a, VRPTW vrptw, int indexTourSource, int indexTourDestination, int i, int j) {
         boolean isFeasible = true;
         int city, previousCity, prevCity, nextCity, currentCity;
         double currentQuantity, arrivalTime, currentTime = 0.0, beginService, earliestTime, latestTime, distance;
-        ArrayList<Request> reqList = vrp.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         double value1, value2, value3, value4;
 
         city = a.tours.get(indexTourSource).get(i);
         currentQuantity = a.currentQuantity.get(indexTourDestination) + reqList.get(city + 1).getDemand();
-        if (currentQuantity > vrp.getCapacity()) {
+        if (currentQuantity > vrptw.getCapacity()) {
             return false;
         }
 
@@ -414,7 +414,7 @@ public class VRPTW_ACS implements Runnable {
                 prevCity = a.tours.get(indexTourSource).get(pos - 1);
                 currentCity = a.tours.get(indexTourSource).get(pos);
             }
-            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrptw.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -448,14 +448,14 @@ public class VRPTW_ACS implements Runnable {
         previousCity = a.tours.get(indexTourDestination).get(j - 1);
         nextCity = a.tours.get(indexTourDestination).get(j);
 
-        arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + vrp.instance.distance[previousCity + 1][city + 1];
+        arrivalTime = a.beginService[previousCity + 1] + reqList.get(previousCity + 1).getServiceTime() + vrptw.instance.distance[previousCity + 1][city + 1];
         beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
         if (beginService > reqList.get(city + 1).getEndWindow()) {
             return false;
         }
         currentTime = beginService;
 
-        arrivalTime = currentTime + reqList.get(city + 1).getServiceTime() + vrp.instance.distance[city + 1][nextCity + 1];
+        arrivalTime = currentTime + reqList.get(city + 1).getServiceTime() + vrptw.instance.distance[city + 1][nextCity + 1];
         beginService = Math.max(arrivalTime, reqList.get(nextCity + 1).getStartWindow());
         if (beginService > reqList.get(nextCity + 1).getEndWindow()) {
             return false;
@@ -466,7 +466,7 @@ public class VRPTW_ACS implements Runnable {
         for (int pos = j + 1; pos < a.tours.get(indexTourDestination).size(); pos++) {
             prevCity = a.tours.get(indexTourDestination).get(pos - 1);
             currentCity = a.tours.get(indexTourDestination).get(pos);
-            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
+            distance = vrptw.instance.distance[prevCity + 1][currentCity + 1];
             arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
@@ -536,7 +536,7 @@ public class VRPTW_ACS implements Runnable {
         Ant bestImprovedAnt = new Ant();
         bestImprovedAnt.tours = new ArrayList();
         bestImprovedAnt.tour_lengths = new ArrayList<Double>();
-        bestImprovedAnt.beginService = new double[VRPTW.n + 1];
+        bestImprovedAnt.beginService = new double[vrptw.n + 1];
         bestImprovedAnt.currentTime = new ArrayList<Double>();
         bestImprovedAnt.currentQuantity = new ArrayList<Double>();
         bestImprovedAnt.usedVehicles = 1;
@@ -544,7 +544,7 @@ public class VRPTW_ACS implements Runnable {
             bestImprovedAnt.tours.add(j, new ArrayList<Integer>());
             bestImprovedAnt.tour_lengths.add(j, 0.0);
         }
-        bestImprovedAnt.visited = new boolean[VRPTW.n];
+        bestImprovedAnt.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         bestImprovedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         bestImprovedAnt.costObjectives = new double[2];
@@ -557,7 +557,7 @@ public class VRPTW_ACS implements Runnable {
         Ant temp = new Ant();
         temp.tours = new ArrayList();
         temp.tour_lengths = new ArrayList<Double>();
-        temp.beginService = new double[VRPTW.n + 1];
+        temp.beginService = new double[vrptw.n + 1];
         temp.currentTime = new ArrayList<Double>();
         temp.currentQuantity = new ArrayList<Double>();
         temp.usedVehicles = 1;
@@ -565,7 +565,7 @@ public class VRPTW_ACS implements Runnable {
             temp.tours.add(j, new ArrayList<Integer>());
             temp.tour_lengths.add(j, 0.0);
         }
-        temp.visited = new boolean[VRPTW.n];
+        temp.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
@@ -696,7 +696,7 @@ public class VRPTW_ACS implements Runnable {
         Ant improvedAnt = new Ant();
         improvedAnt.tours = new ArrayList();
         improvedAnt.tour_lengths = new ArrayList<Double>();
-        improvedAnt.beginService = new double[VRPTW.n + 1];
+        improvedAnt.beginService = new double[vrptw.n + 1];
         improvedAnt.currentTime = new ArrayList<Double>();
         improvedAnt.currentQuantity = new ArrayList<Double>();
         improvedAnt.usedVehicles = 1;
@@ -704,7 +704,7 @@ public class VRPTW_ACS implements Runnable {
             improvedAnt.tours.add(j, new ArrayList<Integer>());
             improvedAnt.tour_lengths.add(j, 0.0);
         }
-        improvedAnt.visited = new boolean[VRPTW.n];
+        improvedAnt.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         improvedAnt.costObjectives = new double[2];
@@ -717,7 +717,7 @@ public class VRPTW_ACS implements Runnable {
         Ant temp = new Ant();
         temp.tours = new ArrayList();
         temp.tour_lengths = new ArrayList<Double>();
-        temp.beginService = new double[VRPTW.n + 1];
+        temp.beginService = new double[vrptw.n + 1];
         temp.currentTime = new ArrayList<Double>();
         temp.currentQuantity = new ArrayList<Double>();
         temp.usedVehicles = 1;
@@ -725,7 +725,7 @@ public class VRPTW_ACS implements Runnable {
             temp.tours.add(j, new ArrayList<Integer>());
             temp.tour_lengths.add(j, 0.0);
         }
-        temp.visited = new boolean[VRPTW.n];
+        temp.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
@@ -867,7 +867,7 @@ public class VRPTW_ACS implements Runnable {
         Ant improvedAnt = new Ant();
         improvedAnt.tours = new ArrayList();
         improvedAnt.tour_lengths = new ArrayList<Double>();
-        improvedAnt.beginService = new double[VRPTW.n + 1];
+        improvedAnt.beginService = new double[vrptw.n + 1];
         improvedAnt.currentTime = new ArrayList<Double>();
         improvedAnt.currentQuantity = new ArrayList<Double>();
         improvedAnt.usedVehicles = 1;
@@ -875,7 +875,7 @@ public class VRPTW_ACS implements Runnable {
             improvedAnt.tours.add(j, new ArrayList<Integer>());
             improvedAnt.tour_lengths.add(j, 0.0);
         }
-        improvedAnt.visited = new boolean[VRPTW.n];
+        improvedAnt.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         improvedAnt.costObjectives = new double[2];
@@ -888,7 +888,7 @@ public class VRPTW_ACS implements Runnable {
         Ant temp = new Ant();
         temp.tours = new ArrayList();
         temp.tour_lengths = new ArrayList<Double>();
-        temp.beginService = new double[VRPTW.n + 1];
+        temp.beginService = new double[vrptw.n + 1];
         temp.currentTime = new ArrayList<Double>();
         temp.currentQuantity = new ArrayList<Double>();
         temp.usedVehicles = 1;
@@ -896,7 +896,7 @@ public class VRPTW_ACS implements Runnable {
             temp.tours.add(j, new ArrayList<Integer>());
             temp.tour_lengths.add(j, 0.0);
         }
-        temp.visited = new boolean[VRPTW.n];
+        temp.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
@@ -1124,7 +1124,7 @@ public class VRPTW_ACS implements Runnable {
         Ant bestImprovedAnt = new Ant();
         bestImprovedAnt.tours = new ArrayList();
         bestImprovedAnt.tour_lengths = new ArrayList<Double>();
-        bestImprovedAnt.beginService = new double[VRPTW.n + 1];
+        bestImprovedAnt.beginService = new double[vrptw.n + 1];
         bestImprovedAnt.currentTime = new ArrayList<Double>();
         bestImprovedAnt.currentQuantity = new ArrayList<Double>();
         bestImprovedAnt.usedVehicles = 1;
@@ -1132,7 +1132,7 @@ public class VRPTW_ACS implements Runnable {
             bestImprovedAnt.tours.add(j, new ArrayList<Integer>());
             bestImprovedAnt.tour_lengths.add(j, 0.0);
         }
-        bestImprovedAnt.visited = new boolean[VRPTW.n];
+        bestImprovedAnt.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         bestImprovedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         bestImprovedAnt.costObjectives = new double[2];
@@ -1145,7 +1145,7 @@ public class VRPTW_ACS implements Runnable {
         Ant temp = new Ant();
         temp.tours = new ArrayList();
         temp.tour_lengths = new ArrayList<Double>();
-        temp.beginService = new double[VRPTW.n + 1];
+        temp.beginService = new double[vrptw.n + 1];
         temp.currentTime = new ArrayList<Double>();
         temp.currentQuantity = new ArrayList<Double>();
         temp.usedVehicles = 1;
@@ -1153,7 +1153,7 @@ public class VRPTW_ACS implements Runnable {
             temp.tours.add(j, new ArrayList<Integer>());
             temp.tour_lengths.add(j, 0.0);
         }
-        temp.visited = new boolean[VRPTW.n];
+        temp.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
@@ -1259,7 +1259,7 @@ public class VRPTW_ACS implements Runnable {
         Ant improvedAnt = new Ant();
         improvedAnt.tours = new ArrayList();
         improvedAnt.tour_lengths = new ArrayList<Double>();
-        improvedAnt.beginService = new double[VRPTW.n + 1];
+        improvedAnt.beginService = new double[vrptw.n + 1];
         improvedAnt.currentTime = new ArrayList<Double>();
         improvedAnt.currentQuantity = new ArrayList<Double>();
         improvedAnt.usedVehicles = 1;
@@ -1267,7 +1267,7 @@ public class VRPTW_ACS implements Runnable {
             improvedAnt.tours.add(j, new ArrayList<Integer>());
             improvedAnt.tour_lengths.add(j, 0.0);
         }
-        improvedAnt.visited = new boolean[VRPTW.n];
+        improvedAnt.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
         improvedAnt.costObjectives = new double[2];
@@ -1280,7 +1280,7 @@ public class VRPTW_ACS implements Runnable {
         Ant temp = new Ant();
         temp.tours = new ArrayList();
         temp.tour_lengths = new ArrayList<Double>();
-        temp.beginService = new double[VRPTW.n + 1];
+        temp.beginService = new double[vrptw.n + 1];
         temp.currentTime = new ArrayList<Double>();
         temp.currentQuantity = new ArrayList<Double>();
         temp.usedVehicles = 1;
@@ -1288,7 +1288,7 @@ public class VRPTW_ACS implements Runnable {
             temp.tours.add(j, new ArrayList<Integer>());
             temp.tour_lengths.add(j, 0.0);
         }
-        temp.visited = new boolean[VRPTW.n];
+        temp.visited = new boolean[vrptw.n];
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         temp.toVisit = vrptw.getIdAvailableRequests().size();
         temp.costObjectives = new double[2];
@@ -1673,12 +1673,12 @@ public class VRPTW_ACS implements Runnable {
     }
 
     //manage global Ants.pheromone trail update for the ACO algorithms
-    static void pheromone_trail_update()
+    static void pheromone_trail_update(VRPTW vrptw)
     {
         //Simulate the Ants.pheromone evaporation of all Ants.pheromones; this is not necessary for ACS
         if (Ants.as_flag) {
             /* evaporate all Ants.pheromone trails */
-            Ants.evaporation();
+            Ants.evaporation(vrptw);
         }
 
         /* Next, apply the Ants.pheromone deposit for the various ACO algorithms */
@@ -1706,14 +1706,14 @@ public class VRPTW_ACS implements Runnable {
             //the thread was restarted (i.e. it was previously stopped and started again)
             if (threadRestarted) {
                 //compute the new value for the initial pheromone trail based on the current best solution so far
-                int noAvailableNodes = vrpInstance.getIdAvailableRequests().size();
+                int noAvailableNodes = vrptw.getIdAvailableRequests().size();
                 Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) Ants.best_so_far_ant.total_tour_length);
 
                 //preserve a certain amount of the pheromones from the previous run of the ant colony
-                Ants.preservePheromones(vrpInstance);
+                Ants.preservePheromones(vrptw);
             }
             //do the optimization task (work)
-            construct_solutions(vrpInstance);
+            construct_solutions(vrptw);
             //increase evaluations counter
             InOut.noEvaluations++;
             counter++;
@@ -1722,8 +1722,8 @@ public class VRPTW_ACS implements Runnable {
 	    	/*if (ls_flag) {
 				apply_local_search(vrpInstance);
 			}	*/
-            update_statistics(vrpInstance);
-            pheromone_trail_update();
+            update_statistics(vrptw);
+            pheromone_trail_update(vrptw);
             search_control_and_statistics();
             //force the ant colony thread to stop its execution
             if (counter > 300) {

@@ -221,7 +221,7 @@ public class Controller {
             LoggerOutput.log("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: " + dvrptwInstance);
             //include in the counting also the depot, which is assumed to be apriori known
             countApriori = vrptw.getIdAvailableRequests().size();
-            LoggerOutput.log("No. of customers' requests (except the depot): " + VRPTW.n + ", among which " + countApriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
+            LoggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countApriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
 
             //compute the scaling value with which we can scale all time-related values
             Request depotReq = vrptw.getRequests().get(0);
@@ -262,7 +262,7 @@ public class Controller {
             vrptw.instance.nn_list = result[0];
             vrptw.instance.nn_list_all = result[1];
 
-            Ants.pheromone = new double[VRPTW.n + 1][VRPTW.n + 1];
+            Ants.pheromone = new double[vrptw.n + 1][vrptw.n + 1];
             //Ants.total = new double[MTsp.n + 1][MTsp.n + 1];
 
             //VRPTW_ACS.generateInitialWeights();

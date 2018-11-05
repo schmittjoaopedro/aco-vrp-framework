@@ -77,25 +77,7 @@ public class VRPTW {
     private ArrayList<Request> dynamicRequests;
 
     //number of cities/customers, except the depot
-    static int n;
-
-    //number of salesmen from the mTSP instance - the number of vehicles to be used in the solution of the VRPTW instance
-    //static int m;
-
-    static class Point {
-        double x;
-        double y;
-    }
-
-    public static class Problem {
-        String name; /* instance name */
-        int n_near; /* number of nearest neighbors */
-        Point[] nodes; /* array of classes containing coordinates of nodes */
-        double[][] distance; /* distance matrix: distance[i][j] gives distance */
-        int[][] nn_list; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors */
-        int[][] nn_list_all; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors including the depot*/
-
-    }
+    public int n;
 
     public Problem instance;
 
@@ -157,7 +139,7 @@ public class VRPTW {
         this.dynamicRequests = dynamicRequests;
     }
 
-    static double dtrunc(double x) {
+    public double dtrunc(double x) {
         int k;
 
         k = (int) x;
@@ -243,7 +225,7 @@ public class VRPTW {
     public double[][] compute_distances(double scalingValue)
     {
         int i, j;
-        int size = VRPTW.n;
+        int size = n;
         //include also the depot city in the distance matrix: it will correspond to index 0 for row and column
         double matrix[][] = new double[size + 1][size + 1];
 
@@ -270,7 +252,7 @@ public class VRPTW {
     public int[][][] compute_nn_lists() {
         int i, node, nn, count1, count2;
 
-        int size = VRPTW.n;
+        int size = n;
         double[] distance_vector = new double[size + 1];
         int[] help_vector = new int[size + 1];
 

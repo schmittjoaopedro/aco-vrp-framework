@@ -28,7 +28,7 @@ public class DataReader {
      */
     public VRPTW read(Utilities utilities) {
         VRPTW vrp = new VRPTW(utilities);
-        vrp.instance = new VRPTW.Problem();
+        vrp.instance = new Problem();
         ArrayList<Request> reqList = new ArrayList<Request>();
         ArrayList<Request> dynamicReqList = new ArrayList<Request>();
         ArrayList<Integer> availableNodes = new ArrayList<Integer>();
@@ -73,11 +73,11 @@ public class DataReader {
                 vrp.setDynamicRequests(dynamicReqList);
                 vrp.setIdAvailableRequests(availableNodes);
                 int nrCustomerRequests = reqList.size() - 1;
-                VRPTW.n = nrCustomerRequests;
+                vrp.n = nrCustomerRequests;
 
-                vrp.instance.nodes = new VRPTW.Point[reqList.size()];
+                vrp.instance.nodes = new Point[reqList.size()];
                 for (int i = 0; i < reqList.size(); i++) {
-                    vrp.instance.nodes[i] = new VRPTW.Point();
+                    vrp.instance.nodes[i] = new Point();
                     Request r = reqList.get(i);
                     vrp.instance.nodes[i].x = r.getxCoord();
                     vrp.instance.nodes[i].y = r.getyCoord();
