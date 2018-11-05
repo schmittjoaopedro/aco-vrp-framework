@@ -115,7 +115,7 @@ public class VRPTW_ACS implements Runnable {
         //return Timer.elapsed_time() >= InOut.max_time;
     }
 
-    static boolean isFeasible(VRPTW vrp, Ant a, int city, double beginService, double beginServiceDepot, int indexSalesman) {
+    public boolean isFeasible(VRPTW vrp, Ant a, int city, double beginService, double beginServiceDepot, int indexSalesman) {
         boolean ok = false;
         double currentQuantity;
         ArrayList<Request> reqList = vrp.getRequests();
@@ -290,7 +290,7 @@ public class VRPTW_ACS implements Runnable {
                     //choose for each ant in a probabilistic way by some type of roullette wheel selection
                     //which salesman to consider next, that will visit a city
                     //salesman = (int)(Math.random() * MTsp.m);
-                    values = ants.neighbour_choose_and_move_to_next(ants.ants[k], vrptw);
+                    values = ants.neighbour_choose_and_move_to_next(ants.ants[k], vrptw, this);
                     if (values[0] != -1) {
                         if (ants.acs_flag)
                             ants.local_acs_pheromone_update(ants.ants[k], values[1]);
@@ -397,7 +397,7 @@ public class VRPTW_ACS implements Runnable {
         return a;
     }
 
-    static boolean checkFeasibleTourRelocationMultiple(Ant a, VRPTW vrptw, int indexTourSource, int indexTourDestination, int i, int j) {
+    public boolean checkFeasibleTourRelocationMultiple(Ant a, VRPTW vrptw, int indexTourSource, int indexTourDestination, int i, int j) {
         boolean isFeasible = true;
         int city, previousCity, prevCity, nextCity, currentCity;
         double currentQuantity, arrivalTime, currentTime = 0.0, beginService, earliestTime, latestTime, distance;
@@ -484,7 +484,7 @@ public class VRPTW_ACS implements Runnable {
         return isFeasible;
     }
 
-    static void updateBeginServiceRelocationMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
+    public void updateBeginServiceRelocationMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
         int currentCity, prevCity;
         double currentTime = 0.0;
         double distance, arrivalTime, beginService = 0.0;
@@ -668,7 +668,7 @@ public class VRPTW_ACS implements Runnable {
     }
 
     //find the index of the tour having the smallest number of visited nodes (cities/customers)
-    static int findShortestTour(Ant a) {
+    public int findShortestTour(Ant a) {
         int indexTour = 0;
         int min = Integer.MAX_VALUE;
 
@@ -1000,7 +1000,7 @@ public class VRPTW_ACS implements Runnable {
         return improvedAnt;
     }
 
-    static boolean checkFeasibleTourExchangeMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
+    public boolean checkFeasibleTourExchangeMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
         boolean isFeasible = true;
         int currentCity, prevCity, city1, city2;
         double currentTime = 0.0;
@@ -1067,7 +1067,7 @@ public class VRPTW_ACS implements Runnable {
 
     }
 
-    static void updateBeginServiceExchangeMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
+    public void updateBeginServiceExchangeMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
         int currentCity, prevCity;
         double currentTime = 0.0;
         double distance, arrivalTime, beginService = 0.0;
@@ -1559,15 +1559,12 @@ public class VRPTW_ACS implements Runnable {
 
 		/*if (!saveIterCosts) {
 			//compute non-dominated set of solutions (iteration non-dominated front)
-			ParetoFront.iterationPareto.clear();
 			Ant copyAnt;
 			for (int i = 0; i < Ants.n_ants; i++) {
 				copyAnt = Ants.copyAnt(Ants.ants[i]);
-				ParetoFront.paretoUpdateWithSolution(ParetoFront.iterationPareto, copyAnt);
 			}
 
 			//update BestSoFarPareto external set
-			ParetoFront.paretoUpdate(ParetoFront.bestSoFarPareto, ParetoFront.iterationPareto);
 		}*/
 
 
@@ -1575,7 +1572,7 @@ public class VRPTW_ACS implements Runnable {
 
     //occasionally compute some statistics
     //at every 5 iterations save the value of the longest cost of the solution/tour given by the best so far ant
-    static void search_control_and_statistics() {
+    public void search_control_and_statistics() {
         double longestCost;
         double initTrail;
 
@@ -1745,7 +1742,7 @@ public class VRPTW_ACS implements Runnable {
         //there are still left available (known) cities to be visited
         while (ants.ants[0].toVisit > 0) {
             salesman = ants.ants[0].usedVehicles - 1;
-            ants.choose_closest_next(ants.ants[0], salesman, vrptw);
+            ants.choose_closest_next(ants.ants[0], salesman, vrptw, this);
         }
 
         //System.out.println("Cities to be visited: " + ants[0].toVisit);

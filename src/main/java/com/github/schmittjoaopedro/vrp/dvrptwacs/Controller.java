@@ -399,7 +399,7 @@ public class Controller {
 
                             //try to add as many unvisited cities/nodes as possible in this newly created tour
                             //following the nearest neighbour heuristic
-                            ants.choose_closest_nn(ants.best_so_far_ant, indexTour, vrptw);
+                            ants.choose_closest_nn(ants.best_so_far_ant, indexTour, vrptw, vrptw_acs);
                             //System.out.println("After adding new tour & NN tour construction: Cities to be visited in the best so far solution: " + Ants.best_so_far_ant.toVisit);
 
                             //try to insert remaining cities using insertion heuristic

@@ -231,7 +231,7 @@ public class Utilities {
         this.amplitude = amplitude;
     }
 
-    public static ArrayList<ArrayList<Integer>> readSolution(String fileName) {
+    public ArrayList<ArrayList<Integer>> readSolution(String fileName) {
         File file = new File("input/" + fileName);
         BufferedReader in = null;
         int value;

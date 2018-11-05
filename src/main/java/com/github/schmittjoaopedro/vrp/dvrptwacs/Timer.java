@@ -83,7 +83,7 @@ public class Timer {
         }
     }
 
-    public static double getNoSolEstimated(double x) {
+    public double getNoSolEstimated(double x) {
         // Calculated with Excel
         return 0.0195 * Math.pow(x, 4.0) - 0.6707 * Math.pow(x, 3.0) + 18.528 * Math.pow(x, 2) + 20.967 * x + 12.558;
     }
