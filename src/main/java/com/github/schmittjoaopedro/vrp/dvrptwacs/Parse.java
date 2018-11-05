@@ -1,10 +1,5 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
 /**
  * ACO algorithms for the TSP
  *
@@ -37,7 +32,7 @@ public class Parse {
      * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
      ***************************************************************************/
 
-    static void parse_commandline(String antSystem, int runNumber, Ants ants, InOut inOut) {
+    public void parse_commandline(String antSystem, int runNumber, Ants ants, InOut inOut, LoggerOutput loggerOutput) {
 
         // Choice of ONE algorithm
         int algorithmCount = 0;
@@ -58,12 +53,12 @@ public class Parse {
         if (antSystem.equals("u")) {
             ants.as_flag = true;
             inOut.set_default_as_parameters(ants);
-            LoggerOutput.log("\nRun basic Ant System #" + (runNumber + 1));
+            loggerOutput.log("\nRun basic Ant System #" + (runNumber + 1));
         }
         if (antSystem.equals("z")) {
             ants.acs_flag = true;
             inOut.set_default_acs_parameters(ants);
-            LoggerOutput.log("\nRun Ant Colony System #" + (runNumber + 1));
+            loggerOutput.log("\nRun Ant Colony System #" + (runNumber + 1));
         }
 
     }

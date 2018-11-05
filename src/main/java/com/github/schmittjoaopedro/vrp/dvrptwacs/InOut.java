@@ -207,10 +207,11 @@ public class InOut {
     }
 
     //initialize the program
-    public void init_program(String antSystem, int runNumber, VRPTW vrptw, double scalingValue, Ants ants) {
+    public void init_program(String antSystem, int runNumber, VRPTW vrptw, double scalingValue, Ants ants, LoggerOutput loggerOutput) {
 
         set_default_parameters(ants);
-        Parse.parse_commandline(antSystem, runNumber, ants, this);
+        Parse parse = new Parse();
+        parse.parse_commandline(antSystem, runNumber, ants, this, loggerOutput);
 
         //compute distance matrix between cities and allocate ants
         if (ants.n_ants < 0)

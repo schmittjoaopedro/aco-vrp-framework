@@ -46,11 +46,15 @@ public class Controller {
 
     private InsertionHeuristic insertionHeuristic;
 
-    public Controller(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed, boolean isDiscreteTime) {
+    private LoggerOutput loggerOutput;
+
+    public Controller(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed, boolean isDiscreteTime, boolean printLogger) {
         this.vrpInstance = instanceName;
         this.dynamicLevel = magnitude;
         this.rootDirectory = rootDirectory;
         this.antSystem = antSystem;
+        this.loggerOutput = new LoggerOutput();
+        this.loggerOutput.setPrint(printLogger);
         this.utilities = new Utilities();
         this.utilities.setSeed(seed);
         this.inOut = new InOut(isDiscreteTime);
@@ -227,10 +231,10 @@ public class Controller {
             //read the data from the file
             vrptw = reader.read(utilities);
 
-            LoggerOutput.log("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: " + dvrptwInstance);
+            loggerOutput.log("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: " + dvrptwInstance);
             //include in the counting also the depot, which is assumed to be apriori known
             countApriori = vrptw.getIdAvailableRequests().size();
-            LoggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countApriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
+            loggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countApriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
 
             //compute the scaling value with which we can scale all time-related values
             Request depotReq = vrptw.getRequests().get(0);
@@ -238,11 +242,11 @@ public class Controller {
             setScalingValue(scalingValue);
 
             //adjust distances between nodes (cities) according to this scale value
-            inOut.init_program(this.antSystem, trial, vrptw, scalingValue, ants);
+            inOut.init_program(this.antSystem, trial, vrptw, scalingValue, ants, loggerOutput);
 
             //adjust for each request, all the time related values according to the length of the working day we are simulating
             if (scalingValue != 0) {
-                LoggerOutput.log("Scalling value = " + scalingValue);
+                loggerOutput.log("Scalling value = " + scalingValue);
                 for (Request req : vrptw.getRequests()) {
                     newStartWindow = req.getStartWindow() * scalingValue;
                     req.setStartWindow(newStartWindow);
@@ -275,7 +279,7 @@ public class Controller {
             //Ants.total = new double[MTsp.n + 1][MTsp.n + 1];
 
             //VRPTW_ACS.generateInitialWeights();
-            this.vrptw_acs = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer);
+            this.vrptw_acs = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer, loggerOutput);
             vrptw_acs.init_try(vrptw);
 
             currentTimeSlice = 1;
@@ -287,7 +291,7 @@ public class Controller {
             startTime = timer.getCurrentTime();
 
             //start the ant colony
-            VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer);
+            VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer, loggerOutput);
             Thread t = null;
             if (!inOut.isDiscreteTime) {
                 t = new Thread(worker);
@@ -308,7 +312,7 @@ public class Controller {
                 //did a new time slice started?
                 if (currentTime > currentTimeSlice * lengthTimeSlice) {
                     //advance to next time slice
-                    LoggerOutput.log("Trial " + (trial + 1) + "; Current time (seconds): " + currentTime + "; new time slice started at " + currentTimeSlice * lengthTimeSlice);
+                    loggerOutput.log("Trial " + (trial + 1) + "; Current time (seconds): " + currentTime + "; new time slice started at " + currentTimeSlice * lengthTimeSlice);
                     //check if there are new nodes that became available in the last time slice
                     newAvailableIdNodes = countNoAvailableNodes(dynamicRequests, currentTime);
                     //mark the fact that new nodes (from the list of dynamic customer requests) are available
@@ -364,9 +368,9 @@ public class Controller {
                             idKnownRequests.add(id);
                             knowNodesMsg += (id + 1) + " ";
                         }
-                        LoggerOutput.log(knowNodesMsg);
+                        loggerOutput.log(knowNodesMsg);
                         vrptw.setIdAvailableRequests(idKnownRequests);
-                        LoggerOutput.log("Number of total available (known) nodes (excluding the depot): " + idKnownRequests.size());
+                        loggerOutput.log("Number of total available (known) nodes (excluding the depot): " + idKnownRequests.size());
 
                         //insert new available nodes in the best so far solution
                         ants.best_so_far_ant.toVisit = countNodes;
@@ -430,7 +434,7 @@ public class Controller {
                         if (scalingValue != 0) {
                             scalledValue = ants.best_so_far_ant.total_tour_length / scalingValue;
                         }
-                        LoggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.best_so_far_ant.usedVehicles + " total tours length=" + ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
+                        loggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.best_so_far_ant.usedVehicles + " total tours length=" + ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
 				   /*for (int i = 0; i < Ants.best_so_far_ant.usedVehicles; i++) {
 						int tourLength = Ants.best_so_far_ant.tours.get(i).size();
 						for (int j = 0; j < tourLength; j++) {
@@ -448,7 +452,7 @@ public class Controller {
                 //restart the colony thread
                 if (threadStopped) {
                     //restart the ant colony thread
-                    worker = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer);
+                    worker = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer, loggerOutput);
                     if (!inOut.isDiscreteTime) {
                         t = new Thread(worker);
                         t.start();
@@ -489,7 +493,7 @@ public class Controller {
             if (scalingValue != 0) {
                 scalledValue = ants.best_so_far_ant.total_tour_length / scalingValue;
             }
-            LoggerOutput.log("Final best solution >> No. of used vehicles=" + ants.best_so_far_ant.usedVehicles + " total tours length=" + ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
+            loggerOutput.log("Final best solution >> No. of used vehicles=" + ants.best_so_far_ant.usedVehicles + " total tours length=" + ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
             String finalRouteStr = "";
             for (int i = 0; i < ants.best_so_far_ant.usedVehicles; i++) {
                 int tourLength = ants.best_so_far_ant.tours.get(i).size();
@@ -499,16 +503,16 @@ public class Controller {
                     city = city + 1;  //so as to correspond to the city indexes from the VRPTW input file
                     finalRouteStr += (city + " ");
                 }
-                LoggerOutput.log(finalRouteStr);
+                loggerOutput.log(finalRouteStr);
             }
-            LoggerOutput.log("Total number of evaluations: " + inOut.noEvaluations);
-            LoggerOutput.log("Total number of feasible solutions: " + inOut.noSolutions);
+            loggerOutput.log("Total number of evaluations: " + inOut.noEvaluations);
+            loggerOutput.log("Total number of feasible solutions: " + inOut.noSolutions);
             //System.out.println("Working day is over..");
             boolean isValid = checkFeasibility(ants.best_so_far_ant, vrptw, true);
             if (isValid) {
-                LoggerOutput.log("The final solution is valid (feasible)..");
+                loggerOutput.log("The final solution is valid (feasible)..");
             } else {
-                LoggerOutput.log("The final solution is not valid (feasible)..");
+                loggerOutput.log("The final solution is not valid (feasible)..");
             }
         }
 
@@ -553,11 +557,14 @@ public class Controller {
             }
         }
         if (printNoNodes) {
-            LoggerOutput.log("Added nodes=" + addedNodes);
+            loggerOutput.log("Added nodes=" + addedNodes);
         }
         this.addedNodes = addedNodes;
         return isFeasible;
 
     }
 
+    public LoggerOutput getLoggerOutput() {
+        return loggerOutput;
+    }
 }

@@ -5,15 +5,15 @@ import java.util.List;
 
 public class LoggerOutput {
 
-    private static boolean print;
+    private boolean print;
 
-    private static List<String> logOutput = new ArrayList<>();
+    private List<String> logOutput = new ArrayList<>();
 
-    public static void reset() {
+    public void reset() {
         logOutput.clear();
     }
 
-    public static void log(String message) {
+    public void log(String message) {
         if (print) {
             //System.out.println(message);
             System.out.println("assertThat(LoggerOutput.get(lineCount++)).isEqualTo(\"" + message + "\");");
@@ -21,7 +21,7 @@ public class LoggerOutput {
         logOutput.add(message);
     }
 
-    public static String get(int i) {
+    public String get(int i) {
         return logOutput.get(i);
     }
 
@@ -29,11 +29,11 @@ public class LoggerOutput {
         return logOutput;
     }
 
-    public static boolean isPrint() {
+    public boolean isPrint() {
         return print;
     }
 
-    public static void setPrint(boolean print) {
-        LoggerOutput.print = print;
+    public void setPrint(boolean print) {
+        this.print = print;
     }
 }
