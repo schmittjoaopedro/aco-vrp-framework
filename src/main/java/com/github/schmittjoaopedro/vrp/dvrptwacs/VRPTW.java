@@ -249,17 +249,17 @@ public class VRPTW {
     }
 
     //computes nearest neighbor lists of depth nn for each city
-    public int[][][] compute_nn_lists() {
+    public int[][][] compute_nn_lists(Ants ants) {
         int i, node, nn, count1, count2;
 
         int size = n;
         double[] distance_vector = new double[size + 1];
         int[] help_vector = new int[size + 1];
 
-        nn = Ants.nn_ants;
+        nn = ants.nn_ants;
         if (nn >= size + 1)
             nn = size - 2;
-        Ants.nn_ants = nn;
+        ants.nn_ants = nn;
 
         int[][][] result = new int[2][][];
         int[][] m_nnear = new int[size + 1][nn];

@@ -2,8 +2,6 @@ package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 import java.util.ArrayList;
 
-import com.github.schmittjoaopedro.vrp.dvrptwacs.Ants.Ant;
-
 /*
  * A class containing utilities methods for constructing the Pareto front that contains
  * non-dominated solutions found during the execution of the ACO algorithm

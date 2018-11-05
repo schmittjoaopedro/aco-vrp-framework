@@ -1,7 +1,5 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
-import com.github.schmittjoaopedro.vrp.dvrptwacs.Ants.Ant;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -153,12 +151,12 @@ public class Utilities {
         random = new Random(seed);
     }
 
-    public double mean() {
+    public double mean(Ants ants) {
         double sum = 0.0;
-        for (Ant ant : Ants.ants) {
+        for (Ant ant : ants.ants) {
             sum += ant.total_tour_length;
         }
-        return sum / Ants.n_ants;
+        return sum / ants.n_ants;
     }
 
     public String[] getTours() {

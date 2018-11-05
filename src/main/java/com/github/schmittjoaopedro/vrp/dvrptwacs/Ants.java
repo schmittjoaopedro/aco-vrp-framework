@@ -56,94 +56,55 @@ public class Ants {
      * Germany
      ***************************************************************************/
 
-    static class Ant {
-        //for each of the m salesmen an ant will construct a tour, so that a candidate solution constructed by
-        //an ant will be represented by a list of tours, one for each salesman
-        ArrayList<ArrayList<Integer>> tours;
-        boolean[] visited;
-        ArrayList<Double> tour_lengths;
-        //contains the beginning of service for each customer, including the depot, taking into
-        //account the opening time (beginning) of the time window, the service time and the
-        //distance between customers
-        double[] beginService;
-        //current number of used vehicles (= number of routes/tours) for constructing a feasible solution
-        //that serve all the customers' requests and satisfy the time windows and capacity constraints
-        int usedVehicles;
-        //stores for each partial tour/route under construction the current time
-        //taking into account the beginning time of service for the last visited customer on the tour
-        ArrayList<Double> currentTime;
-        //used by the insertion heuristic when checking the feasibility of an insertion
-        //it stores for every customer i already assigned to a route the earliest time a delivery
-        //can be made at i
-        ArrayList<ArrayList<Double>> earliestTime;
-        //used by the insertion heuristic when checking the feasibility of an insertion
-        //it stores for every customer i already assigned to a route the latest time a delivery
-        //can be made at i
-        ArrayList<ArrayList<Double>> latestTime;
-        //stores for each partial tour/route under construction the current quantity of goods
-        //(given by the demand of each request) transported on the route
-        ArrayList<Double> currentQuantity;
-        double total_tour_length;
-        double longest_tour_length;
-        int indexLongestTour;  //the index of the longest tour
-        //cities left to be visited by an ant (initially toVisit = n, which is the number of cities from the mTSP instance)
-        int toVisit;
-        //stores the cost of each solution according to the considered objectives (2 in this case)
-        double costObjectives[];
-        //it is true if a new empty tour was added in the ant solution to service the remaining available
-        //unrouted/unvisited customers
-        boolean addedEmptyTour;
-    }
-
     private Utilities utilities;
 
     private Controller controller;
 
-    public static final int MAX_ANTS = 1024;
-    public static final int MAX_NEIGHBOURS = 512;
+    public final int MAX_ANTS = 1024;
+    public final int MAX_NEIGHBOURS = 512;
 
-    public static final double weight1 = 0.4;  //0.3   //0.4
-    public static final double weight2 = 0.4;  //0.5   //0.4
-    public static final double weight3 = 0.2;  //0.2   //0.2
+    public final double weight1 = 0.4;  //0.3   //0.4
+    public final double weight2 = 0.4;  //0.5   //0.4
+    public final double weight3 = 0.2;  //0.2   //0.2
 
     //weight used in the nearest neighbour heuristic, when computing an initial solution to calculate the
     //value of the initial pheromone trail
-    public static double initialWeight1;
-    public static double initialWeight2;
-    public static double initialWeight3;
+    public double initialWeight1;
+    public double initialWeight2;
+    public double initialWeight3;
 
     //it indicates that node at position/index i is committed if the value at position i is true; the
     //depot node is considered to be committed by default and it's not included in this array
-    public volatile static boolean[] committedNodes;
+    public boolean[] committedNodes;
 
     //for each tour in T* (best so far solution) it indicates the position/index of the last node that was committed
-    //public volatile static ArrayList<Integer> lastCommitted;
+    //public volatile ArrayList<Integer> lastCommitted;
 
-    static Ant ants[];
-    public volatile static Ant best_so_far_ant;
-    static Ant restart_best_ant;
+    public Ant ants[];
+    public volatile Ant best_so_far_ant;
+    public Ant restart_best_ant;
 
-    static double pheromone[][];
-    //static double total[][];  //keeps heuristic information times pheromone for each arc
+    public double pheromone[][];
+    //double total[][];  //keeps heuristic information times pheromone for each arc
 
-    static double prob_of_selection[][];
+    public double prob_of_selection[][];
 
-    static int n_ants; /* number of ants */
+    public int n_ants; /* number of ants */
 
-    static int nn_ants; /* length of nearest neighbor lists for the ants' solution construction */
+    public int nn_ants; /* length of nearest neighbor lists for the ants' solution construction */
 
-    static double rho; /* parameter for evaporation used in global pheromne update*/
-    static double local_rho;  /* parameter for evaporation used in local pheromone update*/
-    static double alpha; /* importance of trail */
-    static double beta; /* importance of heuristic evaluate */
-    static double q_0; /* probability of best choice in tour construction */
+    public double rho; /* parameter for evaporation used in global pheromne update*/
+    public double local_rho;  /* parameter for evaporation used in local pheromone update*/
+    public double alpha; /* importance of trail */
+    public double beta; /* importance of heuristic evaluate */
+    public double q_0; /* probability of best choice in tour construction */
 
-    static boolean as_flag; /* ant system */
-    static boolean acs_flag; /* ant colony system (ACS) */
+    public boolean as_flag; /* ant system */
+    public boolean acs_flag; /* ant colony system (ACS) */
 
-    static int u_gb; /* every u_gb iterations update with best-so-far ant */
+    public int u_gb; /* every u_gb iterations update with best-so-far ant */
 
-    static double trail_0; /* initial pheromone level in ACS */
+    public double trail_0; /* initial pheromone level in ACS */
 
     public Ants(Controller controller, Utilities utilities) {
         this.controller = controller;
@@ -155,7 +116,7 @@ public class Ants {
     }
 
     //allocate the memory for the ant colony, the best-so-far ant
-    static void allocate_ants(VRPTW vrptw) {
+    public void allocate_ants(VRPTW vrptw) {
         int i, j;
 
         ants = new Ant[n_ants];
@@ -253,7 +214,7 @@ public class Ants {
 
     //find the best ant of the current iteration (the one with the lowest number of used vehicles and
     //with smaller total traveled distance)
-    static int find_best()
+    public int find_best()
     {
         double min1, min2;
         int k1, k2, k2_min;
@@ -283,7 +244,7 @@ public class Ants {
 
     //initialize pheromone trails
     //matricea cu urmele de feromoni trebuie sa se faca relativ la toate cele n orase
-    static void init_pheromone_trails(VRPTW vrptw, double initial_trail)
+    public void init_pheromone_trails(VRPTW vrptw, double initial_trail)
     {
         int i, j;
 
@@ -299,7 +260,7 @@ public class Ants {
     }
 
     //preserve some of the pheromone level on the edges between available nodes
-    static void preservePheromones(VRPTW vrptw) {
+    public void preservePheromones(VRPTW vrptw) {
         for (int i = 0; i < (vrptw.n + 1); i++) {
             for (int j = 0; j <= i; j++) {
                 if (vrptw.getIdAvailableRequests().contains(i - 1) && vrptw.getIdAvailableRequests().contains(j - 1)
@@ -317,7 +278,7 @@ public class Ants {
     }
 
     //implements the pheromone trail evaporation
-    static void evaporation(VRPTW vrptw)
+    public void evaporation(VRPTW vrptw)
     {
         int i, j;
 
@@ -330,7 +291,7 @@ public class Ants {
     }
 
     //reinforces edges used in ant k's solution
-    static void global_update_pheromone(Ant a)
+    public void global_update_pheromone(Ant a)
     {
         int i, j, h, k, size;
         double d_tau;
@@ -353,7 +314,7 @@ public class Ants {
     }
 
     //calculates heuristic info times pheromone for each arc
-   /* static void compute_total_information()
+   /* void compute_total_information()
     {
 		int i, j;
 
@@ -366,7 +327,7 @@ public class Ants {
     }*/
 
     //empty the ants's memory regarding visited cities
-    static void ant_empty_memory(Ant a, VRPTW vrptw)
+    public void ant_empty_memory(Ant a, VRPTW vrptw)
     {
         int i, j;
 
@@ -425,7 +386,7 @@ public class Ants {
     }
 
     //create a copy of the ant a and return the created copy at the output
-    static Ant copyAnt(VRPTW vrptw, Ant a) {
+    public Ant copyAnt(VRPTW vrptw, Ant a) {
         //first create an empty ant
         //TODO: copy also fields such as usedVehicle, current quantity, currentTime
         Ant copy = new Ant();
@@ -461,7 +422,7 @@ public class Ants {
     }
 
     //get the list with the unvisited customers
-    static ArrayList unroutedCustomers(Ant a, VRPTW vrptw) {
+    public ArrayList unroutedCustomers(Ant a, VRPTW vrptw) {
         ArrayList<Integer> l = new ArrayList<Integer>(a.toVisit);
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
         int count = 0;
@@ -579,7 +540,7 @@ public class Ants {
                     startIndexTour = 0;
                 }
                 lastCommitedIndexes = new  ArrayList<Integer>();
-                for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
+                for (int index = 0; index < best_so_far_ant.usedVehicles; index++) {
                     pos = controller.getLastCommitedPos(index);
                     lastCommitedIndexes.add(pos);
                 }
@@ -1072,7 +1033,7 @@ public class Ants {
     }
 
     //reinforces the edges used in ant's solution as in ACS
-    static void global_acs_pheromone_update(Ant a) {
+    public void global_acs_pheromone_update(Ant a) {
         int i, j, h, k, size;
         double d_tau;
 
@@ -1103,7 +1064,7 @@ public class Ants {
     }
 
     //removes some pheromone on edge just passed by the ant
-    static void local_acs_pheromone_update(Ant a, int indexSalesman) {
+    public void local_acs_pheromone_update(Ant a, int indexSalesman) {
         int h, j;
 
         int lastPos = a.tours.get(indexSalesman).size() - 1;
@@ -1121,10 +1082,10 @@ public class Ants {
     }
 
     //copy solution from ant a1 into ant a2
-    static void copy_from_to(Ant a1, Ant a2, VRPTW vrptw) {
+    public void copy_from_to(Ant a1, Ant a2, VRPTW vrptw) {
         int i, j;
 
-        Ants.ant_empty_memory(a2, vrptw);
+        ant_empty_memory(a2, vrptw);
 
         a2.total_tour_length = a1.total_tour_length;
 		/*a2.longest_tour_length = a1.longest_tour_length;
@@ -1167,7 +1128,7 @@ public class Ants {
         }
     }
 
-    static double computeToursAmplitude(Ant a) {
+    public double computeToursAmplitude(Ant a) {
         double min, max;
         int i;
 

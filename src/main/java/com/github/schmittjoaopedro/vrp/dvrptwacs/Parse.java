@@ -37,7 +37,7 @@ public class Parse {
      * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
      ***************************************************************************/
 
-    static void parse_commandline(String antSystem, int runNumber) {
+    static void parse_commandline(String antSystem, int runNumber, Ants ants) {
 
         // Choice of ONE algorithm
         int algorithmCount = 0;
@@ -51,18 +51,18 @@ public class Parse {
             System.err.println("Error: More than one ACO algorithm enabled in the command line.");
             System.exit(1);
         } else if (algorithmCount == 1) {
-            Ants.as_flag = false;
-            Ants.acs_flag = false;
+            ants.as_flag = false;
+            ants.acs_flag = false;
         }
 
         if (antSystem.equals("u")) {
-            Ants.as_flag = true;
-            InOut.set_default_as_parameters();
+            ants.as_flag = true;
+            InOut.set_default_as_parameters(ants);
             LoggerOutput.log("\nRun basic Ant System #" + (runNumber + 1));
         }
         if (antSystem.equals("z")) {
-            Ants.acs_flag = true;
-            InOut.set_default_acs_parameters();
+            ants.acs_flag = true;
+            InOut.set_default_acs_parameters(ants);
             LoggerOutput.log("\nRun Ant Colony System #" + (runNumber + 1));
         }
 

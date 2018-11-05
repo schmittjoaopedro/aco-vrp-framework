@@ -19,6 +19,8 @@ public class Controller {
 
     private Utilities utilities;
 
+    private InOut inOut;
+
     //number of time slices
     private int noTimeSlices = 50;
 
@@ -48,6 +50,7 @@ public class Controller {
         this.utilities = new Utilities();
         this.utilities.setSeed(seed);
         this.ants = new Ants(this, this.utilities);
+        this.inOut = new InOut();
     }
 
     public double getScalingValue() {
@@ -89,11 +92,11 @@ public class Controller {
         int node;
         int tourLength;
 
-        if (indexTour < Ants.best_so_far_ant.usedVehicles) {
-            tourLength = Ants.best_so_far_ant.tours.get(indexTour).size();
+        if (indexTour < ants.best_so_far_ant.usedVehicles) {
+            tourLength = ants.best_so_far_ant.tours.get(indexTour).size();
             for (int i = 1; i < tourLength - 1; i++) {
-                node = Ants.best_so_far_ant.tours.get(indexTour).get(i);
-                if (Ants.committedNodes[node]) {
+                node = ants.best_so_far_ant.tours.get(indexTour).get(i);
+                if (ants.committedNodes[node]) {
                     pos++;
                 } else {
                     break;
@@ -105,7 +108,7 @@ public class Controller {
     }
 
     //check if there are any nodes in the tours of the best so far solution that should be marked as committed
-    public boolean checkNewCommittedNodes(Ants.Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
+    public boolean checkNewCommittedNodes(Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
         boolean result = false;
         int indexTour = 0;
         int tourLength = 0;
@@ -123,7 +126,7 @@ public class Controller {
                 node = bestAnt.tours.get(indexTour).get(i);
                 //check condition for a node to be committed
                 if (bestAnt.beginService[node + 1] <= indexTimeSlice * lengthTimeSlice) {
-                    if (!Ants.committedNodes[node]) {
+                    if (!ants.committedNodes[node]) {
                         return true;
                     } else {
                         continue;
@@ -152,7 +155,7 @@ public class Controller {
     //commit nodes from the tours of the best so far solution, that will have their position fixed when
     //they will be copied in the ants'solutions
     // block part of the best solution that is being/has been visited
-    public void commitNodes(Ants.Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
+    public void commitNodes(Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
         int indexTour = 0;
         int tourLength = 0;
         int node = 0, startPos = 0, count = 0;
@@ -171,8 +174,8 @@ public class Controller {
                 node = bestAnt.tours.get(indexTour).get(i);
                 //check condition for a node to be committed
                 if ((bestAnt.beginService[node + 1] <= indexTimeSlice * lengthTimeSlice) &&
-                        (!Ants.committedNodes[node])) {
-                    Ants.committedNodes[node] = true;
+                        (!ants.committedNodes[node])) {
+                    ants.committedNodes[node] = true;
                     //Ants.lastCommitted.set(indexTour, i);
                 } else {
                     indexTour++;
@@ -229,7 +232,7 @@ public class Controller {
             setScalingValue(scalingValue);
 
             //adjust distances between nodes (cities) according to this scale value
-            InOut.init_program(this.antSystem, trial, vrptw, scalingValue);
+            inOut.init_program(this.antSystem, trial, vrptw, scalingValue, ants);
 
             //adjust for each request, all the time related values according to the length of the working day we are simulating
             if (scalingValue != 0) {
@@ -258,11 +261,11 @@ public class Controller {
 		 }*/
 
             int[][][] result = new int[2][][];
-            result = vrptw.compute_nn_lists();
+            result = vrptw.compute_nn_lists(ants);
             vrptw.instance.nn_list = result[0];
             vrptw.instance.nn_list_all = result[1];
 
-            Ants.pheromone = new double[vrptw.n + 1][vrptw.n + 1];
+            ants.pheromone = new double[vrptw.n + 1][vrptw.n + 1];
             //Ants.total = new double[MTsp.n + 1][MTsp.n + 1];
 
             //VRPTW_ACS.generateInitialWeights();
@@ -313,7 +316,7 @@ public class Controller {
 			   /*if (currentTimeSlice >= 30) {
 				  System.out.println("Before checking for new nodes to be committed..; isNewNodesAvailable="  + isNewNodesAvailable);
 			   }*/
-                    isNewNodesCommitted = checkNewCommittedNodes(Ants.best_so_far_ant, vrptw, currentTimeSlice, lengthTimeSlice);
+                    isNewNodesCommitted = checkNewCommittedNodes(ants.best_so_far_ant, vrptw, currentTimeSlice, lengthTimeSlice);
 			   /*if (currentTimeSlice >= 30) {
 				  System.out.println("After checking for nodes to be committed..isNewNodesAvailable="  + isNewNodesAvailable + " isNewNodesCommitted=" + isNewNodesCommitted);
 			   }*/
@@ -339,7 +342,7 @@ public class Controller {
 	    				   System.out.println("Before nodes were committed.." + "After stopping ant colony..isNewNodesAvailable=" + isNewNodesAvailable + " isNewNodesCommitted=" + isNewNodesCommitted);
 	    			   }*/
                             //commit necessary nodes after the ant colony execution is stopped
-                            commitNodes(Ants.best_so_far_ant, vrptw, currentTimeSlice, lengthTimeSlice);
+                            commitNodes(ants.best_so_far_ant, vrptw, currentTimeSlice, lengthTimeSlice);
 	    			  /* if (currentTime >= 20) {
 	    				   System.out.println("After nodes were committed.." + "After stopping ant colony..isNewNodesAvailable=" + isNewNodesAvailable + " isNewNodesCommitted=" + isNewNodesCommitted);
 	    			   }*/
@@ -360,68 +363,68 @@ public class Controller {
                         LoggerOutput.log("Number of total available (known) nodes (excluding the depot): " + idKnownRequests.size());
 
                         //insert new available nodes in the best so far solution
-                        Ants.best_so_far_ant.toVisit = countNodes;
+                        ants.best_so_far_ant.toVisit = countNodes;
                         //determine nodes that are not visited yet in the current ant's solution
-                        ArrayList<Integer> unroutedList = Ants.unroutedCustomers(Ants.best_so_far_ant, vrptw);
+                        ArrayList<Integer> unroutedList = ants.unroutedCustomers(ants.best_so_far_ant, vrptw);
                         //skip over committed (defined) nodes when performing insertion heuristic
                         lastCommitedIndexes = new ArrayList<Integer>();
-                        for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
+                        for (int index = 0; index < ants.best_so_far_ant.usedVehicles; index++) {
                             lastPos = getLastCommitedPos(index);
                             lastCommitedIndexes.add(lastPos);
                         }
-                        InsertionHeuristic.insertUnroutedCustomers(Ants.best_so_far_ant, vrptw, unroutedList, 0, lastCommitedIndexes);
+                        InsertionHeuristic.insertUnroutedCustomers(ants.best_so_far_ant, vrptw, unroutedList, 0, lastCommitedIndexes);
                         //System.out.println("After first applying insertion heuristic: Cities to be visited in the best so far solution: " + Ants.best_so_far_ant.toVisit);
                         //if there are still remaining unvisited cities from the ones that are available
                         //insert an empty tour and add cities in it following nearest-neighbour heuristic
                         int indexTour;
-                        while (Ants.best_so_far_ant.toVisit > 0) {
-                            Ants.best_so_far_ant.usedVehicles++;
-                            indexTour = Ants.best_so_far_ant.usedVehicles - 1;
-                            Ants.best_so_far_ant.tours.add(indexTour, new ArrayList<Integer>());
-                            Ants.best_so_far_ant.tours.get(indexTour).add(-1);
-                            Ants.best_so_far_ant.tour_lengths.add(indexTour, 0.0);
-                            Ants.best_so_far_ant.currentQuantity.add(indexTour, 0.0);
-                            Ants.best_so_far_ant.currentTime.add(indexTour, 0.0);
+                        while (ants.best_so_far_ant.toVisit > 0) {
+                            ants.best_so_far_ant.usedVehicles++;
+                            indexTour = ants.best_so_far_ant.usedVehicles - 1;
+                            ants.best_so_far_ant.tours.add(indexTour, new ArrayList<Integer>());
+                            ants.best_so_far_ant.tours.get(indexTour).add(-1);
+                            ants.best_so_far_ant.tour_lengths.add(indexTour, 0.0);
+                            ants.best_so_far_ant.currentQuantity.add(indexTour, 0.0);
+                            ants.best_so_far_ant.currentTime.add(indexTour, 0.0);
                             //Ants.lastCommitted.add(indexTour, 0);
 
                             //try to add as many unvisited cities/nodes as possible in this newly created tour
                             //following the nearest neighbour heuristic
-                            ants.choose_closest_nn(Ants.best_so_far_ant, indexTour, vrptw);
+                            ants.choose_closest_nn(ants.best_so_far_ant, indexTour, vrptw);
                             //System.out.println("After adding new tour & NN tour construction: Cities to be visited in the best so far solution: " + Ants.best_so_far_ant.toVisit);
 
                             //try to insert remaining cities using insertion heuristic
-                            if (Ants.best_so_far_ant.toVisit > 0) {
+                            if (ants.best_so_far_ant.toVisit > 0) {
                                 //determine nodes that are not visited yet in the current ant's solution
-                                unroutedList = Ants.unroutedCustomers(Ants.best_so_far_ant, vrptw);
+                                unroutedList = ants.unroutedCustomers(ants.best_so_far_ant, vrptw);
                                 //skip over committed (defined) nodes when performing insertion heuristic
                                 lastCommitedIndexes = new ArrayList<Integer>();
-                                for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
+                                for (int index = 0; index < ants.best_so_far_ant.usedVehicles; index++) {
                                     lastPos = getLastCommitedPos(index);
                                     lastCommitedIndexes.add(lastPos);
                                 }
-                                InsertionHeuristic.insertUnroutedCustomers(Ants.best_so_far_ant, vrptw, unroutedList, indexTour, lastCommitedIndexes);
+                                InsertionHeuristic.insertUnroutedCustomers(ants.best_so_far_ant, vrptw, unroutedList, indexTour, lastCommitedIndexes);
                                 //System.out.println("After applying insertion heuristic to the NN tour: Cities to be visited in the best so far solution: " + Ants.best_so_far_ant.toVisit);
                             }
                             //add the depot again to end this tour
-                            Ants.best_so_far_ant.tours.get(indexTour).add(-1);
+                            ants.best_so_far_ant.tours.get(indexTour).add(-1);
                         }
 				   /*if (VRPTW_ACS.ls_flag) {
 					   Ants.best_so_far_ant = VRPTW_ACS.local_search(Ants.best_so_far_ant, vrpInstance);
 				   }*/
 
                         sum = 0.0;
-                        for (int i = 0; i < Ants.best_so_far_ant.usedVehicles; i++) {
-                            Ants.best_so_far_ant.tour_lengths.set(i, vrptw.compute_tour_length_(Ants.best_so_far_ant.tours.get(i)));
-                            sum += Ants.best_so_far_ant.tour_lengths.get(i);
+                        for (int i = 0; i < ants.best_so_far_ant.usedVehicles; i++) {
+                            ants.best_so_far_ant.tour_lengths.set(i, vrptw.compute_tour_length_(ants.best_so_far_ant.tours.get(i)));
+                            sum += ants.best_so_far_ant.tour_lengths.get(i);
                         }
-                        Ants.best_so_far_ant.total_tour_length = sum;
+                        ants.best_so_far_ant.total_tour_length = sum;
 
                         scalingValue = getScalingValue();
                         double scalledValue = 0.0;
                         if (scalingValue != 0) {
-                            scalledValue = Ants.best_so_far_ant.total_tour_length / scalingValue;
+                            scalledValue = ants.best_so_far_ant.total_tour_length / scalingValue;
                         }
-                        LoggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + Ants.best_so_far_ant.usedVehicles + " total tours length=" + Ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
+                        LoggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.best_so_far_ant.usedVehicles + " total tours length=" + ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
 				   /*for (int i = 0; i < Ants.best_so_far_ant.usedVehicles; i++) {
 						int tourLength = Ants.best_so_far_ant.tours.get(i).size();
 						for (int j = 0; j < tourLength; j++) {
@@ -478,15 +481,15 @@ public class Controller {
             scalingValue = getScalingValue();
             double scalledValue = 0.0;
             if (scalingValue != 0) {
-                scalledValue = Ants.best_so_far_ant.total_tour_length / scalingValue;
+                scalledValue = ants.best_so_far_ant.total_tour_length / scalingValue;
             }
-            LoggerOutput.log("Final best solution >> No. of used vehicles=" + Ants.best_so_far_ant.usedVehicles + " total tours length=" + Ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
+            LoggerOutput.log("Final best solution >> No. of used vehicles=" + ants.best_so_far_ant.usedVehicles + " total tours length=" + ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
             String finalRouteStr = "";
-            for (int i = 0; i < Ants.best_so_far_ant.usedVehicles; i++) {
-                int tourLength = Ants.best_so_far_ant.tours.get(i).size();
+            for (int i = 0; i < ants.best_so_far_ant.usedVehicles; i++) {
+                int tourLength = ants.best_so_far_ant.tours.get(i).size();
                 finalRouteStr = "";
                 for (int j = 0; j < tourLength; j++) {
-                    int city = Ants.best_so_far_ant.tours.get(i).get(j);
+                    int city = ants.best_so_far_ant.tours.get(i).get(j);
                     city = city + 1;  //so as to correspond to the city indexes from the VRPTW input file
                     finalRouteStr += (city + " ");
                 }
@@ -495,7 +498,7 @@ public class Controller {
             LoggerOutput.log("Total number of evaluations: " + InOut.noEvaluations);
             LoggerOutput.log("Total number of feasible solutions: " + InOut.noSolutions);
             //System.out.println("Working day is over..");
-            boolean isValid = checkFeasibility(Ants.best_so_far_ant, vrptw, true);
+            boolean isValid = checkFeasibility(ants.best_so_far_ant, vrptw, true);
             if (isValid) {
                 LoggerOutput.log("The final solution is valid (feasible)..");
             } else {
@@ -505,7 +508,7 @@ public class Controller {
 
     }
 
-    private boolean checkFeasibility(Ants.Ant a, VRPTW vrp, boolean printNoNodes) {
+    private boolean checkFeasibility(Ant a, VRPTW vrp, boolean printNoNodes) {
         boolean isFeasible = true;
         int currentCity, prevCity, addedNodes = 0;
         double currentQuantity, currentTime;
