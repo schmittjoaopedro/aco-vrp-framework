@@ -95,6 +95,8 @@ public class Ants {
         boolean addedEmptyTour;
     }
 
+    private Controller controller;
+
     public static final int MAX_ANTS = 1024;
     public static final int MAX_NEIGHBOURS = 512;
 
@@ -141,6 +143,9 @@ public class Ants {
 
     static double trail_0; /* initial pheromone level in ACS */
 
+    public Ants(Controller controller) {
+        this.controller = controller;
+    }
 
     static double HEURISTIC(int m, int n) {
         return (1.0 / (double) VRPTW.instance.distance[m][n]);
@@ -1178,7 +1183,7 @@ public class Ants {
     }
 
     //generate a nearest neighbor tour and compute tour length using only the available nodes (nodes known so far)
-    static double nn_tour(VRPTW instance) {
+    public double nn_tour(VRPTW instance) {
         int step, salesman = 0;
         double sum = 0, sum1 = 0, scalledValue = 0, noVehicles = 1.0;
 
@@ -1228,7 +1233,7 @@ public class Ants {
 		}*/
 
         //System.out.println("Initial (nearest neighbour tour) longest tour length: " + longestTourLength);
-        double scalingValue = Controller.getScalingValue();
+        double scalingValue = controller.getScalingValue();
         if (scalingValue != 0) {
             scalledValue = ants[0].total_tour_length / scalingValue;
         }

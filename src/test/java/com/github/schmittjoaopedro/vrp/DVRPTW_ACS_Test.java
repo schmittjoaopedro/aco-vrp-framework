@@ -21,8 +21,10 @@ public class DVRPTW_ACS_Test {
     @Test
     public void dynamic_vrp_time_window_acs_r103_0_1_test() {
         LoggerOutput.reset();
+        LoggerOutput.setPrint(true);
         InOut.isDiscreteTime = true;
-        Controller.execute("z", rootDirectory, "r103", 0.1, 1);
+        Controller controller = new Controller("z", rootDirectory, "r103", 0.1, 1);
+        controller.execute();
 
         int lineCount = 0;
         assertThat(LoggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: r103-0.1");
@@ -123,7 +125,8 @@ public class DVRPTW_ACS_Test {
     public void dynamic_vrp_time_window_acs_r201_0_5_test() {
         LoggerOutput.reset();
         InOut.isDiscreteTime = true;
-        Controller.execute("z", rootDirectory, "r201", 0.5, 1);
+        Controller controller = new Controller("z", rootDirectory, "r201", 0.5, 1);
+        controller.execute();
 
         int lineCount = 0;
         assertThat(LoggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: r201-0.5");
@@ -310,7 +313,8 @@ public class DVRPTW_ACS_Test {
     public void dynamic_vrp_time_window_acs_c101_0_5_test() {
         LoggerOutput.reset();
         InOut.isDiscreteTime = true;
-        Controller.execute("z", rootDirectory, "c101", 0.5, 1);
+        Controller controller = new Controller("z", rootDirectory, "c101", 0.5, 1);
+        controller.execute();
 
         int lineCount = 0;
         assertThat(LoggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: c101-0.5");
@@ -468,7 +472,8 @@ public class DVRPTW_ACS_Test {
     public void dynamic_vrp_time_window_acs_c202_0_5_test() {
         LoggerOutput.reset();
         InOut.isDiscreteTime = true;
-        Controller.execute("z", rootDirectory, "c202", 0.5, 1);
+        Controller controller = new Controller("z", rootDirectory, "c202", 0.5, 1);
+        controller.execute();
 
         int lineCount = 0;
         assertThat(LoggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: c202-0.5");
@@ -636,7 +641,8 @@ public class DVRPTW_ACS_Test {
     public void dynamic_vrp_time_window_acs_rc101_0_1_test() {
         LoggerOutput.reset();
         InOut.isDiscreteTime = true;
-        Controller.execute("z", rootDirectory, "rc101", 0.1, 1);
+        Controller controller = new Controller("z", rootDirectory, "rc101", 0.1, 1);
+        controller.execute();
 
         int lineCount = 0;
         assertThat(LoggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: rc101-0.1");
@@ -772,7 +778,8 @@ public class DVRPTW_ACS_Test {
     public void dynamic_vrp_time_window_acs_rc202_1_0_test() {
         LoggerOutput.reset();
         InOut.isDiscreteTime = true;
-        Controller.execute("z", rootDirectory, "rc202", 1.0, 1);
+        Controller controller = new Controller("z", rootDirectory, "rc202", 1.0, 1);
+        controller.execute();
 
         int lineCount = 0;
         assertThat(LoggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: rc202-1.0");

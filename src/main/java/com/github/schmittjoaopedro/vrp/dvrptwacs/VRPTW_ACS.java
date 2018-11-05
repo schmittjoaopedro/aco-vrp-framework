@@ -76,6 +76,10 @@ public class VRPTW_ACS implements Runnable {
      * Germany
      ***************************************************************************/
 
+    private Controller controller;
+
+    private Ants ants;
+
     private volatile boolean isRunning = true;
 
     private int counter = 0;
@@ -88,12 +92,11 @@ public class VRPTW_ACS implements Runnable {
 
     private VRPTW vrpInstance;
 
-
-    public VRPTW_ACS() {}
-
-    public VRPTW_ACS(boolean threadStopped, VRPTW vrpInstance_) {
+    public VRPTW_ACS(boolean threadStopped, VRPTW vrpInstance_, Controller controller, Ants ants) {
         this.threadRestarted = threadStopped;
         this.vrpInstance = vrpInstance_;
+        this.controller = controller;
+        this.ants = ants;
     }
 
     //checks whether termination condition is met
@@ -321,7 +324,7 @@ public class VRPTW_ACS implements Runnable {
     }
 
     //initialize variables appropriately when starting a trial
-    static void init_try(VRPTW instance) {
+    public void init_try(VRPTW instance) {
 
         Timer.start_timers();
         InOut.time_used = Timer.elapsed_time();
@@ -341,7 +344,7 @@ public class VRPTW_ACS implements Runnable {
          * have to be initialized differently
          */
         if (!(Ants.acs_flag)) {
-            Ants.trail_0 = 1. / ((Ants.rho) * Ants.nn_tour(instance));
+            Ants.trail_0 = 1. / ((Ants.rho) * ants.nn_tour(instance));
             /*
              * in the original papers on Ant System it is not exactly defined what the
              * initial value of the Ants.pheromones is. Here we set it to some
@@ -356,7 +359,7 @@ public class VRPTW_ACS implements Runnable {
                 Ants.trail_0 = 1.0;
             }
             else {
-                Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) Ants.nn_tour(instance));
+                Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) ants.nn_tour(instance));
             }
             Ants.init_pheromone_trails(Ants.trail_0);
         }
@@ -1402,7 +1405,7 @@ public class VRPTW_ACS implements Runnable {
 
     //manage some statistical information about the trial, especially if a new best solution
     //(best-so-far) is found and adjust some parameters if a new best solution is found
-    static void update_statistics(VRPTW instance) {
+    public void update_statistics(VRPTW instance) {
         int iteration_best_ant;
         double scalingValue, scalledValue = 0.0, sum;
         Object obj = new Object();
@@ -1452,7 +1455,7 @@ public class VRPTW_ACS implements Runnable {
 			    }*/
                 Ants.copy_from_to(a, Ants.best_so_far_ant, instance);
 
-                scalingValue = Controller.getScalingValue();
+                scalingValue = controller.getScalingValue();
                 if (scalingValue != 0) {
                     scalledValue = Ants.best_so_far_ant.total_tour_length / scalingValue;
                 }
@@ -1489,7 +1492,7 @@ public class VRPTW_ACS implements Runnable {
 	    	    	System.out.println("Inside update_statistics: The solution is valid (feasible)..");
 	    	    }*/
             } else {
-                scalingValue = Controller.getScalingValue();
+                scalingValue = controller.getScalingValue();
                 if (scalingValue != 0) {
                     scalledValue = Ants.best_so_far_ant.total_tour_length / scalingValue;
                 }

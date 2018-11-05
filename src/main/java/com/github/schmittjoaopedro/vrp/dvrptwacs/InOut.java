@@ -128,7 +128,6 @@ public class InOut {
         Ants.q_0 = 0.0;
         max_tries = 10;
         max_tours = 10 * 20;
-        Utilities.seed = (int) Timer.getCurrentTime();
         //10 seconds allowed for running time; it is used in the termination condition of ACO
         //max_time = 15.0 * VRPTW.m;
         max_time = 100;  //100  //300

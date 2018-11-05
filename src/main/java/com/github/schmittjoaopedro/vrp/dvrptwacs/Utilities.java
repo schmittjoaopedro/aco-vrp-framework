@@ -61,22 +61,7 @@ public class Utilities {
 
     private static Random random;
 
-    static int seed;
     static int rowIndex = 1;
-
-    //private static String filePath = "output/Experiments Fuzzy cMeans.xlsx";
-
-    //private static String filePath = "../../VRP/Experimente multi-objective VRPTW/Rulari multi-objective VRPTW - MoACO_D-ACS.xlsx";
-    //private static String filePath1 = "../../../Jurnale/jurnal Swarm Intelligence (Springer)/Experimente/Fronturi Pareto algoritmi (pe parcurs)/ACO MinMax_vers. noua/ParetoFront_" + TSP_ACO.instanceName + " (m=" + MTsp.m + ")_amplitude_";
-    //private static String filePath1 = "../../VRP/Experimente multi-objective VRPTW/ParetoFront VRPTW_" + VRPTW.instance.name + " (MoACO_D-ACS)" + ".xlsx";
-    private static String filePath2 = "../../VRP/Experimente multi-objective VRPTW/fisiere intermediare/Rulari MoACO_D-ACS_" + VRPTW.instance.name + "_no of vehicles and total distance.txt";
-    //private static String filePath3 = "../../Doctorat/VRP/VRPTW Solomon instances - data points.xlsx";
-    //private static String filePath4 = "../../VRP/Experimente dynamic VRPTW Solomon/Rulari DVRPTW_ACS MinSum/";
-    //private static String filePath4 = "output/";
-    private static String filePath4 = "C:\\projects\\DVRPTW_ACS\\dvrptw-acs\\output_count_solutions";
-    //private static String filePath5 = "../../VRP/Experimente dynamic VRPTW Solomon/Rulari DVRPTW_ACS MinSum/Rulari DVRPTW_ACS MinSum.xlsx";
-    //private static String filePath5 = "output/Rulari DVRPTW_ACS MinSum.xlsx";
-    //private static String filePath5 = "output_count_solutions/Rulari DVRPTW_ACS MinSum_instante statice_30 rulari.xlsx";
 
     //for setting the content to be inserted in the Excel file
     private static String tours[];
@@ -176,80 +161,6 @@ public class Utilities {
             sum += ant.total_tour_length;
         }
         return sum / Ants.n_ants;
-    }
-
-    //save in a .txt output file the best solution resulted after a run to be later used when
-    //computing the Pareto front
-    static void writeParetoSolutions(ArrayList<Ant> bestSoFarPareto) {
-        File f = new File(filePath2);
-        double[] objValues = new double[2];
-
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
-
-            for (int i = 0; i < bestSoFarPareto.size(); i++) {
-                if (rowIndex > 0 && i != 0) {
-                    bw.newLine();
-                }
-                bw.write(rowIndex + "\t");
-                //get values total cost and amplitude
-                for (int indexObj = 0; indexObj < 2; indexObj++) {
-                    objValues[indexObj] = bestSoFarPareto.get(i).costObjectives[indexObj];
-                }
-                bw.write(objValues[0] + "\t");
-                //write cost of each individual subtour
-                for (int j = 0; j < bestSoFarPareto.get(i).tour_lengths.size(); j++) {
-                    bw.write(bestSoFarPareto.get(i).tour_lengths.get(j) + "\t");
-                }
-                bw.write(objValues[1] + "\t");
-
-                rowIndex++;
-            }
-            bw.newLine();
-            bw.close();
-        } catch (IOException e) {
-            System.out.println("error writing file");
-        }
-    }
-
-    static void writeFinalSolution(int trial, String fileName, double scalledValue, boolean isValid) {
-        String name = filePath4 + fileName;
-        File f = new File(name);
-
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f, true));
-
-            if (trial > 0) {
-                bw.newLine();
-            }
-            bw.write("Run Ant Colony System #" + (trial + 1));
-
-            bw.write("\nFinal best solution >> No. of used vehicles=" + Ants.best_so_far_ant.usedVehicles + " total tours length=" + Ants.best_so_far_ant.total_tour_length + " (scalled value = " + scalledValue + ")");
-            bw.newLine();
-            for (int i = 0; i < Ants.best_so_far_ant.usedVehicles; i++) {
-                int tourLength = Ants.best_so_far_ant.tours.get(i).size();
-                for (int j = 0; j < tourLength; j++) {
-                    int city = Ants.best_so_far_ant.tours.get(i).get(j);
-                    city = city + 1;  //so as to correspond to the city indexes from the VRPTW input file
-                    bw.write(city + " ");
-                }
-                bw.newLine();
-            }
-            bw.write("\nTotal number of evaluations: " + InOut.noEvaluations);
-            bw.write("\nAdded nodes=" + Controller.addedNodes);
-            if (isValid) {
-                bw.write("\nThe final solution is valid (feasible)..");
-            } else {
-                bw.write("\nThe final solution is not valid (feasible)..");
-            }
-
-            bw.newLine();
-            bw.close();
-
-        } catch (IOException e) {
-            System.out.println("error writing file");
-            e.printStackTrace();
-        }
     }
 
     public static String[] getTours() {
@@ -363,50 +274,5 @@ public class Utilities {
 
     }
 
-    public static boolean checkFeasibility(Ant a, VRPTW vrp, boolean printNoNodes) {
-        boolean isFeasible = true;
-        int currentCity, prevCity, addedNodes = 0;
-        double currentQuantity, currentTime;
-        double distance, arrivalTime, beginService;
-        ArrayList<Request> reqList = vrp.getRequests();
-
-        for (int indexTour = 0; indexTour < a.usedVehicles; indexTour++) {
-            currentQuantity = reqList.get(0).getDemand();
-            currentTime = 0.0;
-            for (int currentPos = 1; currentPos < a.tours.get(indexTour).size(); currentPos++) {
-                if (currentPos < a.tours.get(indexTour).size() - 1) {
-                    addedNodes++;
-                }
-				/*if (addedNodes == 0) {
-					System.out.println("Possible empty tour: " + a.tours.get(indexTour).size());
-				}*/
-                prevCity = a.tours.get(indexTour).get(currentPos - 1);
-                currentCity = a.tours.get(indexTour).get(currentPos);
-                currentQuantity += reqList.get(currentCity + 1).getDemand();
-
-                distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
-                arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
-                beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
-                if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                    //isFeasible = false;
-                    System.out.println("Time window constraint violated");
-                    return false;
-                }
-                currentTime = beginService;
-
-            }
-            if (currentQuantity > vrp.getCapacity()) {
-                //isFeasible = false;
-                System.out.println("Capacity constraint violated");
-                return false;
-            }
-        }
-        if (printNoNodes) {
-            LoggerOutput.log("Added nodes=" + addedNodes);
-        }
-        Controller.addedNodes = addedNodes;
-        return isFeasible;
-
-    }
 
 }

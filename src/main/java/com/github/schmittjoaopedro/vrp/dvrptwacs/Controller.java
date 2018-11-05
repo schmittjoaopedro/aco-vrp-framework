@@ -11,46 +11,64 @@ import java.util.Collections;
 public class Controller {
 
     //length of a working day in seconds
-    public static int workingDay = 100;
+    private int workingDay = 100;
+
+    private String antSystem;
+
+    private String rootDirectory;
+
+    private Utilities utilities;
 
     //number of time slices
-    private static int noTimeSlices = 50;
+    private int noTimeSlices = 50;
 
     //file name to be used for input data set
-    public static String vrpInstance = "r103";   //r104
+    private String vrpInstance = "r103";   //r104
 
     //dynamic level, which gives the proportion of the dynamic requests (available time > 0) from the DVRPTW instance
-    private static double dynamicLevel = 0.1;  //0.0  //0.1  //0.5  //1.0
+    private double dynamicLevel = 0.1;  //0.0  //0.1  //0.5  //1.0
 
-    private static double scalingValue;
+    private double scalingValue;
 
-    private static int idLastAvailableNode = 0;
+    private int idLastAvailableNode = 0;
 
-    public static int addedNodes = 0;
+    private int addedNodes = 0;
 
+    private Ants ants;
 
-    public static double getScalingValue() {
+    private VRPTW_ACS vrptw_acs;
+
+    public Controller(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed) {
+        this.vrpInstance = instanceName;
+        this.dynamicLevel = magnitude;
+        this.rootDirectory = rootDirectory;
+        this.antSystem = antSystem;
+        this.utilities = new Utilities();
+        this.utilities.setSeed(seed);
+        this.ants = new Ants(this);
+    }
+
+    public double getScalingValue() {
         return scalingValue;
     }
 
-    public static void setScalingValue(double scalingValue) {
-        Controller.scalingValue = scalingValue;
+    public void setScalingValue(double scalingValue) {
+        this.scalingValue = scalingValue;
     }
 
-    public static int getIdLastAvailableNode() {
+    public int getIdLastAvailableNode() {
         return idLastAvailableNode;
     }
 
-    public static void setIdLastAvailableNode(int idLastAvailableNode) {
-        Controller.idLastAvailableNode = idLastAvailableNode;
+    public void setIdLastAvailableNode(int idLastAvailableNode) {
+        this.idLastAvailableNode = idLastAvailableNode;
     }
 
     //get a list of new available (known) nodes at the given time moment
-    public static ArrayList<Integer> countNoAvailableNodes(ArrayList<Request> dynamicRequests, double time) {
+    public ArrayList<Integer> countNoAvailableNodes(ArrayList<Request> dynamicRequests, double time) {
         int i, id;
-        int pos = Controller.getIdLastAvailableNode();
+        int pos = getIdLastAvailableNode();
         ArrayList<Integer> nodesList = new ArrayList<Integer>();
-
         for (i = pos; i < dynamicRequests.size(); i++) {
             if (time >= dynamicRequests.get(i).getAvailableTime()) {
                 id = dynamicRequests.get(i).getId() - 1;
@@ -59,8 +77,7 @@ public class Controller {
                 break;
             }
         }
-        Controller.setIdLastAvailableNode(i);
-
+        setIdLastAvailableNode(i);
         return nodesList;
     }
 
@@ -176,9 +193,7 @@ public class Controller {
 
     }
 
-    public static void execute(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed) {
-        vrpInstance = instanceName;
-        dynamicLevel = magnitude;
+    public void execute() {
         long startTime, endTime;
         double currentTime, scalingValue, newStartWindow, newEndWindow, newServiceTime, newAvailableTime;
         //counter which stores the number of the current time slice that we are during the execution of the
@@ -197,10 +212,9 @@ public class Controller {
             //reads benchmark data; read the data from the input file
             String dvrptwInstance = vrpInstance + "-" + dynamicLevel;
             String fileName = dvrptwInstance + ".txt";
-            DataReader reader = new DataReader(rootDirectory, fileName);
+            DataReader reader = new DataReader(this.rootDirectory, fileName);
             //read the data from the file
             VRPTW vrpInstance = reader.read();
-            Utilities.setSeed(seed);
 
             LoggerOutput.log("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: " + dvrptwInstance);
             //include in the counting also the depot, which is assumed to be apriori known
@@ -209,11 +223,11 @@ public class Controller {
 
             //compute the scaling value with which we can scale all time-related values
             Request depotReq = vrpInstance.getRequests().get(0);
-            scalingValue = (double) workingDay / (double) (depotReq.getEndWindow() - depotReq.getStartWindow());
-            Controller.setScalingValue(scalingValue);
+            scalingValue = (double) this.workingDay / (double) (depotReq.getEndWindow() - depotReq.getStartWindow());
+            setScalingValue(scalingValue);
 
             //adjust distances between nodes (cities) according to this scale value
-            InOut.init_program(antSystem, trial, vrpInstance, scalingValue);
+            InOut.init_program(this.antSystem, trial, vrpInstance, scalingValue);
 
             //adjust for each request, all the time related values according to the length of the working day we are simulating
             if (scalingValue != 0) {
@@ -250,7 +264,8 @@ public class Controller {
             //Ants.total = new double[MTsp.n + 1][MTsp.n + 1];
 
             //VRPTW_ACS.generateInitialWeights();
-            VRPTW_ACS.init_try(vrpInstance);
+            this.vrptw_acs = new VRPTW_ACS(threadStopped, vrpInstance, this, ants);
+            vrptw_acs.init_try(vrpInstance);
 
             currentTimeSlice = 1;
             idLastAvailableNode = 0;
@@ -261,7 +276,7 @@ public class Controller {
             startTime = Timer.getCurrentTime();
 
             //start the ant colony
-            VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrpInstance);
+            VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrpInstance, this, ants);
             Thread t = null;
             if (!InOut.isDiscreteTime) {
                 t = new Thread(worker);
@@ -399,7 +414,7 @@ public class Controller {
                         }
                         Ants.best_so_far_ant.total_tour_length = sum;
 
-                        scalingValue = Controller.getScalingValue();
+                        scalingValue = getScalingValue();
                         double scalledValue = 0.0;
                         if (scalingValue != 0) {
                             scalledValue = Ants.best_so_far_ant.total_tour_length / scalingValue;
@@ -422,7 +437,7 @@ public class Controller {
                 //restart the colony thread
                 if (threadStopped) {
                     //restart the ant colony thread
-                    worker = new VRPTW_ACS(threadStopped, vrpInstance);
+                    worker = new VRPTW_ACS(threadStopped, vrpInstance, this, ants);
                     if (!InOut.isDiscreteTime) {
                         t = new Thread(worker);
                         t.start();
@@ -458,7 +473,7 @@ public class Controller {
         	Ants.best_so_far_ant = VRPTW_ACS.exchangeMultipleRouteIterated(Ants.best_so_far_ant, vrpInstance);
 		}*/
 
-            scalingValue = Controller.getScalingValue();
+            scalingValue = getScalingValue();
             double scalledValue = 0.0;
             if (scalingValue != 0) {
                 scalledValue = Ants.best_so_far_ant.total_tour_length / scalingValue;
@@ -478,17 +493,59 @@ public class Controller {
             LoggerOutput.log("Total number of evaluations: " + InOut.noEvaluations);
             LoggerOutput.log("Total number of feasible solutions: " + InOut.noSolutions);
             //System.out.println("Working day is over..");
-            boolean isValid = Utilities.checkFeasibility(Ants.best_so_far_ant, vrpInstance, true);
+            boolean isValid = checkFeasibility(Ants.best_so_far_ant, vrpInstance, true);
             if (isValid) {
                 LoggerOutput.log("The final solution is valid (feasible)..");
             } else {
                 LoggerOutput.log("The final solution is not valid (feasible)..");
             }
-
-            //save final solution in a .txt file on the disk
-            Utilities.writeFinalSolution(trial, fileName, scalledValue, isValid);
-
         }
+
+    }
+
+    private boolean checkFeasibility(Ants.Ant a, VRPTW vrp, boolean printNoNodes) {
+        boolean isFeasible = true;
+        int currentCity, prevCity, addedNodes = 0;
+        double currentQuantity, currentTime;
+        double distance, arrivalTime, beginService;
+        ArrayList<Request> reqList = vrp.getRequests();
+
+        for (int indexTour = 0; indexTour < a.usedVehicles; indexTour++) {
+            currentQuantity = reqList.get(0).getDemand();
+            currentTime = 0.0;
+            for (int currentPos = 1; currentPos < a.tours.get(indexTour).size(); currentPos++) {
+                if (currentPos < a.tours.get(indexTour).size() - 1) {
+                    addedNodes++;
+                }
+				/*if (addedNodes == 0) {
+					System.out.println("Possible empty tour: " + a.tours.get(indexTour).size());
+				}*/
+                prevCity = a.tours.get(indexTour).get(currentPos - 1);
+                currentCity = a.tours.get(indexTour).get(currentPos);
+                currentQuantity += reqList.get(currentCity + 1).getDemand();
+
+                distance = VRPTW.instance.distance[prevCity + 1][currentCity + 1];
+                arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
+                beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
+                if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
+                    //isFeasible = false;
+                    System.out.println("Time window constraint violated");
+                    return false;
+                }
+                currentTime = beginService;
+
+            }
+            if (currentQuantity > vrp.getCapacity()) {
+                //isFeasible = false;
+                System.out.println("Capacity constraint violated");
+                return false;
+            }
+        }
+        if (printNoNodes) {
+            LoggerOutput.log("Added nodes=" + addedNodes);
+        }
+        this.addedNodes = addedNodes;
+        return isFeasible;
 
     }
 
