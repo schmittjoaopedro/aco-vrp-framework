@@ -82,7 +82,7 @@ public class Controller {
     }
 
     //get the position of the last committed node in the tour designated by indexTour from the best so far ant
-    public static int getLastCommitedPos(int indexTour) {
+    public int getLastCommitedPos(int indexTour) {
         int pos = 0;
         int node;
         int tourLength;
@@ -103,7 +103,7 @@ public class Controller {
     }
 
     //check if there are any nodes in the tours of the best so far solution that should be marked as committed
-    public static boolean checkNewCommittedNodes(Ants.Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
+    public boolean checkNewCommittedNodes(Ants.Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
         boolean result = false;
         int indexTour = 0;
         int tourLength = 0;
@@ -150,7 +150,7 @@ public class Controller {
     //commit nodes from the tours of the best so far solution, that will have their position fixed when
     //they will be copied in the ants'solutions
     // block part of the best solution that is being/has been visited
-    public static void commitNodes(Ants.Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
+    public void commitNodes(Ants.Ant bestAnt, VRPTW instance, int indexTimeSlice, double lengthTimeSlice) {
         int indexTour = 0;
         int tourLength = 0;
         int node = 0, startPos = 0, count = 0;

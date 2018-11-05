@@ -166,7 +166,7 @@ public class VRPTW_ACS implements Runnable {
     }
 
     //add to the ant's solution the committed nodes from each tour of the best so far solution
-    static void addCommitedNodes(Ant a, VRPTW instance) {
+    public void addCommitedNodes(Ant a, VRPTW instance) {
         int index, city, current_city;
         double distance, arrivalTime, beginService;
         ArrayList<Request> reqList = instance.getRequests();
@@ -174,7 +174,7 @@ public class VRPTW_ACS implements Runnable {
 
         ArrayList<Integer> lastCommitedIndexes = new ArrayList<Integer>();
         for (int indexTour = 0; indexTour < Ants.best_so_far_ant.usedVehicles; indexTour++) {
-            pos = Controller.getLastCommitedPos(indexTour);
+            pos = controller.getLastCommitedPos(indexTour);
             lastCommitedIndexes.add(pos);
         }
 
@@ -225,13 +225,13 @@ public class VRPTW_ACS implements Runnable {
 
     //check if there are any committed tours (i.e. tours that contain at least one committed node that
     //should be included in the ant's solution)
-    static boolean checkCommitedTours() {
+    public boolean checkCommitedTours() {
         boolean result = false;
         int lastPos;
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            lastPos = Controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommitedPos(index);
             lastCommitedIndexes.add(lastPos);
         }
 
@@ -246,7 +246,7 @@ public class VRPTW_ACS implements Runnable {
 
     //manage the solution construction phase (construct a set of complete and closed tours, one
     //for each vehicle)
-    static void construct_solutions(VRPTW instance) {
+    public void construct_solutions(VRPTW instance) {
         int k; /* counter variable */
         int step; /* counter of the number of construction steps */
         int values[] = new int[2];
@@ -282,7 +282,7 @@ public class VRPTW_ACS implements Runnable {
                     //choose for each ant in a probabilistic way by some type of roullette wheel selection
                     //which salesman to consider next, that will visit a city
                     //salesman = (int)(Math.random() * MTsp.m);
-                    values = Ants.neighbour_choose_and_move_to_next(Ants.ants[k], instance);
+                    values = ants.neighbour_choose_and_move_to_next(Ants.ants[k], instance);
                     if (values[0] != -1) {
                         if (Ants.acs_flag)
                             Ants.local_acs_pheromone_update(Ants.ants[k], values[1]);
@@ -344,7 +344,7 @@ public class VRPTW_ACS implements Runnable {
          * have to be initialized differently
          */
         if (!(Ants.acs_flag)) {
-            Ants.trail_0 = 1. / ((Ants.rho) * ants.nn_tour(instance));
+            Ants.trail_0 = 1. / ((Ants.rho) * nn_tour(instance));
             /*
              * in the original papers on Ant System it is not exactly defined what the
              * initial value of the Ants.pheromones is. Here we set it to some
@@ -359,7 +359,7 @@ public class VRPTW_ACS implements Runnable {
                 Ants.trail_0 = 1.0;
             }
             else {
-                Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) ants.nn_tour(instance));
+                Ants.trail_0 = 1. / ((double) (noAvailableNodes + 1) * (double) nn_tour(instance));
             }
             Ants.init_pheromone_trails(Ants.trail_0);
         }
@@ -373,14 +373,14 @@ public class VRPTW_ACS implements Runnable {
     //the local search procedure is composed of 2 operators applied sequentially in this order:
     //relocate single/multiple route and exchange single/multiple route
     //as a result, all ants of the colony will have locally optimal tours
-    static void apply_local_search(VRPTW instance) {
+    public void apply_local_search(VRPTW instance) {
         for (int k = 0; k < Ants.n_ants; k++) {
             Ants.ants[k] = local_search(Ants.ants[k], instance);
         }
     }
 
     //skip committed (defined) nodes when applying local search operators
-    static Ant local_search(Ant a, VRPTW instance) {
+    public Ant local_search(Ant a, VRPTW instance) {
         //apply relocate multiple route local search operator
         a = relocateMultipleRoute(a, instance);
 
@@ -525,7 +525,7 @@ public class VRPTW_ACS implements Runnable {
     //skip committed (defined) nodes
     //relocateMultipleRoute is performed only once and the best improvement (which minimizes most the
     //total traveled distance) is applied
-    static Ant relocateMultipleRoute(Ant a, VRPTW instance) {
+    public Ant relocateMultipleRoute(Ant a, VRPTW instance) {
         boolean feasible = false;
         int city, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -580,7 +580,7 @@ public class VRPTW_ACS implements Runnable {
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            lastPos = Controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommitedPos(index);
             lastCommitedIndexes.add(lastPos);
         }
 
@@ -682,7 +682,7 @@ public class VRPTW_ACS implements Runnable {
     //skip committed (defined) nodes
     //relocateMultipleRouteIterated is performed multiple times until no further improvement (which minimizes most the
     //total traveled distance or reduces the number of used vehicles) is possible
-    static Ant relocateMultipleRouteIterated(Ant a, VRPTW instance) {
+    public Ant relocateMultipleRouteIterated(Ant a, VRPTW instance) {
         boolean feasible = false;
         int city, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -740,7 +740,7 @@ public class VRPTW_ACS implements Runnable {
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            lastPos = Controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommitedPos(index);
             lastCommitedIndexes.add(lastPos);
         }
 
@@ -855,7 +855,7 @@ public class VRPTW_ACS implements Runnable {
     //total traveled distance or reduces the number of used vehicles) is possible
     //try to relocate nodes from the tour having the minimum number of visited nodes, in an attempt
     //to reduce (minimize) the number of tours (i.e. used vehicles)
-    static Ant relocateMultipleRouteIteratedShortest(Ant a, VRPTW instance) {
+    public Ant relocateMultipleRouteIteratedShortest(Ant a, VRPTW instance) {
         boolean feasible = false;
         int city, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -911,7 +911,7 @@ public class VRPTW_ACS implements Runnable {
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            lastPos = Controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommitedPos(index);
             lastCommitedIndexes.add(lastPos);
         }
 
@@ -1113,7 +1113,7 @@ public class VRPTW_ACS implements Runnable {
 
     }
 
-    static Ant exchangeMultipleRoute(Ant a, VRPTW instance) {
+    public Ant exchangeMultipleRoute(Ant a, VRPTW instance) {
         boolean feasible = false;
         int city1, city2, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -1168,7 +1168,7 @@ public class VRPTW_ACS implements Runnable {
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            lastPos = Controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommitedPos(index);
             lastCommitedIndexes.add(lastPos);
         }
 
@@ -1245,7 +1245,7 @@ public class VRPTW_ACS implements Runnable {
         return bestImprovedAnt;
     }
 
-    static Ant exchangeMultipleRouteIterated(Ant a, VRPTW instance) {
+    public Ant exchangeMultipleRouteIterated(Ant a, VRPTW instance) {
         boolean feasible = false;
         int city1, city2, sourcePrevCity, sourceNextCity = -2, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -1303,7 +1303,7 @@ public class VRPTW_ACS implements Runnable {
 
         ArrayList<Integer> lastCommitedIndexes = new  ArrayList<Integer>();
         for (int index = 0; index < Ants.best_so_far_ant.usedVehicles; index++) {
-            lastPos = Controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommitedPos(index);
             lastCommitedIndexes.add(lastPos);
         }
 
@@ -1735,6 +1735,96 @@ public class VRPTW_ACS implements Runnable {
             }
         }
         //System.out.println("Counter=" + counter + "; After terminating work in thread: best solution is >> No. of used vehicles=" + Ants.best_so_far_ant.usedVehicles + " total tours length=" + Ants.best_so_far_ant.total_tour_length);
+    }
+
+
+    //generate a nearest neighbor tour and compute tour length using only the available nodes (nodes known so far)
+    public double nn_tour(VRPTW instance) {
+        int step, salesman = 0;
+        double sum = 0, sum1 = 0, scalledValue = 0, noVehicles = 1.0;
+
+        ants.ant_empty_memory(Ants.ants[0], instance);
+        step = 0;
+
+        for (int i = 0; i < Ants.ants[0].usedVehicles; i++) {
+            //place the ant on the depot city, which is the start city of each tour
+            // -1 is a special marker for the deport city, so that it's not be confused with the rest of the cities
+            // all the rest of the cities are represented by integer values > 0
+            Ants.ants[0].tours.get(i).add(-1);
+        }
+
+        //there are still left available (known) cities to be visited
+        while (Ants.ants[0].toVisit > 0) {
+            salesman = Ants.ants[0].usedVehicles - 1;
+            ants.choose_closest_next(Ants.ants[0], salesman, instance);
+        }
+
+        //System.out.println("Cities to be visited: " + ants[0].toVisit);
+
+        int nrTours = Ants.ants[0].usedVehicles;
+        for (int i = 0; i < nrTours; i++) {
+            step = Ants.ants[0].tours.get(i).size();
+            Ants.ants[0].tours.get(i).add(step, -1);
+            Ants.ants[0].tour_lengths.set(i, VRPTW.compute_tour_length(Ants.ants[0].tours.get(i)));
+            sum1 += Ants.ants[0].tour_lengths.get(i);
+        }
+
+        Ants.ants[0].total_tour_length = sum1;
+
+        if (VRPTW_ACS.ls_flag) {
+            //ants[0] = VRPTW_ACS.local_search(ants[0], instance);
+            Ants.ants[0] = relocateMultipleRouteIterated(Ants.ants[0], instance);
+            Ants.ants[0] = exchangeMultipleRouteIterated(Ants.ants[0], instance);
+
+            //compute new distances and update longest tour
+            for (int l = 0; l < Ants.ants[0].usedVehicles; l++) {
+                Ants.ants[0].tour_lengths.set(l, VRPTW.compute_tour_length(Ants.ants[0].tours.get(l)));
+                sum += Ants.ants[0].tour_lengths.get(l);
+            }
+            Ants.ants[0].total_tour_length = sum;
+        }
+
+		/*for (int j = 0; j < ants[0].usedVehicles; j++) {
+			lastCommitted.add(j, 0);
+		}*/
+
+        //System.out.println("Initial (nearest neighbour tour) longest tour length: " + longestTourLength);
+        double scalingValue = controller.getScalingValue();
+        if (scalingValue != 0) {
+            scalledValue = Ants.ants[0].total_tour_length / scalingValue;
+        }
+        LoggerOutput.log("\nInitial (nearest neighbour tour) total tour length: " + Ants.ants[0].total_tour_length + " (scalled value = " + scalledValue + "); Number of vehicles used: " + Ants.ants[0].usedVehicles);
+        sum1 = Ants.ants[0].total_tour_length;
+        noVehicles = Ants.ants[0].usedVehicles;
+
+		/*for (int i = 0; i < nrTours; i++) {
+			int tourLength = ants[0].tours.get(i).size();
+			for (int j = 0; j < tourLength; j++) {
+				int city = ants[0].tours.get(i).get(j);
+				city = city + 1;  //so as to correspond to the city indexes from the VRPTW input file
+				System.out.print(city + " ");
+			}
+			System.out.println();
+		}*/
+
+        //initialize best solution so far with this solution constructed by the nearest neighbour heuristic
+        Ants.copy_from_to(Ants.ants[0], Ants.best_so_far_ant, instance);
+
+		/*for (int j = 0; j < Ants.best_so_far_ant.usedVehicles; j++) {
+			lastCommitted.add(j, 0);
+		}*/
+
+        //sum = ants[0].total_tour_length;
+        ants.ant_empty_memory(Ants.ants[0], instance);
+
+        //return sum;
+        //double value = sum1 * noVehicles;
+        //double value = sum1 * ants[0].usedVehicles * 0.1;
+        //double value = sum1 + ants[0].usedVehicles * 0.01;
+		/*double weightedSum = 0.5 * (double)sum1 + 0.5 * (double)ants[0].usedVehicles;
+		double value = Math.pow(weightedSum, 2.0);*/
+        return sum1;
+        //return value;
     }
 
     public void terminate() {
