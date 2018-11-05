@@ -7,50 +7,7 @@ import java.util.HashMap;
 
 public class InsertionHeuristic {
 
-    static class Insertion {
-        //id of the unrouted customer that should be inserted in a route in the best feasible insertion place
-        int customer;
-
-        //id of the route or the index of the tour given by the best feasible insertion place
-        int indexTour;
-
-        //the previous node from the selected tour given by the best feasible insertion place
-        //the unrouted customer will be inserted in the the tour having the index = indexTour and in front
-        //of this node/customer/city
-        int previousNode;
-
-        //computed value for the metric for a certain insertion place, considered when deciding which is the best feasible insertion place
-        //for an unrouted customer
-        double score;
-
-        public Insertion() {}
-
-        public Insertion(int customer_, int indexTour_, int previousNode_, double score_) {
-            this.customer = customer_;
-            this.indexTour = indexTour_;
-            this.previousNode = previousNode_;
-            this.score = score_;
-        }
-
-        public int getCustomer() {
-            return customer;
-        }
-
-        public int getIndexTour() {
-            return indexTour;
-        }
-
-        public int getPreviousNode() {
-            return previousNode;
-        }
-
-        public double getScore() {
-            return score;
-        }
-
-    }
-
-    static void computeRouteVariables(Ant a, VRPTW vrp, int startTourIndex) {
+    public void computeRouteVariables(Ant a, VRPTW vrp, int startTourIndex) {
         ArrayList<Request> reqList = vrp.getRequests();
 
         //for every customer already included in the solution, compute route variables (earliest time a
@@ -123,7 +80,7 @@ public class InsertionHeuristic {
 
     }
 
-    static void updateRouteVariables(Ant a, VRPTW vrp, Insertion ins) {
+    public void updateRouteVariables(Ant a, VRPTW vrp, Insertion ins) {
         int previousCity, nextCity, bestPos, bestIndexTour;
         double value1, value2, oldLatestTime, newLatestTime, oldEarliestTime, newEarliestTime;
 
@@ -163,7 +120,7 @@ public class InsertionHeuristic {
 
     }
 
-    static boolean checkIsFeasibleTour(Ant a, VRPTW vrp, int customer, int indexTour, int previousPos, int nextPos) {
+    public boolean checkIsFeasibleTour(Ant a, VRPTW vrp, int customer, int indexTour, int previousPos, int nextPos) {
         boolean res = true;
         int currentCity, prevCity;
         double currentQuantity, currentTime;
@@ -241,7 +198,7 @@ public class InsertionHeuristic {
 
     //check if it is feasible to insert the client denoted by customer, in the tour designated by
     //indexTour; the customer is checked if it can be inserted between the nodes at position previousPos and nextPos
-    static boolean isFeasibleInsertion(Ant a, VRPTW vrp, int customer, int indexTour, int previousPos, int nextPos) {
+    public boolean isFeasibleInsertion(Ant a, VRPTW vrp, int customer, int indexTour, int previousPos, int nextPos) {
         boolean isFeasible1 = false, isFeasible2 = false;
         double currentQuantity, arrivalTime, arrivalTime1, beginService, earliestTime, latestTime;
         double value1, value2, value3, value4;
@@ -280,7 +237,7 @@ public class InsertionHeuristic {
 		return isFeasible2;*/
     }
 
-    static void insertUnroutedCustomers(Ant a, VRPTW vrp, ArrayList<Integer> unvisitedNodes, int startIndexTour, ArrayList<Integer> startPos) {
+    public void insertUnroutedCustomers(Ant a, VRPTW vrp, ArrayList<Integer> unvisitedNodes, int startIndexTour, ArrayList<Integer> startPos) {
         boolean ok = true;
         double c11, c12, c13, c1, c1_, c2, value1, value2, value3, value4, earliestTime, latestTime;
         double bestC1Score = Double.MAX_VALUE;

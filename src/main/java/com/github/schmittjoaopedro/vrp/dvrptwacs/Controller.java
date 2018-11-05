@@ -44,6 +44,8 @@ public class Controller {
 
     private VRPTW vrptw;
 
+    private InsertionHeuristic insertionHeuristic;
+
     public Controller(String antSystem, String rootDirectory, String instanceName, double magnitude, int seed, boolean isDiscreteTime) {
         this.vrpInstance = instanceName;
         this.dynamicLevel = magnitude;
@@ -52,7 +54,8 @@ public class Controller {
         this.utilities = new Utilities();
         this.utilities.setSeed(seed);
         this.inOut = new InOut(isDiscreteTime);
-        this.ants = new Ants(this, this.utilities, this.inOut);
+        this.insertionHeuristic = new InsertionHeuristic();
+        this.ants = new Ants(this, this.utilities, this.inOut, this.insertionHeuristic);
         this.timer = new Timer(this.inOut);
     }
 
@@ -375,7 +378,7 @@ public class Controller {
                             lastPos = getLastCommitedPos(index);
                             lastCommitedIndexes.add(lastPos);
                         }
-                        InsertionHeuristic.insertUnroutedCustomers(ants.best_so_far_ant, vrptw, unroutedList, 0, lastCommitedIndexes);
+                        insertionHeuristic.insertUnroutedCustomers(ants.best_so_far_ant, vrptw, unroutedList, 0, lastCommitedIndexes);
                         //System.out.println("After first applying insertion heuristic: Cities to be visited in the best so far solution: " + Ants.best_so_far_ant.toVisit);
                         //if there are still remaining unvisited cities from the ones that are available
                         //insert an empty tour and add cities in it following nearest-neighbour heuristic
@@ -405,7 +408,7 @@ public class Controller {
                                     lastPos = getLastCommitedPos(index);
                                     lastCommitedIndexes.add(lastPos);
                                 }
-                                InsertionHeuristic.insertUnroutedCustomers(ants.best_so_far_ant, vrptw, unroutedList, indexTour, lastCommitedIndexes);
+                                insertionHeuristic.insertUnroutedCustomers(ants.best_so_far_ant, vrptw, unroutedList, indexTour, lastCommitedIndexes);
                                 //System.out.println("After applying insertion heuristic to the NN tour: Cities to be visited in the best so far solution: " + Ants.best_so_far_ant.toVisit);
                             }
                             //add the depot again to end this tour

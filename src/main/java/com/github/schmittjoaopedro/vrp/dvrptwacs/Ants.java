@@ -56,6 +56,8 @@ public class Ants {
      * Germany
      ***************************************************************************/
 
+    private InsertionHeuristic insertionHeuristic;
+
     private Utilities utilities;
 
     private Controller controller;
@@ -108,10 +110,11 @@ public class Ants {
 
     public double trail_0; /* initial pheromone level in ACS */
 
-    public Ants(Controller controller, Utilities utilities, InOut inOut) {
+    public Ants(Controller controller, Utilities utilities, InOut inOut, InsertionHeuristic insertionHeuristic) {
         this.controller = controller;
         this.utilities = utilities;
         this.inOut = inOut;
+        this.insertionHeuristic = insertionHeuristic;
     }
 
     public double HEURISTIC(VRPTW vrptw, int m, int n) {
@@ -548,7 +551,7 @@ public class Ants {
                     lastCommitedIndexes.add(pos);
                 }
                 //skip over committed (defined) nodes when performing insertion heuristic
-                InsertionHeuristic.insertUnroutedCustomers(a, vrptw, unroutedList, startIndexTour, lastCommitedIndexes);
+                insertionHeuristic.insertUnroutedCustomers(a, vrptw, unroutedList, startIndexTour, lastCommitedIndexes);
                 appliedInsertion = true;
                 //System.out.println("Iter=" + InOut.iteration + ": After insertion heuristic >> cities to be visited: " + a.toVisit);
             }
