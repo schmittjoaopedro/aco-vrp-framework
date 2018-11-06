@@ -1,9 +1,9 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 
-import java.util.ArrayList;
-
 import com.github.schmittjoaopedro.vrp.dvrptwacs.InOut.Distance_type;
+
+import java.util.ArrayList;
 
 public class VRPTW {
 

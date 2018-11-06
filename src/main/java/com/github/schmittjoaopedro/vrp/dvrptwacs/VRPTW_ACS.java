@@ -41,14 +41,43 @@ public class VRPTW_ACS implements Runnable {
         this.loggerOutput = loggerOutput;
     }
 
-    public boolean isFeasible(VRPTW vrp, Ant a, int city, double beginService, double beginServiceDepot, int indexSalesman) {
+    public double[] HEURISTIC(Ants ants, Ant ant, VRPTW vrptw, int vehicleIdx, int currentCity, int nextCity, boolean inverse) {
+        double cost = 0.0;
+        double feasible = 0.0;
+        double distances[][] = vrptw.instance.distance;
+        ArrayList<Request> reqList = vrptw.getRequests();
+        // Calculate distance from current city to next city
+        double distance = distances[currentCity][nextCity];
+        double arrivalTime = ant.currentTime.get(vehicleIdx) + reqList.get(currentCity).getServiceTime() + distance;
+        double beginService = Math.max(arrivalTime, reqList.get(nextCity).getStartWindow());
+        // Calculate distance from next city to depot
+        double distanceDepot = distances[nextCity][0];
+        double arrivalTimeDepot = beginService + reqList.get(nextCity).getServiceTime() + distanceDepot;
+        double beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
+        // Check if route is feasible
+        if (isFeasible(vrptw, ant, nextCity - 1, beginService, beginServiceDepot, vehicleIdx)) {
+            double deliveryUrgency = reqList.get(nextCity).getEndWindow() - (ant.beginService[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
+            double timeDifference = beginService - ant.beginService[currentCity] - reqList.get(currentCity).getServiceTime();
+            if (inverse) {
+                cost = 1.0 / (ants.weight1 * distance + ants.weight2 * timeDifference + ants.weight3 * deliveryUrgency);
+                cost = Math.pow(cost, ants.beta);
+                cost = cost * Math.pow(ants.pheromone[currentCity][nextCity], ants.alpha);
+            } else {
+                cost = ants.weight1 * distance + ants.weight2 * timeDifference + ants.weight3 * deliveryUrgency;
+            }
+            feasible = 1.0;
+        }
+        return new double[]{feasible, cost, beginService};
+    }
+
+    public boolean isFeasible(VRPTW vrptw, Ant a, int city, double beginService, double beginServiceDepot, int indexSalesman) {
         boolean ok = false;
         double currentQuantity;
-        ArrayList<Request> reqList = vrp.getRequests();
+        ArrayList<Request> reqList = vrptw.getRequests();
         //check upper bound of the time window of the next customer to be visited &&
         //current capacity of the car && vehicle arrival time at the depot (the maximum total route time -> upper bound of the time window of the depot)
         currentQuantity = a.currentQuantity.get(indexSalesman) + reqList.get(city + 1).getDemand();
-        if (beginService <= reqList.get(city + 1).getEndWindow() && currentQuantity <= vrp.getCapacity()
+        if (beginService <= reqList.get(city + 1).getEndWindow() && currentQuantity <= vrptw.getCapacity()
                 && beginServiceDepot <= reqList.get(0).getEndWindow()) {
             ok = true;
         }

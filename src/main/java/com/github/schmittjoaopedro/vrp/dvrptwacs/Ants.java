@@ -237,18 +237,9 @@ public class Ants {
         int startIndex;
         int startIndexTour;
         double valueBest = -1.0;  /* values in total matrix are always >= 0.0 */
-        double help;
+        double help[];
         int[] values = new int[2];
-        double distance;
-        double distanceDepot;
-        double arrivalTime;
-        double arrivalTimeDepot;
-        double beginService;
-        double beginServiceDepot;
-        double timeDifference;
-        double deliveryUrgency;
         double bestBeginService = 0;
-        double[][] distances = vrptw.instance.distance;
         ArrayList<Request> reqList = vrptw.getRequests();
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
         ArrayList<Integer> lastCommittedIndexes;
@@ -264,27 +255,12 @@ public class Ants {
             for (int city : idKnownRequests) {
                 if (ant.visited[city] == false) {
                     helpCity = city + 1;
-                    // Calculate distance from current city to next city
-                    distance = distances[currentCity][helpCity];
-                    arrivalTime = ant.currentTime.get(vehicleIdx) + reqList.get(currentCity).getServiceTime() + distance;
-                    beginService = Math.max(arrivalTime, reqList.get(helpCity).getStartWindow());
-                    // Calculate distance from next city to depot
-                    distanceDepot = distances[helpCity][0];
-                    arrivalTimeDepot = beginService + reqList.get(helpCity).getServiceTime() + distanceDepot;
-                    beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-                    // Check if route is feasible
-                    if (vrptwAcs.isFeasible(vrptw, ant, helpCity - 1, beginService, beginServiceDepot, vehicleIdx)) {
-                        deliveryUrgency = reqList.get(helpCity).getEndWindow() - (ant.beginService[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
-                        timeDifference = beginService - ant.beginService[currentCity] - reqList.get(currentCity).getServiceTime();
-                        help = 1.0 / (weight1 * distance + weight2 * timeDifference + weight3 * deliveryUrgency);
-                        help = Math.pow(help, beta);
-                        help = help * Math.pow(pheromone[currentCity][helpCity], alpha);
-                        if (help > valueBest) {
-                            nextCity = helpCity - 1;
-                            valueBest = help;
-                            vehicle = vehicleIdx;
-                            bestBeginService = beginService;
-                        }
+                    help = vrptwAcs.HEURISTIC(this, ant, vrptw, vehicleIdx, currentCity, helpCity, true);
+                    if (help[0] == 1.0 && help[1] > valueBest) { // Is feasible
+                        nextCity = helpCity - 1;
+                        valueBest = help[1]; // Cost
+                        vehicle = vehicleIdx;
+                        bestBeginService = help[2]; // Begin service
                     }
                 }
             }
@@ -342,19 +318,10 @@ public class Ants {
         int helpCity;
         int startPos;
         double valueBest = -1.0;  //values in total matrix are always >= 0.0
-        double help;
-        double distance;
-        double distanceDepot;
-        double arrivalTime;
-        double arrivalTimeDepot;
-        double beginService;
-        double beginServiceDepot;
-        double timeDifference;
-        double deliveryUrgency;
+        double help[];
         double bestBeginService = 0;
         int[] values = new int[2];
         int[][] nnList = vrptw.instance.nnList;
-        double distances[][] = vrptw.instance.distance;
         ArrayList<Request> reqList = vrptw.getRequests();
         if (ant.addedEmptyTour) {
             startPos = ant.usedVehicles - 1;
@@ -368,27 +335,12 @@ public class Ants {
             for (int i = 0; i < nnAnts; i++) {
                 helpCity = nnList[currentCity][i];
                 if ((vrptw.getIdAvailableRequests().contains(helpCity - 1)) && (!ant.visited[helpCity - 1])) {
-                    // Calculate distance from current city to next city
-                    distance = distances[currentCity][helpCity];
-                    arrivalTime = ant.currentTime.get(vehicleIdx) + reqList.get(currentCity).getServiceTime() + distance;
-                    beginService = Math.max(arrivalTime, reqList.get(helpCity).getStartWindow());
-                    // Calculate distance from next city to depot
-                    distanceDepot = distances[helpCity][0];
-                    arrivalTimeDepot = beginService + reqList.get(helpCity).getServiceTime() + distanceDepot;
-                    beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-                    // Check if route is feasible
-                    if (vrptwAcs.isFeasible(vrptw, ant, helpCity - 1, beginService, beginServiceDepot, vehicleIdx)) {
-                        deliveryUrgency = reqList.get(helpCity).getEndWindow() - (ant.beginService[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
-                        timeDifference = beginService - ant.beginService[currentCity] - reqList.get(currentCity).getServiceTime();
-                        help = 1.0 / (weight1 * distance + weight2 * timeDifference + weight3 * deliveryUrgency);
-                        help = Math.pow(help, beta);
-                        help = help * Math.pow(pheromone[currentCity][helpCity], alpha);
-                        if (help > valueBest) {
-                            nextCity = helpCity - 1;
-                            valueBest = help;
-                            vehicle = vehicleIdx;
-                            bestBeginService = beginService;
-                        }
+                    help = vrptwAcs.HEURISTIC(this, ant, vrptw, vehicleIdx, currentCity, helpCity, true);
+                    if (help[0] == 1.0 && help[1] > valueBest) { // Feasible
+                        nextCity = helpCity - 1;
+                        valueBest = help[1]; // Cost
+                        vehicle = vehicleIdx;
+                        bestBeginService = help[2]; // Begin service
                     }
                 }
             }
@@ -414,17 +366,9 @@ public class Ants {
         int currentCity;
         int nextCity;
         int helpCity;
-        double distance;
-        double distanceDepot;
-        double arrivalTime;
-        double arrivalTimeDepot;
-        double beginService;
-        double beginServiceDepot;
-        double timeDifference;
-        double deliveryUrgency;
         double bestBeginService = 0;
         double minValue;
-        double metricValue;
+        double help[];
         ArrayList<Request> reqList = vrptw.getRequests();
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
         while (ant.toVisit > 0) {
@@ -436,26 +380,11 @@ public class Ants {
             for (int city : idKnownRequests) {
                 if (ant.visited[city] == false) {
                     helpCity = city + 1;
-                    // Calculate distance from current city to next city
-                    distance = vrptw.instance.distance[currentCity][helpCity];
-                    arrivalTime = ant.currentTime.get(idxVehicle) + reqList.get(currentCity).getServiceTime() + distance;
-                    beginService = Math.max(arrivalTime, reqList.get(helpCity).getStartWindow());
-                    // Calculate distance from next city to depot
-                    distanceDepot = vrptw.instance.distance[helpCity][0];
-                    arrivalTimeDepot = beginService + reqList.get(helpCity).getServiceTime() + distanceDepot;
-                    beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-                    // Check if route is feasible
-                    if (vrptwAcs.isFeasible(vrptw, ant, helpCity - 1, beginService, beginServiceDepot, idxVehicle)) {
-                        //compute the value of the "closeness" metric; this metric tries to account
-                        //for both geographical and temporal closeness of customers
-                        timeDifference = beginService - ant.beginService[currentCity] - reqList.get(currentCity).getServiceTime();
-                        deliveryUrgency = reqList.get(helpCity).getEndWindow() - (ant.beginService[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
-                        metricValue = weight1 * distance + weight2 * timeDifference + weight3 * deliveryUrgency;
-                        if (metricValue < minValue) {
-                            nextCity = helpCity - 1;
-                            minValue = metricValue;
-                            bestBeginService = beginService;
-                        }
+                    help = vrptwAcs.HEURISTIC(this, ant, vrptw, idxVehicle, currentCity, helpCity, false);
+                    if (help[0] == 1.0 && help[1] < minValue) {
+                        nextCity = helpCity - 1;
+                        minValue = help[1];
+                        bestBeginService = help[2];
                     }
                 }
             }
@@ -478,17 +407,9 @@ public class Ants {
         int nextCity = vrptw.n;
         int indexTour;
         int helpCity;
-        double distance;
-        double distanceDepot;
-        double arrivalTime;
-        double arrivalTimeDepot;
-        double beginService;
-        double beginServiceDepot;
-        double timeDifference;
-        double deliveryUrgency;
         double bestBeginService = 0;
         double minValue;
-        double metricValue;
+        double help[];
         ArrayList<Request> reqList = vrptw.getRequests();
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
         int lastPos = ant.tours.get(idxVehicle).size() - 1;
@@ -498,26 +419,11 @@ public class Ants {
         for (int city : idKnownRequests) {
             if (ant.visited[city] == false) {
                 helpCity = city + 1;
-                // Calculate distance from current city to next city
-                distance = vrptw.instance.distance[currentCity][helpCity];
-                arrivalTime = ant.currentTime.get(idxVehicle) + reqList.get(currentCity).getServiceTime() + distance;
-                beginService = Math.max(arrivalTime, reqList.get(helpCity).getStartWindow());
-                // Calculate distance from next city to depot
-                distanceDepot = vrptw.instance.distance[helpCity][0];
-                arrivalTimeDepot = beginService + reqList.get(helpCity).getServiceTime() + distanceDepot;
-                beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-                // Check if route is feasible
-                if (vrptwAcs.isFeasible(vrptw, ant, helpCity - 1, beginService, beginServiceDepot, idxVehicle)) {
-                    //compute the value of the "closeness" metric; this metric tries to account
-                    //for both geographical and temporal closeness of customers
-                    timeDifference = beginService - ant.beginService[currentCity] - reqList.get(currentCity).getServiceTime();
-                    deliveryUrgency = reqList.get(helpCity).getEndWindow() - (ant.beginService[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
-                    metricValue = weight1 * distance + weight2 * timeDifference + weight3 * deliveryUrgency;
-                    if (metricValue < minValue) {
-                        nextCity = helpCity - 1;
-                        minValue = metricValue;
-                        bestBeginService = beginService;
-                    }
+                help = vrptwAcs.HEURISTIC(this, ant, vrptw, idxVehicle, currentCity, helpCity, false);
+                if (help[0] == 1.0 && help[1] < minValue) {
+                    nextCity = helpCity - 1;
+                    minValue = help[1];
+                    bestBeginService = help[2];
                 }
             }
         }
@@ -532,7 +438,7 @@ public class Ants {
             if (ant.toVisit > 0) {
                 ant.usedVehicles++;
                 indexTour = ant.usedVehicles - 1;
-                ant.tours.add(indexTour, new ArrayList<Integer>());
+                ant.tours.add(indexTour, new ArrayList<>());
                 ant.tours.get(indexTour).add(-1);
                 ant.tourLengths.add(indexTour, 0.0);
                 ant.currentQuantity.add(indexTour, 0.0);
@@ -556,16 +462,11 @@ public class Ants {
         int currentCity;
         double sumProb = 0.0;
         double probPtr[][];
-        double help1;
+        double helpPtr[];
         int[] tempCities = new int[ant.usedVehicles];
         double distance;
-        double distanceDepot;
         double arrivalTime;
-        double arrivalTimeDepot;
         double beginService;
-        double beginServiceDepot;
-        double deliveryUrgency;
-        double timeDifference;
         ArrayList<Request> reqList = vrptw.getRequests();
         if ((q0 > 0.0) && (utilities.random01() < q0)) {
             /*
@@ -593,24 +494,12 @@ public class Ants {
             currentCity++;
             for (int i = 0; i < nnAnts; i++) {
                 city = vrptw.instance.nnList[currentCity][i];
-                // Calculate distance from current city to next city
-                distance = vrptw.instance.distance[currentCity][city];
-                arrivalTime = ant.currentTime.get(vehicleIdx) + reqList.get(currentCity).getServiceTime() + distance;
-                beginService = Math.max(arrivalTime, reqList.get(city).getStartWindow());
-                // Calculate distance from next city to depot
-                distanceDepot = vrptw.instance.distance[city][0];
-                arrivalTimeDepot = beginService + reqList.get(city).getServiceTime() + distanceDepot;
-                beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
+                helpPtr = vrptwAcs.HEURISTIC(this, ant, vrptw, vehicleIdx, currentCity, city, true);
                 // Check if route is feasible
-                if (!vrptw.getIdAvailableRequests().contains(city - 1) || ant.visited[city - 1] || !vrptwAcs.isFeasible(vrptw, ant, city - 1, beginService, beginServiceDepot, vehicleIdx)) {
+                if (!vrptw.getIdAvailableRequests().contains(city - 1) || ant.visited[city - 1] || helpPtr[0] == 0.0) {
                     probPtr[vehicleIdx][i] = 0.0; /* city already visited */
-                } else if (vrptwAcs.isFeasible(vrptw, ant, city - 1, beginService, beginServiceDepot, vehicleIdx) && vrptw.getIdAvailableRequests().contains(city - 1) && !ant.visited[city - 1]) {
-                    deliveryUrgency = reqList.get(city).getEndWindow() - (ant.beginService[currentCity] + reqList.get(currentCity).getServiceTime() + distance);
-                    timeDifference = beginService - ant.beginService[currentCity] - reqList.get(currentCity).getServiceTime();
-                    help1 = 1.0 / (weight1 * distance + weight2 * timeDifference + weight3 * deliveryUrgency);
-                    help1 = Math.pow(help1, beta);
-                    help1 = help1 * Math.pow(pheromone[currentCity][city], alpha);
-                    probPtr[vehicleIdx][i] = help1;
+                } else if (helpPtr[0] == 1.0 && vrptw.getIdAvailableRequests().contains(city - 1) && !ant.visited[city - 1]) {
+                    probPtr[vehicleIdx][i] = helpPtr[1];
                     tempCities[vehicleIdx] = currentCity;
                     sumProb += probPtr[vehicleIdx][i];
                 }
