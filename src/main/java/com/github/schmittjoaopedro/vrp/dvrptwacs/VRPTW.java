@@ -172,10 +172,10 @@ public class VRPTW {
         int size = n;
         double[] distance_vector = new double[size + 1];
         int[] help_vector = new int[size + 1];
-        nn = ants.nn_ants;
+        nn = ants.nnAnts;
         if (nn >= size + 1)
             nn = size - 2;
-        ants.nn_ants = nn;
+        ants.nnAnts = nn;
         int[][][] result = new int[2][][];
         int[][] m_nnear = new int[size + 1][nn];
         int[][] m_nnear_all = new int[size + 1][nn];  //include also the depot city
@@ -190,7 +190,7 @@ public class VRPTW {
             i = -1;
             while (count1 < nn) {
                 i++;
-                //include in the nn_list of a node only the nodes that are known (available)
+                //include in the nnList of a node only the nodes that are known (available)
                 if (help_vector[i] != 0) {
                     m_nnear[node][count1] = help_vector[i];
                     count1++;
@@ -202,7 +202,7 @@ public class VRPTW {
             i = -1;
             while (count2 < nn) {
                 i++;
-                //include in the nn_list of a node only the nodes that are known (available)
+                //include in the nnList of a node only the nodes that are known (available)
                 m_nnear_all[node][count2] = help_vector[i];
                 count2++;
             }

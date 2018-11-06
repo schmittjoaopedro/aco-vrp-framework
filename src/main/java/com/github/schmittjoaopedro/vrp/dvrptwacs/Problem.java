@@ -8,7 +8,7 @@ public class Problem {
 
     public double[][] distance; /* distance matrix: distance[i][j] gives distance */
 
-    public int[][] nn_list; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors */
+    public int[][] nnList; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors */
 
     public int[][] nn_list_all; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors including the depot*/
 

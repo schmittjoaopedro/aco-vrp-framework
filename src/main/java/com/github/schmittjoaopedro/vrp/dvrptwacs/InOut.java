@@ -22,9 +22,7 @@ public class InOut {
     public double lambda; /* Parameter to determine branching factor */
 
     public int found_best; /* iteration in which best solution is found */
-    public int restart_found_best; /* iteration in which restart-best solution is found */
 
-    public double pheromonePreservation;
     public int noEvaluations = 0;
     public int noSolutions = 0;   /* counter for the total number of feasible solutions */
     public boolean isDiscreteTime = false;
@@ -39,35 +37,36 @@ public class InOut {
 
     public void set_default_as_parameters(Ants ants) {
         /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
-        ants.n_ants = -1;
-        ants.nn_ants = 20;
+        ants.nAnts = -1;
+        ants.nnAnts = 20;
         ants.alpha = 1.0;
         ants.beta = 2.0;
         ants.rho = 0.5;
-        ants.q_0 = 0.0;
+        ants.q0 = 0.0;
     }
 
     public void set_default_acs_parameters(Ants ants) {
         /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
-        ants.n_ants = 10;
-        ants.nn_ants = 20;
+        ants.nAnts = 10;
+        ants.nnAnts = 20;
         ants.alpha = 1.0;
         ants.beta = 1.0;
         ants.rho = 0.9;
         //used in local pheromone update
         ants.local_rho = 0.9;
-        ants.q_0 = 0.9;
+        ants.q0 = 0.9;
     }
 
     //set default parameter settings
     public void set_default_parameters(Ants ants) {
         /* number of ants and number of nearest neighbors in tour construction */
-        ants.n_ants = 25;
-        ants.nn_ants = 20;
+        ants.nAnts = 25;
+        ants.nnAnts = 20;
         ants.alpha = 1.0;
         ants.beta = 2.0;
         ants.rho = 0.5;
-        ants.q_0 = 0.0;
+        ants.q0 = 0.0;
+        ants.pheromonePreservation = 0.3;
         max_tries = 10;
         max_tours = 10 * 20;
         //10 seconds allowed for running time; it is used in the termination condition of ACO
@@ -80,7 +79,6 @@ public class InOut {
         ants.acs_flag = false;
         ants.as_flag = false;
         distance_type = Distance_type.EUC_2D;
-        pheromonePreservation = 0.3;
     }
 
     //compute the average node lambda-branching factor, where l designates the lambda value
@@ -92,17 +90,17 @@ public class InOut {
         num_branches = new double[vrptw.n + 1];
         for (m = 0; m < (vrptw.n + 1); m++) {
             /* determine max, min to calculate the cutoff value */
-            min = ants.pheromone[m][vrptw.instance.nn_list[m][0]];
-            max = ants.pheromone[m][vrptw.instance.nn_list[m][0]];
-            for (i = 1; i < ants.nn_ants; i++) {
-                if (ants.pheromone[m][vrptw.instance.nn_list[m][i]] > max)
-                    max = ants.pheromone[m][vrptw.instance.nn_list[m][i]];
-                if (ants.pheromone[m][vrptw.instance.nn_list[m][i]] < min)
-                    min = ants.pheromone[m][vrptw.instance.nn_list[m][i]];
+            min = ants.pheromone[m][vrptw.instance.nnList[m][0]];
+            max = ants.pheromone[m][vrptw.instance.nnList[m][0]];
+            for (i = 1; i < ants.nnAnts; i++) {
+                if (ants.pheromone[m][vrptw.instance.nnList[m][i]] > max)
+                    max = ants.pheromone[m][vrptw.instance.nnList[m][i]];
+                if (ants.pheromone[m][vrptw.instance.nnList[m][i]] < min)
+                    min = ants.pheromone[m][vrptw.instance.nnList[m][i]];
             }
             cutoff = min + l * (max - min);
-            for (i = 0; i < ants.nn_ants; i++) {
-                if (ants.pheromone[m][vrptw.instance.nn_list[m][i]] > cutoff)
+            for (i = 0; i < ants.nnAnts; i++) {
+                if (ants.pheromone[m][vrptw.instance.nnList[m][i]] > cutoff)
                     num_branches[m] += 1.;
             }
         }
@@ -135,10 +133,10 @@ public class InOut {
         Parse parse = new Parse();
         parse.parse_commandline(antSystem, runNumber, ants, this, loggerOutput);
         //compute distance matrix between cities and allocate ants
-        if (ants.n_ants < 0)
-            ants.n_ants = vrptw.n;
+        if (ants.nAnts < 0)
+            ants.nAnts = vrptw.n;
         vrptw.instance.distance = vrptw.compute_distances(scalingValue, this);
-        ants.allocate_ants(vrptw);
+        ants.allocateAnts(vrptw);
     }
 
 }

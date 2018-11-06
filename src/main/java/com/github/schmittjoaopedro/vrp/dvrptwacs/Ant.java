@@ -10,7 +10,7 @@ public class Ant {
 
     public boolean[] visited;
 
-    public ArrayList<Double> tour_lengths;
+    public ArrayList<Double> tourLengths;
 
     //contains the beginning of service for each customer, including the depot, taking into
     //account the opening time (beginning) of the time window, the service time and the
@@ -39,9 +39,9 @@ public class Ant {
     //(given by the demand of each request) transported on the route
     public ArrayList<Double> currentQuantity;
 
-    public double total_tour_length;
+    public double totalTourLength;
 
-    public double longest_tour_length;
+    public double longestTourLength;
 
     public int indexLongestTour;  //the index of the longest tour
 
