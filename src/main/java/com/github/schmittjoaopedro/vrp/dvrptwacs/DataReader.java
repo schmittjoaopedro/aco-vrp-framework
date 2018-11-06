@@ -12,7 +12,10 @@ import java.util.ArrayList;
  * This is a data reader for reading the input data set that will be partitioned into k clusters
  */
 public class DataReader {
-    /** file name */
+
+    /**
+     * file name
+     */
     private String fileName = "R103.txt";
 
     private String rootDir;
@@ -24,23 +27,21 @@ public class DataReader {
 
     /**
      * Read the data from the given file
+     *
      * @return the data from the file
      */
     public VRPTW read(Utilities utilities) {
         VRPTW vrp = new VRPTW(utilities);
         vrp.instance = new Problem();
-        ArrayList<Request> reqList = new ArrayList<Request>();
-        ArrayList<Request> dynamicReqList = new ArrayList<Request>();
-        ArrayList<Integer> availableNodes = new ArrayList<Integer>();
-
+        ArrayList<Request> reqList = new ArrayList<>();
+        ArrayList<Request> dynamicReqList = new ArrayList<>();
+        ArrayList<Integer> availableNodes = new ArrayList<>();
         //we are dealing with a input file with txt extension
         if (fileName.endsWith(".txt")) {
             boolean foundGeneralSection = false;
             boolean foundRequestsSection = false;
-
             File file = Paths.get(rootDir, fileName).toFile();
-            BufferedReader in = null;
-
+            BufferedReader in;
             if (file.exists()) {
                 vrp.instance.name = fileName;
                 try {
@@ -62,7 +63,6 @@ public class DataReader {
                             foundRequestsSection = true;
                         }
                         line = in.readLine();
-
                     }
                     in.close();
                 } catch (FileNotFoundException ignored) {
@@ -74,7 +74,6 @@ public class DataReader {
                 vrp.setIdAvailableRequests(availableNodes);
                 int nrCustomerRequests = reqList.size() - 1;
                 vrp.n = nrCustomerRequests;
-
                 vrp.instance.nodes = new Point[reqList.size()];
                 for (int i = 0; i < reqList.size(); i++) {
                     vrp.instance.nodes[i] = new Point();
@@ -83,17 +82,15 @@ public class DataReader {
                     vrp.instance.nodes[i].y = r.getyCoord();
                 }
             }
-
         }
-
         return vrp;
-
     }
 
     /**
      * Read the first section of the input file containing the size of the vehicle fleet (vehicle number)
      * and the capacity of each vehicle
-     * @param line string to extract the record from
+     *
+     * @param line        string to extract the record from
      * @param vrpInstance reference to the VRPTW instance to be populated with the extracted data
      */
     private void readGeneralRecord(String line, VRPTW vrpInstance) {
@@ -106,31 +103,26 @@ public class DataReader {
                 System.out.println("NumberFormatException " + e.getMessage() + " record=" + strRecord[i] + " line=" + line);
             }
         }
-
-        vrpInstance.setNoVehicles(values[0]);
         vrpInstance.setCapacity(values[1]);
     }
 
-
     /**
      * Read the requests section of the input file containing the list of the customers ' requests
-     * @param line string to extract the record from
+     *
+     * @param line    string to extract the record from
      * @param reqList reference to the list of requests to be populated with the extracted data
      */
     private void readRequestRecord(String line, ArrayList<Request> reqList, ArrayList<Request> dynamicReqList, ArrayList<Integer> availableNodes) {
         String[] strRecord = line.trim().split("\\s+");
         int[] values = new int[8];
         int idCity;
-
         for (int i = 0; i < strRecord.length; i++) {
             try {
                 values[i] = Integer.parseInt(strRecord[i]);
-
             } catch (NumberFormatException e) {
                 System.out.println("NumberFormatException " + e.getMessage() + " record=" + strRecord[i] + " line=" + line);
             }
         }
-
         Request req = new Request(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
         reqList.add(req);
         //we have a dynamic customer request
@@ -145,9 +137,7 @@ public class DataReader {
                 idCity = values[0] - 1;
                 availableNodes.add(idCity);
             }
-
         }
     }
-
 
 }

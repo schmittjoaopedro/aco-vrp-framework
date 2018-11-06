@@ -1,39 +1,8 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
-/**
- * ACO algorithms for the TSP
- *
- * This code is based on the ACOTSP project of Thomas Stuetzle.
- * It was initially ported from C to Java by Adrian Wilke.
- *
- * Project website: http://adibaba.github.io/ACOTSPJava/
- * Source code: https://github.com/adibaba/ACOTSPJava/
- */
 public class Parse {
-    /***************************************************************************
-     * Program's name: ACOTSPJava
-     *
-     * Command line parser for 'ACO algorithms for the TSP'
-     *
-     * Copyright (C) 2014 Adrian Wilke
-     *
-     * This program is free software; you can redistribute it and/or modify
-     * it under the terms of the GNU General Public License as published by
-     * the Free Software Foundation; either version 2 of the License, or
-     * (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU General Public License for more details.
-     *
-     * You should have received a copy of the GNU General Public License along
-     * with this program; if not, write to the Free Software Foundation, Inc.,
-     * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-     ***************************************************************************/
 
     public void parse_commandline(String antSystem, int runNumber, Ants ants, InOut inOut, LoggerOutput loggerOutput) {
-
         // Choice of ONE algorithm
         int algorithmCount = 0;
         if (antSystem.equals("u")) {
@@ -49,7 +18,6 @@ public class Parse {
             ants.as_flag = false;
             ants.acs_flag = false;
         }
-
         if (antSystem.equals("u")) {
             ants.as_flag = true;
             inOut.set_default_as_parameters(ants);
@@ -60,6 +28,6 @@ public class Parse {
             inOut.set_default_acs_parameters(ants);
             loggerOutput.log("\nRun Ant Colony System #" + (runNumber + 1));
         }
-
     }
+
 }

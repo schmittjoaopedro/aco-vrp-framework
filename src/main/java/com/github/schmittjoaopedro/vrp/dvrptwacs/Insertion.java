@@ -17,8 +17,6 @@ public class Insertion {
     //for an unrouted customer
     public double score;
 
-    public Insertion() {}
-
     public Insertion(int customer_, int indexTour_, int previousNode_, double score_) {
         this.customer = customer_;
         this.indexTour = indexTour_;

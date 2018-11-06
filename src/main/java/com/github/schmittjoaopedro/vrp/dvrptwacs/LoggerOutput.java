@@ -9,13 +9,8 @@ public class LoggerOutput {
 
     private List<String> logOutput = new ArrayList<>();
 
-    public void reset() {
-        logOutput.clear();
-    }
-
     public void log(String message) {
         if (print) {
-            //System.out.println(message);
             System.out.println("assertThat(LoggerOutput.get(lineCount++)).isEqualTo(\"" + message + "\");");
         }
         logOutput.add(message);
@@ -23,14 +18,6 @@ public class LoggerOutput {
 
     public String get(int i) {
         return logOutput.get(i);
-    }
-
-    public List<String> getLog() {
-        return logOutput;
-    }
-
-    public boolean isPrint() {
-        return print;
     }
 
     public void setPrint(boolean print) {

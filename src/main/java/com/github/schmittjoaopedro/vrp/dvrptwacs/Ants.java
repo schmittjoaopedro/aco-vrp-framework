@@ -3,58 +3,9 @@ package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 import java.util.ArrayList;
 
-/**
- * ACO algorithms for the TSP
- * <p>
- * This code is based on the ACOTSP project of Thomas Stuetzle.
- * It was initially ported from C to Java by Adrian Wilke.
- * <p>
- * Project website: http://adibaba.github.io/ACOTSPJava/
- * Source code: https://github.com/adibaba/ACOTSPJava/
- */
 public class Ants {
-    /*
-     * ################################################
-     * ########## ACO algorithms for the TSP ##########
-     * ################################################
-     *
-     * Version: 1.0
-     * File: ants.c
-     * Author: Thomas Stuetzle
-     * Purpose: implementation of procedures for ants' behaviour
-     * Check: README.txt and legal.txt
-     * Copyright (C) 2002 Thomas Stuetzle
-     */
 
-    /***************************************************************************
-     * Program's name: acotsp
-     *
-     * Ant Colony Optimization algorithms (AS, ACS, EAS, RAS, MMAS, BWAS) for the
-     * symmetric TSP
-     *
-     * Copyright (C) 2004 Thomas Stuetzle
-     *
-     * This program is free software; you can redistribute it and/or modify
-     * it under the terms of the GNU General Public License as published by
-     * the Free Software Foundation; either version 2 of the License, or
-     * (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY; without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-     * GNU General Public License for more details.
-     *
-     * You should have received a copy of the GNU General Public License
-     * along with this program; if not, write to the Free Software
-     * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-     *
-     * email: stuetzle no@spam informatik.tu-darmstadt.de
-     * mail address: Universitaet Darmstadt
-     * Fachbereich Informatik
-     * Hochschulstr. 10
-     * D-64283 Darmstadt
-     * Germany
-     ***************************************************************************/
+    private LoggerOutput loggerOutput;
 
     private InsertionHeuristic insertionHeuristic;
 
@@ -64,12 +15,9 @@ public class Ants {
 
     private InOut inOut;
 
-    public final int MAX_ANTS = 1024;
-    public final int MAX_NEIGHBOURS = 512;
-
-    public final double weight1 = 0.4;  //0.3   //0.4
-    public final double weight2 = 0.4;  //0.5   //0.4
-    public final double weight3 = 0.2;  //0.2   //0.2
+    public final double weight1 = 0.4;
+    public final double weight2 = 0.4;
+    public final double weight3 = 0.2;
 
     //weight used in the nearest neighbour heuristic, when computing an initial solution to calculate the
     //value of the initial pheromone trail
@@ -81,17 +29,11 @@ public class Ants {
     //depot node is considered to be committed by default and it's not included in this array
     public boolean[] committedNodes;
 
-    //for each tour in T* (best so far solution) it indicates the position/index of the last node that was committed
-    //public volatile ArrayList<Integer> lastCommitted;
-
     public Ant ants[];
-    public volatile Ant best_so_far_ant;
+    public Ant best_so_far_ant;
     public Ant restart_best_ant;
 
     public double pheromone[][];
-    //double total[][];  //keeps heuristic information times pheromone for each arc
-
-    public double prob_of_selection[][];
 
     public int n_ants; /* number of ants */
 
@@ -110,42 +52,34 @@ public class Ants {
 
     public double trail_0; /* initial pheromone level in ACS */
 
-    public Ants(Controller controller, Utilities utilities, InOut inOut, InsertionHeuristic insertionHeuristic) {
+    public Ants(Controller controller, Utilities utilities, InOut inOut, InsertionHeuristic insertionHeuristic, LoggerOutput loggerOutput) {
         this.controller = controller;
         this.utilities = utilities;
         this.inOut = inOut;
         this.insertionHeuristic = insertionHeuristic;
-    }
-
-    public double HEURISTIC(VRPTW vrptw, int m, int n) {
-        return (1.0 / (double) vrptw.instance.distance[m][n]);
+        this.loggerOutput = loggerOutput;
     }
 
     //allocate the memory for the ant colony, the best-so-far ant
     public void allocate_ants(VRPTW vrptw) {
         int i, j;
-
         ants = new Ant[n_ants];
-
         committedNodes = new boolean[vrptw.n];
         for (i = 0; i < vrptw.n; i++) {
             committedNodes[i] = false;
         }
-        //lastCommitted = new ArrayList<Integer>();
-
         for (i = 0; i < n_ants; i++) {
             ants[i] = new Ant();
             ants[i].tours = new ArrayList();
-            ants[i].tour_lengths = new ArrayList<Double>();
+            ants[i].tour_lengths = new ArrayList<>();
             ants[i].beginService = new double[vrptw.n + 1];
-            ants[i].currentTime = new ArrayList<Double>();
-            ants[i].currentQuantity = new ArrayList<Double>();
+            ants[i].currentTime = new ArrayList<>();
+            ants[i].currentQuantity = new ArrayList<>();
             ants[i].usedVehicles = 1;
             ants[i].addedEmptyTour = false;
             for (j = 0; j < ants[i].usedVehicles; j++) {
-                ants[i].tours.add(j, new ArrayList<Integer>());
+                ants[i].tours.add(j, new ArrayList<>());
                 ants[i].tour_lengths.add(j, 0.0);
-                //lastCommitted.add(j, 0);
             }
             ants[i].visited = new boolean[vrptw.n];
             //the another node is the depot, which is by default visited by each salesman and added in its tour
@@ -157,7 +91,6 @@ public class Ants {
             ants[i].earliestTime = new ArrayList(ants[i].usedVehicles);
             ants[i].latestTime = new ArrayList(ants[i].usedVehicles);
         }
-
         best_so_far_ant = new Ant();
         best_so_far_ant.tours = new ArrayList();
         best_so_far_ant.tour_lengths = new ArrayList<Double>();
@@ -174,14 +107,12 @@ public class Ants {
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         best_so_far_ant.toVisit = vrptw.getIdAvailableRequests().size();
         best_so_far_ant.longest_tour_length = Double.MAX_VALUE;
-
         best_so_far_ant.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             best_so_far_ant.costObjectives[indexObj] = 0;
         }
         best_so_far_ant.earliestTime = new ArrayList(best_so_far_ant.usedVehicles);
         best_so_far_ant.latestTime = new ArrayList(best_so_far_ant.usedVehicles);
-
         restart_best_ant = new Ant();
         restart_best_ant.tours = new ArrayList();
         restart_best_ant.tour_lengths = new ArrayList<Double>();
@@ -198,24 +129,12 @@ public class Ants {
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         restart_best_ant.toVisit = vrptw.getIdAvailableRequests().size();
         restart_best_ant.longest_tour_length = Double.MAX_VALUE;
-
         restart_best_ant.costObjectives = new double[2];
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             restart_best_ant.costObjectives[indexObj] = 0;
         }
         restart_best_ant.earliestTime = new ArrayList(restart_best_ant.usedVehicles);
         restart_best_ant.latestTime = new ArrayList(restart_best_ant.usedVehicles);
-
-		/*prob_of_selection = new double[ants[0].usedVehicles][nn_ants + 1];
-		for (j = 0; j < ants[0].usedVehicles; j++) {
-			for (i = 0; i < nn_ants; i++) {
-			    prob_of_selection[j][i] = Double.POSITIVE_INFINITY;
-			}
-		}
-		for (j = 0; j < (ants[0].usedVehicles - 1); j++) {
-			prob_of_selection[j][nn_ants] = 0;
-		}
-		prob_of_selection[ants[0].usedVehicles - 1][nn_ants] = Double.POSITIVE_INFINITY;*/
     }
 
     //find the best ant of the current iteration (the one with the lowest number of used vehicles and
@@ -223,7 +142,6 @@ public class Ants {
     public int find_best() {
         double min1, min2;
         int k1, k2, k2_min;
-
         //first detect the ant which uses the minimum number of vehicles
         min1 = ants[0].usedVehicles;
         for (k1 = 1; k1 < n_ants; k1++) {
@@ -231,7 +149,6 @@ public class Ants {
                 min1 = ants[k1].usedVehicles;
             }
         }
-
         //among the vehicles which use the minimum number of vehicles, select the best ant as the one with the minimum total distance for its traveled tours
         min2 = Double.MAX_VALUE;
         k2_min = 0;
@@ -242,7 +159,6 @@ public class Ants {
                     k2_min = k2;
                 }
             }
-
         }
         return k2_min;
     }
@@ -251,14 +167,11 @@ public class Ants {
     //matricea cu urmele de feromoni trebuie sa se faca relativ la toate cele n orase
     public void init_pheromone_trails(VRPTW vrptw, double initial_trail) {
         int i, j;
-
         /* Initialize pheromone trails */
         for (i = 0; i < (vrptw.n + 1); i++) {
             for (j = 0; j <= i; j++) {
                 pheromone[i][j] = initial_trail;
                 pheromone[j][i] = initial_trail;
-				/*total[i][j] = initial_trail;
-				total[j][i] = initial_trail;*/
             }
         }
     }
@@ -283,7 +196,6 @@ public class Ants {
     //implements the pheromone trail evaporation
     public void evaporation(VRPTW vrptw) {
         int i, j;
-
         for (i = 0; i < vrptw.n + 1; i++) {
             for (j = 0; j <= i; j++) {
                 pheromone[i][j] = (1 - rho) * pheromone[i][j];
@@ -296,64 +208,36 @@ public class Ants {
     public void global_update_pheromone(Ant a) {
         int i, j, h, k, size;
         double d_tau;
-
-        d_tau = 1.0 / (double) a.total_tour_length;
+        d_tau = 1.0 / a.total_tour_length;
         for (i = 0; i < a.usedVehicles; i++) {
             size = a.tours.get(i).size();
             for (k = 0; k < size - 1; k++) {
                 j = a.tours.get(i).get(k);
                 h = a.tours.get(i).get(k + 1);
-
                 j++;
                 h++;
-
                 pheromone[j][h] += d_tau;
                 pheromone[h][j] = pheromone[j][h];
             }
         }
-
     }
-
-    //calculates heuristic info times pheromone for each arc
-   /* void compute_total_information()
-    {
-		int i, j;
-
-		for (i = 0; i < MTsp.n + 1; i++) {
-		    for (j = 0; j < i; j++) {
-				total[i][j] = Math.pow(pheromone[i][j], alpha) * Math.pow(HEURISTIC(i, j), beta);
-				total[j][i] = total[i][j];
-		    }
-		}
-    }*/
 
     //empty the ants's memory regarding visited cities
     public void ant_empty_memory(Ant a, VRPTW vrptw) {
         int i, j;
-
         a.total_tour_length = 0;
         a.longest_tour_length = Integer.MAX_VALUE;
         a.indexLongestTour = 0;
         a.addedEmptyTour = false;
-
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             a.costObjectives[indexObj] = 0;
         }
-
         a.tour_lengths.clear();
         a.currentQuantity.clear();
         a.currentTime.clear();
-
         //clear all the elements (cities) from the tours of an ant
         for (i = 0; i < a.usedVehicles; i++) {
             a.tours.get(i).clear();
-		    /*if (a.earliestTime != null && a.earliestTime.size() > i && a.earliestTime.get(i) != null) {
-		    	a.earliestTime.get(i).clear();
-		    }
-		    if (a.latestTime != null && a.latestTime.size() > i && a.latestTime.get(i) != null) {
-		    	a.latestTime.get(i).clear();
-		    }*/
-
         }
         a.tours.clear();
         if (a.earliestTime != null) {
@@ -362,18 +246,13 @@ public class Ants {
         if (a.latestTime != null) {
             a.latestTime.clear();
         }
-
         a.usedVehicles = 1;
-
         for (i = 0; i < a.usedVehicles; i++) {
             a.tour_lengths.add(i, 0.0);
             a.currentQuantity.add(i, 0.0);
             a.currentTime.add(i, 0.0);
-            a.tours.add(i, new ArrayList<Integer>());
-		   /* a.earliestTime.add(i, new ArrayList<Double>());
-		    a.latestTime.add(i, new ArrayList<Double>());*/
+            a.tours.add(i, new ArrayList<>());
         }
-
         for (j = 0; j < vrptw.n; j++) {
             a.visited[j] = false;
         }
@@ -382,51 +261,13 @@ public class Ants {
         }
         //the another node is the depot, which is by default visited by each salesman and added in its tour
         a.toVisit = vrptw.getIdAvailableRequests().size();
-
-    }
-
-    //create a copy of the ant a and return the created copy at the output
-    public Ant copyAnt(VRPTW vrptw, Ant a) {
-        //first create an empty ant
-        //TODO: copy also fields such as usedVehicle, current quantity, currentTime
-        Ant copy = new Ant();
-        copy.tours = new ArrayList(a.usedVehicles);
-        copy.tour_lengths = new ArrayList<Double>(a.usedVehicles);
-	    /*for (int j = 0; j < a.usedVehicles; j++) {
-	    	copy.tours.add(j, new ArrayList<Integer>());
-	    	copy.tour_lengths.add(j, 0.0);
-	    }*/
-        copy.visited = new boolean[vrptw.n];
-        copy.toVisit = vrptw.n;
-
-        copy.costObjectives = new double[2];
-        //copy.weights = new double[TSP_ACO.k];
-
-        //then copy the information from the ant a
-        copy.total_tour_length = a.total_tour_length;
-        copy.usedVehicles = a.usedVehicles;
-        for (int indexObj = 0; indexObj < 2; indexObj++) {
-            copy.costObjectives[indexObj] = a.costObjectives[indexObj];
-        }
-        for (int i = 0; i < a.usedVehicles; i++) {
-            copy.tour_lengths.add(i, a.tour_lengths.get(i));
-            int size = a.tours.get(i).size();
-            copy.tours.add(i, new ArrayList<Integer>(size));
-            for (int j = 0; j < size; j++) {
-                int elem = a.tours.get(i).get(j);
-                copy.tours.get(i).add(elem);
-            }
-        }
-
-        return copy;
     }
 
     //get the list with the unvisited customers
     public ArrayList unroutedCustomers(Ant a, VRPTW vrptw) {
-        ArrayList<Integer> l = new ArrayList<Integer>(a.toVisit);
+        ArrayList<Integer> l = new ArrayList<>(a.toVisit);
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
         int count = 0;
-
         //collect nodes missing from the ant's solution; depot is considered to be visisted by default
         for (int city : idKnownRequests) {
             if (a.visited[city] == false) {
@@ -437,37 +278,32 @@ public class Ants {
                 }
             }
         }
-
         return l;
     }
 
     //choose for an ant as the next city the one with maximal value of heuristic information times pheromone
     public int[] choose_best_next(Ant a, VRPTW vrptw, VRPTW_ACS vrptw_acs) {
-        int current_city, next_city, salesman = 0, indexTour, startIndex, startIndexTour = 0;
+        int current_city, next_city, salesman = 0, indexTour, startIndex, startIndexTour;
         double value_best = -1.;  /* values in total matrix are always >= 0.0 */
         double help;
         int[] values = new int[2];
         double distance, distanceDepot, arrivalTime, arrivalTimeDepot, beginService, beginServiceDepot;
-        double currentTime = 0, timeDiference = 0, waitingTIme, waiting, deliveryUrgency, bestBeginService = 0;
+        double timeDiference, deliveryUrgency, bestBeginService = 0;
         ArrayList<Request> reqList = vrptw.getRequests();
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
         ArrayList<Integer> lastCommitedIndexes;
         int pos;
         boolean appliedInsertion = false;
-
         next_city = vrptw.n;
-
         if (a.addedEmptyTour) {
             startIndex = a.usedVehicles - 1;
         } else {
             startIndex = 0;
         }
-
         for (int indexSalesman = startIndex; indexSalesman < a.usedVehicles; indexSalesman++) {
             int lastPos = a.tours.get(indexSalesman).size() - 1;
             current_city = a.tours.get(indexSalesman).get(lastPos);
             current_city++;
-
             for (int city : idKnownRequests) {
                 if (a.visited[city])
                     ; /* city already visited, do nothing */
@@ -481,32 +317,9 @@ public class Ants {
                     beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
 
                     if (vrptw_acs.isFeasible(vrptw, a, city, beginService, beginServiceDepot, indexSalesman)) {
-                        waiting = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime() - distance;
-                        waitingTIme = Math.max(0.0, waiting);
-				    	/*if (waitingTIme == 0) {
-				    		waitingTIme = 0.05;
-				    	}*/
-                        currentTime = a.currentTime.get(indexSalesman);
-                        if (currentTime == 0) {
-                            currentTime = 0.001;
-                        }
                         deliveryUrgency = reqList.get(city + 1).getEndWindow() - (a.beginService[current_city] + reqList.get(current_city).getServiceTime() + distance);
-				    	/*if (deliveryUrgency == 0) {
-				    		deliveryUrgency = 0.05;
-				    	}*/
                         timeDiference = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime();
-
-                        //help = HEURISTIC(current_city, city + 1) * (1.0 / currentTime) * (1.0 / waitingTIme) * (1.0 / deliveryUrgency);
-                        //help = HEURISTIC(current_city, city + 1) * (1.0 / waitingTIme) * (1.0 / deliveryUrgency);
-
-				    	/*if (a.currentTime.get(indexSalesman) == 0 && reqList.get(city + 1).getStartWindow() == 0) {
-				    		help = 1.0 / (weight1 * distance + weight2 * timeDiference);
-				    	}
-				    	else {
-				    		help = 1.0 / (weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency);
-				    	}*/
                         help = 1.0 / (weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency);
-
                         help = Math.pow(help, beta);
                         help = help * Math.pow(pheromone[current_city][city + 1], alpha);
                         if (help > value_best) {
@@ -516,18 +329,14 @@ public class Ants {
                             bestBeginService = beginService;
                         }
                     }
-
                 }
             }
         }
-
         //it means that not all the cities are covered and some customers has not yet been serviced
         //by using an insertion heuristic try to insert in the infeasible solution the customers not visited yet
         //when no more customer with feasible insertions can be found, start a new route/tour and add
         //one more vehicle for constructing a feasible solution
         if (next_city == vrptw.n) {
-            //System.out.println("Iter=" + InOut.iteration + ": Before insertion heuristic >> cities to be visited: " + a.toVisit);
-
             if ((a.toVisit > 0) && (a.toVisit <= 10)) {
                 //determine nodes that are not visited yet in the current ant's solution
                 ArrayList<Integer> unroutedList = unroutedCustomers(a, vrptw);
@@ -536,15 +345,13 @@ public class Ants {
                 } else {
                     startIndexTour = 0;
                 }
-                lastCommitedIndexes = new ArrayList<Integer>();
+                lastCommitedIndexes = new ArrayList<>();
                 for (int index = 0; index < best_so_far_ant.usedVehicles; index++) {
                     pos = controller.getLastCommitedPos(index);
                     lastCommitedIndexes.add(pos);
                 }
                 //skip over committed (defined) nodes when performing insertion heuristic
                 insertionHeuristic.insertUnroutedCustomers(a, vrptw, unroutedList, startIndexTour, lastCommitedIndexes);
-                appliedInsertion = true;
-                //System.out.println("Iter=" + InOut.iteration + ": After insertion heuristic >> cities to be visited: " + a.toVisit);
             }
             //if no more unrouted customers can be feasible inserted in the solution and there are still
             //remaining unrouted customers, add a new tour
@@ -556,13 +363,10 @@ public class Ants {
                 a.tour_lengths.add(indexTour, 0.0);
                 a.currentQuantity.add(indexTour, 0.0);
                 a.currentTime.add(indexTour, 0.0);
-
                 a.addedEmptyTour = true;
-
                 values[0] = -1;
                 values[1] = indexTour;
             }
-
         } else {
             a.tours.get(salesman).add(next_city);
             a.visited[next_city] = true;
@@ -571,11 +375,9 @@ public class Ants {
             a.beginService[next_city + 1] = bestBeginService;
             double newQuantity = a.currentQuantity.get(salesman) + reqList.get(next_city + 1).getDemand();
             a.currentQuantity.set(salesman, newQuantity);
-
             values[0] = next_city;
             values[1] = salesman;
         }
-
         return values;
     }
 
@@ -585,66 +387,32 @@ public class Ants {
         double value_best = -1;  //values in total matrix are always >= 0.0
         double help;
         double distance, distanceDepot, arrivalTime, arrivalTimeDepot, beginService, beginServiceDepot;
-        double currentTime = 0, timeDiference = 0, waitingTIme, waiting, deliveryUrgency, bestBeginService = 0;
+        double currentTime, timeDiference, waiting, deliveryUrgency, bestBeginService = 0;
         int[] values = new int[2];
         ArrayList<Request> reqList = vrptw.getRequests();
-
-        next_city = vrptw.n;   //next_city = Integer.MAX_VALUE;
+        next_city = vrptw.n;
         if (a.addedEmptyTour) {
             startPos = a.usedVehicles - 1;
         } else {
             startPos = 0;
         }
-
         for (int indexSalesman = startPos; indexSalesman < a.usedVehicles; indexSalesman++) {
             int lastPos = a.tours.get(indexSalesman).size() - 1;
             current_city = a.tours.get(indexSalesman).get(lastPos);
             current_city++;
-
             for (i = 0; i < nn_ants; i++) {
                 help_city = vrptw.instance.nn_list[current_city][i];
                 if ((vrptw.getIdAvailableRequests().contains(help_city - 1)) && (!a.visited[help_city - 1])) {
                     distance = vrptw.instance.distance[current_city][help_city];
                     arrivalTime = a.currentTime.get(indexSalesman) + reqList.get(current_city).getServiceTime() + distance;
                     beginService = Math.max(arrivalTime, reqList.get(help_city).getStartWindow());
-
                     distanceDepot = vrptw.instance.distance[help_city][0];
                     arrivalTimeDepot = beginService + reqList.get(help_city).getServiceTime() + distanceDepot;
                     beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-
                     if (vrptw_acs.isFeasible(vrptw, a, help_city - 1, beginService, beginServiceDepot, indexSalesman)) {
-                        waiting = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime() - distance;
-                        waitingTIme = Math.max(0.0, waiting);
-			    		/*if (waiting <= 0) {
-			    			waitingTIme = 0;
-			    		}
-			    		else {
-			    			waitingTIme = waiting;
-			    		}*/
-				    	/*if (waitingTIme == 0) {
-				    		waitingTIme = 0.05;
-				    	}*/
-                        currentTime = a.currentTime.get(indexSalesman);
-                        if (currentTime == 0) {
-                            currentTime = 0.001;
-                        }
                         deliveryUrgency = reqList.get(help_city).getEndWindow() - (a.beginService[current_city] + reqList.get(current_city).getServiceTime() + distance);
-				    	/*if (deliveryUrgency == 0) {
-				    		deliveryUrgency = 0.05;
-				    	}*/
                         timeDiference = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime();
-
-                        //help = HEURISTIC(current_city, help_city) * (1.0 / currentTime) * (1.0 / waitingTIme) * (1.0 / deliveryUrgency);
-                        //help = HEURISTIC(current_city, help_city) * (1.0 / waitingTIme) * (1.0 / deliveryUrgency);
-
-				    	/*if (a.currentTime.get(indexSalesman) == 0 && reqList.get(help_city).getStartWindow() == 0) {
-				    		help = 1.0 / (weight1 * distance + weight2 * timeDiference);
-				    	}
-				    	else {
-				    		help = 1.0 / (weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency);
-				    	}*/
                         help = 1.0 / (weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency);
-
                         help = Math.pow(help, beta);
                         help = help * Math.pow(pheromone[current_city][help_city], alpha);
                         if (help > value_best) {
@@ -654,11 +422,9 @@ public class Ants {
                             bestBeginService = beginService;
                         }
                     }
-
                 }
             }
         }
-
         if (next_city == vrptw.n) {
             // all cities in nearest neighbor list were already visited
             values = choose_best_next(a, vrptw, vrptw_acs);
@@ -675,22 +441,19 @@ public class Ants {
             values[1] = salesman;
             return values;
         }
-
     }
 
     public void choose_closest_nn(Ant a, int indexSalesman, VRPTW vrptw, VRPTW_ACS vrptw_acs) {
-        int current_city, next_city, indexTour;
+        int current_city, next_city;
         double distance, distanceDepot, arrivalTime, arrivalTimeDepot, beginService, beginServiceDepot;
         double timeDiference, deliveryUrgency, bestBeginService = 0, minValue, metricValue;
         ArrayList<Request> reqList = vrptw.getRequests();
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
-
         while (a.toVisit > 0) {
             next_city = vrptw.n;
             int lastPos = a.tours.get(indexSalesman).size() - 1;
             current_city = a.tours.get(indexSalesman).get(lastPos);
             current_city++;
-
             minValue = Integer.MAX_VALUE;
             for (int city : idKnownRequests) {
                 if (a.visited[city])
@@ -699,27 +462,15 @@ public class Ants {
                     distance = vrptw.instance.distance[current_city][city + 1];
                     arrivalTime = a.currentTime.get(indexSalesman) + reqList.get(current_city).getServiceTime() + distance;
                     beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
-
                     distanceDepot = vrptw.instance.distance[city + 1][0];
                     arrivalTimeDepot = beginService + reqList.get(city + 1).getServiceTime() + distanceDepot;
                     beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-
                     if (vrptw_acs.isFeasible(vrptw, a, city, beginService, beginServiceDepot, indexSalesman)) {
                         //compute the value of the "closeness" metric; this metric tries to account
                         //for both geographical and temporal closeness of customers
                         timeDiference = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime();
                         deliveryUrgency = reqList.get(city + 1).getEndWindow() - (a.beginService[current_city] + reqList.get(current_city).getServiceTime() + distance);
-
-			    		/*if (a.currentTime.get(indexSalesman) == 0 && reqList.get(city + 1).getStartWindow() == 0) {
-			    			metricValue = weight1 * distance + weight2 * timeDiference;
-				    	}
-				    	else {
-				    		metricValue = weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency;
-				    	}*/
-                        //metricValue = 0.5 * distance + 0.3 * timeDiference + 0.2 * deliveryUrgency;
-                        //metricValue = initialWeight1 * distance + initialWeight2 * timeDiference + initialWeight3 * deliveryUrgency;
                         metricValue = weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency;
-
                         if (metricValue < minValue) {
                             next_city = city;
                             minValue = metricValue;
@@ -728,7 +479,6 @@ public class Ants {
                     }
                 }
             }
-
             //no more nodes can be feasible added in the tour
             if (next_city == vrptw.n) {
                 break;
@@ -741,8 +491,6 @@ public class Ants {
                 a.currentQuantity.set(indexSalesman, a.currentQuantity.get(indexSalesman) + reqList.get(next_city + 1).getDemand());
             }
         }
-
-
     }
 
     public void choose_closest_next(Ant a, int indexSalesman, VRPTW vrptw, VRPTW_ACS vrptw_acs) {
@@ -751,12 +499,10 @@ public class Ants {
         double timeDiference, deliveryUrgency, bestBeginService = 0, minValue, metricValue;
         ArrayList<Request> reqList = vrptw.getRequests();
         ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
-
         next_city = vrptw.n;
         int lastPos = a.tours.get(indexSalesman).size() - 1;
         current_city = a.tours.get(indexSalesman).get(lastPos);
         current_city++;
-
         minValue = Integer.MAX_VALUE;
         for (int city : idKnownRequests) {
             if (a.visited[city])
@@ -765,27 +511,15 @@ public class Ants {
                 distance = vrptw.instance.distance[current_city][city + 1];
                 arrivalTime = a.currentTime.get(indexSalesman) + reqList.get(current_city).getServiceTime() + distance;
                 beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
-
                 distanceDepot = vrptw.instance.distance[city + 1][0];
                 arrivalTimeDepot = beginService + reqList.get(city + 1).getServiceTime() + distanceDepot;
                 beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
-
                 if (vrptw_acs.isFeasible(vrptw, a, city, beginService, beginServiceDepot, indexSalesman)) {
                     //compute the value of the "closeness" metric; this metric tries to account
                     //for both geographical and temporal closeness of customers
                     timeDiference = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime();
                     deliveryUrgency = reqList.get(city + 1).getEndWindow() - (a.beginService[current_city] + reqList.get(current_city).getServiceTime() + distance);
-
-		    		/*if (a.currentTime.get(indexSalesman) == 0 && reqList.get(city + 1).getStartWindow() == 0) {
-		    			metricValue = weight1 * distance + weight2 * timeDiference;
-			    	}
-			    	else {
-			    		metricValue = weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency;
-			    	}*/
-                    //metricValue = 0.5 * distance + 0.3 * timeDiference + 0.2 * deliveryUrgency;
-                    //metricValue = initialWeight1 * distance + initialWeight2 * timeDiference + initialWeight3 * deliveryUrgency;
                     metricValue = weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency;
-
                     if (metricValue < minValue) {
                         next_city = city;
                         minValue = metricValue;
@@ -800,12 +534,6 @@ public class Ants {
         //when no more customer with feasible insertions can be found, start a new route/tour and add
         //one more vehicle for constructing a feasible solution
         if (next_city == vrptw.n) {
-            //System.out.println("Cities to be visited: " + a.toVisit);
-
-            //determine nodes that are not visited yet in the current tour
-		    /*ArrayList<Integer> unroutedList = unroutedCustomers(a, vrp);
-		    InsertionHeuristic.insertUnroutedCustomers(a, vrp, unroutedList, a.usedVehicles - 1, 1);*/
-
             //if no more unrouted customers can be feasible inserted in the solution and there are still
             //remaining unrouted customers, add a new tour
             if (a.toVisit > 0) {
@@ -817,7 +545,6 @@ public class Ants {
                 a.currentQuantity.add(indexTour, 0.0);
                 a.currentTime.add(indexTour, 0.0);
             }
-
         } else {
             a.tours.get(indexSalesman).add(next_city);
             a.visited[next_city] = true;
@@ -826,39 +553,30 @@ public class Ants {
             a.beginService[next_city + 1] = bestBeginService;
             a.currentQuantity.set(indexSalesman, a.currentQuantity.get(indexSalesman) + reqList.get(next_city + 1).getDemand());
         }
-
     }
 
     //Choose for an ant probabilistically a next city among all unvisited cities in the current city's candidate list
     public int[] neighbour_choose_and_move_to_next(Ant a, VRPTW vrptw, VRPTW_ACS vrptw_acs) {
         int i, j, help, city, salesman = 0;
-        int current_city = 0;
-        double rnd, partial_sum = 0., sum_prob = 0.0;
+        int current_city;
+        double rnd, partial_sum, sum_prob = 0.0;
         double prob_ptr[][];
         double help1;
         int[] values = new int[2];
         int[] tempCities = new int[a.usedVehicles];
-        double distance, distanceDepot, arrivalTime, currentTime, arrivalTimeDepot, beginService, beginServiceDepot;
-        double waitingTIme, waiting, deliveryUrgency, timeDiference = 0;
+        double distance, distanceDepot, arrivalTime, arrivalTimeDepot, beginService, beginServiceDepot;
+        double deliveryUrgency, timeDiference;
         ArrayList<Request> reqList = vrptw.getRequests();
-
-
         if ((q_0 > 0.0) && (utilities.random01() < q_0)) {
             /*
-             * with a probability q_0 make the best possible choice
-             * according to pheromone trails and heuristic information, this corresponds to exploitation
-             */
-            /*
-             * we first check whether q_0 > 0.0, to avoid the very common case
-             * of q_0 = 0.0 to have to compute a random number, which is
-             * expensive computationally
+             * With a probability q_0 make the best possible choice according to pheromone trails and heuristic
+             * information, this corresponds to exploitation.
+             * We first check whether q_0 > 0.0, to avoid the very common case of q_0 = 0.0 to have to compute
+             * a random number, which is expensive computationally.
              */
             values = neighbour_choose_best_next(a, vrptw, vrptw_acs);
-            //values = choose_best_next(a, vrp);
             return values;
         }
-
-        //prob_ptr = prob_of_selection;
         prob_ptr = new double[a.usedVehicles][nn_ants + 1];
         for (j = 0; j < a.usedVehicles; j++) {
             for (i = 0; i < nn_ants; i++) {
@@ -869,19 +587,16 @@ public class Ants {
             prob_ptr[j][nn_ants] = 0;
         }
         prob_ptr[a.usedVehicles - 1][nn_ants] = Double.POSITIVE_INFINITY;
-
         for (int indexSalesman = 0; indexSalesman < a.usedVehicles; indexSalesman++) {
             /* current_city city of ant k */
             int lastPos = a.tours.get(indexSalesman).size() - 1;
             current_city = a.tours.get(indexSalesman).get(lastPos);
             current_city++;
-
             for (i = 0; i < nn_ants; i++) {
                 city = vrptw.instance.nn_list[current_city][i];
                 distance = vrptw.instance.distance[current_city][city];
                 arrivalTime = a.currentTime.get(indexSalesman) + reqList.get(current_city).getServiceTime() + distance;
                 beginService = Math.max(arrivalTime, reqList.get(city).getStartWindow());
-
                 distanceDepot = vrptw.instance.distance[city][0];
                 arrivalTimeDepot = beginService + reqList.get(city).getServiceTime() + distanceDepot;
                 beginServiceDepot = Math.max(arrivalTimeDepot, reqList.get(0).getStartWindow());
@@ -889,30 +604,8 @@ public class Ants {
                 if (!(vrptw.getIdAvailableRequests().contains(city - 1)) || (a.visited[city - 1]) || (!vrptw_acs.isFeasible(vrptw, a, city - 1, beginService, beginServiceDepot, indexSalesman)))
                     prob_ptr[indexSalesman][i] = 0.0; /* city already visited */
                 else if ((vrptw_acs.isFeasible(vrptw, a, city - 1, beginService, beginServiceDepot, indexSalesman)) && (vrptw.getIdAvailableRequests().contains(city - 1)) && !(a.visited[city - 1])) {
-                    waiting = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime() - distance;
-                    waitingTIme = Math.max(0.0, waiting);
-			    	/*if (waitingTIme == 0) {
-			    		waitingTIme = 0.05;
-			    	}*/
                     deliveryUrgency = reqList.get(city).getEndWindow() - (a.beginService[current_city] + reqList.get(current_city).getServiceTime() + distance);
-			    	/*if (deliveryUrgency == 0) {
-			    		deliveryUrgency = 0.05;
-			    	}*/
-                    currentTime = a.currentTime.get(indexSalesman);
-                    if (currentTime == 0) {
-                        currentTime = 0.001;
-                    }
                     timeDiference = beginService - a.beginService[current_city] - reqList.get(current_city).getServiceTime();
-
-                    //help1 = HEURISTIC(current_city, city) *  (1.0 / currentTime) * (1.0 / waitingTIme) * (1.0 / deliveryUrgency);
-                    //help1 = HEURISTIC(current_city, city) * (1.0 / waitingTIme) * (1.0 / deliveryUrgency);
-
-			    	/*if (a.currentTime.get(indexSalesman) == 0 && reqList.get(city).getStartWindow() == 0) {
-			    		help1 = 1.0 / (weight1 * distance + weight2 * timeDiference);
-			    	}
-			    	else {
-			    		help1 = 1.0 / (weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency);
-			    	}*/
                     help1 = 1.0 / (weight1 * distance + weight2 * timeDiference + weight3 * deliveryUrgency);
                     help1 = Math.pow(help1, beta);
                     help1 = help1 * Math.pow(pheromone[current_city][city], alpha);
@@ -920,20 +613,14 @@ public class Ants {
                     tempCities[indexSalesman] = current_city;
                     sum_prob += prob_ptr[indexSalesman][i];
                 }
-
-
             }
         }
-
         if (sum_prob <= 0.0) {
             /* All cities from the candidate  are tabu (are already visited) */
             values = choose_best_next(a, vrptw, vrptw_acs);
             return values;
         } else {
-            /*
-             * at least one neighbor is eligible, choose one according to the
-             * selection probabilities
-             */
+            // at least one neighbor is eligible, choose one according to the selection probabilities
             rnd = utilities.random01();
             rnd *= sum_prob;
             i = 0;
@@ -946,13 +633,12 @@ public class Ants {
                 while (partial_sum <= rnd) {
                     i++;
                     if (i < 0) {
-                        System.out.println("Iter=" + inOut.iteration + " Test: indexSalesman= " + indexSalesman + " i= " + i);
+                        loggerOutput.log("Iter=" + inOut.iteration + " Test: indexSalesman= " + indexSalesman + " i= " + i);
                         partial_sum += Double.POSITIVE_INFINITY;
                         forcedEnd = true;
                         break;
                     }
                     if (i < prob_ptr[indexSalesman].length) {
-                        //System.out.println("Test: indexSalesman= " + indexSalesman + " i= " + i);
                         partial_sum += prob_ptr[indexSalesman][i];
                         salesman = indexSalesman;
                     } else if (i >= prob_ptr[indexSalesman].length) {
@@ -971,23 +657,16 @@ public class Ants {
                     } else { //choose randomly a salesman to whom add the city
                         salesman = (int) (utilities.random01() * a.usedVehicles);
                     }
-
                 }
-
             }
-
-            /*
-             * This may very rarely happen because of rounding if rnd is close to 1.
-             */
+            // This may very rarely happen because of rounding if rnd is close to 1.
             if (i == nn_ants) {
                 values = neighbour_choose_best_next(a, vrptw, vrptw_acs);
-                //values = choose_best_next(a, vrp);
                 return values;
             }
-            //System.out.println("nn_ants=" + nn_ants + " salesman=" + salesman + " i=" + i);
             current_city = tempCities[salesman];
             int maxIndex = 0;
-            double maxValue = Double.MIN_VALUE;
+            double maxValue;
             if (i < 0) {
                 maxValue = prob_ptr[salesman][0];
                 for (j = 1; j < nn_ants; j++) {
@@ -998,13 +677,10 @@ public class Ants {
                 }
                 i = maxIndex;
             }
-
             help = vrptw.instance.nn_list[current_city][i];
-
             distance = vrptw.instance.distance[current_city][help];
             arrivalTime = a.currentTime.get(salesman) + reqList.get(current_city).getServiceTime() + distance;
             beginService = Math.max(arrivalTime, reqList.get(help).getStartWindow());
-
             a.tours.get(salesman).add(help - 1);
             a.visited[help - 1] = true;
             a.toVisit--;
@@ -1012,7 +688,6 @@ public class Ants {
             a.beginService[help] = beginService;
             double newQuantity = a.currentQuantity.get(salesman) + reqList.get(help).getDemand();
             a.currentQuantity.set(salesman, newQuantity);
-
             values[0] = help - 1;
             values[1] = salesman;
             return values;
@@ -1024,28 +699,16 @@ public class Ants {
     public void global_acs_pheromone_update(Ant a) {
         int i, j, h, k, size;
         double d_tau;
-
         d_tau = 1.0 / (double) a.total_tour_length;
-        //d_tau = 1.0 / ((double) a.total_tour_length * (double) a.usedVehicles);
-        //d_tau = 1.0 / ((double) a.total_tour_length * (double) a.usedVehicles * 0.1);
-        //d_tau = 1.0 / ((double) a.total_tour_length + (double) a.usedVehicles * 0.01);
-		/*double weightedSum = 0.5 * (double)a.total_tour_length + 0.5 * (double)a.usedVehicles;
-		d_tau = 1.0 / Math.pow(weightedSum, 2.0);*/
-
         for (i = 0; i < a.usedVehicles; i++) {
             size = a.tours.get(i).size();
             for (k = 0; k < size - 1; k++) {
                 j = a.tours.get(i).get(k);
                 h = a.tours.get(i).get(k + 1);
-
                 j++;
                 h++;
-
                 pheromone[j][h] = (1. - rho) * pheromone[j][h] + rho * d_tau;
                 pheromone[h][j] = pheromone[j][h];
-
-			    /*total[h][j] = Math.pow(pheromone[h][j], alpha) * Math.pow(HEURISTIC(h, j), beta);
-			    total[j][h] = total[h][j];*/
             }
         }
 
@@ -1054,47 +717,33 @@ public class Ants {
     //removes some pheromone on edge just passed by the ant
     public void local_acs_pheromone_update(Ant a, int indexSalesman) {
         int h, j;
-
         int lastPos = a.tours.get(indexSalesman).size() - 1;
         j = a.tours.get(indexSalesman).get(lastPos);
         h = a.tours.get(indexSalesman).get(lastPos - 1);
-
         j++;
         h++;
-
         /* still additional parameter has to be introduced */
         pheromone[h][j] = (1. - local_rho) * pheromone[h][j] + local_rho * trail_0;
         pheromone[j][h] = pheromone[h][j];
-		/*total[h][j] = Math.pow(pheromone[h][j], alpha) * Math.pow(HEURISTIC(h, j), beta);
-		total[j][h] = total[h][j];*/
     }
 
     //copy solution from ant a1 into ant a2
     public void copy_from_to(Ant a1, Ant a2, VRPTW vrptw) {
         int i, j;
-
         ant_empty_memory(a2, vrptw);
-
         a2.total_tour_length = a1.total_tour_length;
-		/*a2.longest_tour_length = a1.longest_tour_length;
-		a2.indexLongestTour = a1.indexLongestTour;*/
         a2.toVisit = a1.toVisit;
-
         for (int indexObj = 0; indexObj < 2; indexObj++) {
             a2.costObjectives[indexObj] = a1.costObjectives[indexObj];
         }
-
         if (a2.usedVehicles < a1.usedVehicles) {
             for (int index = a2.usedVehicles; index < a1.usedVehicles; index++) {
                 a2.tour_lengths.add(index, 0.0);
                 a2.tours.add(index, new ArrayList<Integer>());
                 a2.currentQuantity.add(index, 0.0);
                 a2.currentTime.add(index, 0.0);
-				/*a2.earliestTime.add(index, new ArrayList<Double>());
-				a2.latestTime.add(index, new ArrayList<Double>());*/
             }
         }
-
         for (i = 0; i < a1.usedVehicles; i++) {
             a2.tour_lengths.set(i, a1.tour_lengths.get(i));
             a2.currentQuantity.set(i, a1.currentQuantity.get(i));
@@ -1104,13 +753,11 @@ public class Ants {
                 int elem = a1.tours.get(i).get(j);
                 a2.tours.get(i).add(elem);
             }
-
         }
         for (i = 0; i < vrptw.n; i++) {
             a2.visited[i] = a1.visited[i];
         }
         a2.usedVehicles = a1.usedVehicles;
-
         for (i = 0; i < (vrptw.n + 1); i++) {
             a2.beginService[i] = a1.beginService[i];
         }
@@ -1119,7 +766,6 @@ public class Ants {
     public double computeToursAmplitude(Ant a) {
         double min, max;
         int i;
-
         min = a.tour_lengths.get(0);
         max = a.tour_lengths.get(0);
         for (i = 1; i < a.tours.size(); i++) {
@@ -1130,9 +776,7 @@ public class Ants {
                 max = a.tour_lengths.get(i);
             }
         }
-
         return (max - min);
     }
-
 
 }
