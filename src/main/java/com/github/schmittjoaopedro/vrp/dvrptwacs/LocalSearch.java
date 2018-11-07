@@ -10,7 +10,7 @@ public class LocalSearch {
         this.loggerOutput = loggerOutput;
     }
 
-    public Ant relocateMultipleRouteIterated(Ants ants, Controller controller, Ant a, VRPTW vrptw) {
+    public Ant relocateMultipleRouteIterated(Ants ants, Controller controller, Ant ant, VRPTW vrptw) {
         boolean feasible;
         int city, sourcePrevCity, sourceNextCity, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -20,52 +20,14 @@ public class LocalSearch {
         int lastPos;
         double tempNo = Math.pow(10, 10);
         double round1, round2;
-        Ant improvedAnt = new Ant();
-        improvedAnt.tours = new ArrayList();
-        improvedAnt.tourLengths = new ArrayList<>();
-        improvedAnt.beginService = new double[vrptw.n + 1];
-        improvedAnt.currentTime = new ArrayList<>();
-        improvedAnt.currentQuantity = new ArrayList<>();
-        improvedAnt.usedVehicles = 1;
-        for (int j = 0; j < improvedAnt.usedVehicles; j++) {
-            improvedAnt.tours.add(j, new ArrayList<>());
-            improvedAnt.tourLengths.add(j, 0.0);
-        }
-        improvedAnt.visited = new boolean[vrptw.n];
-        //the another node is the depot, which is by default visited by each salesman and added in its tour
-        improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
-        improvedAnt.costObjectives = new double[2];
-        for (int indexObj = 0; indexObj < 2; indexObj++) {
-            improvedAnt.costObjectives[indexObj] = 0;
-        }
-        improvedAnt.earliestTime = new ArrayList(improvedAnt.usedVehicles);
-        improvedAnt.latestTime = new ArrayList(improvedAnt.usedVehicles);
-        Ant temp = new Ant();
-        temp.tours = new ArrayList();
-        temp.tourLengths = new ArrayList<>();
-        temp.beginService = new double[vrptw.n + 1];
-        temp.currentTime = new ArrayList<>();
-        temp.currentQuantity = new ArrayList<>();
-        temp.usedVehicles = 1;
-        for (int j = 0; j < temp.usedVehicles; j++) {
-            temp.tours.add(j, new ArrayList<>());
-            temp.tourLengths.add(j, 0.0);
-        }
-        temp.visited = new boolean[vrptw.n];
-        //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = vrptw.getIdAvailableRequests().size();
-        temp.costObjectives = new double[2];
-        for (int indexObj = 0; indexObj < 2; indexObj++) {
-            temp.costObjectives[indexObj] = 0;
-        }
-        temp.earliestTime = new ArrayList(temp.usedVehicles);
-        temp.latestTime = new ArrayList(temp.usedVehicles);
-        ants.copy_from_to(a, improvedAnt, vrptw);
-        ants.copy_from_to(a, temp, vrptw);
-        ArrayList<Integer> lastCommitedIndexes = new ArrayList<>();
+        Ant improvedAnt = ants.createNewAnt(vrptw);
+        Ant temp = ants.createNewAnt(vrptw);
+        ants.copyFromTo(ant, improvedAnt, vrptw);
+        ants.copyFromTo(ant, temp, vrptw);
+        ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
             lastPos = controller.getLastCommitedPos(index);
-            lastCommitedIndexes.add(lastPos);
+            lastCommittedIndexes.add(lastPos);
         }
         int count = 0;
         while (foundImprovement) {
@@ -74,22 +36,22 @@ public class LocalSearch {
             if (count > 100) {
                 loggerOutput.log("Inside relocateMultipleRouteIterated; count=" + count);
             }
-            ants.copy_from_to(improvedAnt, a, vrptw);
-            ants.copy_from_to(improvedAnt, temp, vrptw);
+            ants.copyFromTo(improvedAnt, ant, vrptw);
+            ants.copyFromTo(improvedAnt, temp, vrptw);
             for (int indexTourSource = 0; indexTourSource < temp.usedVehicles; indexTourSource++) {
                 for (int indexTourDestination = 0; indexTourDestination < temp.usedVehicles; indexTourDestination++) {
                     if (indexTourSource != indexTourDestination) {
                         //index of the element to be moved/relocated
-                        if (indexTourSource > lastCommitedIndexes.size() - 1) {
+                        if (indexTourSource > lastCommittedIndexes.size() - 1) {
                             startIndexSource = 1;
                         } else {
-                            startIndexSource = lastCommitedIndexes.get(indexTourSource) + 1;
+                            startIndexSource = lastCommittedIndexes.get(indexTourSource) + 1;
                         }
                         //index of the relocation's destination
-                        if (indexTourDestination > lastCommitedIndexes.size() - 1) {
+                        if (indexTourDestination > lastCommittedIndexes.size() - 1) {
                             startIndexDestination = 1;
                         } else {
-                            startIndexDestination = lastCommitedIndexes.get(indexTourDestination) + 1;
+                            startIndexDestination = lastCommittedIndexes.get(indexTourDestination) + 1;
                         }
                         for (int i = startIndexSource; i < temp.tours.get(indexTourSource).size() - 1; i++) {
                             for (int j = startIndexDestination; j < temp.tours.get(indexTourDestination).size(); j++) {
@@ -135,11 +97,11 @@ public class LocalSearch {
                                     //if some improvement is obtained in the total traveled distance
                                     if (((round1 < round2) && (temp.usedVehicles == improvedAnt.usedVehicles))
                                             || (temp.usedVehicles < improvedAnt.usedVehicles)) {
-                                        ants.copy_from_to(temp, improvedAnt, vrptw);
+                                        ants.copyFromTo(temp, improvedAnt, vrptw);
                                         foundImprovement = true;
                                     }
                                     //restore previous solution constructed by ant
-                                    ants.copy_from_to(a, temp, vrptw);
+                                    ants.copyFromTo(ant, temp, vrptw);
                                 }
                             }
                         }
@@ -258,52 +220,14 @@ public class LocalSearch {
         int lastPos;
         double tempNo = Math.pow(10, 10);
         double round1, round2;
-        Ant improvedAnt = new Ant();
-        improvedAnt.tours = new ArrayList();
-        improvedAnt.tourLengths = new ArrayList<>();
-        improvedAnt.beginService = new double[vrptw.n + 1];
-        improvedAnt.currentTime = new ArrayList<>();
-        improvedAnt.currentQuantity = new ArrayList<>();
-        improvedAnt.usedVehicles = 1;
-        for (int j = 0; j < improvedAnt.usedVehicles; j++) {
-            improvedAnt.tours.add(j, new ArrayList<>());
-            improvedAnt.tourLengths.add(j, 0.0);
-        }
-        improvedAnt.visited = new boolean[vrptw.n];
-        //the another node is the depot, which is by default visited by each salesman and added in its tour
-        improvedAnt.toVisit = vrptw.getIdAvailableRequests().size();
-        improvedAnt.costObjectives = new double[2];
-        for (int indexObj = 0; indexObj < 2; indexObj++) {
-            improvedAnt.costObjectives[indexObj] = 0;
-        }
-        improvedAnt.earliestTime = new ArrayList(improvedAnt.usedVehicles);
-        improvedAnt.latestTime = new ArrayList(improvedAnt.usedVehicles);
-        Ant temp = new Ant();
-        temp.tours = new ArrayList();
-        temp.tourLengths = new ArrayList<>();
-        temp.beginService = new double[vrptw.n + 1];
-        temp.currentTime = new ArrayList<>();
-        temp.currentQuantity = new ArrayList<>();
-        temp.usedVehicles = 1;
-        for (int j = 0; j < temp.usedVehicles; j++) {
-            temp.tours.add(j, new ArrayList<>());
-            temp.tourLengths.add(j, 0.0);
-        }
-        temp.visited = new boolean[vrptw.n];
-        //the another node is the depot, which is by default visited by each salesman and added in its tour
-        temp.toVisit = vrptw.getIdAvailableRequests().size();
-        temp.costObjectives = new double[2];
-        for (int indexObj = 0; indexObj < 2; indexObj++) {
-            temp.costObjectives[indexObj] = 0;
-        }
-        temp.earliestTime = new ArrayList(temp.usedVehicles);
-        temp.latestTime = new ArrayList(temp.usedVehicles);
-        ants.copy_from_to(a, improvedAnt, vrptw);
-        ants.copy_from_to(a, temp, vrptw);
-        ArrayList<Integer> lastCommitedIndexes = new ArrayList<Integer>();
+        Ant improvedAnt = ants.createNewAnt(vrptw);
+        Ant temp = ants.createNewAnt(vrptw);
+        ants.copyFromTo(a, improvedAnt, vrptw);
+        ants.copyFromTo(a, temp, vrptw);
+        ArrayList<Integer> lastCommittedIndexes = new ArrayList<Integer>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
             lastPos = controller.getLastCommitedPos(index);
-            lastCommitedIndexes.add(lastPos);
+            lastCommittedIndexes.add(lastPos);
         }
         int count = 0;
         while (foundImprovement) {
@@ -312,22 +236,22 @@ public class LocalSearch {
             if (count > 100) {
                 loggerOutput.log("Inside exchangeMultipleRouteIterated; count=" + count);
             }
-            ants.copy_from_to(improvedAnt, a, vrptw);
-            ants.copy_from_to(improvedAnt, temp, vrptw);
+            ants.copyFromTo(improvedAnt, a, vrptw);
+            ants.copyFromTo(improvedAnt, temp, vrptw);
             for (int indexTourSource = 0; indexTourSource < (temp.usedVehicles - 1); indexTourSource++) {
                 for (int indexTourDestination = indexTourSource + 1; indexTourDestination < temp.usedVehicles; indexTourDestination++) {
                     if (indexTourSource != indexTourDestination) {
                         //index of the element to be moved from the source tour
-                        if (indexTourSource > lastCommitedIndexes.size() - 1) {
+                        if (indexTourSource > lastCommittedIndexes.size() - 1) {
                             startIndexSource = 1;
                         } else {
-                            startIndexSource = lastCommitedIndexes.get(indexTourSource) + 1;
+                            startIndexSource = lastCommittedIndexes.get(indexTourSource) + 1;
                         }
                         //index of the element to be moved from the destination tour
-                        if (indexTourDestination > lastCommitedIndexes.size() - 1) {
+                        if (indexTourDestination > lastCommittedIndexes.size() - 1) {
                             startIndexDestination = 1;
                         } else {
-                            startIndexDestination = lastCommitedIndexes.get(indexTourDestination) + 1;
+                            startIndexDestination = lastCommittedIndexes.get(indexTourDestination) + 1;
                         }
                         for (int i = startIndexSource; i < temp.tours.get(indexTourSource).size() - 1; i++) {
                             for (int j = startIndexDestination; j < temp.tours.get(indexTourDestination).size() - 1; j++) {
@@ -366,11 +290,11 @@ public class LocalSearch {
                                         round2 = Math.round(improvedAnt.totalTourLength * tempNo) / tempNo;
                                         //if some improvement is obtained in the total traveled distance
                                         if (round1 < round2) {
-                                            ants.copy_from_to(temp, improvedAnt, vrptw);
+                                            ants.copyFromTo(temp, improvedAnt, vrptw);
                                             foundImprovement = true;
                                         }
                                         //restore previous solution constructed by ant
-                                        ants.copy_from_to(a, temp, vrptw);
+                                        ants.copyFromTo(a, temp, vrptw);
                                     }
                                 }
                             }

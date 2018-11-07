@@ -287,7 +287,7 @@ public class VRPTW_ACS implements Runnable {
             if ((a.usedVehicles < ants.bestSoFarAnt.usedVehicles) || ((a.usedVehicles == ants.bestSoFarAnt.usedVehicles) && (round1 < round2))
                     || ((round1 < round2) && (ants.bestSoFarAnt.totalTourLength == Double.MAX_VALUE))) {
                 inOut.timeUsed = timer.elapsedTime();  //best solution found after timeUsed
-                ants.copy_from_to(a, ants.bestSoFarAnt, vrptw);
+                ants.copyFromTo(a, ants.bestSoFarAnt, vrptw);
                 scalingValue = controller.getScalingValue();
                 if (scalingValue != 0) {
                     scaledValue = ants.bestSoFarAnt.totalTourLength / scalingValue;
@@ -395,7 +395,7 @@ public class VRPTW_ACS implements Runnable {
         loggerOutput.log("\nInitial (nearest neighbour tour) total tour length: " + ant.totalTourLength + " (scalled value = " + scaledValue + "); Number of vehicles used: " + ant.usedVehicles);
         sum1 = ant.totalTourLength;
         //initialize best solution so far with this solution constructed by the nearest neighbour heuristic
-        ants.copy_from_to(ant, ants.bestSoFarAnt, vrptw);
+        ants.copyFromTo(ant, ants.bestSoFarAnt, vrptw);
         ants.antEmptyMemory(ant, vrptw.getIdAvailableRequests());
         return sum1;
     }

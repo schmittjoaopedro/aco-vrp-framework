@@ -613,7 +613,7 @@ public class Ants {
     }
 
     //copy solution from ant a1 into ant a2
-    public void copy_from_to(Ant from, Ant to, VRPTW vrptw) {
+    public void copyFromTo(Ant from, Ant to, VRPTW vrptw) {
         antEmptyMemory(to, vrptw.getIdAvailableRequests());
         to.totalTourLength = from.totalTourLength;
         to.toVisit = from.toVisit;
