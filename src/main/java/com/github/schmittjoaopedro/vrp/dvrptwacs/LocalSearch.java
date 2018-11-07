@@ -17,7 +17,6 @@ public class LocalSearch {
         double newQuantity1, newQuantity2, newDistance1, newDistance2, newTotalDistance;
         ArrayList<Request> reqList = vrptw.getRequests();
         boolean foundImprovement = true;
-        int lastPos;
         double tempNo = Math.pow(10, 10);
         double round1, round2;
         Ant improvedAnt = ants.createNewAnt(vrptw);
@@ -26,8 +25,7 @@ public class LocalSearch {
         ants.copyFromTo(ant, temp, vrptw);
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-            lastPos = controller.getLastCommitedPos(index);
-            lastCommittedIndexes.add(lastPos);
+            lastCommittedIndexes.add(controller.getLastCommitedPos(index));
         }
         int count = 0;
         while (foundImprovement) {
@@ -68,7 +66,11 @@ public class LocalSearch {
                                     temp.currentQuantity.set(indexTourDestination, newQuantity2);
                                     //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                     //also update the current time of the source and destination tours
-                                    updateBeginServiceRelocationMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
+                                    try {
+                                        updateBeginServiceMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
+                                    } catch (InfeasibleSolution is) {
+                                        loggerOutput.log(is.getMessage());
+                                    }
                                     //update total traveled distance and lengths of source and destination tours
                                     sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                     sourceNextCity = temp.tours.get(indexTourSource).get(i);
@@ -168,49 +170,7 @@ public class LocalSearch {
         return true;
     }
 
-    public void updateBeginServiceRelocationMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
-        int currentCity, prevCity;
-        double currentTime = 0.0;
-        double distance, arrivalTime, beginService = 0.0;
-        ArrayList<Request> reqList = vrp.getRequests();
-        //update of begin service times for the source tour
-        for (int pos = i; pos < a.tours.get(indexTourSource).size() - 1; pos++) {
-            prevCity = a.tours.get(indexTourSource).get(pos - 1);
-            currentCity = a.tours.get(indexTourSource).get(pos);
-            if (pos == i) {
-                currentTime = a.beginService[prevCity + 1];
-            }
-            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
-            arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
-            beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
-            currentTime = beginService;
-            a.beginService[currentCity + 1] = beginService;
-            if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                loggerOutput.log("Relocation Multiple indexTourSource: Unfeasible solution..");
-            }
-        }
-        a.currentTime.set(indexTourSource, beginService);
-        //update of begin service times for the destination tour
-        for (int pos = j; pos < a.tours.get(indexTourDestination).size() - 1; pos++) {
-            prevCity = a.tours.get(indexTourDestination).get(pos - 1);
-            currentCity = a.tours.get(indexTourDestination).get(pos);
-            if (pos == j) {
-                currentTime = a.beginService[prevCity + 1];
-            }
-            distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
-            arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
-            beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
-            currentTime = beginService;
-            a.beginService[currentCity + 1] = beginService;
-            if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                loggerOutput.log("Relocation Multiple indexTourDestination: Unfeasible solution..");
-            }
-        }
-        a.currentTime.set(indexTourDestination, beginService);
-    }
-
-
-    public Ant exchangeMultipleRouteIterated(Ants ants, Controller controller, Ant a, VRPTW vrptw) {
+    public Ant exchangeMultipleRouteIterated(Ants ants, Controller controller, Ant ant, VRPTW vrptw) {
         boolean feasible;
         int city1, city2, sourcePrevCity, sourceNextCity, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -222,9 +182,9 @@ public class LocalSearch {
         double round1, round2;
         Ant improvedAnt = ants.createNewAnt(vrptw);
         Ant temp = ants.createNewAnt(vrptw);
-        ants.copyFromTo(a, improvedAnt, vrptw);
-        ants.copyFromTo(a, temp, vrptw);
-        ArrayList<Integer> lastCommittedIndexes = new ArrayList<Integer>();
+        ants.copyFromTo(ant, improvedAnt, vrptw);
+        ants.copyFromTo(ant, temp, vrptw);
+        ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
             lastPos = controller.getLastCommitedPos(index);
             lastCommittedIndexes.add(lastPos);
@@ -236,7 +196,7 @@ public class LocalSearch {
             if (count > 100) {
                 loggerOutput.log("Inside exchangeMultipleRouteIterated; count=" + count);
             }
-            ants.copyFromTo(improvedAnt, a, vrptw);
+            ants.copyFromTo(improvedAnt, ant, vrptw);
             ants.copyFromTo(improvedAnt, temp, vrptw);
             for (int indexTourSource = 0; indexTourSource < (temp.usedVehicles - 1); indexTourSource++) {
                 for (int indexTourDestination = indexTourSource + 1; indexTourDestination < temp.usedVehicles; indexTourDestination++) {
@@ -270,7 +230,11 @@ public class LocalSearch {
                                         temp.currentQuantity.set(indexTourDestination, newQuantity2);
                                         //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                         //also update the current time of the source and destination tours
-                                        updateBeginServiceExchangeMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
+                                        try {
+                                            updateBeginServiceMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
+                                        } catch (InfeasibleSolution is) {
+                                            loggerOutput.log(is.getMessage());
+                                        }
                                         //update total traveled distance and lengths of source and destination tours
                                         sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                         sourceNextCity = temp.tours.get(indexTourSource).get(i + 1);
@@ -294,7 +258,7 @@ public class LocalSearch {
                                             foundImprovement = true;
                                         }
                                         //restore previous solution constructed by ant
-                                        ants.copyFromTo(a, temp, vrptw);
+                                        ants.copyFromTo(ant, temp, vrptw);
                                     }
                                 }
                             }
@@ -367,11 +331,12 @@ public class LocalSearch {
         return true;
     }
 
-    public void updateBeginServiceExchangeMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
+    private void updateBeginServiceMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) throws InfeasibleSolution {
         int currentCity, prevCity;
         double currentTime = 0.0;
         double distance, arrivalTime, beginService = 0.0;
         ArrayList<Request> reqList = vrp.getRequests();
+        //update of begin service times for the source tour
         for (int pos = i; pos < a.tours.get(indexTourSource).size() - 1; pos++) {
             prevCity = a.tours.get(indexTourSource).get(pos - 1);
             currentCity = a.tours.get(indexTourSource).get(pos);
@@ -384,10 +349,11 @@ public class LocalSearch {
             currentTime = beginService;
             a.beginService[currentCity + 1] = beginService;
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                loggerOutput.log("Exchange Multiple indexTourSource: Unfeasible solution..");
+                throw new InfeasibleSolution("Unfeasible solution..");
             }
         }
         a.currentTime.set(indexTourSource, beginService);
+        //update of begin service times for the destination tour
         for (int pos = j; pos < a.tours.get(indexTourDestination).size() - 1; pos++) {
             prevCity = a.tours.get(indexTourDestination).get(pos - 1);
             currentCity = a.tours.get(indexTourDestination).get(pos);
@@ -400,7 +366,7 @@ public class LocalSearch {
             currentTime = beginService;
             a.beginService[currentCity + 1] = beginService;
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                loggerOutput.log("Exchange Multiple indexTourDestination: Unfeasible solution..");
+                throw new InfeasibleSolution("Unfeasible solution..");
             }
         }
         a.currentTime.set(indexTourDestination, beginService);
