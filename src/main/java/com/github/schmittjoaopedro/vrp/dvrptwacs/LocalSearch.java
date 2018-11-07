@@ -66,11 +66,7 @@ public class LocalSearch {
                                     temp.currentQuantity.set(indexTourDestination, newQuantity2);
                                     //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                     //also update the current time of the source and destination tours
-                                    try {
-                                        updateBeginServiceMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
-                                    } catch (InfeasibleSolution is) {
-                                        loggerOutput.log(is.getMessage());
-                                    }
+                                    updateBeginServiceMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                                     //update total traveled distance and lengths of source and destination tours
                                     sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                     sourceNextCity = temp.tours.get(indexTourSource).get(i);
@@ -230,11 +226,7 @@ public class LocalSearch {
                                         temp.currentQuantity.set(indexTourDestination, newQuantity2);
                                         //update the begin service times of the nodes from the source and destination tours of the obtained neighbour solution
                                         //also update the current time of the source and destination tours
-                                        try {
-                                            updateBeginServiceMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
-                                        } catch (InfeasibleSolution is) {
-                                            loggerOutput.log(is.getMessage());
-                                        }
+                                        updateBeginServiceMultiple(temp, vrptw, indexTourSource, indexTourDestination, i, j);
                                         //update total traveled distance and lengths of source and destination tours
                                         sourcePrevCity = temp.tours.get(indexTourSource).get(i - 1);
                                         sourceNextCity = temp.tours.get(indexTourSource).get(i + 1);
@@ -331,7 +323,7 @@ public class LocalSearch {
         return true;
     }
 
-    private void updateBeginServiceMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) throws InfeasibleSolution {
+    private void updateBeginServiceMultiple(Ant a, VRPTW vrp, int indexTourSource, int indexTourDestination, int i, int j) {
         int currentCity, prevCity;
         double currentTime = 0.0;
         double distance, arrivalTime, beginService = 0.0;
@@ -349,7 +341,7 @@ public class LocalSearch {
             currentTime = beginService;
             a.beginService[currentCity + 1] = beginService;
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                throw new InfeasibleSolution("Unfeasible solution..");
+                loggerOutput.log("Unfeasible solution..");
             }
         }
         a.currentTime.set(indexTourSource, beginService);
@@ -366,7 +358,7 @@ public class LocalSearch {
             currentTime = beginService;
             a.beginService[currentCity + 1] = beginService;
             if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
-                throw new InfeasibleSolution("Unfeasible solution..");
+                loggerOutput.log("Unfeasible solution..");
             }
         }
         a.currentTime.set(indexTourDestination, beginService);
