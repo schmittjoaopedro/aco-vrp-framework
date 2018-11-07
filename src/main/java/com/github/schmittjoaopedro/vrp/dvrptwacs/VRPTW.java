@@ -77,20 +77,15 @@ public class VRPTW {
         this.dynamicRequests = dynamicRequests;
     }
 
-    public double dtrunc(double x) {
-        int k;
-        k = (int) x;
-        x = (double) k;
-        return x;
+    public double doubleTrunc(double x) {
+        return (double) (int) x;
     }
 
     //compute Euclidean distances between two nodes rounded to next integer for TSPLIB instances
-    public double euclidianDistance(int i, int j) {
-        double xd, yd;
-        xd = instance.nodes[i].x - instance.nodes[j].x;
-        yd = instance.nodes[i].y - instance.nodes[j].y;
-        double r = Math.sqrt(xd * xd + yd * yd);
-        return r;
+    public double euclideanDistance(int i, int j) {
+        double xd = instance.nodes[i].x - instance.nodes[j].x;
+        double yd = instance.nodes[i].y - instance.nodes[j].y;
+        return Math.sqrt(xd * xd + yd * yd);
     }
 
     //compute ceiling distance between two nodes rounded to next integer for TSPLIB instances
@@ -102,22 +97,22 @@ public class VRPTW {
     }
 
     //compute geometric distance between two nodes rounded to next integer for TSPLIB instances
-    public int geo_distance(int i, int j) {
+    public int geoDistance(int i, int j) {
         double deg, min;
         double lati, latj, longi, longj;
         double q1, q2, q3;
         int dd;
         double x1 = instance.nodes[i].x, x2 = instance.nodes[j].x, y1 = instance.nodes[i].y, y2 = instance.nodes[j].y;
-        deg = dtrunc(x1);
+        deg = doubleTrunc(x1);
         min = x1 - deg;
         lati = Math.PI * (deg + 5.0 * min / 3.0) / 180.0;
-        deg = dtrunc(x2);
+        deg = doubleTrunc(x2);
         min = x2 - deg;
         latj = Math.PI * (deg + 5.0 * min / 3.0) / 180.0;
-        deg = dtrunc(y1);
+        deg = doubleTrunc(y1);
         min = y1 - deg;
         longi = Math.PI * (deg + 5.0 * min / 3.0) / 180.0;
-        deg = dtrunc(y2);
+        deg = doubleTrunc(y2);
         min = y2 - deg;
         longj = Math.PI * (deg + 5.0 * min / 3.0) / 180.0;
         q1 = Math.cos(longi - longj);
@@ -128,11 +123,11 @@ public class VRPTW {
     }
 
     //compute ATT distance between two nodes rounded to next integer for TSPLIB instances
-    public int att_distance(int i, int j) {
+    public int attDistance(int i, int j) {
         double xd = instance.nodes[i].x - instance.nodes[j].x;
         double yd = instance.nodes[i].y - instance.nodes[j].y;
         double rij = Math.sqrt((xd * xd + yd * yd) / 10.0);
-        double tij = dtrunc(rij);
+        double tij = doubleTrunc(rij);
         int dij;
         if (tij < rij)
             dij = (int) tij + 1;
@@ -142,7 +137,7 @@ public class VRPTW {
     }
 
     //computes the matrix of all intercity/inter customers distances
-    public double[][] compute_distances(double scalingValue, InOut inOut) {
+    public double[][] computeDistances(double scalingValue, InOut inOut) {
         int i, j;
         int size = n;
         //include also the depot city in the distance matrix: it will correspond to index 0 for row and column
@@ -150,16 +145,16 @@ public class VRPTW {
         for (i = 0; i < size + 1; i++) {
             for (j = 0; j < size + 1; j++) {
                 if (inOut.distance_type == Distance_type.ATT) {
-                    matrix[i][j] = att_distance(i, j);
+                    matrix[i][j] = attDistance(i, j);
                 } else if (inOut.distance_type == Distance_type.CEIL_2D) {
                     matrix[i][j] = ceil_distance(i, j);
                 } else if (inOut.distance_type == Distance_type.EUC_2D) {
-                    matrix[i][j] = euclidianDistance(i, j);
+                    matrix[i][j] = euclideanDistance(i, j);
                     if (scalingValue != 0) {
                         matrix[i][j] *= scalingValue;
                     }
                 } else if (inOut.distance_type == Distance_type.GEO) {
-                    matrix[i][j] = geo_distance(i, j);
+                    matrix[i][j] = geoDistance(i, j);
                 }
             }
         }
@@ -167,32 +162,32 @@ public class VRPTW {
     }
 
     //computes nearest neighbor lists of depth nn for each city
-    public int[][][] compute_nn_lists(Ants ants) {
+    public int[][][] computeNnLists(Ants ants) {
         int i, node, nn, count1, count2;
         int size = n;
-        double[] distance_vector = new double[size + 1];
-        int[] help_vector = new int[size + 1];
+        double[] distanceVector = new double[size + 1];
+        int[] helpVector = new int[size + 1];
         nn = ants.nnAnts;
         if (nn >= size + 1)
             nn = size - 2;
         ants.nnAnts = nn;
         int[][][] result = new int[2][][];
-        int[][] m_nnear = new int[size + 1][nn];
-        int[][] m_nnear_all = new int[size + 1][nn];  //include also the depot city
+        int[][] mNnear = new int[size + 1][nn];
+        int[][] mNnearAll = new int[size + 1][nn];  //include also the depot city
         for (node = 0; node < size + 1; node++) { /* compute candidate-sets for all nodes */
             for (i = 0; i < size + 1; i++) { /* Copy distances from nodes to the others */
-                distance_vector[i] = instance.distance[node][i];
-                help_vector[i] = i;
+                distanceVector[i] = instance.distance[node][i];
+                helpVector[i] = i;
             }
-            distance_vector[node] = Integer.MAX_VALUE; /* city itself is not nearest neighbor */
-            utilities.sort2(distance_vector, help_vector, 0, size);
+            distanceVector[node] = Integer.MAX_VALUE; /* city itself is not nearest neighbor */
+            utilities.sort2(distanceVector, helpVector, 0, size);
             count1 = 0;
             i = -1;
             while (count1 < nn) {
                 i++;
                 //include in the nnList of a node only the nodes that are known (available)
-                if (help_vector[i] != 0) {
-                    m_nnear[node][count1] = help_vector[i];
+                if (helpVector[i] != 0) {
+                    mNnear[node][count1] = helpVector[i];
                     count1++;
                 } else {
                     continue;
@@ -203,36 +198,36 @@ public class VRPTW {
             while (count2 < nn) {
                 i++;
                 //include in the nnList of a node only the nodes that are known (available)
-                m_nnear_all[node][count2] = help_vector[i];
+                mNnearAll[node][count2] = helpVector[i];
                 count2++;
             }
         }
-        result[0] = m_nnear;
-        result[1] = m_nnear_all;
+        result[0] = mNnear;
+        result[1] = mNnearAll;
         return result;
     }
 
     //compute the tour length of tour t taking also into account the depot city
-    public double compute_tour_length(ArrayList<Integer> t) {
+    public double computeTourLength(ArrayList<Integer> tour) {
         int i;
         double sum = 0;
-        if (t.size() > 1) {
-            for (i = 0; i < t.size() - 1; i++) {
-                sum += instance.distance[t.get(i) + 1][t.get(i + 1) + 1];
+        if (tour.size() > 1) {
+            for (i = 0; i < tour.size() - 1; i++) {
+                sum += instance.distance[tour.get(i) + 1][tour.get(i + 1) + 1];
             }
         }
         return sum;
     }
 
-    public double compute_tour_length_(ArrayList<Integer> t) {
+    public double computeTourLengthWithDepot(ArrayList<Integer> tour) {
         int i;
         double sum = 0;
-        if (t.size() > 1) {
-            sum += instance.distance[0][t.get(1) + 1];
-            for (i = 1; i < t.size() - 2; i++) {
-                sum += instance.distance[t.get(i) + 1][t.get(i + 1) + 1];
+        if (tour.size() > 1) {
+            sum += instance.distance[0][tour.get(1) + 1];
+            for (i = 1; i < tour.size() - 2; i++) {
+                sum += instance.distance[tour.get(i) + 1][tour.get(i + 1) + 1];
             }
-            sum += instance.distance[t.get(t.size() - 2) + 1][0];
+            sum += instance.distance[tour.get(tour.size() - 2) + 1][0];
         }
         return sum;
     }

@@ -10,6 +10,6 @@ public class Problem {
 
     public int[][] nnList; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors */
 
-    public int[][] nn_list_all; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors including the depot*/
+    public int[][] nnListAll; /* nearest neighbor list; contains for each node i a sorted list of n_near nearest neighbors including the depot*/
 
 }

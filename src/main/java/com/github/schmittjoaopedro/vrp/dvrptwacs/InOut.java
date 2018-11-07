@@ -6,22 +6,22 @@ public class InOut {
 
     public Distance_type distance_type;
 
-    public int n_tours; /* counter of number constructed tours */
+    public int nTours; /* counter of number constructed tours */
     public int iteration; /* iteration counter */
     public int max_tries; /* maximum number of independent tries */
     public int max_tours; /* maximum number of tour constructions in one try */
     public int max_iterations; /* maximum number of iterations */
 
     public double max_time; /* maximal allowed run time of a try */
-    public double time_used; /* time used until some given event */
-    public double time_passed; /* time passed until some moment */
+    public double timeUsed; /* time used until some given event */
+    public double timePassed; /* time passed until some moment */
     public int currentTimeSlice;
     public int optimal; /* optimal solution or bound to find */
 
     public double branch_fac; /* If branching factor < branch_fac => update trails */
     public double lambda; /* Parameter to determine branching factor */
 
-    public int found_best; /* iteration in which best solution is found */
+    public int foundBest; /* iteration in which best solution is found */
 
     public int noEvaluations = 0;
     public int noSolutions = 0;   /* counter for the total number of feasible solutions */
@@ -35,7 +35,7 @@ public class InOut {
         this.isDiscreteTime = isDiscreteTime;
     }
 
-    public void set_default_as_parameters(Ants ants) {
+    public void setDefaultAsParameters(Ants ants) {
         /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
         ants.nAnts = -1;
         ants.nnAnts = 20;
@@ -45,7 +45,7 @@ public class InOut {
         ants.q0 = 0.0;
     }
 
-    public void set_default_acs_parameters(Ants ants) {
+    public void setDefaultAcsParameters(Ants ants) {
         /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
         ants.nAnts = 10;
         ants.nnAnts = 20;
@@ -58,7 +58,7 @@ public class InOut {
     }
 
     //set default parameter settings
-    public void set_default_parameters(Ants ants) {
+    public void setDefaultParameters(Ants ants) {
         /* number of ants and number of nearest neighbors in tour construction */
         ants.nAnts = 25;
         ants.nnAnts = 20;
@@ -75,9 +75,9 @@ public class InOut {
         max_iterations = 3000;
         optimal = 1;
         branch_fac = 1.00001;
-        ants.u_gb = Integer.MAX_VALUE;
-        ants.acs_flag = false;
-        ants.as_flag = false;
+        ants.uGb = Integer.MAX_VALUE;
+        ants.acsFlag = false;
+        ants.asFlag = false;
         distance_type = Distance_type.EUC_2D;
     }
 
@@ -128,14 +128,14 @@ public class InOut {
     }
 
     //initialize the program
-    public void init_program(String antSystem, int runNumber, VRPTW vrptw, double scalingValue, Ants ants, LoggerOutput loggerOutput) {
-        set_default_parameters(ants);
+    public void initProgram(String antSystem, int runNumber, VRPTW vrptw, double scalingValue, Ants ants, LoggerOutput loggerOutput) {
+        setDefaultParameters(ants);
         Parse parse = new Parse();
-        parse.parse_commandline(antSystem, runNumber, ants, this, loggerOutput);
+        parse.parseCommandline(antSystem, runNumber, ants, this, loggerOutput);
         //compute distance matrix between cities and allocate ants
         if (ants.nAnts < 0)
             ants.nAnts = vrptw.n;
-        vrptw.instance.distance = vrptw.compute_distances(scalingValue, this);
+        vrptw.instance.distance = vrptw.computeDistances(scalingValue, this);
         ants.allocateAnts(vrptw);
     }
 

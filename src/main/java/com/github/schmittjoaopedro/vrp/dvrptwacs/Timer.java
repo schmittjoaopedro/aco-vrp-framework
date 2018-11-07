@@ -11,12 +11,12 @@ public class Timer {
     }
 
     //virtual and real time of day are computed and stored to allow at later time the computation of the elapsed time
-    public void start_timers() {
+    public void startTimers() {
         startTime = getCurrentTime();
     }
 
     //return the time used in seconds (virtual or real, depending on type)
-    public double elapsed_time() {
+    public double elapsedTime() {
         return (getCurrentTime() - startTime) / 1000.0;
     }
 

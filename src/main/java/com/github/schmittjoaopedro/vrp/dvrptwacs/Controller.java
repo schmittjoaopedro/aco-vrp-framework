@@ -38,7 +38,7 @@ public class Controller {
 
     private Ants ants;
 
-    private VRPTW_ACS vrptw_acs;
+    private VRPTW_ACS vrptwAcs;
 
     private VRPTW vrptw;
 
@@ -202,10 +202,10 @@ public class Controller {
         boolean threadStopped = false, isNewNodesAvailable, isNewNodesCommitted;
         //keeps the last index/position in the array of dynamic requests sorted ascending by available time
         //of the recent request which became available in the last time slice
-        int countApriori, lastPos;
+        int countAPriori, lastPos;
         ArrayList<Integer> newAvailableIdNodes;
         ArrayList<Integer> idKnownRequests;
-        ArrayList<Integer> lastCommitedIndexes;
+        ArrayList<Integer> lastCommittedIndexes;
         double sum;
         for (int trial = 0; trial < 1; trial++) {
             //reads benchmark data; read the data from the input file
@@ -215,15 +215,15 @@ public class Controller {
             //read the data from the file
             vrptw = reader.read(utilities);
             loggerOutput.log("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: " + dvrptwInstance);
-            //include in the counting also the depot, which is assumed to be apriori known
-            countApriori = vrptw.getIdAvailableRequests().size();
-            loggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countApriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
+            //include in the counting also the depot, which is assumed to be a-priori known
+            countAPriori = vrptw.getIdAvailableRequests().size();
+            loggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countAPriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
             //compute the scaling value with which we can scale all time-related values
             Request depotReq = vrptw.getRequests().get(0);
-            scalingValue = (double) this.workingDay / (double) (depotReq.getEndWindow() - depotReq.getStartWindow());
+            scalingValue = (double) this.workingDay / (depotReq.getEndWindow() - depotReq.getStartWindow());
             setScalingValue(scalingValue);
             //adjust distances between nodes (cities) according to this scale value
-            inOut.init_program(this.antSystem, trial, vrptw, scalingValue, ants, loggerOutput);
+            inOut.initProgram(this.antSystem, trial, vrptw, scalingValue, ants, loggerOutput);
             //adjust for each request, all the time related values according to the length of the working day we are simulating
             if (scalingValue != 0) {
                 loggerOutput.log("Scalling value = " + scalingValue);
@@ -243,12 +243,12 @@ public class Controller {
             Collections.sort(dynamicRequests);
             vrptw.setDynamicRequests(dynamicRequests);
             int[][][] result;
-            result = vrptw.compute_nn_lists(ants);
+            result = vrptw.computeNnLists(ants);
             vrptw.instance.nnList = result[0];
-            vrptw.instance.nn_list_all = result[1];
+            vrptw.instance.nnListAll = result[1];
             ants.pheromone = new double[vrptw.n + 1][vrptw.n + 1];
-            this.vrptw_acs = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer, loggerOutput);
-            vrptw_acs.init_try(vrptw);
+            this.vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, this, ants, inOut, timer, loggerOutput);
+            vrptwAcs.initTry(vrptw);
             currentTimeSlice = 1;
             idLastAvailableNode = 0;
             inOut.noEvaluations = 0;
@@ -319,12 +319,12 @@ public class Controller {
                         //determine nodes that are not visited yet in the current ant's solution
                         ArrayList<Integer> unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
                         //skip over committed (defined) nodes when performing insertion heuristic
-                        lastCommitedIndexes = new ArrayList<>();
+                        lastCommittedIndexes = new ArrayList<>();
                         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
                             lastPos = getLastCommitedPos(index);
-                            lastCommitedIndexes.add(lastPos);
+                            lastCommittedIndexes.add(lastPos);
                         }
-                        insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, 0, lastCommitedIndexes);
+                        insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, 0, lastCommittedIndexes);
                         //if there are still remaining unvisited cities from the ones that are available
                         //insert an empty tour and add cities in it following nearest-neighbour heuristic
                         int indexTour;
@@ -338,25 +338,25 @@ public class Controller {
                             ants.bestSoFarAnt.currentTime.add(indexTour, 0.0);
                             //try to add as many unvisited cities/nodes as possible in this newly created tour
                             //following the nearest neighbour heuristic
-                            ants.chooseClosestNn(ants.bestSoFarAnt, indexTour, vrptw, vrptw_acs);
+                            ants.chooseClosestNn(ants.bestSoFarAnt, indexTour, vrptw, vrptwAcs);
                             //try to insert remaining cities using insertion heuristic
                             if (ants.bestSoFarAnt.toVisit > 0) {
                                 //determine nodes that are not visited yet in the current ant's solution
                                 unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
                                 //skip over committed (defined) nodes when performing insertion heuristic
-                                lastCommitedIndexes = new ArrayList<Integer>();
+                                lastCommittedIndexes = new ArrayList<Integer>();
                                 for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
                                     lastPos = getLastCommitedPos(index);
-                                    lastCommitedIndexes.add(lastPos);
+                                    lastCommittedIndexes.add(lastPos);
                                 }
-                                insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, indexTour, lastCommitedIndexes);
+                                insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, indexTour, lastCommittedIndexes);
                             }
                             //add the depot again to end this tour
                             ants.bestSoFarAnt.tours.get(indexTour).add(-1);
                         }
                         sum = 0.0;
                         for (int i = 0; i < ants.bestSoFarAnt.usedVehicles; i++) {
-                            ants.bestSoFarAnt.tourLengths.set(i, vrptw.compute_tour_length_(ants.bestSoFarAnt.tours.get(i)));
+                            ants.bestSoFarAnt.tourLengths.set(i, vrptw.computeTourLengthWithDepot(ants.bestSoFarAnt.tours.get(i)));
                             sum += ants.bestSoFarAnt.tourLengths.get(i);
                         }
                         ants.bestSoFarAnt.totalTourLength = sum;

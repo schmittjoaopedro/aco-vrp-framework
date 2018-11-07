@@ -39,10 +39,10 @@ public class Ants {
     public double beta; /* importance of heuristic evaluate */
     public double q0; /* probability of best choice in tour construction */
 
-    public boolean as_flag; /* ant system */
-    public boolean acs_flag; /* ant colony system (ACS) */
+    public boolean asFlag; /* ant system */
+    public boolean acsFlag; /* ant colony system (ACS) */
 
-    public int u_gb; /* every u_gb iterations update with best-so-far ant */
+    public int uGb; /* every uGb iterations update with best-so-far ant */
 
     public double trail0; /* initial pheromone level in ACS */
 
