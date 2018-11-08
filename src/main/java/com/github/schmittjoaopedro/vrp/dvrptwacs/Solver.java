@@ -6,12 +6,12 @@ import java.util.Collections;
 /**
  * the Solver is the central part of the algorithm, which reads the benchmark data,
  * initializes the data structures, builds an initial solution using nearest neighbor heuristic
- * and starts the ant colony, once the working day has started
+ * and starts the ant colony, once the working day has started.
  */
 public class Solver {
 
     //file name to be used for input data set
-    private String vrpInstance;   //r104
+    private String vrpInstance;
 
     private DynamicController dynamicController;
 
@@ -31,7 +31,7 @@ public class Solver {
 
     private VRPTW vrptw;
 
-    public DistanceType distance_type;
+    public DistanceType distanceType;
 
     private InsertionHeuristic insertionHeuristic;
 
@@ -56,13 +56,10 @@ public class Solver {
     public void execute() {
         long startTime, endTime;
         double currentTime;
-        //counter which stores the number of the current time slice that we are during the execution of the
-        //algorithm, which simulates a working day
-        int currentTimeSlice = 1;
         boolean threadStopped = false, isNewNodesAvailable, isNewNodesCommitted;
         //keeps the last index/position in the array of dynamic requests sorted ascending by available time
         //of the recent request which became available in the last time slice
-        int countAPriori, lastPos;
+        int lastPos;
         ArrayList<Integer> newAvailableIdNodes;
         ArrayList<Integer> idKnownRequests;
         ArrayList<Integer> lastCommittedIndexes;
@@ -75,26 +72,29 @@ public class Solver {
         vrptw = reader.read(utilities);
         loggerOutput.log("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: " + dvrptwInstance);
         //include in the counting also the depot, which is assumed to be a-priori known
-        countAPriori = vrptw.getIdAvailableRequests().size();
-        loggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countAPriori + " are apriori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() + " are dynamic requests");
-        // Calculate scale value
+        int countAPriori = vrptw.getIdAvailableRequests().size();
+        loggerOutput.log("No. of customers' requests (except the depot): " + vrptw.n + ", among which " + countAPriori +
+                " are a-priori known (available nodes excluding the depot) and " + vrptw.getDynamicRequests().size() +
+                " are dynamic requests");
+        //calculate scale value
         dynamicController.calculateScaleValue(vrptw);
-        //adjust distances between nodes (cities) according to this scale value
         initProgram();
-        // Calculate scale request values
+        //Calculate scale request values
         dynamicController.scaleRequestTimes(vrptw);
         //sorting dynamic requests in ascending order by their available time
         ArrayList<Request> dynamicRequests = vrptw.getDynamicRequests();
         Collections.sort(dynamicRequests);
         vrptw.setDynamicRequests(dynamicRequests);
-        int[][][] result;
-        result = vrptw.computeNnLists(ants);
+        //compute nearest neighborhood lists
+        int[][][] result = vrptw.computeNnLists(ants);
         vrptw.instance.nnList = result[0];
         vrptw.instance.nnListAll = result[1];
-        ants.pheromone = new double[vrptw.n + 1][vrptw.n + 1];
         this.vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
         vrptwAcs.initTry(vrptw);
-        currentTimeSlice = 1;
+        utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
+        //counter which stores the number of the current time slice that we are during the execution of the algorithm,
+        //which simulates a working day
+        int currentTimeSlice = 1;
         dynamicController.idLastAvailableNode = 0;
         statistics.noEvaluations = 0;
         statistics.noSolutions = 0;
@@ -102,10 +102,10 @@ public class Solver {
         startTime = timer.getCurrentTime();
         //start the ant colony
         VRPTW_ACS worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-        Thread t = null;
+        Thread thread = null;
         if (!statistics.isDiscreteTime) {
-            t = new Thread(worker);
-            t.start();
+            thread = new Thread(worker);
+            thread.start();
         }
         //check periodically if the problem has changed and new nodes (customer requests) became available
         //or there are nodes from the best so far solution that must be marked as committed
@@ -133,10 +133,10 @@ public class Solver {
                 if (isNewNodesAvailable || isNewNodesCommitted) {
                     //stop the execution of the ant colony thread
                     worker.terminate();
-                    if (t != null) {
+                    if (thread != null) {
                         //wait for the thread to stop
                         try {
-                            t.join();
+                            thread.join();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -218,8 +218,8 @@ public class Solver {
                 //restart the ant colony thread
                 worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
                 if (!statistics.isDiscreteTime) {
-                    t = new Thread(worker);
-                    t.start();
+                    thread = new Thread(worker);
+                    thread.start();
                 }
                 threadStopped = false;
             }
@@ -232,11 +232,11 @@ public class Solver {
         } while (true);
         //working day is over
         //stop the worker thread
-        if (t != null) {
+        if (thread != null) {
             worker.terminate();
             //wait for the thread to stop
             try {
-                t.join();
+                thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -264,6 +264,7 @@ public class Solver {
         boolean isValid = vrptwAcs.checkFeasibility(ants.bestSoFarAnt, vrptw, true);
         if (isValid) {
             loggerOutput.log("The final solution is valid (feasible)..");
+            utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
         } else {
             loggerOutput.log("The final solution is not valid (feasible)..");
         }
@@ -276,8 +277,10 @@ public class Solver {
         //compute distance matrix between cities and allocate ants
         if (ants.nAnts < 0)
             ants.nAnts = vrptw.n;
-        vrptw.instance.distance = vrptw.computeDistances(dynamicController.scalingValue, distance_type);
+        // Adjust distances between nodes (cities) according to this scale value
+        vrptw.instance.distance = vrptw.computeDistances(dynamicController.scalingValue, distanceType);
         ants.allocateAnts(vrptw);
+        ants.pheromone = new double[vrptw.n + 1][vrptw.n + 1];
         dynamicController.allocateStructures(vrptw);
     }
 
@@ -330,7 +333,7 @@ public class Solver {
         ants.uGb = Integer.MAX_VALUE;
         ants.acsFlag = false;
         ants.asFlag = false;
-        distance_type = DistanceType.EUC_2D;
+        distanceType = DistanceType.EUC_2D;
     }
 
     public void setDefaultAsParameters(Ants ants) {

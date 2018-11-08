@@ -13,9 +13,7 @@ import java.util.ArrayList;
  */
 public class DataReader {
 
-    /**
-     * file name
-     */
+    //file name
     private String fileName = "R103.txt";
 
     private String rootDir;
@@ -25,11 +23,7 @@ public class DataReader {
         this.rootDir = rootDir;
     }
 
-    /**
-     * Read the data from the given file
-     *
-     * @return the data from the file
-     */
+    //Read the data from the given file/
     public VRPTW read(Utilities utilities) {
         VRPTW vrp = new VRPTW(utilities);
         vrp.instance = new Problem();

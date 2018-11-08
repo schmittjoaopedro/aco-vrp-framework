@@ -24,7 +24,7 @@ public class DVRPTW_ACS_Test {
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: r103-0.1");
-        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 97 are apriori known (available nodes excluding the depot) and 3 are dynamic requests");
+        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 97 are a-priori known (available nodes excluding the depot) and 3 are dynamic requests");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nRun Ant Colony System #1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("Scalling value = 0.43478260869565216");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nInitial (nearest neighbour tour) total tour length: 576.5586588877334 (scalled value = 1326.0849154417867); Number of vehicles used: 14");
@@ -125,7 +125,7 @@ public class DVRPTW_ACS_Test {
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: r201-0.5");
-        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 50 are apriori known (available nodes excluding the depot) and 50 are dynamic requests");
+        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 50 are a-priori known (available nodes excluding the depot) and 50 are dynamic requests");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nRun Ant Colony System #1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("Scalling value = 0.1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nInitial (nearest neighbour tour) total tour length: 83.0060681211039 (scalled value = 830.0606812110389); Number of vehicles used: 3");
@@ -312,7 +312,7 @@ public class DVRPTW_ACS_Test {
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: c101-0.5");
-        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 52 are apriori known (available nodes excluding the depot) and 48 are dynamic requests");
+        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 52 are a-priori known (available nodes excluding the depot) and 48 are dynamic requests");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nRun Ant Colony System #1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("Scalling value = 0.08090614886731391");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nInitial (nearest neighbour tour) total tour length: 73.23590361106349 (scalled value = 905.1957686327448); Number of vehicles used: 10");
@@ -470,7 +470,7 @@ public class DVRPTW_ACS_Test {
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: c202-0.5");
-        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 59 are apriori known (available nodes excluding the depot) and 41 are dynamic requests");
+        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 59 are a-priori known (available nodes excluding the depot) and 41 are dynamic requests");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nRun Ant Colony System #1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("Scalling value = 0.029498525073746312");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nInitial (nearest neighbour tour) total tour length: 22.419076268623538 (scalled value = 760.0066855063379); Number of vehicles used: 3");
@@ -638,7 +638,7 @@ public class DVRPTW_ACS_Test {
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: rc101-0.1");
-        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 90 are apriori known (available nodes excluding the depot) and 10 are dynamic requests");
+        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 90 are a-priori known (available nodes excluding the depot) and 10 are dynamic requests");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nRun Ant Colony System #1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("Scalling value = 0.4166666666666667");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nInitial (nearest neighbour tour) total tour length: 701.8773993864899 (scalled value = 1684.5057585275756); Number of vehicles used: 16");
@@ -774,7 +774,7 @@ public class DVRPTW_ACS_Test {
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: rc202-1.0");
-        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 27 are apriori known (available nodes excluding the depot) and 73 are dynamic requests");
+        assertThat(loggerOutput.get(lineCount++)).isEqualTo("No. of customers' requests (except the depot): 100, among which 27 are a-priori known (available nodes excluding the depot) and 73 are dynamic requests");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nRun Ant Colony System #1");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("Scalling value = 0.10416666666666667");
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("\nInitial (nearest neighbour tour) total tour length: 48.58551988465745 (scalled value = 466.42099089271153); Number of vehicles used: 1");
