@@ -25,7 +25,7 @@ public class LocalSearch {
         ants.copyFromTo(ant, temp, vrptw);
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-            lastCommittedIndexes.add(controller.getLastCommitedPos(index));
+            lastCommittedIndexes.add(controller.getLastCommittedPos(ants.bestSoFarAnt, index));
         }
         int count = 0;
         while (foundImprovement) {
@@ -182,7 +182,7 @@ public class LocalSearch {
         ants.copyFromTo(ant, temp, vrptw);
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-            lastPos = controller.getLastCommitedPos(index);
+            lastPos = controller.getLastCommittedPos(ants.bestSoFarAnt, index);
             lastCommittedIndexes.add(lastPos);
         }
         int count = 0;

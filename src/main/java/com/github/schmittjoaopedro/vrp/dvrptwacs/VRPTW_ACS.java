@@ -88,6 +88,42 @@ public class VRPTW_ACS implements Runnable {
         return ok;
     }
 
+
+    public boolean checkFeasibility(Ant a, VRPTW vrp, boolean printNoNodes) {
+        int currentCity, prevCity, addedNodes = 0;
+        double currentQuantity, currentTime;
+        double distance, arrivalTime, beginService;
+        ArrayList<Request> reqList = vrp.getRequests();
+        for (int indexTour = 0; indexTour < a.usedVehicles; indexTour++) {
+            currentQuantity = reqList.get(0).getDemand();
+            currentTime = 0.0;
+            for (int currentPos = 1; currentPos < a.tours.get(indexTour).size(); currentPos++) {
+                if (currentPos < a.tours.get(indexTour).size() - 1) {
+                    addedNodes++;
+                }
+                prevCity = a.tours.get(indexTour).get(currentPos - 1);
+                currentCity = a.tours.get(indexTour).get(currentPos);
+                currentQuantity += reqList.get(currentCity + 1).getDemand();
+                distance = vrp.instance.distance[prevCity + 1][currentCity + 1];
+                arrivalTime = currentTime + reqList.get(prevCity + 1).getServiceTime() + distance;
+                beginService = Math.max(arrivalTime, reqList.get(currentCity + 1).getStartWindow());
+                if (beginService > reqList.get(currentCity + 1).getEndWindow()) {
+                    loggerOutput.log("Time window constraint violated");
+                    return false;
+                }
+                currentTime = beginService;
+            }
+            if (currentQuantity > vrp.getCapacity()) {
+                loggerOutput.log("Capacity constraint violated");
+                return false;
+            }
+        }
+        if (printNoNodes) {
+            loggerOutput.log("Added nodes=" + addedNodes);
+        }
+        return true;
+    }
+
     //check if there is still an ant with left cities to visit
     public boolean isDone() {
         for (int k = 0; k < ants.nAnts; k++) {
@@ -98,75 +134,6 @@ public class VRPTW_ACS implements Runnable {
         return true;
     }
 
-    //add to the ant's solution the committed nodes from each tour of the best so far solution
-    public void addCommittedNodes(Ant ant, VRPTW vrptw) {
-        int index, city, currentCity;
-        double distance, arrivalTime, beginService;
-        ArrayList<Request> reqList = vrptw.getRequests();
-        int startIndex = 1, pos;
-        ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
-        for (int indexTour = 0; indexTour < ants.bestSoFarAnt.usedVehicles; indexTour++) {
-            pos = controller.getLastCommitedPos(indexTour);
-            lastCommittedIndexes.add(pos);
-        }
-        for (int i = 0; i < lastCommittedIndexes.size(); i++) {
-            //we have at least one committed node in the i-th tour (i.e. tour with index i)
-            index = lastCommittedIndexes.get(i);
-            if (index > 0) {
-                //if the number of vehicles (tours) from the ant solution is less than the index of the
-                //tour from the best so far solution, add new (empty) tours in the ant's solution
-                if (ant.usedVehicles < (i + 1)) {
-                    ant.usedVehicles = i + 1;
-                    for (int l = startIndex; l < ant.usedVehicles; l++) {
-                        ant.tours.add(l, new ArrayList<>());
-                        ant.tours.get(l).add(-1);
-                        ant.tourLengths.add(l, 0.0);
-                        ant.currentQuantity.add(l, 0.0);
-                        ant.currentTime.add(l, 0.0);
-                    }
-                    startIndex = i + 1;
-                }
-                int lastPos = ant.tours.get(i).size() - 1;
-                currentCity = ant.tours.get(i).get(lastPos);
-                currentCity++;
-                //add in the ant's i-th tour all the committed nodes from the i-th tour of the best so far solution
-                for (int j = 1; j <= index; j++) {
-                    city = ants.bestSoFarAnt.tours.get(i).get(j);
-                    distance = vrptw.instance.distance[currentCity][city + 1];
-                    arrivalTime = ant.currentTime.get(i) + reqList.get(currentCity).getServiceTime() + distance;
-                    beginService = Math.max(arrivalTime, reqList.get(city + 1).getStartWindow());
-                    if (beginService > reqList.get(city + 1).getEndWindow()) {
-                        loggerOutput.log("Method addCommittedNodes: solution infeasible..");
-                    }
-                    //add committed node to the ant's tour
-                    ant.tours.get(i).add(j, city);
-                    ant.visited[city] = true;
-                    ant.toVisit--;
-                    ant.currentTime.set(i, beginService);
-                    ant.beginService[city + 1] = beginService;
-                    ant.currentQuantity.set(i, ant.currentQuantity.get(i) + reqList.get(city + 1).getDemand());
-                    currentCity = city + 1;
-                }
-            }
-        }
-    }
-
-    //check if there are any committed tours (i.e. tours that contain at least one committed node that
-    //should be included in the ant's solution)
-    public boolean checkCommittedTours() {
-        int lastPos;
-        ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
-        for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-            lastPos = controller.getLastCommitedPos(index);
-            lastCommittedIndexes.add(lastPos);
-        }
-        for (int index : lastCommittedIndexes) {
-            if (index > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     //manage the solution construction phase (construct a set of complete and closed tours, one
     //for each vehicle)
@@ -188,9 +155,9 @@ public class VRPTW_ACS implements Runnable {
             }
         }
         //initialize ant solution with the committed nodes (if any) from each tour of the best so far solution
-        if (checkCommittedTours()) {
+        if (controller.checkCommittedTours(ants.bestSoFarAnt)) {
             for (k = 0; k < ants.nAnts; k++) {
-                addCommittedNodes(ants.ants[k], vrptw);
+                controller.addCommittedNodes(ants.bestSoFarAnt, ants.ants[k], vrptw);
             }
         }
         while (!isDone()) {

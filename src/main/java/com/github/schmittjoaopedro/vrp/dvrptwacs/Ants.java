@@ -18,10 +18,6 @@ public class Ants {
     public final double weight2 = 0.4;
     public final double weight3 = 0.2;
 
-    //it indicates that node at position/index i is committed if the value at position i is true; the
-    //depot node is considered to be committed by default and it's not included in this array
-    public boolean[] committedNodes;
-
     public Ant ants[];
     public Ant bestSoFarAnt;
     public Ant restartBestAnt;
@@ -56,9 +52,9 @@ public class Ants {
     //allocate the memory for the ant colony, the best-so-far ant
     public void allocateAnts(VRPTW vrptw) {
         ants = new Ant[nAnts];
-        committedNodes = new boolean[vrptw.n];
+        controller.committedNodes = new boolean[vrptw.n];
         for (int i = 0; i < vrptw.n; i++) {
-            committedNodes[i] = false;
+            controller.committedNodes[i] = false;
         }
         for (int i = 0; i < nAnts; i++) {
             ants[i] = createNewAnt(vrptw);
@@ -276,7 +272,7 @@ public class Ants {
                 startIndexTour = 0;
                 lastCommittedIndexes = new ArrayList<>();
                 for (int index = 0; index < bestSoFarAnt.usedVehicles; index++) {
-                    lastCommittedIndexes.add(controller.getLastCommitedPos(index));
+                    lastCommittedIndexes.add(controller.getLastCommittedPos(bestSoFarAnt, index));
                 }
                 //skip over committed (defined) nodes when performing insertion heuristic
                 insertionHeuristic.insertUnroutedCustomers(ant, vrptw, nonRoutedCustomers, startIndexTour, lastCommittedIndexes);

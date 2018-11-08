@@ -1,6 +1,6 @@
 package com.github.schmittjoaopedro.vrp;
 
-import com.github.schmittjoaopedro.vrp.dvrptwacs.Controller;
+import com.github.schmittjoaopedro.vrp.dvrptwacs.Solver;
 import com.github.schmittjoaopedro.vrp.dvrptwacs.LoggerOutput;
 import org.junit.Test;
 
@@ -18,9 +18,9 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_r103_0_1_test() {
-        Controller controller = new Controller("z", rootDirectory, "r103", 0.1, 1, true, true);
-        controller.execute();
-        LoggerOutput loggerOutput = controller.getLoggerOutput();
+        Solver solver = new Solver("z", rootDirectory, "r103", 0.1, 1, true, true);
+        solver.execute();
+        LoggerOutput loggerOutput = solver.getLoggerOutput();
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: r103-0.1");
@@ -119,9 +119,9 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_r201_0_5_test() {
-        Controller controller = new Controller("z", rootDirectory, "r201", 0.5, 1, true, true);
-        controller.execute();
-        LoggerOutput loggerOutput = controller.getLoggerOutput();
+        Solver solver = new Solver("z", rootDirectory, "r201", 0.5, 1, true, true);
+        solver.execute();
+        LoggerOutput loggerOutput = solver.getLoggerOutput();
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: r201-0.5");
@@ -306,9 +306,9 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_c101_0_5_test() {
-        Controller controller = new Controller("z", rootDirectory, "c101", 0.5, 1, true, false);
-        controller.execute();
-        LoggerOutput loggerOutput = controller.getLoggerOutput();
+        Solver solver = new Solver("z", rootDirectory, "c101", 0.5, 1, true, false);
+        solver.execute();
+        LoggerOutput loggerOutput = solver.getLoggerOutput();
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: c101-0.5");
@@ -464,9 +464,9 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_c202_0_5_test() {
-        Controller controller = new Controller("z", rootDirectory, "c202", 0.5, 1, true, false);
-        controller.execute();
-        LoggerOutput loggerOutput = controller.getLoggerOutput();
+        Solver solver = new Solver("z", rootDirectory, "c202", 0.5, 1, true, false);
+        solver.execute();
+        LoggerOutput loggerOutput = solver.getLoggerOutput();
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: c202-0.5");
@@ -632,9 +632,9 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_rc101_0_1_test() {
-        Controller controller = new Controller("z", rootDirectory, "rc101", 0.1, 1, true, false);
-        controller.execute();
-        LoggerOutput loggerOutput = controller.getLoggerOutput();
+        Solver solver = new Solver("z", rootDirectory, "rc101", 0.1, 1, true, false);
+        solver.execute();
+        LoggerOutput loggerOutput = solver.getLoggerOutput();
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: rc101-0.1");
@@ -768,9 +768,9 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_rc202_1_0_test() {
-        Controller controller = new Controller("z", rootDirectory, "rc202", 1.0, 1, true, false);
-        controller.execute();
-        LoggerOutput loggerOutput = controller.getLoggerOutput();
+        Solver solver = new Solver("z", rootDirectory, "rc202", 1.0, 1, true, false);
+        solver.execute();
+        LoggerOutput loggerOutput = solver.getLoggerOutput();
 
         int lineCount = 0;
         assertThat(loggerOutput.get(lineCount++)).isEqualTo("DVRPTW_ACS MinSum >> Solving dynamic VRPTW instance: rc202-1.0");
