@@ -12,7 +12,7 @@ public class Ants {
 
     private Utilities utilities;
 
-    private Controller controller;
+    private DynamicController dynamicController;
 
     public final double weight1 = 0.4;
     public final double weight2 = 0.4;
@@ -42,8 +42,8 @@ public class Ants {
 
     public double trail0; /* initial pheromone level in ACS */
 
-    public Ants(Controller controller, Utilities utilities, InsertionHeuristic insertionHeuristic, LoggerOutput loggerOutput) {
-        this.controller = controller;
+    public Ants(DynamicController dynamicController, Utilities utilities, InsertionHeuristic insertionHeuristic, LoggerOutput loggerOutput) {
+        this.dynamicController = dynamicController;
         this.utilities = utilities;
         this.insertionHeuristic = insertionHeuristic;
         this.loggerOutput = loggerOutput;
@@ -52,10 +52,6 @@ public class Ants {
     //allocate the memory for the ant colony, the best-so-far ant
     public void allocateAnts(VRPTW vrptw) {
         ants = new Ant[nAnts];
-        controller.committedNodes = new boolean[vrptw.n];
-        for (int i = 0; i < vrptw.n; i++) {
-            controller.committedNodes[i] = false;
-        }
         for (int i = 0; i < nAnts; i++) {
             ants[i] = createNewAnt(vrptw);
         }
@@ -272,7 +268,7 @@ public class Ants {
                 startIndexTour = 0;
                 lastCommittedIndexes = new ArrayList<>();
                 for (int index = 0; index < bestSoFarAnt.usedVehicles; index++) {
-                    lastCommittedIndexes.add(controller.getLastCommittedPos(bestSoFarAnt, index));
+                    lastCommittedIndexes.add(dynamicController.getLastCommittedPos(bestSoFarAnt, index));
                 }
                 //skip over committed (defined) nodes when performing insertion heuristic
                 insertionHeuristic.insertUnroutedCustomers(ant, vrptw, nonRoutedCustomers, startIndexTour, lastCommittedIndexes);

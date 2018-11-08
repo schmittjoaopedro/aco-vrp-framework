@@ -4,10 +4,10 @@ public class Timer {
 
     private long startTime;
 
-    private InOut inOut;
+    private Statistics statistics;
 
-    public Timer(InOut inOut) {
-        this.inOut = inOut;
+    public Timer(Statistics statistics) {
+        this.statistics = statistics;
     }
 
     //virtual and real time of day are computed and stored to allow at later time the computation of the elapsed time
@@ -21,9 +21,9 @@ public class Timer {
     }
 
     public long getCurrentTime() {
-        if (inOut.isDiscreteTime) {
-            double x = inOut.currentTimeSlice;
-            double noSolCur = inOut.noSolutions;
+        if (statistics.isDiscreteTime) {
+            double x = statistics.currentTimeSlice;
+            double noSolCur = statistics.noSolutions;
             double noSolEst = getNoSolEstimated(x);
             long time = (long) ((((x - 1) + (noSolCur / noSolEst)) / 50.0) * 100.0 * 1000.0);
             return Math.max(time, 0);

@@ -1,8 +1,6 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 
-import com.github.schmittjoaopedro.vrp.dvrptwacs.InOut.Distance_type;
-
 import java.util.ArrayList;
 
 public class VRPTW {
@@ -137,23 +135,23 @@ public class VRPTW {
     }
 
     //computes the matrix of all intercity/inter customers distances
-    public double[][] computeDistances(double scalingValue, InOut inOut) {
+    public double[][] computeDistances(double scalingValue, DistanceType distance_type) {
         int i, j;
         int size = n;
         //include also the depot city in the distance matrix: it will correspond to index 0 for row and column
         double matrix[][] = new double[size + 1][size + 1];
         for (i = 0; i < size + 1; i++) {
             for (j = 0; j < size + 1; j++) {
-                if (inOut.distance_type == Distance_type.ATT) {
+                if (distance_type == DistanceType.ATT) {
                     matrix[i][j] = attDistance(i, j);
-                } else if (inOut.distance_type == Distance_type.CEIL_2D) {
+                } else if (distance_type == DistanceType.CEIL_2D) {
                     matrix[i][j] = ceil_distance(i, j);
-                } else if (inOut.distance_type == Distance_type.EUC_2D) {
+                } else if (distance_type == DistanceType.EUC_2D) {
                     matrix[i][j] = euclideanDistance(i, j);
                     if (scalingValue != 0) {
                         matrix[i][j] *= scalingValue;
                     }
-                } else if (inOut.distance_type == Distance_type.GEO) {
+                } else if (distance_type == DistanceType.GEO) {
                     matrix[i][j] = geoDistance(i, j);
                 }
             }

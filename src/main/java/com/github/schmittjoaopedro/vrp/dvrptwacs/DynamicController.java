@@ -2,7 +2,7 @@ package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
 import java.util.ArrayList;
 
-public class Controller {
+public class DynamicController {
 
     // length of a working day in seconds
     public int workingDay = 100;
@@ -23,7 +23,7 @@ public class Controller {
 
     private LoggerOutput loggerOutput;
 
-    public Controller(LoggerOutput loggerOutput) {
+    public DynamicController(LoggerOutput loggerOutput) {
         this.loggerOutput = loggerOutput;
     }
 
@@ -43,6 +43,13 @@ public class Controller {
         this.idLastAvailableNode = idLastAvailableNode;
     }
 
+    public void allocateStructures(VRPTW vrptw) {
+        committedNodes = new boolean[vrptw.n];
+        for (int i = 0; i < vrptw.n; i++) {
+            committedNodes[i] = false;
+        }
+    }
+
     //get a list of new available (known) nodes at the given time moment
     public ArrayList<Integer> countNoAvailableNodes(ArrayList<Request> dynamicRequests, double time) {
         int i, id;
@@ -59,7 +66,6 @@ public class Controller {
         setIdLastAvailableNode(i);
         return nodesList;
     }
-
 
     //get the position of the last committed node in the tour designated by indexTour from the best so far ant
     public int getLastCommittedPos(Ant bestSoFarAnt, int indexTour) {
@@ -176,7 +182,6 @@ public class Controller {
             count++;
         }
     }
-
 
     //add to the ant's solution the committed nodes from each tour of the best so far solution
     public void addCommittedNodes(Ant bestSoFarAnt, Ant ant, VRPTW vrptw) {

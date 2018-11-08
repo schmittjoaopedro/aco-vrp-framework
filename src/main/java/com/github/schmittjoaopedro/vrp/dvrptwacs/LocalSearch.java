@@ -10,7 +10,7 @@ public class LocalSearch {
         this.loggerOutput = loggerOutput;
     }
 
-    public Ant relocateMultipleRouteIterated(Ants ants, Controller controller, Ant ant, VRPTW vrptw) {
+    public Ant relocateMultipleRouteIterated(Ants ants, DynamicController dynamicController, Ant ant, VRPTW vrptw) {
         boolean feasible;
         int city, sourcePrevCity, sourceNextCity, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -25,7 +25,7 @@ public class LocalSearch {
         ants.copyFromTo(ant, temp, vrptw);
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-            lastCommittedIndexes.add(controller.getLastCommittedPos(ants.bestSoFarAnt, index));
+            lastCommittedIndexes.add(dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index));
         }
         int count = 0;
         while (foundImprovement) {
@@ -166,7 +166,7 @@ public class LocalSearch {
         return true;
     }
 
-    public Ant exchangeMultipleRouteIterated(Ants ants, Controller controller, Ant ant, VRPTW vrptw) {
+    public Ant exchangeMultipleRouteIterated(Ants ants, DynamicController dynamicController, Ant ant, VRPTW vrptw) {
         boolean feasible;
         int city1, city2, sourcePrevCity, sourceNextCity, destinationPrevCity, destinationNextCity;
         int startIndexSource, startIndexDestination;
@@ -182,7 +182,7 @@ public class LocalSearch {
         ants.copyFromTo(ant, temp, vrptw);
         ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
         for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-            lastPos = controller.getLastCommittedPos(ants.bestSoFarAnt, index);
+            lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
             lastCommittedIndexes.add(lastPos);
         }
         int count = 0;

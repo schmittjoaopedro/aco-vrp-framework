@@ -1,10 +1,6 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
-public class InOut {
-
-    enum Distance_type {EUC_2D, CEIL_2D, GEO, ATT}
-
-    public Distance_type distance_type;
+public class Statistics {
 
     public int nTours; /* counter of number constructed tours */
     public int iteration; /* iteration counter */
@@ -27,58 +23,12 @@ public class InOut {
     public int noSolutions = 0;   /* counter for the total number of feasible solutions */
     public boolean isDiscreteTime = false;
 
-    public InOut() {
+    public Statistics() {
         super();
     }
 
-    public InOut(boolean isDiscreteTime) {
+    public Statistics(boolean isDiscreteTime) {
         this.isDiscreteTime = isDiscreteTime;
-    }
-
-    public void setDefaultAsParameters(Ants ants) {
-        /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
-        ants.nAnts = -1;
-        ants.nnAnts = 20;
-        ants.alpha = 1.0;
-        ants.beta = 2.0;
-        ants.rho = 0.5;
-        ants.q0 = 0.0;
-    }
-
-    public void setDefaultAcsParameters(Ants ants) {
-        /* number of ants (-1 means MTsp.instance.n size) and number of nearest neighbors in tour construction */
-        ants.nAnts = 10;
-        ants.nnAnts = 20;
-        ants.alpha = 1.0;
-        ants.beta = 1.0;
-        ants.rho = 0.9;
-        //used in local pheromone update
-        ants.local_rho = 0.9;
-        ants.q0 = 0.9;
-    }
-
-    //set default parameter settings
-    public void setDefaultParameters(Ants ants) {
-        /* number of ants and number of nearest neighbors in tour construction */
-        ants.nAnts = 25;
-        ants.nnAnts = 20;
-        ants.alpha = 1.0;
-        ants.beta = 2.0;
-        ants.rho = 0.5;
-        ants.q0 = 0.0;
-        ants.pheromonePreservation = 0.3;
-        max_tries = 10;
-        max_tours = 10 * 20;
-        //10 seconds allowed for running time; it is used in the termination condition of ACO
-        max_time = 100;
-        //maximum number of allowed iterations until the ACO algorithm stops
-        max_iterations = 3000;
-        optimal = 1;
-        branch_fac = 1.00001;
-        ants.uGb = Integer.MAX_VALUE;
-        ants.acsFlag = false;
-        ants.asFlag = false;
-        distance_type = Distance_type.EUC_2D;
     }
 
     //compute the average node lambda-branching factor, where l designates the lambda value
@@ -125,18 +75,6 @@ public class InOut {
         for (int i = 0; i < array.length; i++)
             var += (array[i] - average) * (array[i] - average);
         return (float) var / (float) array.length;
-    }
-
-    //initialize the program
-    public void initProgram(String antSystem, int runNumber, VRPTW vrptw, double scalingValue, Ants ants, LoggerOutput loggerOutput) {
-        setDefaultParameters(ants);
-        Parse parse = new Parse();
-        parse.parseCommandline(antSystem, runNumber, ants, this, loggerOutput);
-        //compute distance matrix between cities and allocate ants
-        if (ants.nAnts < 0)
-            ants.nAnts = vrptw.n;
-        vrptw.instance.distance = vrptw.computeDistances(scalingValue, this);
-        ants.allocateAnts(vrptw);
     }
 
 }

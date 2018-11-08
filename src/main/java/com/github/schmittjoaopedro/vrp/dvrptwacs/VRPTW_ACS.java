@@ -9,9 +9,9 @@ public class VRPTW_ACS implements Runnable {
 
     private LoggerOutput loggerOutput;
 
-    private InOut inOut;
+    private Statistics statistics;
 
-    private Controller controller;
+    private DynamicController dynamicController;
 
     private Ants ants;
 
@@ -33,12 +33,12 @@ public class VRPTW_ACS implements Runnable {
 
     private VRPTW vrptw;
 
-    public VRPTW_ACS(boolean threadStopped, VRPTW vrptw, Controller controller, Ants ants, InOut inOut, Timer timer, LoggerOutput loggerOutput) {
+    public VRPTW_ACS(boolean threadStopped, VRPTW vrptw, DynamicController dynamicController, Ants ants, Statistics statistics, Timer timer, LoggerOutput loggerOutput) {
         this.threadRestarted = threadStopped;
         this.vrptw = vrptw;
-        this.controller = controller;
+        this.dynamicController = dynamicController;
         this.ants = ants;
-        this.inOut = inOut;
+        this.statistics = statistics;
         this.timer = timer;
         this.loggerOutput = loggerOutput;
         if (lsFlag) {
@@ -155,9 +155,9 @@ public class VRPTW_ACS implements Runnable {
             }
         }
         //initialize ant solution with the committed nodes (if any) from each tour of the best so far solution
-        if (controller.checkCommittedTours(ants.bestSoFarAnt)) {
+        if (dynamicController.checkCommittedTours(ants.bestSoFarAnt)) {
             for (k = 0; k < ants.nAnts; k++) {
-                controller.addCommittedNodes(ants.bestSoFarAnt, ants.ants[k], vrptw);
+                dynamicController.addCommittedNodes(ants.bestSoFarAnt, ants.ants[k], vrptw);
             }
         }
         while (!isDone()) {
@@ -176,7 +176,7 @@ public class VRPTW_ACS implements Runnable {
         double longestTourLength;
         int idLongestTour = 0;
         for (k = 0; k < ants.nAnts; k++) {
-            inOut.noSolutions++;
+            statistics.noSolutions++;
             longestTourLength = Double.MIN_VALUE;
             for (int i = 0; i < ants.ants[k].usedVehicles; i++) {
                 step = ants.ants[k].tours.get(i).size();
@@ -195,22 +195,22 @@ public class VRPTW_ACS implements Runnable {
             ants.ants[k].costObjectives[0] = ants.ants[k].totalTourLength;
             ants.ants[k].costObjectives[1] = ants.computeToursAmplitude(ants.ants[k]);
         }
-        inOut.nTours += (ants.nAnts * ants.ants[0].usedVehicles); //each ant constructs a complete and closed tour
+        statistics.nTours += (ants.nAnts * ants.ants[0].usedVehicles); //each ant constructs a complete and closed tour
     }
 
     //initialize variables appropriately when starting a trial
     public void initTry(VRPTW vrptw) {
         timer.startTimers();
-        inOut.timeUsed = timer.elapsedTime();
-        inOut.timePassed = inOut.timeUsed;
+        statistics.timeUsed = timer.elapsedTime();
+        statistics.timePassed = statistics.timeUsed;
         int noAvailableNodes;
         /* Initialize variables concerning statistics etc. */
-        inOut.nTours = 1;
-        inOut.iteration = 1;
+        statistics.nTours = 1;
+        statistics.iteration = 1;
         ants.bestSoFarAnt.totalTourLength = Double.MAX_VALUE;
         ants.restartBestAnt.totalTourLength = Double.MAX_VALUE;
-        inOut.foundBest = 0;
-        inOut.lambda = 0.05;
+        statistics.foundBest = 0;
+        statistics.lambda = 0.05;
         // Initialize the Pheromone trails, only if ACS is used, Ants.pheromones have to be initialized differently
         if (!(ants.acsFlag)) {
             ants.trail0 = 1. / ((ants.rho) * nnTour(vrptw));
@@ -245,17 +245,17 @@ public class VRPTW_ACS implements Runnable {
         Ant a = ants.ants[iterationBestAnt];
         if (lsFlag) {
             //apply multiple route relocation and exchange iterated local search operators for the iteration best ant
-            a = localSearch.relocateMultipleRouteIterated(ants, controller, a, vrptw);
-            a = localSearch.exchangeMultipleRouteIterated(ants, controller, a, vrptw);
+            a = localSearch.relocateMultipleRouteIterated(ants, dynamicController, a, vrptw);
+            a = localSearch.exchangeMultipleRouteIterated(ants, dynamicController, a, vrptw);
         }
         synchronized (obj) {
             round1 = Math.round(a.totalTourLength * tempNo) / tempNo;
             round2 = Math.round(ants.bestSoFarAnt.totalTourLength * tempNo) / tempNo;
             if ((a.usedVehicles < ants.bestSoFarAnt.usedVehicles) || ((a.usedVehicles == ants.bestSoFarAnt.usedVehicles) && (round1 < round2))
                     || ((round1 < round2) && (ants.bestSoFarAnt.totalTourLength == Double.MAX_VALUE))) {
-                inOut.timeUsed = timer.elapsedTime();  //best solution found after timeUsed
+                statistics.timeUsed = timer.elapsedTime();  //best solution found after timeUsed
                 ants.copyFromTo(a, ants.bestSoFarAnt, vrptw);
-                scalingValue = controller.getScalingValue();
+                scalingValue = dynamicController.getScalingValue();
                 if (scalingValue != 0) {
                     scaledValue = ants.bestSoFarAnt.totalTourLength / scalingValue;
                 }
@@ -305,7 +305,7 @@ public class VRPTW_ACS implements Runnable {
             //do the optimization task (work)
             constructSolutions(vrptw);
             //increase evaluations counter
-            inOut.noEvaluations++;
+            statistics.noEvaluations++;
             counter++;
             updateStatistics(vrptw);
             pheromoneTrailUpdate();
@@ -313,7 +313,7 @@ public class VRPTW_ACS implements Runnable {
             if (counter > 300) {
                 isRunning = false;
             }
-            if (inOut.isDiscreteTime) {
+            if (statistics.isDiscreteTime) {
                 counter = 0;
                 break;
             }
@@ -346,8 +346,8 @@ public class VRPTW_ACS implements Runnable {
         }
         ant.totalTourLength = sum1;
         if (lsFlag) {
-            ant = localSearch.relocateMultipleRouteIterated(ants, controller, ant, vrptw);
-            ant = localSearch.exchangeMultipleRouteIterated(ants, controller, ant, vrptw);
+            ant = localSearch.relocateMultipleRouteIterated(ants, dynamicController, ant, vrptw);
+            ant = localSearch.exchangeMultipleRouteIterated(ants, dynamicController, ant, vrptw);
             //compute new distances and update longest tour
             for (int l = 0; l < ant.usedVehicles; l++) {
                 ant.tourLengths.set(l, vrptw.computeTourLength(ant.tours.get(l)));
@@ -355,7 +355,7 @@ public class VRPTW_ACS implements Runnable {
             }
             ant.totalTourLength = sum;
         }
-        double scalingValue = controller.getScalingValue();
+        double scalingValue = dynamicController.getScalingValue();
         if (scalingValue != 0) {
             scaledValue = ant.totalTourLength / scalingValue;
         }
