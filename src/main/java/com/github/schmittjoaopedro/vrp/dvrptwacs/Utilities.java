@@ -5,8 +5,10 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Utilities {
 
@@ -75,8 +77,10 @@ public class Utilities {
         colors.put(18, "47,79,79");
         colors.put(19, "25,25,112");
         // Get map bounds
+        double margin = 5;
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
-        for (int idRequest : vrptw.getIdAvailableRequests()) {
+        List<Integer> requests = vrptw.getRequests().stream().map(req -> req.getId()).collect(Collectors.toList());
+        for (int idRequest : requests) {
             double xCoord = vrptw.getRequests().get(idRequest).getxCoord();
             double yCoord = vrptw.getRequests().get(idRequest).getyCoord();
             maxX = Math.max(maxX, xCoord);
@@ -85,17 +89,27 @@ public class Utilities {
             minY = Math.min(minY, yCoord);
         }
         // Draw html
+        List<Integer> dynamicRequests = vrptw.getDynamicRequests().stream().map(req -> req.getId()).collect(Collectors.toList());
         try {
             StringBuilder indexHtml = new StringBuilder();
-            indexHtml.append("<svg width=\"").append(width + 10).append("\" height=\"").append(height + 10).append("\">");
-            for (int idRequest : vrptw.getIdAvailableRequests()) {
+            indexHtml.append("<svg width=\"").append(width + margin * 2).append("\" height=\"").append(height + margin * 2).append("\">");
+            indexHtml.append("\t<defs>\n");
+            indexHtml.append("\t\t<marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"0\" refY=\"3\" orient=\"auto\" markerUnits=\"strokeWidth\">\n");
+            indexHtml.append("\t\t\t<path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n");
+            indexHtml.append("\t\t</marker>\n");
+            indexHtml.append("\t</defs>");
+            for (int idRequest : requests) {
                 double xCoord = vrptw.getRequests().get(idRequest).getxCoord();
                 double yCoord = vrptw.getRequests().get(idRequest).getyCoord();
                 indexHtml.append("\n\t<circle cx=\"");
-                indexHtml.append((width / maxX) * xCoord);
+                indexHtml.append(((width / maxX) * xCoord) + margin);
                 indexHtml.append("\" cy=\"");
-                indexHtml.append((height / maxY) * yCoord);
-                indexHtml.append("\" r=\"4\" fill=\"black\" />");
+                indexHtml.append(((height / maxY) * yCoord) + margin);
+                if (dynamicRequests.contains(idRequest)) {
+                    indexHtml.append("\" r=\"4\" fill=\"red\" />");
+                } else {
+                    indexHtml.append("\" r=\"4\" fill=\"black\" />");
+                }
             }
             for (int k = 0; k < bestSoFarAnt.usedVehicles; k++) {
                 for (int i = 0; i < bestSoFarAnt.tours.get(k).size() - 1; i++) {
@@ -104,16 +118,17 @@ public class Utilities {
                     double xCoordTarget = vrptw.getRequests().get(bestSoFarAnt.tours.get(k).get(i + 1) + 1).getxCoord();
                     double yCoordTarget = vrptw.getRequests().get(bestSoFarAnt.tours.get(k).get(i + 1) + 1).getyCoord();
                     indexHtml.append("\n\t<line x1=\"");
-                    indexHtml.append((width / maxX) * xCoordSource);
+                    indexHtml.append(((width / maxX) * xCoordSource) + margin);
                     indexHtml.append("\" y1=\"");
-                    indexHtml.append((height / maxY) * yCoordSource);
+                    indexHtml.append(((height / maxY) * yCoordSource) + margin);
                     indexHtml.append("\" x2=\"");
-                    indexHtml.append((width / maxX) * xCoordTarget);
+                    indexHtml.append(((width / maxX) * xCoordTarget) + margin);
                     indexHtml.append("\" y2=\"");
-                    indexHtml.append((height / maxY) * yCoordTarget);
+                    indexHtml.append(((height / maxY) * yCoordTarget) + margin);
                     indexHtml.append("\" style=\"stroke:rgb(");
                     indexHtml.append(colors.get(k));
-                    indexHtml.append(");stroke-width:2\" />");
+                    indexHtml.append(");stroke-width:2\" />"); // without arrow
+                    //indexHtml.append(");stroke-width:2\" marker-end=\"url(#arrow)\" />"); // with arrow
                 }
             }
             indexHtml.append("\n</svg>");

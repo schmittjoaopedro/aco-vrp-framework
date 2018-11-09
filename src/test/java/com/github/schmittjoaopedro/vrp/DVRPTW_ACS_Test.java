@@ -12,13 +12,17 @@ public class DVRPTW_ACS_Test {
 
     private static final String rootDirectory;
 
+    private static boolean discreteTime = true;
+
+    private static boolean printLog = true;
+
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dvrptw").getFile().substring(1)).toString();
     }
 
     @Test
     public void dynamic_vrp_time_window_acs_r103_0_1_test() {
-        Solver solver = new Solver("z", rootDirectory, "r103", 0.1, 1, true, true);
+        Solver solver = new Solver("z", rootDirectory, "r103", 0.1, 1, discreteTime, printLog);
         solver.execute();
         LoggerOutput loggerOutput = solver.getLoggerOutput();
 
@@ -119,7 +123,7 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_r201_0_5_test() {
-        Solver solver = new Solver("z", rootDirectory, "r201", 0.5, 1, true, true);
+        Solver solver = new Solver("z", rootDirectory, "r201", 0.5, 1, discreteTime, printLog);
         solver.execute();
         LoggerOutput loggerOutput = solver.getLoggerOutput();
 
@@ -306,7 +310,7 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_c101_0_5_test() {
-        Solver solver = new Solver("z", rootDirectory, "c101", 0.5, 1, true, false);
+        Solver solver = new Solver("z", rootDirectory, "c101", 0.5, 1, discreteTime, printLog);
         solver.execute();
         LoggerOutput loggerOutput = solver.getLoggerOutput();
 
@@ -464,7 +468,7 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_c202_0_5_test() {
-        Solver solver = new Solver("z", rootDirectory, "c202", 0.5, 1, true, false);
+        Solver solver = new Solver("z", rootDirectory, "c202", 0.5, 1, discreteTime, printLog);
         solver.execute();
         LoggerOutput loggerOutput = solver.getLoggerOutput();
 
@@ -632,7 +636,7 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_rc101_0_1_test() {
-        Solver solver = new Solver("z", rootDirectory, "rc101", 0.1, 1, true, false);
+        Solver solver = new Solver("z", rootDirectory, "rc101", 0.1, 1, discreteTime, printLog);
         solver.execute();
         LoggerOutput loggerOutput = solver.getLoggerOutput();
 
@@ -768,7 +772,7 @@ public class DVRPTW_ACS_Test {
 
     @Test
     public void dynamic_vrp_time_window_acs_rc202_1_0_test() {
-        Solver solver = new Solver("z", rootDirectory, "rc202", 1.0, 1, true, false);
+        Solver solver = new Solver("z", rootDirectory, "rc202", 1.0, 1, discreteTime, printLog);
         solver.execute();
         LoggerOutput loggerOutput = solver.getLoggerOutput();
 

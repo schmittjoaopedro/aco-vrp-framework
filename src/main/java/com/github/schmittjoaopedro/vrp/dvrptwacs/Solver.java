@@ -91,7 +91,7 @@ public class Solver {
         vrptw.instance.nnListAll = result[1];
         this.vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
         vrptwAcs.initTry(vrptw);
-        utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
+        //utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
         //counter which stores the number of the current time slice that we are during the execution of the algorithm,
         //which simulates a working day
         int currentTimeSlice = 1;
@@ -264,7 +264,7 @@ public class Solver {
         boolean isValid = vrptwAcs.checkFeasibility(ants.bestSoFarAnt, vrptw, true);
         if (isValid) {
             loggerOutput.log("The final solution is valid (feasible)..");
-            utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
+            //utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
         } else {
             loggerOutput.log("The final solution is not valid (feasible)..");
         }

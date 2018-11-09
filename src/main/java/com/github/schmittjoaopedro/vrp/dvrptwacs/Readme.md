@@ -39,3 +39,5 @@ The quantity of the deposited pheromone and the best ant is taken according to t
 according to the mTSP_ACO MinMax global_new heuristic algorithm, the salesman and the city to
 be visited and added in its tour are selected simultaneously during the same step from the
 construction phase of solution, reflecting a jointly decision making.
+
+Necula, R., Breaban, M., & Raschip, M. (2017). Tackling Dynamic Vehicle Routing Problem with Time Windows by means of ant colony system. 2017 IEEE Congress on Evolutionary Computation (CEC), 2480–2487. https://doi.org/10.1109/CEC.2017.7969606
