@@ -65,4 +65,13 @@ public class Maths {
         }
         return cost / (double) antPopulation.size();
     }
+
+
+    public static long minutes(long n) {
+        return n * seconds(60);
+    }
+
+    public static long seconds(long n) {
+        return n * 1000;
+    }
 }

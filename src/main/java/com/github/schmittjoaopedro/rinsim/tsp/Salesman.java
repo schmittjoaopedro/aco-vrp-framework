@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.rinsim;
+package com.github.schmittjoaopedro.rinsim.tsp;
 
 import com.github.rinde.rinsim.core.model.pdp.PDPModel;
 import com.github.rinde.rinsim.core.model.pdp.Vehicle;
@@ -6,11 +6,11 @@ import com.github.rinde.rinsim.core.model.pdp.VehicleDTO;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.time.TimeLapse;
 
-public class SimpleTruck extends Vehicle {
+public class Salesman extends Vehicle {
 
-    protected VehicleStrategy strategy;
+    protected SalesmanStrategy strategy;
 
-    public SimpleTruck(VehicleDTO dto, VehicleStrategy vs) {
+    public Salesman(VehicleDTO dto, SalesmanStrategy vs) {
         super(dto);
         strategy = vs;
     }

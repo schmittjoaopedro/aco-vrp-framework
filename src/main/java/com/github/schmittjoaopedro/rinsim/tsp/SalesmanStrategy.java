@@ -1,11 +1,11 @@
-package com.github.schmittjoaopedro.rinsim;
+package com.github.schmittjoaopedro.rinsim.tsp;
 
 import com.github.rinde.rinsim.core.model.pdp.PDPModel;
 import com.github.rinde.rinsim.core.model.pdp.Vehicle;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.time.TimeLapse;
 
-public interface VehicleStrategy {
+public interface SalesmanStrategy {
 
     void init(Vehicle vehicle, RoadModel rm, PDPModel pm);
 

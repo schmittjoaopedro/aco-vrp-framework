@@ -45,7 +45,6 @@
             <groupId>com.github.rinde</groupId>
             <artifactId>rinsim-scenario-util</artifactId>
             <version>4.4.6</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
