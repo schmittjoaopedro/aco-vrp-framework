@@ -4,14 +4,13 @@ import com.github.rinde.rinsim.core.Simulator;
 import com.github.rinde.rinsim.core.model.pdp.*;
 import com.github.rinde.rinsim.core.model.road.RoadModelBuilders;
 import com.github.rinde.rinsim.core.model.time.TimeModel;
-import com.github.rinde.rinsim.geom.LengthData;
-import com.github.rinde.rinsim.geom.ListenableGraph;
 import com.github.rinde.rinsim.geom.Point;
-import com.github.rinde.rinsim.geom.TableGraph;
 import com.github.rinde.rinsim.pdptw.common.*;
 import com.github.rinde.rinsim.scenario.*;
 import com.github.rinde.rinsim.ui.View;
-import com.github.rinde.rinsim.ui.renderers.*;
+import com.github.rinde.rinsim.ui.renderers.PDPModelRenderer;
+import com.github.rinde.rinsim.ui.renderers.PlaneRoadModelRenderer;
+import com.github.rinde.rinsim.ui.renderers.RoadUserRenderer;
 import com.github.rinde.rinsim.util.TimeWindow;
 import com.github.schmittjoaopedro.tsp.algorithms.MMAS_TSP;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
@@ -32,7 +31,7 @@ public class RINSIM_MMAS_TSP implements Runnable {
 
     private Simulator simulator;
 
-    private StatisticsDTO dto;
+    private StatisticsDTO statistics;
 
     private static final RGB GRAY = new RGB(200, 200, 200);
 
@@ -40,10 +39,9 @@ public class RINSIM_MMAS_TSP implements Runnable {
 
     private static final RGB PURPLE = new RGB(255, 0, 255);
 
-    public RINSIM_MMAS_TSP(Graph graph, MMAS_TSP mmasTsp) {
-        int numVehicles = 2;
+    public RINSIM_MMAS_TSP(Graph graph, MMAS_TSP mmasTsp, boolean showGui) {
         long endTime = Maths.minutes(15);
-        double truckSpeed = 5;
+        double truckSpeed = 30;
         int tickSize = 50;
         Vertex depotVertex;
         Point depotPoint, tempPoint;
@@ -126,54 +124,48 @@ public class RINSIM_MMAS_TSP implements Runnable {
                 .build();
 
         // Create simulator
-        simulator = Simulator.builder()
-                .setRandomSeed(123L)
-                // Add events handler
-                .addModel(
-                        ScenarioController
-                                .builder(scenario)
-                                .withEventHandler(AddDepotEvent.class, AddDepotEvent.defaultHandler())
-                                .withEventHandler(AddParcelEvent.class, AddParcelEvent.defaultHandler())
-                                .withEventHandler(TimeOutEvent.class, TimeOutEvent.ignoreHandler())
-                                .withEventHandler(AddVehicleEvent.class,
-                                        (evt, sim) -> sim.register(new Salesman(evt.getVehicleDTO(), new SalesmanMmasStrategy(mmasTsp)))
-                                ))
-                // Add GUI visualizer
-                .addModel(
-                        View.builder()
-                                .with(PlaneRoadModelRenderer.builder())
-                                .with(RoadUserRenderer.builder()
-                                        .withColorAssociation(Depot.class, GRAY)
-                                        .withColorAssociation(Parcel.class, BLUE)
-                                        .withColorAssociation(Vehicle.class, PURPLE))
-                                .with(PDPModelRenderer.builder())
-                                .with(PathRenderer.builder())
-                                .with(StatsPanel.builder())
-                                .withResolution(1600, 768)
-                                .withAutoPlay()
-                                .withAutoClose()
-                                // For testing we allow to change the speed up via the args.
-                                .withSpeedUp(100)
-                                .withTitleAppendix("Experiment example"))
-                .build();
+        Simulator.Builder simulatorBuilder = Simulator.builder();
+        simulatorBuilder.setRandomSeed(123L);
+        // Add events handler
+        simulatorBuilder.addModel(
+                ScenarioController
+                        .builder(scenario)
+                        .withEventHandler(AddDepotEvent.class, AddDepotEvent.defaultHandler())
+                        .withEventHandler(AddParcelEvent.class, AddParcelEvent.defaultHandler())
+                        .withEventHandler(TimeOutEvent.class, TimeOutEvent.ignoreHandler())
+                        .withEventHandler(AddVehicleEvent.class,
+                                (evt, sim) -> sim.register(new Salesman(evt.getVehicleDTO(), new SalesmanMmasStrategy(mmasTsp)))
+                        ));
+        if (showGui) {
+            // Add GUI visualizer
+            simulatorBuilder.addModel(
+                    View.builder()
+                            .with(PlaneRoadModelRenderer.builder())
+                            .with(RoadUserRenderer.builder()
+                                    .withColorAssociation(Depot.class, GRAY)
+                                    .withColorAssociation(Parcel.class, BLUE)
+                                    .withColorAssociation(Vehicle.class, PURPLE))
+                            .with(PDPModelRenderer.builder())
+                            .with(PathRenderer.builder())
+                            .with(StatsPanel.builder())
+                            .withResolution(1600, 768)
+                            .withAutoPlay()
+                            .withAutoClose()
+                            // For testing we allow to change the speed up via the args.
+                            .withSpeedUp(150)
+                            .withTitleAppendix("Experiment example"));
+        }
+        simulator = simulatorBuilder.build();
     }
 
     @Override
     public void run() {
-
         // Execute simulator
         simulator.start();
-        dto = simulator.getModelProvider().getModel(StatsTracker.class).getStatistics();
+        statistics = simulator.getModelProvider().getModel(StatsTracker.class).getStatistics();
+    }
 
-        final double distInOneTick = 30.0 / 3600.0;
-        System.out.println(dto.simFinish);
-        System.out.println(9 - 2.0 * distInOneTick + " = " + dto.totalDistance);
-        System.out.println(dto.totalParcels);
-        System.out.println(dto.overTime);
-        System.out.println(dto.pickupTardiness);
-        System.out.println(dto.deliveryTardiness);
-        System.out.println(dto.totalVehicles);
-        System.out.println(dto.movedVehicles);
-
+    public StatisticsDTO getStatistics() {
+        return statistics;
     }
 }

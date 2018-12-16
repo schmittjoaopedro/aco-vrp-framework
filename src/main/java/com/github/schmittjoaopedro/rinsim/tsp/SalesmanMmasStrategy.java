@@ -15,33 +15,25 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
 
     protected MMAS_TSP mmasTspSolver;
 
-    protected Vehicle vehicle;
+    protected Salesman salesman;
     protected RoadModel roadModel;
     protected PDPModel pdpModel;
     protected Depot depot;
-    protected List<Parcel> deliveryOrder;
 
-    int pickedUpParcelIndex = 0;
-    int deliveredParcelIndex = 0;
+    private int pickedUpParcelIndex = 0;
+    private int deliveredParcelIndex = 0;
 
     public SalesmanMmasStrategy(MMAS_TSP mmasTspSolver) {
         this.mmasTspSolver = mmasTspSolver;
     }
 
     @Override
-    public void init(Vehicle v, RoadModel rm, PDPModel pm) {
-        final Set<Depot> set;
-        if (!(vehicle == null && roadModel == null && pdpModel == null)) {
-            throw new RuntimeException("init can be called only once!");
-        }
-        vehicle = v;
+    public void init(Vehicle vehicle, RoadModel rm, PDPModel pm) {
         roadModel = rm;
         pdpModel = pm;
-        set = rm.getObjectsOfType(Depot.class);
-        if (!(set.size() == 1)) {
-            throw new RuntimeException("This strategy only supports problems with one depot.");
-        }
-        depot = set.iterator().next();
+        depot = rm.getObjectsOfType(Depot.class).iterator().next();
+        salesman = (Salesman) vehicle;
+        salesman.setDepot(depot);
         mmasTspSolver.run();
     }
 
@@ -50,15 +42,17 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
         while (time.hasTimeLeft()) {
             Parcel nextParcel = null;
             buildParcels();
-            if (pickedUpParcelIndex < deliveryOrder.size()) {
-                nextParcel = deliveryOrder.get(pickedUpParcelIndex);
-            } else if (deliveredParcelIndex < deliveryOrder.size()) {
-                nextParcel = deliveryOrder.get(deliveredParcelIndex);
+            // First make all pickups (in depot) to after start do to the deliveries
+            if (pickedUpParcelIndex < salesman.getRoute().size()) {
+                nextParcel = salesman.getRoute().get(pickedUpParcelIndex);
+            } else if (deliveredParcelIndex < salesman.getRoute().size()) {
+                nextParcel = salesman.getRoute().get(deliveredParcelIndex);
             }
+            // If there is a parcel AVAILABLE move to that position
             if (nextParcel != null && isParcelAvailable(nextParcel)) {
-                roadModel.moveTo(vehicle, nextParcel, time);
-                if (roadModel.equalPosition(vehicle, nextParcel)) {
-                    pdpModel.service(vehicle, nextParcel, time);
+                roadModel.moveTo(salesman, nextParcel, time);
+                if (roadModel.equalPosition(salesman, nextParcel)) { // If reached the position make the pickup/delivery
+                    pdpModel.service(salesman, nextParcel, time);
                     if (pdpModel.getParcelState(nextParcel).isDelivered()) {
                         deliveredParcelIndex++;
                     } else if (pdpModel.getParcelState(nextParcel).isPickedUp()) {
@@ -66,8 +60,9 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
                     }
                 }
             } else {
-                roadModel.moveTo(vehicle, depot, time);
-                if (roadModel.equalPosition(vehicle, depot)) {
+                // If all parcels were delivered go to depot
+                roadModel.moveTo(salesman, depot, time);
+                if (roadModel.equalPosition(salesman, depot)) {
                     time.consumeAll();
                 }
             }
@@ -76,16 +71,15 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
 
     public boolean isParcelAvailable(Parcel parcel) {
         final Set<Parcel> parcels = new HashSet<>(pdpModel.getParcels(PDPModel.ParcelState.AVAILABLE));
-        if (!pdpModel.getContents(vehicle).isEmpty()) {
-            parcels.addAll(pdpModel.getContents(vehicle));
+        if (!pdpModel.getContents(salesman).isEmpty()) {
+            parcels.addAll(pdpModel.getContents(salesman));
         }
         return parcels.contains(parcel);
     }
 
     public void buildParcels() {
-        if (deliveryOrder == null) {
+        if (salesman.getRoute().isEmpty()) {
             Parcel nextParcel;
-            deliveryOrder = new ArrayList<>();
             List<Vertex> bestRoute = mmasTspSolver.getGlobalStatistics().getBestRoute();
             List<Vertex> bestRouteWithoutDepot = new ArrayList<>();
             int depotIdx = getDepotIndex(bestRoute);
@@ -97,7 +91,7 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
             }
             for (Vertex vertex : bestRouteWithoutDepot) {
                 nextParcel = getParcel(vertex);
-                deliveryOrder.add(nextParcel);
+                salesman.getRoute().add(nextParcel);
             }
         }
     }

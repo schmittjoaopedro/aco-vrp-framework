@@ -4,18 +4,16 @@ import com.github.rinde.rinsim.core.model.DependencyProvider;
 import com.github.rinde.rinsim.core.model.ModelBuilder;
 import com.github.rinde.rinsim.core.model.pdp.PDPModel;
 import com.github.rinde.rinsim.core.model.pdp.Parcel;
-import com.github.rinde.rinsim.core.model.pdp.Vehicle;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.geom.Point;
 import com.github.rinde.rinsim.ui.renderers.CanvasRenderer;
 import com.github.rinde.rinsim.ui.renderers.ViewPort;
-import com.google.common.collect.ImmutableList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 
-import java.util.Set;
+import java.util.List;
 
 public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
 
@@ -41,15 +39,42 @@ public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
 
     @Override
     public void renderDynamic(GC gc, ViewPort vp, long time) {
-        final Set<Vehicle> vehicles = roadModel.getObjectsOfType(Vehicle.class);
-        for (final Vehicle v : vehicles) {
-            for (final Parcel parcel : ImmutableList.copyOf(pdpModel.getContents(v))) {
+        int xPrev;
+        int yPrev;
+        int xCurr;
+        int yCurr;
+        int xDept;
+        int yDept;
+        Point parcelPosition;
+        Point depotPosition;
+        List<Parcel> route;
+        Parcel parcel;
+        for (final Salesman salesmen : roadModel.getObjectsOfType(Salesman.class)) {
+            xPrev = 0;
+            yPrev = 0;
+            route = salesmen.getRoute();
+            depotPosition = roadModel.getPosition(salesmen.getDepot());
+            xDept = vp.toCoordX((int) depotPosition.x);
+            yDept = vp.toCoordY((int) depotPosition.y);
+            // Draw route parcel locations and line connecting them
+            for (int i = 0; i < route.size(); i++) {
+                parcel = route.get(i);
                 gc.setForeground(black);
-                final Point po = parcel.getDeliveryLocation();
-                final int xd = vp.toCoordX(po.x);
-                final int yd = vp.toCoordY(po.y);
-                gc.fillOval(xd - OVAL_RADIUS_PX, yd - OVAL_RADIUS_PX, OVAL_DIAMETER_PX, OVAL_DIAMETER_PX);
-                gc.drawOval(xd - OVAL_RADIUS_PX, yd - OVAL_RADIUS_PX, OVAL_DIAMETER_PX, OVAL_DIAMETER_PX);
+                parcelPosition = parcel.getDeliveryLocation();
+                xCurr = vp.toCoordX(parcelPosition.x);
+                yCurr = vp.toCoordY(parcelPosition.y);
+                gc.fillOval(xCurr - OVAL_RADIUS_PX, yCurr - OVAL_RADIUS_PX, OVAL_DIAMETER_PX, OVAL_DIAMETER_PX);
+                gc.drawOval(xCurr - OVAL_RADIUS_PX, yCurr - OVAL_RADIUS_PX, OVAL_DIAMETER_PX, OVAL_DIAMETER_PX);
+                if (xPrev != 0 && yPrev != 0) {
+                    gc.drawLine(xPrev, yPrev, xCurr, yCurr);
+                }
+                xPrev = xCurr;
+                yPrev = yCurr;
+                if (i == 0) { // If is the next parcel related to depot
+                    gc.drawLine(xDept, yDept, xCurr, yCurr);
+                } else if (i == route.size() - 1) { // If is the prev parcel related to depot
+                    gc.drawLine(xCurr, yCurr, xDept, yDept);
+                }
             }
             gc.setBackground(backgroundInfo);
             gc.setForeground(foregroundInfo);
