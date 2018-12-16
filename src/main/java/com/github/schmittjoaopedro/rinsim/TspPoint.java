@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.rinsim.tsp;
+package com.github.schmittjoaopedro.rinsim;
 
 import com.github.rinde.rinsim.geom.Point;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;

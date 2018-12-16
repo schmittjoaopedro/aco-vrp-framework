@@ -6,6 +6,7 @@ import com.github.rinde.rinsim.core.model.pdp.Parcel;
 import com.github.rinde.rinsim.core.model.pdp.Vehicle;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.time.TimeLapse;
+import com.github.schmittjoaopedro.rinsim.TspPoint;
 import com.github.schmittjoaopedro.tsp.algorithms.MMAS_TSP;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 

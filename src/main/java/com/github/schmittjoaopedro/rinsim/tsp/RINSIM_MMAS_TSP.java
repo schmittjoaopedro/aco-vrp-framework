@@ -12,6 +12,7 @@ import com.github.rinde.rinsim.ui.renderers.PDPModelRenderer;
 import com.github.rinde.rinsim.ui.renderers.PlaneRoadModelRenderer;
 import com.github.rinde.rinsim.ui.renderers.RoadUserRenderer;
 import com.github.rinde.rinsim.util.TimeWindow;
+import com.github.schmittjoaopedro.rinsim.TspPoint;
 import com.github.schmittjoaopedro.tsp.algorithms.MMAS_TSP;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
