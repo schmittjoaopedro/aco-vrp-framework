@@ -6,6 +6,7 @@ import com.github.rinde.rinsim.core.model.time.TimeLapse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class Salesman extends Vehicle {
 
@@ -18,6 +19,8 @@ public class Salesman extends Vehicle {
     private double[] beginService;
 
     private Depot depot;
+
+    private Semaphore semaphore;
 
     public Salesman(VehicleDTO dto, SalesmanStrategy vs) {
         super(dto);
@@ -66,5 +69,13 @@ public class Salesman extends Vehicle {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Semaphore getSemaphore() {
+        return semaphore;
+    }
+
+    public void setSemaphore(Semaphore semaphore) {
+        this.semaphore = semaphore;
     }
 }

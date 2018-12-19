@@ -9,6 +9,11 @@ import com.github.rinde.rinsim.core.model.time.TimeLapse;
 import com.github.schmittjoaopedro.rinsim.IdPoint;
 import com.github.schmittjoaopedro.rinsim.Salesman;
 import com.github.schmittjoaopedro.rinsim.SalesmanStrategy;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.util.stream.Collectors;
 
 public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
 
@@ -41,23 +46,15 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
     public void execute(TimeLapse time) {
         if (time.hasTimeLeft() && !salesman.getRoute().isEmpty()) {
             Parcel nextParcel = null;
-
-            if (deliveredParcelIndex < salesman.getRoute().size()) {
-                nextParcel = salesman.getRoute().get(deliveredParcelIndex);
-            }
-
             try {
+                acquireLock();
+                if (deliveredParcelIndex < salesman.getRoute().size()) {
+                    nextParcel = salesman.getRoute().get(deliveredParcelIndex);
+                }
                 if (nextParcel != null) {
                     int parcelId = ((IdPoint) nextParcel.getDeliveryLocation()).id;
-                    if (salesman.getId() == 7) {
-                        String msg = "Salesman = " + salesman.getId();
-                        msg += " Parcel = " + parcelId;
-                        msg += " TimeWindow = " + nextParcel.getDeliveryTimeWindow().begin() + "," + nextParcel.getDeliveryTimeWindow().end();
-                        msg += " BeginService = " + salesman.getBeginService()[parcelId];
-                        msg += " CurrentTime = " + time.getTime();
-                        System.out.println(msg);
-                    }
                     if (Math.round(salesman.getBeginService()[parcelId]) <= time.getTime()) {
+                        logSalesman(time, nextParcel, parcelId);
                         // First make the pickup (in depot) to after start do to the delivery
                         if (!pdpModel.getParcelState(nextParcel).isPickedUp()) {
                             roadModel.moveTo(salesman, nextParcel, time, SIMULATED_HEURISTIC);
@@ -84,7 +81,25 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
+            } finally {
+                releaseLock();
             }
+        }
+    }
+
+    private void logSalesman(TimeLapse time, Parcel nextParcel, int parcelId) {
+        try {
+            String msg = "Salesman = " + salesman.getId();
+            msg += " Parcel = " + parcelId;
+            msg += " TimeWindow = " + nextParcel.getDeliveryTimeWindow().begin() + "," + nextParcel.getDeliveryTimeWindow().end();
+            msg += " BeginService = " + salesman.getBeginService()[parcelId];
+            msg += " CurrentTime = " + time.getTime();
+            msg += " Route = " + StringUtils.join(salesman.getRoute().stream().map(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id).collect(Collectors.toList()), ",");
+            msg += "\n";
+            System.out.println(msg);
+            //FileUtils.writeStringToFile(new File("C:\\Temp\\salesman-" + salesman.getId()), msg, true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -92,6 +107,22 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
         int vehicleIdx = SalesmanAcsDvrptwStrategy.globalVehicleIdx;
         SalesmanAcsDvrptwStrategy.globalVehicleIdx++;
         return vehicleIdx;
+    }
+
+    private void acquireLock() {
+        if (salesman.getSemaphore() != null) {
+            try {
+                salesman.getSemaphore().acquire();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void releaseLock() {
+        if (salesman.getSemaphore() != null) {
+            salesman.getSemaphore().release();
+        }
     }
 
 }

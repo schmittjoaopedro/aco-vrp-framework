@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.dvrptwacs;
 import com.github.schmittjoaopedro.rinsim.dvrptwacs.BSFListener;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 /* contains the main entry point for the implementation of ACO for solving the VRPTW problem on instances
  * belonging to Solomon benchmark
@@ -24,6 +25,8 @@ public class VRPTW_ACS implements Runnable {
     private int counter = 0;
 
     private BSFListener bsfListener;
+
+    private Semaphore semaphore;
 
     /**
      * indicates whether local search is used in the ACO algorithm
@@ -202,6 +205,22 @@ public class VRPTW_ACS implements Runnable {
         statistics.nTours += (ants.nAnts * ants.ants[0].usedVehicles); //each ant constructs a complete and closed tour
     }
 
+    private void acquireLock() {
+        if (semaphore != null) {
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void releaseLock() {
+        if (semaphore != null) {
+            semaphore.release();
+        }
+    }
+
     //initialize variables appropriately when starting a trial
     public void initTry(VRPTW vrptw) {
         timer.startTimers();
@@ -231,7 +250,7 @@ public class VRPTW_ACS implements Runnable {
             if (noAvailableNodes == 0) {
                 ants.trail0 = 1.0;
             } else {
-                ants.trail0 = 1. / ((double) (noAvailableNodes + 1) * (double) nnTour(vrptw));
+                ants.trail0 = 1. / ((double) (noAvailableNodes + 1) * nnTour(vrptw));
             }
             ants.initPheromoneTrails(ants.trail0);
         }
@@ -310,11 +329,16 @@ public class VRPTW_ACS implements Runnable {
                 ants.preservePheromones(vrptw.getIdAvailableRequests());
             }
             //do the optimization task (work)
-            constructSolutions(vrptw);
-            //increase evaluations counter
-            statistics.noEvaluations++;
-            counter++;
-            updateStatistics(vrptw);
+            try {
+                acquireLock();
+                constructSolutions(vrptw);
+                //increase evaluations counter
+                statistics.noEvaluations++;
+                counter++;
+                updateStatistics(vrptw);
+            } finally {
+                releaseLock();
+            }
             pheromoneTrailUpdate();
             //force the ant colony thread to stop its execution
             if (counter > 300) {
@@ -384,5 +408,13 @@ public class VRPTW_ACS implements Runnable {
 
     public void setBsfListener(BSFListener bsfListener) {
         this.bsfListener = bsfListener;
+    }
+
+    public Semaphore getSemaphore() {
+        return semaphore;
+    }
+
+    public void setSemaphore(Semaphore semaphore) {
+        this.semaphore = semaphore;
     }
 }

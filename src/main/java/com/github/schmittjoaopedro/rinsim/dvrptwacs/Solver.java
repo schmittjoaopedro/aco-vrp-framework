@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,8 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     private Thread thread = null;
 
+    private Semaphore semaphore;
+
     boolean threadStopped = false;
 
     /* Integration attributes */
@@ -77,6 +80,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         this.insertionHeuristic = new InsertionHeuristic(this.loggerOutput);
         this.ants = new Ants(this.dynamicController, this.utilities, this.insertionHeuristic, this.loggerOutput);
         this.timer = new Timer(this.statistics);
+        this.semaphore = new Semaphore(1, true);
     }
 
     @Override
@@ -88,10 +92,23 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     @Override
     public void tick(TimeLapse timeLapse) {
+
+        // Compare routes
+        List<Salesman> salesmen = roadModel.getObjectsOfType(Salesman.class).stream().collect(Collectors.toList());
+        salesmen.sort(Comparator.comparing(Salesman::getId));
+        for (int i = 0; i < ants.bestSoFarAnt.tours.size(); i++) {
+            if (salesmen.get(i).getRoute().size() != ants.bestSoFarAnt.tours.get(i).size() - 2) {
+                System.err.println("Error");
+            }
+            for (int j = 0; j < ants.bestSoFarAnt.tours.get(i).size(); j++) {
+                
+            }
+        }
+
         boolean hasWorkToDo = knowParcels.size() != deliveredParcels.size();
         if (timeLapse.hasTimeLeft() && hasWorkToDo) {
             Set<Parcel> tickKnowParcels = getKnownParcels();
-            Set<Parcel> tickDeliveredParcels = getDeliveredParcels();
+            Set<Parcel> tickDeliveredParcels = getPickedParcels();
             tickKnowParcels.removeAll(knowParcels);
             tickDeliveredParcels.removeAll(deliveredParcels);
             knowParcels.addAll(tickKnowParcels);
@@ -115,82 +132,90 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                 //if there are nodes to be committed
                 if (isNewNodesCommitted) {
                     //commit necessary nodes after the ant colony execution is stopped
-                    double timePassed = timeLapse.getTime();
-                    dynamicController.commitNodes(ants.bestSoFarAnt, timePassed);
+                    tickDeliveredParcels.stream().forEach(parcel -> {
+                        int parcelId = ((IdPoint) parcel.getDeliveryLocation()).id;
+                        dynamicController.committedNodes[parcelId - 1] = true;
+                    });
                 }
             }
             //if there are new available nodes, update the list of available/known nodes (customer requests)
             if (isNewNodesAvailable) {
-                String knowNodesMsg = countNodes + " new nodes became available (known): ";
-                ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
-                ArrayList<Integer> newAvailableIdNodes = new ArrayList<>(tickKnowParcels.stream()
-                        .map(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id - 1)
-                        .collect(Collectors.toList()));
-                for (int id : newAvailableIdNodes) {
-                    idKnownRequests.add(id);
-                    knowNodesMsg += (id + 1) + " ";
-                }
-                loggerOutput.log(knowNodesMsg);
-                vrptw.setIdAvailableRequests(idKnownRequests);
-                loggerOutput.log("Number of total available (known) nodes (excluding the depot): " + idKnownRequests.size());
-                //insert new available nodes in the best so far solution
-                ants.bestSoFarAnt.toVisit = countNodes;
-                //determine nodes that are not visited yet in the current ant's solution
-                ArrayList<Integer> unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
-                //skip over committed (defined) nodes when performing insertion heuristic
-                ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
-                int lastPos;
-                for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-                    lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
-                    lastCommittedIndexes.add(lastPos);
-                }
-                insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, 0, lastCommittedIndexes);
-                //if there are still remaining unvisited cities from the ones that are available
-                //insert an empty tour and add cities in it following nearest-neighbour heuristic
-                int indexTour;
-                while (ants.bestSoFarAnt.toVisit > 0) {
-                    ants.bestSoFarAnt.usedVehicles++;
-                    indexTour = ants.bestSoFarAnt.usedVehicles - 1;
-                    ants.bestSoFarAnt.tours.add(indexTour, new ArrayList<Integer>());
-                    ants.bestSoFarAnt.tours.get(indexTour).add(-1);
-                    ants.bestSoFarAnt.tourLengths.add(indexTour, 0.0);
-                    ants.bestSoFarAnt.currentQuantity.add(indexTour, 0.0);
-                    ants.bestSoFarAnt.currentTime.add(indexTour, 0.0);
-                    //try to add as many unvisited cities/nodes as possible in this newly created tour
-                    //following the nearest neighbour heuristic
-                    ants.chooseClosestNn(ants.bestSoFarAnt, indexTour, vrptw, vrptwAcs);
-                    //try to insert remaining cities using insertion heuristic
-                    if (ants.bestSoFarAnt.toVisit > 0) {
-                        //determine nodes that are not visited yet in the current ant's solution
-                        unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
-                        //skip over committed (defined) nodes when performing insertion heuristic
-                        lastCommittedIndexes = new ArrayList<Integer>();
-                        for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-                            lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
-                            lastCommittedIndexes.add(lastPos);
-                        }
-                        insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, indexTour, lastCommittedIndexes);
+                try {
+                    acquireLock();
+                    String knowNodesMsg = countNodes + " new nodes became available (known): ";
+                    ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
+                    ArrayList<Integer> newAvailableIdNodes = new ArrayList<>(tickKnowParcels.stream()
+                            .map(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id - 1)
+                            .collect(Collectors.toList()));
+                    for (int id : newAvailableIdNodes) {
+                        idKnownRequests.add(id);
+                        knowNodesMsg += (id + 1) + " ";
                     }
-                    //add the depot again to end this tour
-                    ants.bestSoFarAnt.tours.get(indexTour).add(-1);
+                    loggerOutput.log(knowNodesMsg);
+                    vrptw.setIdAvailableRequests(idKnownRequests);
+                    loggerOutput.log("Number of total available (known) nodes (excluding the depot): " + idKnownRequests.size());
+                    //insert new available nodes in the best so far solution
+                    ants.bestSoFarAnt.toVisit = countNodes;
+                    //determine nodes that are not visited yet in the current ant's solution
+                    ArrayList<Integer> unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
+                    //skip over committed (defined) nodes when performing insertion heuristic
+                    ArrayList<Integer> lastCommittedIndexes = new ArrayList<>();
+                    int lastPos;
+                    for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
+                        lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
+                        lastCommittedIndexes.add(lastPos);
+                    }
+                    insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, 0, lastCommittedIndexes);
+                    //if there are still remaining unvisited cities from the ones that are available
+                    //insert an empty tour and add cities in it following nearest-neighbour heuristic
+                    int indexTour;
+                    while (ants.bestSoFarAnt.toVisit > 0) {
+                        ants.bestSoFarAnt.usedVehicles++;
+                        indexTour = ants.bestSoFarAnt.usedVehicles - 1;
+                        ants.bestSoFarAnt.tours.add(indexTour, new ArrayList<Integer>());
+                        ants.bestSoFarAnt.tours.get(indexTour).add(-1);
+                        ants.bestSoFarAnt.tourLengths.add(indexTour, 0.0);
+                        ants.bestSoFarAnt.currentQuantity.add(indexTour, 0.0);
+                        ants.bestSoFarAnt.currentTime.add(indexTour, 0.0);
+                        //try to add as many unvisited cities/nodes as possible in this newly created tour
+                        //following the nearest neighbour heuristic
+                        ants.chooseClosestNn(ants.bestSoFarAnt, indexTour, vrptw, vrptwAcs);
+                        //try to insert remaining cities using insertion heuristic
+                        if (ants.bestSoFarAnt.toVisit > 0) {
+                            //determine nodes that are not visited yet in the current ant's solution
+                            unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
+                            //skip over committed (defined) nodes when performing insertion heuristic
+                            lastCommittedIndexes = new ArrayList<Integer>();
+                            for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
+                                lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
+                                lastCommittedIndexes.add(lastPos);
+                            }
+                            insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, indexTour, lastCommittedIndexes);
+                        }
+                        //add the depot again to end this tour
+                        ants.bestSoFarAnt.tours.get(indexTour).add(-1);
+                    }
+                    double sum = 0.0;
+                    for (int i = 0; i < ants.bestSoFarAnt.usedVehicles; i++) {
+                        ants.bestSoFarAnt.tourLengths.set(i, vrptw.computeTourLengthWithDepot(ants.bestSoFarAnt.tours.get(i)));
+                        sum += ants.bestSoFarAnt.tourLengths.get(i);
+                    }
+                    ants.bestSoFarAnt.totalTourLength = sum;
+                    double scalledValue = 0.0;
+                    if (dynamicController.scalingValue != 0) {
+                        scalledValue = ants.bestSoFarAnt.totalTourLength / dynamicController.scalingValue;
+                    }
+                    onBSFFound(ants.bestSoFarAnt);
+                    loggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.bestSoFarAnt.usedVehicles + " total tours length=" + ants.bestSoFarAnt.totalTourLength + " (scalled value = " + scalledValue + ")");
+                } finally {
+                    releaseLock();
                 }
-                double sum = 0.0;
-                for (int i = 0; i < ants.bestSoFarAnt.usedVehicles; i++) {
-                    ants.bestSoFarAnt.tourLengths.set(i, vrptw.computeTourLengthWithDepot(ants.bestSoFarAnt.tours.get(i)));
-                    sum += ants.bestSoFarAnt.tourLengths.get(i);
-                }
-                ants.bestSoFarAnt.totalTourLength = sum;
-                double scalledValue = 0.0;
-                if (dynamicController.scalingValue != 0) {
-                    scalledValue = ants.bestSoFarAnt.totalTourLength / dynamicController.scalingValue;
-                }
-                onBSFFound(ants.bestSoFarAnt);
-                loggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.bestSoFarAnt.usedVehicles + " total tours length=" + ants.bestSoFarAnt.totalTourLength + " (scalled value = " + scalledValue + ")");
             }
             //restart the colony thread
             if (threadStopped) {
                 //restart the ant colony thread
                 worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
+                worker.setSemaphore(semaphore);
                 if (!statistics.isDiscreteTime) {
                     thread = new Thread(worker);
                     thread.start();
@@ -210,6 +235,24 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                 }
             }
         }
+
+    }
+
+
+    private void acquireLock() {
+        if (semaphore != null) {
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void releaseLock() {
+        if (semaphore != null) {
+            semaphore.release();
+        }
     }
 
     @Override
@@ -217,7 +260,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     }
 
-    private Set<Parcel> getDeliveredParcels() {
+    private Set<Parcel> getPickedParcels() {
         return knowParcels.stream().filter(parcel -> pdpModel.getParcelState(parcel).isPickedUp()).collect(Collectors.toSet());
     }
 
@@ -243,7 +286,8 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         int[][][] result = vrptw.computeNnLists(ants);
         vrptw.instance.nnList = result[0];
         vrptw.instance.nnListAll = result[1];
-        this.vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
+        vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
+        vrptwAcs.setSemaphore(semaphore);
         vrptwAcs.initTry(vrptw);
         knowParcels = getKnownParcels();
         onBSFFound(ants.bestSoFarAnt);
@@ -254,6 +298,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         statistics.noSolutions = 0;
         //start the ant colony
         worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
+        worker.setSemaphore(semaphore);
         thread = new Thread(worker);
         thread.start();
     }
@@ -352,12 +397,13 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     @Override
     public void onBSFFound(Ant bestSoFar) {
-        List<Salesman> salesmen = roadModel.getObjectsOfType(Salesman.class).stream().collect(Collectors.toList());
         Map<Integer, Parcel> parcelMap = getKnownParcels().stream().collect(Collectors.toMap(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id, Function.identity()));
+        List<Salesman> salesmen = roadModel.getObjectsOfType(Salesman.class).stream().collect(Collectors.toList());
         salesmen.sort(Comparator.comparing(Salesman::getId));
         for (Salesman salesman : salesmen) {
             salesman.getRoute().clear();
             salesman.setBeginService(bestSoFar.beginService);
+            salesman.setSemaphore(semaphore);
         }
         for (int i = 0; i < bestSoFar.tours.size(); i++) {
             List<Integer> tour = bestSoFar.tours.get(i);

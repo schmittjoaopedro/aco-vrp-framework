@@ -124,7 +124,7 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
                             .with(PDPModelRenderer.builder())
                             .with(PathRenderer.builder())
                             .with(StatsPanel.builder())
-                            .withResolution(1600, 768)
+                            .withResolution(1024, 768)
                             .withAutoPlay()
                             .withAutoClose()
                             // For testing we allow to change the speed up via the args.
