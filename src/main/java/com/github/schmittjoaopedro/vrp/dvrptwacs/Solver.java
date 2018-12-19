@@ -145,7 +145,8 @@ public class Solver {
                     //if there are nodes to be committed
                     if (isNewNodesCommitted) {
                         //commit necessary nodes after the ant colony execution is stopped
-                        dynamicController.commitNodes(ants.bestSoFarAnt, currentTimeSlice, lengthTimeSlice);
+                        double timePassed = currentTimeSlice * lengthTimeSlice;
+                        dynamicController.commitNodes(ants.bestSoFarAnt, timePassed);
                     }
                 }
                 //if there are new available nodes, update the list of available/known nodes (customer requests)

@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.rinsim.tsp;
+package com.github.schmittjoaopedro.rinsim;
 
 import com.github.rinde.rinsim.core.model.pdp.*;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
@@ -9,9 +9,13 @@ import java.util.List;
 
 public class Salesman extends Vehicle {
 
+    private int id;
+
     protected SalesmanStrategy strategy;
 
     private List<Parcel> route;
+
+    private double[] beginService;
 
     private Depot depot;
 
@@ -40,11 +44,27 @@ public class Salesman extends Vehicle {
         this.route = route;
     }
 
+    public double[] getBeginService() {
+        return beginService;
+    }
+
+    public void setBeginService(double[] beginService) {
+        this.beginService = beginService;
+    }
+
     public Depot getDepot() {
         return depot;
     }
 
     public void setDepot(Depot depot) {
         this.depot = depot;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

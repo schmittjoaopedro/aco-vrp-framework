@@ -27,6 +27,12 @@ public class DynamicController {
         this.loggerOutput = loggerOutput;
     }
 
+    public DynamicController(LoggerOutput loggerOutput, int workingDay, int noTimeSlices) {
+        this.loggerOutput = loggerOutput;
+        this.workingDay = workingDay;
+        this.noTimeSlices = noTimeSlices;
+    }
+
     public double getScalingValue() {
         return scalingValue;
     }
@@ -148,7 +154,7 @@ public class DynamicController {
     //commit nodes from the tours of the best so far solution, that will have their position fixed when
     //they will be copied in the ants'solutions
     // block part of the best solution that is being/has been visited
-    public void commitNodes(Ant bestSoFarAnt, int indexTimeSlice, double lengthTimeSlice) {
+    public void commitNodes(Ant bestSoFarAnt, double timePassed) {
         int indexTour = 0;
         int tourLength;
         int node, startPos, count = 0;
@@ -162,7 +168,7 @@ public class DynamicController {
             for (int i = startPos + 1; i < tourLength - 1; i++) {
                 node = bestSoFarAnt.tours.get(indexTour).get(i);
                 //check condition for a node to be committed
-                if ((bestSoFarAnt.beginService[node + 1] <= indexTimeSlice * lengthTimeSlice) &&
+                if ((bestSoFarAnt.beginService[node + 1] <= timePassed) &&
                         (!committedNodes[node])) {
                     committedNodes[node] = true;
                 } else {

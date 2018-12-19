@@ -12,7 +12,9 @@ import com.github.rinde.rinsim.ui.renderers.PDPModelRenderer;
 import com.github.rinde.rinsim.ui.renderers.PlaneRoadModelRenderer;
 import com.github.rinde.rinsim.ui.renderers.RoadUserRenderer;
 import com.github.rinde.rinsim.util.TimeWindow;
-import com.github.schmittjoaopedro.rinsim.TspPoint;
+import com.github.schmittjoaopedro.rinsim.PathRenderer;
+import com.github.schmittjoaopedro.rinsim.Salesman;
+import com.github.schmittjoaopedro.rinsim.VertexPoint;
 import com.github.schmittjoaopedro.tsp.algorithms.MMAS_TSP;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
@@ -43,7 +45,7 @@ public class RINSIM_MMAS_TSP implements Runnable {
     public RINSIM_MMAS_TSP(Graph graph, MMAS_TSP mmasTsp, boolean showGui) {
         long endTime = Maths.minutes(15);
         double truckSpeed = 30;
-        int tickSize = 50;
+        int tickSize = 1;
         Vertex depotVertex;
         Point depotPoint, tempPoint;
         VehicleDTO vehicle;
@@ -56,7 +58,7 @@ public class RINSIM_MMAS_TSP implements Runnable {
 
         // Depot
         depotVertex = graph.getVertex(0);
-        depotPoint = new TspPoint(depotVertex);
+        depotPoint = new VertexPoint(depotVertex);
         maxX = minX = depotPoint.x;
         maxY = minY = depotPoint.y;
         events.add(AddDepotEvent.create(-1, depotPoint));
@@ -76,7 +78,7 @@ public class RINSIM_MMAS_TSP implements Runnable {
         // Create requests
         for (int i = 1; i < graph.getVertexCount(); i++) {
             requestVertex = graph.getVertex(i);
-            tempPoint = new TspPoint(requestVertex);
+            tempPoint = new VertexPoint(requestVertex);
             parcelDTO = Parcel.builder(depotPoint, tempPoint)
                     .pickupTimeWindow(TimeWindow.always())
                     .deliveryTimeWindow(TimeWindow.always())
@@ -135,7 +137,7 @@ public class RINSIM_MMAS_TSP implements Runnable {
                         .withEventHandler(AddParcelEvent.class, AddParcelEvent.defaultHandler())
                         .withEventHandler(TimeOutEvent.class, TimeOutEvent.ignoreHandler())
                         .withEventHandler(AddVehicleEvent.class,
-                                (evt, sim) -> sim.register(new Salesman(evt.getVehicleDTO(), new SalesmanMmasStrategy(mmasTsp)))
+                                (evt, sim) -> sim.register(new Salesman(evt.getVehicleDTO(), new SalesmanMmasTspStrategy(mmasTsp)))
                         ));
         if (showGui) {
             // Add GUI visualizer

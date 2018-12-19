@@ -18,7 +18,8 @@ public class RINSIM_ACS_DVRPTW_Test {
     @Test
     public void rinsim_dynamic_vrp_time_window_acs_r103_0_1_test() throws Exception {
         File file = Paths.get(rootDirectory, "r103-0.1.txt").toFile();
-        RINSIM_ACS_DVRPTW rinsimAcsDvrptw = new RINSIM_ACS_DVRPTW(file);
+        RINSIM_ACS_DVRPTW rinsimAcsDvrptw = new RINSIM_ACS_DVRPTW(file, true);
+        rinsimAcsDvrptw.run();
     }
 
 }

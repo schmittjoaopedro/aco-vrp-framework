@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.rinsim.tsp;
+package com.github.schmittjoaopedro.rinsim;
 
 import com.github.rinde.rinsim.core.model.pdp.PDPModel;
 import com.github.rinde.rinsim.core.model.pdp.Vehicle;

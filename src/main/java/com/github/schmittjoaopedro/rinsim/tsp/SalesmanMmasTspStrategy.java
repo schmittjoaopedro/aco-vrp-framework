@@ -6,13 +6,15 @@ import com.github.rinde.rinsim.core.model.pdp.Parcel;
 import com.github.rinde.rinsim.core.model.pdp.Vehicle;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.time.TimeLapse;
-import com.github.schmittjoaopedro.rinsim.TspPoint;
+import com.github.schmittjoaopedro.rinsim.Salesman;
+import com.github.schmittjoaopedro.rinsim.SalesmanStrategy;
+import com.github.schmittjoaopedro.rinsim.VertexPoint;
 import com.github.schmittjoaopedro.tsp.algorithms.MMAS_TSP;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 
 import java.util.*;
 
-public class SalesmanMmasStrategy implements SalesmanStrategy {
+public class SalesmanMmasTspStrategy implements SalesmanStrategy {
 
     protected MMAS_TSP mmasTspSolver;
 
@@ -24,7 +26,7 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
     private int pickedUpParcelIndex = 0;
     private int deliveredParcelIndex = 0;
 
-    public SalesmanMmasStrategy(MMAS_TSP mmasTspSolver) {
+    public SalesmanMmasTspStrategy(MMAS_TSP mmasTspSolver) {
         this.mmasTspSolver = mmasTspSolver;
     }
 
@@ -100,19 +102,19 @@ public class SalesmanMmasStrategy implements SalesmanStrategy {
     private int getDepotIndex(List<Vertex> bestRoute) {
         Set<Depot> depots = roadModel.getObjectsOfType(Depot.class);
         Depot depot = depots.iterator().next();
-        TspPoint depotPoint = (TspPoint) roadModel.getPosition(depot);
+        VertexPoint depotPoint = (VertexPoint) roadModel.getPosition(depot);
         return bestRoute.indexOf(depotPoint.getVertex());
     }
 
 
     public Parcel getParcel(Vertex vertex) {
         Parcel currentParcel = null;
-        TspPoint tspPoint;
+        VertexPoint vertexPoint;
         Iterator<Parcel> parcels = pdpModel.getParcels(PDPModel.ParcelState.AVAILABLE).iterator();
         while (parcels.hasNext()) {
             currentParcel = parcels.next();
-            tspPoint = (TspPoint) currentParcel.getDeliveryLocation();
-            if (vertex.equals(tspPoint.getVertex())) {
+            vertexPoint = (VertexPoint) currentParcel.getDeliveryLocation();
+            if (vertex.equals(vertexPoint.getVertex())) {
                 break;
             }
         }

@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
+import com.github.schmittjoaopedro.rinsim.dvrptwacs.BSFListener;
+
 import java.util.ArrayList;
 
 /* contains the main entry point for the implementation of ACO for solving the VRPTW problem on instances
@@ -20,6 +22,8 @@ public class VRPTW_ACS implements Runnable {
     private boolean isRunning = true;
 
     private int counter = 0;
+
+    private BSFListener bsfListener;
 
     /**
      * indicates whether local search is used in the ACO algorithm
@@ -255,6 +259,9 @@ public class VRPTW_ACS implements Runnable {
                     || ((round1 < round2) && (ants.bestSoFarAnt.totalTourLength == Double.MAX_VALUE))) {
                 statistics.timeUsed = timer.elapsedTime();  //best solution found after timeUsed
                 ants.copyFromTo(a, ants.bestSoFarAnt, vrptw);
+                if (bsfListener != null) {
+                    bsfListener.onBSFFound(ants.bestSoFarAnt);
+                }
                 scalingValue = dynamicController.getScalingValue();
                 if (scalingValue != 0) {
                     scaledValue = ants.bestSoFarAnt.totalTourLength / scalingValue;
@@ -371,4 +378,11 @@ public class VRPTW_ACS implements Runnable {
         isRunning = false;
     }
 
+    public BSFListener getBsfListener() {
+        return bsfListener;
+    }
+
+    public void setBsfListener(BSFListener bsfListener) {
+        this.bsfListener = bsfListener;
+    }
 }
