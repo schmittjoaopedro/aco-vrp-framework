@@ -320,33 +320,33 @@ public class VRPTW_ACS implements Runnable {
     //(known so far) customer requests
     public void run() {
         while (isRunning) {
-            //the thread was restarted (i.e. it was previously stopped and started again)
-            if (threadRestarted) {
-                //compute the new value for the initial pheromone trail based on the current best solution so far
-                int noAvailableNodes = vrptw.getIdAvailableRequests().size();
-                ants.trail0 = 1.0 / ((double) (noAvailableNodes + 1) * (double) ants.bestSoFarAnt.totalTourLength);
-                //preserve a certain amount of the pheromones from the previous run of the ant colony
-                ants.preservePheromones(vrptw.getIdAvailableRequests());
-            }
-            //do the optimization task (work)
             try {
                 acquireLock();
+                //the thread was restarted (i.e. it was previously stopped and started again)
+                if (threadRestarted) {
+                    //compute the new value for the initial pheromone trail based on the current best solution so far
+                    int noAvailableNodes = vrptw.getIdAvailableRequests().size();
+                    ants.trail0 = 1.0 / ((double) (noAvailableNodes + 1) * (double) ants.bestSoFarAnt.totalTourLength);
+                    //preserve a certain amount of the pheromones from the previous run of the ant colony
+                    ants.preservePheromones(vrptw.getIdAvailableRequests());
+                }
+                //do the optimization task (work)
                 constructSolutions(vrptw);
                 //increase evaluations counter
                 statistics.noEvaluations++;
                 counter++;
                 updateStatistics(vrptw);
+                pheromoneTrailUpdate();
+                //force the ant colony thread to stop its execution
+                if (counter > 300) {
+                    isRunning = false;
+                }
+                if (statistics.isDiscreteTime) {
+                    counter = 0;
+                    break;
+                }
             } finally {
                 releaseLock();
-            }
-            pheromoneTrailUpdate();
-            //force the ant colony thread to stop its execution
-            if (counter > 300) {
-                isRunning = false;
-            }
-            if (statistics.isDiscreteTime) {
-                counter = 0;
-                break;
             }
         }
     }

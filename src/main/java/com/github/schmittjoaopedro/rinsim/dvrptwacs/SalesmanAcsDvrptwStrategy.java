@@ -20,7 +20,7 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
     private static int globalVehicleIdx;
 
 
-    protected static final SimulatedHeuristic SIMULATED_HEURISTIC = new SimulatedHeuristic();
+    protected SimulatedHeuristic SIMULATED_HEURISTIC = new SimulatedHeuristic();
     protected Salesman salesman;
     protected RoadModel roadModel;
     protected PDPModel pdpModel;
@@ -44,62 +44,49 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
 
     @Override
     public void execute(TimeLapse time) {
-        if (time.hasTimeLeft() && !salesman.getRoute().isEmpty()) {
+        if (time.hasTimeLeft() && salesman.isActivated()) {
             Parcel nextParcel = null;
             try {
                 acquireLock();
-                if (deliveredParcelIndex < salesman.getRoute().size()) {
-                    nextParcel = salesman.getRoute().get(deliveredParcelIndex);
-                }
-                if (nextParcel != null) {
-                    int parcelId = ((IdPoint) nextParcel.getDeliveryLocation()).id;
-                    if (Math.round(salesman.getBeginService()[parcelId]) <= time.getTime()) {
-                        logSalesman(time, nextParcel, parcelId);
-                        // First make the pickup (in depot) to after start do to the delivery
-                        if (!pdpModel.getParcelState(nextParcel).isPickedUp()) {
-                            roadModel.moveTo(salesman, nextParcel, time, SIMULATED_HEURISTIC);
-                            if (roadModel.equalPosition(salesman, nextParcel)) { // If reached the position make the pickup
-                                pdpModel.service(salesman, nextParcel, time);
+                if (!salesman.getRoute().isEmpty()) {
+                    if (deliveredParcelIndex < salesman.getRoute().size()) {
+                        nextParcel = salesman.getRoute().get(deliveredParcelIndex);
+                    }
+                    if (nextParcel != null) {
+                        int parcelId = ((IdPoint) nextParcel.getDeliveryLocation()).id;
+                        DebuggerUtils.logSalesman(pdpModel, salesman, time, nextParcel, parcelId, false);
+                        if (Math.round(salesman.getBeginService()[parcelId]) <= time.getTime()) {
+                            if (salesman.getSolver() != null) {
+                                salesman.getSolver().commitParcel(nextParcel);
+                            }
+                            // First make the pickup (in depot) to after start do to the delivery
+                            if (!pdpModel.getParcelState(nextParcel).isPickedUp()) {
+                                roadModel.moveTo(salesman, nextParcel, time, SIMULATED_HEURISTIC);
+                                if (roadModel.equalPosition(salesman, nextParcel)) { // If reached the position make the pickup
+                                    pdpModel.service(salesman, nextParcel, time);
+                                }
+                            }
+                            if (PDPModel.ParcelState.IN_CARGO.equals(pdpModel.getParcelState(nextParcel))) {
+                                roadModel.moveTo(salesman, nextParcel, time, SIMULATED_HEURISTIC);
+                                if (roadModel.equalPosition(salesman, nextParcel)) { // If reached the position make the pickup/delivery
+                                    pdpModel.service(salesman, nextParcel, time);
+                                }
+                            }
+                            if (pdpModel.getParcelState(nextParcel).isDelivered()) {
+                                deliveredParcelIndex++;
                             }
                         }
-                        if (PDPModel.ParcelState.IN_CARGO.equals(pdpModel.getParcelState(nextParcel))) {
-                            roadModel.moveTo(salesman, nextParcel, time, SIMULATED_HEURISTIC);
-                            if (roadModel.equalPosition(salesman, nextParcel)) { // If reached the position make the pickup/delivery
-                                pdpModel.service(salesman, nextParcel, time);
-                            }
+                    } else {
+                        // If all parcels were delivered go to depot
+                        roadModel.moveTo(salesman, depot, time);
+                        if (roadModel.equalPosition(salesman, depot)) {
+                            time.consumeAll();
                         }
-                        if (pdpModel.getParcelState(nextParcel).isDelivered()) {
-                            deliveredParcelIndex++;
-                        }
-                    }
-                } else {
-                    // If all parcels were delivered go to depot
-                    roadModel.moveTo(salesman, depot, time);
-                    if (roadModel.equalPosition(salesman, depot)) {
-                        time.consumeAll();
                     }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
             } finally {
                 releaseLock();
             }
-        }
-    }
-
-    private void logSalesman(TimeLapse time, Parcel nextParcel, int parcelId) {
-        try {
-            String msg = "Salesman = " + salesman.getId();
-            msg += " Parcel = " + parcelId;
-            msg += " TimeWindow = " + nextParcel.getDeliveryTimeWindow().begin() + "," + nextParcel.getDeliveryTimeWindow().end();
-            msg += " BeginService = " + salesman.getBeginService()[parcelId];
-            msg += " CurrentTime = " + time.getTime();
-            msg += " Route = " + StringUtils.join(salesman.getRoute().stream().map(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id).collect(Collectors.toList()), ",");
-            msg += "\n";
-            System.out.println(msg);
-            //FileUtils.writeStringToFile(new File("C:\\Temp\\salesman-" + salesman.getId()), msg, true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -124,5 +111,4 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
             salesman.getSemaphore().release();
         }
     }
-
 }

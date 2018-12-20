@@ -87,24 +87,12 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
     public void registerModelProvider(ModelProvider mp) {
         pdpModel = mp.getModel(PDPModel.class);
         roadModel = mp.getModel(RoadModel.class);
+        roadModel.getObjectsOfType(Salesman.class).forEach(salesman -> salesman.setSolver(this));
         initSolver();
     }
 
     @Override
     public void tick(TimeLapse timeLapse) {
-
-        // Compare routes
-        List<Salesman> salesmen = roadModel.getObjectsOfType(Salesman.class).stream().collect(Collectors.toList());
-        salesmen.sort(Comparator.comparing(Salesman::getId));
-        for (int i = 0; i < ants.bestSoFarAnt.tours.size(); i++) {
-            if (salesmen.get(i).getRoute().size() != ants.bestSoFarAnt.tours.get(i).size() - 2) {
-                System.err.println("Error");
-            }
-            for (int j = 0; j < ants.bestSoFarAnt.tours.get(i).size(); j++) {
-                
-            }
-        }
-
         boolean hasWorkToDo = knowParcels.size() != deliveredParcels.size();
         if (timeLapse.hasTimeLeft() && hasWorkToDo) {
             Set<Parcel> tickKnowParcels = getKnownParcels();
@@ -115,9 +103,8 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
             deliveredParcels.addAll(tickDeliveredParcels);
             int countNodes = tickKnowParcels.size();
             boolean isNewNodesAvailable = countNodes > 0;
-            boolean isNewNodesCommitted = !tickDeliveredParcels.isEmpty();
-            //check if new nodes are available (known) or there are parts (nodes) that must be committed from the tours of the best so far solution
-            if (isNewNodesAvailable || isNewNodesCommitted) {
+            //if there are new available nodes, update the list of available/known nodes (customer requests)
+            if (isNewNodesAvailable) {
                 //stop the execution of the ant colony thread
                 worker.terminate();
                 if (thread != null) {
@@ -129,17 +116,6 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                     }
                 }
                 threadStopped = true;
-                //if there are nodes to be committed
-                if (isNewNodesCommitted) {
-                    //commit necessary nodes after the ant colony execution is stopped
-                    tickDeliveredParcels.stream().forEach(parcel -> {
-                        int parcelId = ((IdPoint) parcel.getDeliveryLocation()).id;
-                        dynamicController.committedNodes[parcelId - 1] = true;
-                    });
-                }
-            }
-            //if there are new available nodes, update the list of available/known nodes (customer requests)
-            if (isNewNodesAvailable) {
                 try {
                     acquireLock();
                     String knowNodesMsg = countNodes + " new nodes became available (known): ";
@@ -216,6 +192,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                 //restart the ant colony thread
                 worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
                 worker.setSemaphore(semaphore);
+                worker.setBsfListener(this);
                 if (!statistics.isDiscreteTime) {
                     thread = new Thread(worker);
                     thread.start();
@@ -238,6 +215,10 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     }
 
+    public void commitParcel(Parcel parcel) {
+        int parcelId = ((IdPoint) parcel.getDeliveryLocation()).id;
+        dynamicController.committedNodes[parcelId - 1] = true;
+    }
 
     private void acquireLock() {
         if (semaphore != null) {
@@ -257,11 +238,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     @Override
     public void afterTick(TimeLapse timeLapse) {
-
-    }
-
-    private Set<Parcel> getPickedParcels() {
-        return knowParcels.stream().filter(parcel -> pdpModel.getParcelState(parcel).isPickedUp()).collect(Collectors.toSet());
+        DebuggerUtils.compareRoutes(roadModel, ants);
     }
 
     private void initSolver() {
@@ -291,6 +268,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         vrptwAcs.initTry(vrptw);
         knowParcels = getKnownParcels();
         onBSFFound(ants.bestSoFarAnt);
+        DebuggerUtils.compareRoutes(roadModel, ants);
         //counter which stores the number of the current time slice that we are during the execution of the algorithm,
         //which simulates a working day
         dynamicController.idLastAvailableNode = 0;
@@ -299,6 +277,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         //start the ant colony
         worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
         worker.setSemaphore(semaphore);
+        worker.setBsfListener(this);
         thread = new Thread(worker);
         thread.start();
     }
@@ -395,6 +374,11 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         return parcels;
     }
 
+
+    private Set<Parcel> getPickedParcels() {
+        return knowParcels.stream().filter(parcel -> pdpModel.getParcelState(parcel).isPickedUp()).collect(Collectors.toSet());
+    }
+
     @Override
     public void onBSFFound(Ant bestSoFar) {
         Map<Integer, Parcel> parcelMap = getKnownParcels().stream().collect(Collectors.toMap(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id, Function.identity()));
@@ -404,9 +388,11 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
             salesman.getRoute().clear();
             salesman.setBeginService(bestSoFar.beginService);
             salesman.setSemaphore(semaphore);
+            salesman.setActivated(false);
         }
         for (int i = 0; i < bestSoFar.tours.size(); i++) {
             List<Integer> tour = bestSoFar.tours.get(i);
+            salesmen.get(i).setActivated(true);
             for (int j = 1; j < tour.size() - 1; j++) {
                 salesmen.get(i).getRoute().add(parcelMap.get(tour.get(j) + 1));
             }
