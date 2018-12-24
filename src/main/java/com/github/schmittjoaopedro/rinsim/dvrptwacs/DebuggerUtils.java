@@ -79,7 +79,7 @@ public class DebuggerUtils {
         }
     }
 
-    public static void printAllRoutesAndDeliveries(RoadModel roadModel, PDPModel pdpModel, Set<Parcel> knowParcels, boolean logConsole) {
+    public static void validateAllRoutesAndDeliveries(RoadModel roadModel, PDPModel pdpModel, Set<Parcel> knowParcels, boolean logConsole) {
         List<Salesman> salesmen = roadModel.getObjectsOfType(Salesman.class).stream().collect(Collectors.toList());
         Map<Integer, Integer> parcelsNumber = new HashMap<>();
         salesmen.sort(Comparator.comparing(Salesman::getId));

@@ -160,7 +160,7 @@ public class MMAS_TSP_Test {
         assertThat(mmas_tsp.getIterationStatistics().get(14).getDiversity()).isEqualTo(43.66646464646465);
         assertThat(mmas_tsp.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(21644);
 
-        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(20000);
         assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
 
         mmas_tsp.getGlobalStatistics().getTimeStatistics().forEach((key, value) -> {
@@ -297,7 +297,7 @@ public class MMAS_TSP_Test {
         assertThat(mmas_tsp.getIterationStatistics().get(14).getDiversity()).isEqualTo(9.6635175879397);
         assertThat(mmas_tsp.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(30074);
 
-        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(60000);
+        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(100000);
         assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
 
         mmas_tsp.getGlobalStatistics().getTimeStatistics().forEach((key, value) -> {
@@ -434,7 +434,7 @@ public class MMAS_TSP_Test {
         assertThat(mmas_tsp.getIterationStatistics().get(14).getDiversity()).isEqualTo(95.09130653266331);
         assertThat(mmas_tsp.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(29772);
 
-        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(60000);
+        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(100000);
         assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
 
         mmas_tsp.getGlobalStatistics().getTimeStatistics().forEach((key, value) -> {
@@ -848,7 +848,7 @@ public class MMAS_TSP_Test {
         assertThat(mmas_tsp.getIterationStatistics().get(14).getDiversity()).isEqualTo(17.383612903225806);
         assertThat(mmas_tsp.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(70165.09999999999);
 
-        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(20000);
+        assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(50000);
         assertThat(mmas_tsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
 
         mmas_tsp.getGlobalStatistics().getTimeStatistics().forEach((key, value) -> {

@@ -288,7 +288,7 @@ public class MMAS_ATSP_Test {
         assertThat(TestUtils.round(mmas_atsp.getIterationStatistics().get(14).getDiversity())).isEqualTo(9.88);
         assertThat(TestUtils.round(mmas_atsp.getIterationStatistics().get(14).getBestSoFar())).isEqualTo(30670);
 
-        assertThat(mmas_atsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(60000);
+        assertThat(mmas_atsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(70000);
         assertThat(mmas_atsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
 
         mmas_atsp.getGlobalStatistics().getTimeStatistics().forEach((key, value) -> {
@@ -425,7 +425,7 @@ public class MMAS_ATSP_Test {
         assertThat(TestUtils.round(mmas_atsp.getIterationStatistics().get(14).getDiversity())).isEqualTo(11.11);
         assertThat(TestUtils.round(mmas_atsp.getIterationStatistics().get(14).getBestSoFar())).isEqualTo(30958);
 
-        assertThat(mmas_atsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(60000);
+        assertThat(mmas_atsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(70000);
         assertThat(mmas_atsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
 
         mmas_atsp.getGlobalStatistics().getTimeStatistics().forEach((key, value) -> {

@@ -1308,7 +1308,7 @@ public class MMAS_MEM_US_MADTSP_Test {
         TestUtils.checkValues(mmas_mem_us_madtsp.getIterationStatistics(), 995, 29682.122291926462, 1.837456774505355E-11, 0.5233333333333333, 0.0, 29682.122291926444);
         TestUtils.checkValues(mmas_mem_us_madtsp.getIterationStatistics(), 1000, 29682.122291926462, 1.837456774505355E-11, 0.5233333333333333, 0.0, 29682.122291926444);
 
-        assertThat(mmas_mem_us_madtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(20000);
+        assertThat(mmas_mem_us_madtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(30000);
         assertThat(mmas_mem_us_madtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 

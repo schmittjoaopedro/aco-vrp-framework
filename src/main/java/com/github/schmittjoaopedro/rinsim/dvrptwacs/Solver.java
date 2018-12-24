@@ -95,18 +95,16 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     @Override
     public void tick(TimeLapse timeLapse) {
+        knowParcels = getKnownParcels();
         boolean hasWorkToDo = knowParcels.size() != deliveredParcels.size();
         try {
             acquireLock();
             //waitSolverTimeSliceFinish();
             if (timeLapse.hasTimeLeft() && hasWorkToDo) {
-                Set<Parcel> tickKnowParcels = getKnownParcels();
                 Set<Parcel> tickDeliveredParcels = getPickedParcels();
-                tickKnowParcels.removeAll(knowParcels);
                 tickDeliveredParcels.removeAll(deliveredParcels);
-                knowParcels.addAll(tickKnowParcels);
                 deliveredParcels.addAll(tickDeliveredParcels);
-                int countNodes = tickKnowParcels.size();
+                int countNodes = knowParcels.size() - vrptw.getIdAvailableRequests().size();
                 boolean isNewNodesAvailable = countNodes > 0;
                 //stop solver
                 if (isNewNodesAvailable || !worker.isRunning()) {
@@ -116,9 +114,11 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                 if (isNewNodesAvailable) {
                     String knowNodesMsg = countNodes + " new nodes became available (known): ";
                     ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
-                    ArrayList<Integer> newAvailableIdNodes = new ArrayList<>(tickKnowParcels.stream()
+                    ArrayList<Integer> newAvailableIdNodes = new ArrayList<>(knowParcels.stream()
+                            .filter(parcel -> !idKnownRequests.contains(((IdPoint) parcel.getDeliveryLocation()).id - 1))
                             .map(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id - 1)
                             .collect(Collectors.toList()));
+                    newAvailableIdNodes.sort(Comparator.naturalOrder());
                     for (int id : newAvailableIdNodes) {
                         idKnownRequests.add(id);
                         knowNodesMsg += (id + 1) + " ";
@@ -199,6 +199,13 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         } finally {
             releaseLock();
         }
+        // Validate routes constructed
+        DebuggerUtils.compareRoutes(roadModel, ants);
+        DebuggerUtils.validateAllRoutesAndDeliveries(roadModel, pdpModel, knowParcels, false);
+    }
+
+    @Override
+    public void afterTick(TimeLapse timeLapse) {
 
     }
 
@@ -206,7 +213,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         //stop the execution of the ant colony thread
         worker.terminate();
 //        if (thread != null) {
-            //wait for the thread to stop
+        //wait for the thread to stop
 //            try {
 //                thread.join();
 //            } catch (InterruptedException e) {
@@ -245,11 +252,6 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         if (semaphore != null) {
             semaphore.release();
         }
-    }
-
-    @Override
-    public void afterTick(TimeLapse timeLapse) {
-        DebuggerUtils.compareRoutes(roadModel, ants);
     }
 
     private void initSolver() {

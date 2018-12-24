@@ -335,7 +335,7 @@ public class MMAS_MEM_US_ADTSP_Test {
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 995, 28581.08978096105, 2069.362405399249, 1.67, 23.64734693877551, 24001.11271351125);
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 1000, 28408.662380038866, 2121.5053950543374, 1.645, 23.346938775510203, 24001.11271351125);
 
-        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(20000);
         assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
@@ -699,7 +699,7 @@ public class MMAS_MEM_US_ADTSP_Test {
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 995, 38531.14363817312, 2507.0161716819566, 2.52, 43.09142857142857, 31128.809813599266);
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 1000, 37309.68161998837, 2535.208432545834, 2.63, 42.12816326530612, 29107.173045155472);
 
-        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(10000);
+        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(20000);
         assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
@@ -1204,7 +1204,7 @@ public class MMAS_MEM_US_ADTSP_Test {
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 950, 37721.3555569665, 1845.8729163857988, 1.3225, 48.41061224489796, 33125.4927203086);
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 1000, 36249.80171558004, 1892.513959516385, 1.385, 43.09142857142857, 32578.769030904914);
 
-        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(40000);
+        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(50000);
         assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
@@ -1298,7 +1298,7 @@ public class MMAS_MEM_US_ADTSP_Test {
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 950, 46711.85637734377, 3038.981285826678, 2.3175, 78.84979591836735, 39474.55524235466);
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 1000, 46465.76551829296, 3796.947928912033, 2.1825, 76.34448979591836, 39474.55524235466);
 
-        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(40000);
+        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(50000);
         assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
@@ -1392,7 +1392,7 @@ public class MMAS_MEM_US_ADTSP_Test {
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 950, 55088.79978925771, 2629.6888758744917, 2.5725, 78.46448979591837, 46777.15975494125);
         TestUtils.checkValues(mmas_mem_us_adtsp.getIterationStatistics(), 1000, 54602.52160324519, 2615.968715098641, 2.395, 72.05469387755102, 46777.15975494125);
 
-        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(40000);
+        assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(50000);
         assertThat(mmas_mem_us_adtsp.getGlobalStatistics().getTimeStatistics().get("MMAS Initialization")).isLessThan(150);
     }
 
