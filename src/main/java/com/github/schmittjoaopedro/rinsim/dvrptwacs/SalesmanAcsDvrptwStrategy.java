@@ -9,11 +9,6 @@ import com.github.rinde.rinsim.core.model.time.TimeLapse;
 import com.github.schmittjoaopedro.rinsim.IdPoint;
 import com.github.schmittjoaopedro.rinsim.Salesman;
 import com.github.schmittjoaopedro.rinsim.SalesmanStrategy;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.util.stream.Collectors;
 
 public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
 
@@ -26,8 +21,6 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
     protected PDPModel pdpModel;
     protected Depot depot;
 
-    private int deliveredParcelIndex = 0;
-
     public SalesmanAcsDvrptwStrategy() {
     }
 
@@ -39,7 +32,6 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
         salesman = (Salesman) vehicle;
         salesman.setDepot(depot);
         salesman.setId(getAndIncrementVehicleIdx());
-        deliveredParcelIndex = 0;
     }
 
     @Override
@@ -49,12 +41,12 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
             try {
                 acquireLock();
                 if (!salesman.getRoute().isEmpty()) {
+                    int deliveredParcelIndex = getLastCommittedIndex();
                     if (deliveredParcelIndex < salesman.getRoute().size()) {
                         nextParcel = salesman.getRoute().get(deliveredParcelIndex);
                     }
                     if (nextParcel != null) {
                         int parcelId = ((IdPoint) nextParcel.getDeliveryLocation()).id;
-                        DebuggerUtils.logSalesman(pdpModel, salesman, time, nextParcel, parcelId, false);
                         if (Math.round(salesman.getBeginService()[parcelId]) <= time.getTime()) {
                             if (salesman.getSolver() != null) {
                                 salesman.getSolver().commitParcel(nextParcel);
@@ -72,9 +64,7 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
                                     pdpModel.service(salesman, nextParcel, time);
                                 }
                             }
-                            if (pdpModel.getParcelState(nextParcel).isDelivered()) {
-                                deliveredParcelIndex++;
-                            }
+                            salesman.getRouteTrace().add(DebuggerUtils.getSalesmanCurrentRoute(pdpModel, salesman, time, nextParcel, parcelId));
                         }
                     } else {
                         // If all parcels were delivered go to depot
@@ -88,6 +78,18 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
                 releaseLock();
             }
         }
+    }
+
+    private int getLastCommittedIndex() {
+        int i = 0;
+        for (Parcel parcel : salesman.getRoute()) {
+            if (pdpModel.getParcelState(parcel).isDelivered()) {
+                i++;
+            } else {
+                break;
+            }
+        }
+        return i;
     }
 
     private static synchronized int getAndIncrementVehicleIdx() {

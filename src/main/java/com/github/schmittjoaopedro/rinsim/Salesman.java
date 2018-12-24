@@ -25,6 +25,8 @@ public class Salesman extends Vehicle {
 
     private Solver solver;
 
+    private List<String> routeTrace = new ArrayList<>();
+
     private boolean isActivated = false;
 
     public Salesman(VehicleDTO dto, SalesmanStrategy vs) {
@@ -98,5 +100,13 @@ public class Salesman extends Vehicle {
 
     public void setActivated(boolean activated) {
         isActivated = activated;
+    }
+
+    public List<String> getRouteTrace() {
+        return routeTrace;
+    }
+
+    public void setRouteTrace(List<String> routeTrace) {
+        this.routeTrace = routeTrace;
     }
 }

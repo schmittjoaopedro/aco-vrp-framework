@@ -28,6 +28,8 @@ public class VRPTW_ACS implements Runnable {
 
     private Semaphore semaphore;
 
+    private int noMaxIterations = 300;
+
     /**
      * indicates whether local search is used in the ACO algorithm
      **/
@@ -338,7 +340,8 @@ public class VRPTW_ACS implements Runnable {
                 updateStatistics(vrptw);
                 pheromoneTrailUpdate();
                 //force the ant colony thread to stop its execution
-                if (counter > 300) {
+                //System.out.print(counter + ",");
+                if (counter >= noMaxIterations) {
                     isRunning = false;
                 }
                 if (statistics.isDiscreteTime) {
@@ -416,5 +419,21 @@ public class VRPTW_ACS implements Runnable {
 
     public void setSemaphore(Semaphore semaphore) {
         this.semaphore = semaphore;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    public int getNoMaxIterations() {
+        return noMaxIterations;
+    }
+
+    public void setNoMaxIterations(int noMaxIterations) {
+        this.noMaxIterations = noMaxIterations;
     }
 }

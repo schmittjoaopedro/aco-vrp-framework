@@ -11,7 +11,7 @@ public class LoggerOutput {
 
     public void log(String message) {
         if (print) {
-            System.out.println("assertThat(LoggerOutput.get(lineCount++)).isEqualTo(\"" + message + "\");");
+            System.out.println("assertThat(loggerOutput.get(lineCount++)).isEqualTo(\"" + message + "\");");
         }
         logOutput.add(message);
     }

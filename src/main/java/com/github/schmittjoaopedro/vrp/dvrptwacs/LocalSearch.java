@@ -96,6 +96,10 @@ public class LocalSearch {
                                     if (((round1 < round2) && (temp.usedVehicles == improvedAnt.usedVehicles))
                                             || (temp.usedVehicles < improvedAnt.usedVehicles)) {
                                         ants.copyFromTo(temp, improvedAnt, vrptw);
+                                        lastCommittedIndexes = new ArrayList<>();
+                                        for (int index = 0; index < improvedAnt.usedVehicles; index++) {
+                                            lastCommittedIndexes.add(dynamicController.getLastCommittedPos(improvedAnt, index));
+                                        }
                                         foundImprovement = true;
                                     }
                                     //restore previous solution constructed by ant
@@ -248,6 +252,10 @@ public class LocalSearch {
                                         if (round1 < round2) {
                                             ants.copyFromTo(temp, improvedAnt, vrptw);
                                             foundImprovement = true;
+                                            lastCommittedIndexes = new ArrayList<>();
+                                            for (int index = 0; index < improvedAnt.usedVehicles; index++) {
+                                                lastCommittedIndexes.add(dynamicController.getLastCommittedPos(improvedAnt, index));
+                                            }
                                         }
                                         //restore previous solution constructed by ant
                                         ants.copyFromTo(ant, temp, vrptw);

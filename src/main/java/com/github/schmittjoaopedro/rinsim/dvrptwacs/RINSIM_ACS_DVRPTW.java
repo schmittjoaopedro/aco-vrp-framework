@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.rinsim.dvrptwacs;
 
 import com.github.rinde.rinsim.core.Simulator;
 import com.github.rinde.rinsim.core.model.pdp.*;
+import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.road.RoadModelBuilders;
 import com.github.rinde.rinsim.core.model.time.TimeModel;
 import com.github.rinde.rinsim.geom.Point;
@@ -16,6 +17,7 @@ import com.github.schmittjoaopedro.rinsim.IdPoint;
 import com.github.schmittjoaopedro.rinsim.PathRenderer;
 import com.github.schmittjoaopedro.rinsim.Salesman;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
+import com.github.schmittjoaopedro.vrp.dvrptwacs.LoggerOutput;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.graphics.RGB;
@@ -24,10 +26,8 @@ import javax.measure.Measure;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.SI;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Things to do:
@@ -56,6 +56,10 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
 
     private List<TimedEvent> events = new ArrayList<>();
 
+    private StatisticsDTO statistics;
+
+    private Map<String, List<String>> salesmenRouteTrace;
+
     private IdPoint depotPoint;
 
     private double maxX;
@@ -80,6 +84,8 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
 
     private double scaleValue;
 
+    private Solver solver;
+
     public RINSIM_ACS_DVRPTW(File problemFile, boolean useGui) throws Exception {
         Iterator<String> problemDataLines = Arrays.asList(FileUtils.readFileToString(problemFile, "UTF-8").split("\n")).iterator();
         setProblemName(problemFile);
@@ -95,6 +101,16 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
     @Override
     public void run() {
         simulator.start();
+        statistics = simulator.getModelProvider().getModel(StatsTracker.class).getStatistics();
+        salesmenRouteTrace = simulator.getModelProvider()
+                .getModel(RoadModel.class)
+                .getObjectsOfType(Salesman.class)
+                .stream()
+                .collect(Collectors.toMap(
+                        salesman -> "Salesman-" + salesman.getId(),
+                        Salesman::getRouteTrace
+                ));
+
     }
 
     private void setSimulator(File problemFile, boolean useGui) {
@@ -102,13 +118,14 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
         Simulator.Builder simulatorBuilder = Simulator.builder();
         simulatorBuilder.setRandomSeed(123L);
         // Add events handler
+        solver = new Solver(problemFile, 1, timeSlices, workingDay);
         simulatorBuilder.addModel(
                 ScenarioController
                         .builder(scenario)
                         .withEventHandler(AddDepotEvent.class, AddDepotEvent.defaultHandler())
                         .withEventHandler(AddParcelEvent.class, AddParcelEvent.defaultHandler())
                         .withEventHandler(TimeOutEvent.class, TimeOutEvent.ignoreHandler())
-                        .withEventHandler(AddSolverEvent.class, (evt, sim) -> sim.register(new Solver(problemFile, 1, timeSlices, workingDay)))
+                        .withEventHandler(AddSolverEvent.class, (evt, sim) -> sim.register(solver))
                         .withEventHandler(AddVehicleEvent.class,
                                 (evt, sim) -> sim.register(new Salesman(evt.getVehicleDTO(), new SalesmanAcsDvrptwStrategy()))
                         ));
@@ -278,11 +295,23 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
         return normalizedData.toArray(new String[]{});
     }
 
+    public Map<String, List<String>> getSalesmenRouteTrace() {
+        return salesmenRouteTrace;
+    }
+
+    public LoggerOutput getSolverLogs() {
+        return solver.getLoggerOutput();
+    }
+
     private void calculateScaleValue() {
         scaleValue = (double) workingDay / depotEndTime;
     }
 
     private long getScaleValue(long time) {
         return Math.round((double) time * scaleValue);
+    }
+
+    public StatisticsDTO getStatistics() {
+        return statistics;
     }
 }

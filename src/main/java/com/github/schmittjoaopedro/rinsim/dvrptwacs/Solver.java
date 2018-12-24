@@ -56,7 +56,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     private VRPTW_ACS worker;
 
-    private Thread thread = null;
+    //private Thread thread = null;
 
     private Semaphore semaphore;
 
@@ -67,6 +67,8 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
     private Set<Parcel> knowParcels;
 
     private Set<Parcel> deliveredParcels = new HashSet<>();
+
+    private int noIterationsByTimeSlice = 10;
 
     public Solver(File problemFile, int seed, int timeSlices, int workingDay) {
         this.problemFile = problemFile;
@@ -94,30 +96,24 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
     @Override
     public void tick(TimeLapse timeLapse) {
         boolean hasWorkToDo = knowParcels.size() != deliveredParcels.size();
-        if (timeLapse.hasTimeLeft() && hasWorkToDo) {
-            Set<Parcel> tickKnowParcels = getKnownParcels();
-            Set<Parcel> tickDeliveredParcels = getPickedParcels();
-            tickKnowParcels.removeAll(knowParcels);
-            tickDeliveredParcels.removeAll(deliveredParcels);
-            knowParcels.addAll(tickKnowParcels);
-            deliveredParcels.addAll(tickDeliveredParcels);
-            int countNodes = tickKnowParcels.size();
-            boolean isNewNodesAvailable = countNodes > 0;
-            //if there are new available nodes, update the list of available/known nodes (customer requests)
-            if (isNewNodesAvailable) {
-                //stop the execution of the ant colony thread
-                worker.terminate();
-                if (thread != null) {
-                    //wait for the thread to stop
-                    try {
-                        thread.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        try {
+            acquireLock();
+            //waitSolverTimeSliceFinish();
+            if (timeLapse.hasTimeLeft() && hasWorkToDo) {
+                Set<Parcel> tickKnowParcels = getKnownParcels();
+                Set<Parcel> tickDeliveredParcels = getPickedParcels();
+                tickKnowParcels.removeAll(knowParcels);
+                tickDeliveredParcels.removeAll(deliveredParcels);
+                knowParcels.addAll(tickKnowParcels);
+                deliveredParcels.addAll(tickDeliveredParcels);
+                int countNodes = tickKnowParcels.size();
+                boolean isNewNodesAvailable = countNodes > 0;
+                //stop solver
+                if (isNewNodesAvailable || !worker.isRunning()) {
+                    stopSolver();
                 }
-                threadStopped = true;
-                try {
-                    acquireLock();
+                //if there are new available nodes, update the list of available/known nodes (customer requests)
+                if (isNewNodesAvailable) {
                     String knowNodesMsg = countNodes + " new nodes became available (known): ";
                     ArrayList<Integer> idKnownRequests = vrptw.getIdAvailableRequests();
                     ArrayList<Integer> newAvailableIdNodes = new ArrayList<>(tickKnowParcels.stream()
@@ -161,7 +157,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                             //determine nodes that are not visited yet in the current ant's solution
                             unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
                             //skip over committed (defined) nodes when performing insertion heuristic
-                            lastCommittedIndexes = new ArrayList<Integer>();
+                            lastCommittedIndexes = new ArrayList<>();
                             for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
                                 lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
                                 lastCommittedIndexes.add(lastPos);
@@ -183,36 +179,51 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                     }
                     onBSFFound(ants.bestSoFarAnt);
                     loggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.bestSoFarAnt.usedVehicles + " total tours length=" + ants.bestSoFarAnt.totalTourLength + " (scalled value = " + scalledValue + ")");
-                } finally {
-                    releaseLock();
                 }
             }
             //restart the colony thread
-            if (threadStopped) {
+            if (threadStopped || !worker.isRunning()) {
                 //restart the ant colony thread
                 worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-                worker.setSemaphore(semaphore);
+                //worker.setSemaphore(semaphore);
                 worker.setBsfListener(this);
-                if (!statistics.isDiscreteTime) {
-                    thread = new Thread(worker);
-                    thread.start();
-                }
+                worker.setNoMaxIterations(noIterationsByTimeSlice);
+                worker.run();
                 threadStopped = false;
+            } else {
+                stopSolver();
             }
-        } else {
-            //working day is over
-            //stop the worker thread
-            if (thread != null) {
-                worker.terminate();
-                //wait for the thread to stop
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            //System.out.println(timeLapse);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            releaseLock();
         }
 
+    }
+
+    private void stopSolver() {
+        //stop the execution of the ant colony thread
+        worker.terminate();
+//        if (thread != null) {
+            //wait for the thread to stop
+//            try {
+//                thread.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        threadStopped = true;
+    }
+
+    private void waitSolverTimeSliceFinish() {
+        while (worker.isRunning()) {
+            try {
+                Thread.sleep(2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void commitParcel(Parcel parcel) {
@@ -264,7 +275,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         vrptw.instance.nnList = result[0];
         vrptw.instance.nnListAll = result[1];
         vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-        vrptwAcs.setSemaphore(semaphore);
+        //vrptwAcs.setSemaphore(semaphore);
         vrptwAcs.initTry(vrptw);
         knowParcels = getKnownParcels();
         onBSFFound(ants.bestSoFarAnt);
@@ -276,10 +287,10 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         statistics.noSolutions = 0;
         //start the ant colony
         worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-        worker.setSemaphore(semaphore);
+        //worker.setSemaphore(semaphore);
         worker.setBsfListener(this);
-        thread = new Thread(worker);
-        thread.start();
+        worker.setNoMaxIterations(noIterationsByTimeSlice);
+        worker.run();
     }
 
     public void initProgram() {
@@ -397,5 +408,9 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                 salesmen.get(i).getRoute().add(parcelMap.get(tour.get(j) + 1));
             }
         }
+    }
+
+    public LoggerOutput getLoggerOutput() {
+        return loggerOutput;
     }
 }
