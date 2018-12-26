@@ -159,53 +159,7 @@ public class Solver {
                     ants.bestSoFarAnt.toVisit = countNodes;
                     //determine nodes that are not visited yet in the current ant's solution
                     ArrayList<Integer> unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
-                    //skip over committed (defined) nodes when performing insertion heuristic
-                    lastCommittedIndexes = new ArrayList<>();
-                    for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-                        lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
-                        lastCommittedIndexes.add(lastPos);
-                    }
-                    insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, 0, lastCommittedIndexes);
-                    //if there are still remaining unvisited cities from the ones that are available
-                    //insert an empty tour and add cities in it following nearest-neighbour heuristic
-                    int indexTour;
-                    while (ants.bestSoFarAnt.toVisit > 0) {
-                        ants.bestSoFarAnt.usedVehicles++;
-                        indexTour = ants.bestSoFarAnt.usedVehicles - 1;
-                        ants.bestSoFarAnt.tours.add(indexTour, new ArrayList<Integer>());
-                        ants.bestSoFarAnt.tours.get(indexTour).add(-1);
-                        ants.bestSoFarAnt.tourLengths.add(indexTour, 0.0);
-                        ants.bestSoFarAnt.currentQuantity.add(indexTour, 0.0);
-                        ants.bestSoFarAnt.currentTime.add(indexTour, 0.0);
-                        //try to add as many unvisited cities/nodes as possible in this newly created tour
-                        //following the nearest neighbour heuristic
-                        ants.chooseClosestNn(ants.bestSoFarAnt, indexTour, vrptw, vrptwAcs);
-                        //try to insert remaining cities using insertion heuristic
-                        if (ants.bestSoFarAnt.toVisit > 0) {
-                            //determine nodes that are not visited yet in the current ant's solution
-                            unroutedList = ants.getNonRoutedCustomers(ants.bestSoFarAnt, vrptw.getIdAvailableRequests());
-                            //skip over committed (defined) nodes when performing insertion heuristic
-                            lastCommittedIndexes = new ArrayList<Integer>();
-                            for (int index = 0; index < ants.bestSoFarAnt.usedVehicles; index++) {
-                                lastPos = dynamicController.getLastCommittedPos(ants.bestSoFarAnt, index);
-                                lastCommittedIndexes.add(lastPos);
-                            }
-                            insertionHeuristic.insertUnroutedCustomers(ants.bestSoFarAnt, vrptw, unroutedList, indexTour, lastCommittedIndexes);
-                        }
-                        //add the depot again to end this tour
-                        ants.bestSoFarAnt.tours.get(indexTour).add(-1);
-                    }
-                    sum = 0.0;
-                    for (int i = 0; i < ants.bestSoFarAnt.usedVehicles; i++) {
-                        ants.bestSoFarAnt.tourLengths.set(i, vrptw.computeTourLengthWithDepot(ants.bestSoFarAnt.tours.get(i)));
-                        sum += ants.bestSoFarAnt.tourLengths.get(i);
-                    }
-                    ants.bestSoFarAnt.totalTourLength = sum;
-                    double scalledValue = 0.0;
-                    if (dynamicController.scalingValue != 0) {
-                        scalledValue = ants.bestSoFarAnt.totalTourLength / dynamicController.scalingValue;
-                    }
-                    loggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.bestSoFarAnt.usedVehicles + " total tours length=" + ants.bestSoFarAnt.totalTourLength + " (scalled value = " + scalledValue + ")");
+                    Defaults.executeNewParcelInsertion(ants, vrptwAcs, dynamicController, vrptw, unroutedList, loggerOutput, insertionHeuristic);
                 }
                 currentTimeSlice++;
             }
