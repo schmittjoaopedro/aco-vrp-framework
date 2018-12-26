@@ -60,6 +60,8 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
 
     private Map<String, List<String>> salesmenRouteTrace;
 
+    private List<Salesman> salesmen = new ArrayList<>();
+
     private IdPoint depotPoint;
 
     private double maxX;
@@ -110,7 +112,7 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
                         salesman -> "Salesman-" + salesman.getId(),
                         Salesman::getRouteTrace
                 ));
-
+        solver.finishStatistics();
     }
 
     private void setSimulator(File problemFile, boolean useGui) {
@@ -127,7 +129,12 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
                         .withEventHandler(TimeOutEvent.class, TimeOutEvent.ignoreHandler())
                         .withEventHandler(AddSolverEvent.class, (evt, sim) -> sim.register(solver))
                         .withEventHandler(AddVehicleEvent.class,
-                                (evt, sim) -> sim.register(new Salesman(evt.getVehicleDTO(), new SalesmanAcsDvrptwStrategy()))
+                                (evt, sim) -> {
+                                    Salesman salesman = new Salesman(evt.getVehicleDTO(), new SalesmanAcsDvrptwStrategy());
+                                    salesman.setId(salesmen.size());
+                                    salesmen.add(salesman);
+                                    sim.register(salesman);
+                                }
                         ));
         if (useGui) {
             // Add GUI visualizer

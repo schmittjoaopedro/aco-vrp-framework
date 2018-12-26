@@ -12,8 +12,6 @@ import com.github.schmittjoaopedro.rinsim.SalesmanStrategy;
 
 public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
 
-    private static int globalVehicleIdx;
-
 
     protected SimulatedHeuristic SIMULATED_HEURISTIC = new SimulatedHeuristic();
     protected Salesman salesman;
@@ -31,7 +29,6 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
         depot = rm.getObjectsOfType(Depot.class).iterator().next();
         salesman = (Salesman) vehicle;
         salesman.setDepot(depot);
-        salesman.setId(getAndIncrementVehicleIdx());
     }
 
     @Override
@@ -90,12 +87,6 @@ public class SalesmanAcsDvrptwStrategy implements SalesmanStrategy {
             }
         }
         return i;
-    }
-
-    private static synchronized int getAndIncrementVehicleIdx() {
-        int vehicleIdx = SalesmanAcsDvrptwStrategy.globalVehicleIdx;
-        SalesmanAcsDvrptwStrategy.globalVehicleIdx++;
-        return vehicleIdx;
     }
 
     private void acquireLock() {

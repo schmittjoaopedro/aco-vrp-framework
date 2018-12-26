@@ -74,7 +74,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         this.problemFile = problemFile;
         this.antSystem = "z"; // Use ACS (Ant Colony System)
         this.loggerOutput = new LoggerOutput();
-        this.loggerOutput.setPrint(true);
+        this.loggerOutput.setPrint(false);
         this.dynamicController = new DynamicController(this.loggerOutput, workingDay, timeSlices);
         this.utilities = new Utilities();
         this.utilities.setSeed(seed);
@@ -409,6 +409,36 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
             for (int j = 1; j < tour.size() - 1; j++) {
                 salesmen.get(i).getRoute().add(parcelMap.get(tour.get(j) + 1));
             }
+        }
+    }
+
+    public void finishStatistics() {
+        //end of the working day; try final improvements of the best so far solution
+        //by applying iterated relocate multiple route and exchange multiple route local search operators
+        double scalledValue = 0.0;
+        if (dynamicController.scalingValue != 0) {
+            scalledValue = ants.bestSoFarAnt.totalTourLength / dynamicController.scalingValue;
+        }
+        loggerOutput.log("Final best solution >> No. of used vehicles=" + ants.bestSoFarAnt.usedVehicles + " total tours length=" + ants.bestSoFarAnt.totalTourLength + " (scalled value = " + scalledValue + ")");
+        String finalRouteStr = "";
+        for (int i = 0; i < ants.bestSoFarAnt.usedVehicles; i++) {
+            int tourLength = ants.bestSoFarAnt.tours.get(i).size();
+            finalRouteStr = "";
+            for (int j = 0; j < tourLength; j++) {
+                int city = ants.bestSoFarAnt.tours.get(i).get(j);
+                city = city + 1;  //so as to correspond to the city indexes from the VRPTW input file
+                finalRouteStr += (city + " ");
+            }
+            loggerOutput.log(finalRouteStr);
+        }
+        loggerOutput.log("Total number of evaluations: " + statistics.noEvaluations);
+        loggerOutput.log("Total number of feasible solutions: " + statistics.noSolutions);
+        boolean isValid = vrptwAcs.checkFeasibility(ants.bestSoFarAnt, vrptw, true);
+        if (isValid) {
+            loggerOutput.log("The final solution is valid (feasible)..");
+            //utilities.plotResult(vrptw, ants.bestSoFarAnt, 1800, 900);
+        } else {
+            loggerOutput.log("The final solution is not valid (feasible)..");
         }
     }
 
