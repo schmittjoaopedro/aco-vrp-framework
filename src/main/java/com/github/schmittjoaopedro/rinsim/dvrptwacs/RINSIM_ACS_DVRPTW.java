@@ -3,7 +3,6 @@ package com.github.schmittjoaopedro.rinsim.dvrptwacs;
 import com.github.rinde.rinsim.core.Simulator;
 import com.github.rinde.rinsim.core.SimulatorAPI;
 import com.github.rinde.rinsim.core.model.pdp.*;
-import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.road.RoadModelBuilders;
 import com.github.rinde.rinsim.core.model.time.TimeModel;
 import com.github.rinde.rinsim.geom.Point;
@@ -29,7 +28,6 @@ import javax.measure.unit.SI;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.Semaphore;
-import java.util.stream.Collectors;
 
 /**
  * Things to do:
