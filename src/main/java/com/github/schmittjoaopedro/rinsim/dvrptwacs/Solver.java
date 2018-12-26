@@ -19,7 +19,7 @@ import java.util.concurrent.Semaphore;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Solver implements ModelReceiver, TickListener, BSFListener {
+public class Solver implements ModelReceiver, TickListener, BestSoFarListener, DeliveryListener {
 
     /* RimSim attributes */
 
@@ -56,8 +56,6 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     private VRPTW_ACS worker;
 
-    //private Thread thread = null;
-
     private Semaphore semaphore;
 
     boolean threadStopped = false;
@@ -70,7 +68,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     private int noIterationsByTimeSlice = 10;
 
-    public Solver(File problemFile, int seed, int timeSlices, int workingDay) {
+    public Solver(Semaphore semaphore, File problemFile, int seed, int timeSlices, int workingDay) {
         this.problemFile = problemFile;
         this.antSystem = "z"; // Use ACS (Ant Colony System)
         this.loggerOutput = new LoggerOutput();
@@ -82,14 +80,13 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         this.insertionHeuristic = new InsertionHeuristic(this.loggerOutput);
         this.ants = new Ants(this.dynamicController, this.utilities, this.insertionHeuristic, this.loggerOutput);
         this.timer = new Timer(this.statistics);
-        this.semaphore = new Semaphore(1, true);
+        this.semaphore = semaphore;
     }
 
     @Override
     public void registerModelProvider(ModelProvider mp) {
         pdpModel = mp.getModel(PDPModel.class);
         roadModel = mp.getModel(RoadModel.class);
-        roadModel.getObjectsOfType(Salesman.class).forEach(salesman -> salesman.setSolver(this));
         initSolver();
     }
 
@@ -99,7 +96,6 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         boolean hasWorkToDo = knowParcels.size() != deliveredParcels.size();
         try {
             acquireLock();
-            //waitSolverTimeSliceFinish();
             if (timeLapse.hasTimeLeft() && hasWorkToDo) {
                 Set<Parcel> tickDeliveredParcels = getPickedParcels();
                 tickDeliveredParcels.removeAll(deliveredParcels);
@@ -177,16 +173,14 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
                     if (dynamicController.scalingValue != 0) {
                         scalledValue = ants.bestSoFarAnt.totalTourLength / dynamicController.scalingValue;
                     }
-                    onBSFFound(ants.bestSoFarAnt);
+                    onBestSoFarFound(ants.bestSoFarAnt);
                     loggerOutput.log("Best ant after inserting the new available nodes>> No. of used vehicles=" + ants.bestSoFarAnt.usedVehicles + " total tours length=" + ants.bestSoFarAnt.totalTourLength + " (scalled value = " + scalledValue + ")");
                 }
             }
-            //restart the colony thread
             if (threadStopped || !worker.isRunning()) {
                 //restart the ant colony thread
                 worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-                //worker.setSemaphore(semaphore);
-                worker.setBsfListener(this);
+                worker.setBestSoFarListener(this);
                 worker.setNoMaxIterations(noIterationsByTimeSlice);
                 worker.run();
                 threadStopped = false;
@@ -206,52 +200,31 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
 
     @Override
     public void afterTick(TimeLapse timeLapse) {
-
+        // Do nothing
     }
 
     private void stopSolver() {
         //stop the execution of the ant colony thread
         worker.terminate();
-//        if (thread != null) {
-        //wait for the thread to stop
-//            try {
-//                thread.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
         threadStopped = true;
     }
 
-    private void waitSolverTimeSliceFinish() {
-        while (worker.isRunning()) {
-            try {
-                Thread.sleep(2);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void commitParcel(Parcel parcel) {
+    @Override
+    public void onParcelDelivered(Parcel parcel) {
         int parcelId = ((IdPoint) parcel.getDeliveryLocation()).id;
         dynamicController.committedNodes[parcelId - 1] = true;
     }
 
     private void acquireLock() {
-        if (semaphore != null) {
-            try {
-                semaphore.acquire();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     private void releaseLock() {
-        if (semaphore != null) {
-            semaphore.release();
-        }
+        semaphore.release();
     }
 
     private void initSolver() {
@@ -277,10 +250,9 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         vrptw.instance.nnList = result[0];
         vrptw.instance.nnListAll = result[1];
         vrptwAcs = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-        //vrptwAcs.setSemaphore(semaphore);
         vrptwAcs.initTry(vrptw);
         knowParcels = getKnownParcels();
-        onBSFFound(ants.bestSoFarAnt);
+        onBestSoFarFound(ants.bestSoFarAnt);
         DebuggerUtils.compareRoutes(roadModel, ants);
         //counter which stores the number of the current time slice that we are during the execution of the algorithm,
         //which simulates a working day
@@ -289,8 +261,7 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
         statistics.noSolutions = 0;
         //start the ant colony
         worker = new VRPTW_ACS(threadStopped, vrptw, dynamicController, ants, statistics, timer, loggerOutput);
-        //worker.setSemaphore(semaphore);
-        worker.setBsfListener(this);
+        worker.setBestSoFarListener(this);
         worker.setNoMaxIterations(noIterationsByTimeSlice);
         worker.run();
     }
@@ -393,19 +364,18 @@ public class Solver implements ModelReceiver, TickListener, BSFListener {
     }
 
     @Override
-    public void onBSFFound(Ant bestSoFar) {
+    public void onBestSoFarFound(Ant bestSoFar) {
         Map<Integer, Parcel> parcelMap = getKnownParcels().stream().collect(Collectors.toMap(parcel -> ((IdPoint) parcel.getDeliveryLocation()).id, Function.identity()));
         List<Salesman> salesmen = roadModel.getObjectsOfType(Salesman.class).stream().collect(Collectors.toList());
         salesmen.sort(Comparator.comparing(Salesman::getId));
         for (Salesman salesman : salesmen) {
             salesman.getRoute().clear();
             salesman.setBeginService(bestSoFar.beginService);
-            salesman.setSemaphore(semaphore);
-            salesman.setActivated(false);
+            salesman.setActive(false);
         }
         for (int i = 0; i < bestSoFar.tours.size(); i++) {
             List<Integer> tour = bestSoFar.tours.get(i);
-            salesmen.get(i).setActivated(true);
+            salesmen.get(i).setActive(true);
             for (int j = 1; j < tour.size() - 1; j++) {
                 salesmen.get(i).getRoute().add(parcelMap.get(tour.get(j) + 1));
             }

@@ -1,9 +1,8 @@
 package com.github.schmittjoaopedro.vrp.dvrptwacs;
 
-import com.github.schmittjoaopedro.rinsim.dvrptwacs.BSFListener;
+import com.github.schmittjoaopedro.rinsim.dvrptwacs.BestSoFarListener;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 /* contains the main entry point for the implementation of ACO for solving the VRPTW problem on instances
  * belonging to Solomon benchmark
@@ -24,9 +23,7 @@ public class VRPTW_ACS implements Runnable {
 
     private int counter = 0;
 
-    private BSFListener bsfListener;
-
-    private Semaphore semaphore;
+    private BestSoFarListener bestSoFarListener;
 
     private int noMaxIterations = 300;
 
@@ -207,22 +204,6 @@ public class VRPTW_ACS implements Runnable {
         statistics.nTours += (ants.nAnts * ants.ants[0].usedVehicles); //each ant constructs a complete and closed tour
     }
 
-    private void acquireLock() {
-        if (semaphore != null) {
-            try {
-                semaphore.acquire();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    private void releaseLock() {
-        if (semaphore != null) {
-            semaphore.release();
-        }
-    }
-
     //initialize variables appropriately when starting a trial
     public void initTry(VRPTW vrptw) {
         timer.startTimers();
@@ -280,8 +261,8 @@ public class VRPTW_ACS implements Runnable {
                     || ((round1 < round2) && (ants.bestSoFarAnt.totalTourLength == Double.MAX_VALUE))) {
                 statistics.timeUsed = timer.elapsedTime();  //best solution found after timeUsed
                 ants.copyFromTo(a, ants.bestSoFarAnt, vrptw);
-                if (bsfListener != null) {
-                    bsfListener.onBSFFound(ants.bestSoFarAnt);
+                if (bestSoFarListener != null) {
+                    bestSoFarListener.onBestSoFarFound(ants.bestSoFarAnt);
                 }
                 scalingValue = dynamicController.getScalingValue();
                 if (scalingValue != 0) {
@@ -322,34 +303,29 @@ public class VRPTW_ACS implements Runnable {
     //(known so far) customer requests
     public void run() {
         while (isRunning) {
-            try {
-                acquireLock();
-                //the thread was restarted (i.e. it was previously stopped and started again)
-                if (threadRestarted) {
-                    //compute the new value for the initial pheromone trail based on the current best solution so far
-                    int noAvailableNodes = vrptw.getIdAvailableRequests().size();
-                    ants.trail0 = 1.0 / ((double) (noAvailableNodes + 1) * (double) ants.bestSoFarAnt.totalTourLength);
-                    //preserve a certain amount of the pheromones from the previous run of the ant colony
-                    ants.preservePheromones(vrptw.getIdAvailableRequests());
-                }
-                //do the optimization task (work)
-                constructSolutions(vrptw);
-                //increase evaluations counter
-                statistics.noEvaluations++;
-                counter++;
-                updateStatistics(vrptw);
-                pheromoneTrailUpdate();
-                //force the ant colony thread to stop its execution
-                //System.out.print(counter + ",");
-                if (counter >= noMaxIterations) {
-                    isRunning = false;
-                }
-                if (statistics.isDiscreteTime) {
-                    counter = 0;
-                    break;
-                }
-            } finally {
-                releaseLock();
+            //the thread was restarted (i.e. it was previously stopped and started again)
+            if (threadRestarted) {
+                //compute the new value for the initial pheromone trail based on the current best solution so far
+                int noAvailableNodes = vrptw.getIdAvailableRequests().size();
+                ants.trail0 = 1.0 / ((double) (noAvailableNodes + 1) * (double) ants.bestSoFarAnt.totalTourLength);
+                //preserve a certain amount of the pheromones from the previous run of the ant colony
+                ants.preservePheromones(vrptw.getIdAvailableRequests());
+            }
+            //do the optimization task (work)
+            constructSolutions(vrptw);
+            //increase evaluations counter
+            statistics.noEvaluations++;
+            counter++;
+            updateStatistics(vrptw);
+            pheromoneTrailUpdate();
+            //force the ant colony thread to stop its execution
+            //System.out.print(counter + ",");
+            if (counter >= noMaxIterations) {
+                isRunning = false;
+            }
+            if (statistics.isDiscreteTime) {
+                counter = 0;
+                break;
             }
         }
     }
@@ -405,20 +381,12 @@ public class VRPTW_ACS implements Runnable {
         isRunning = false;
     }
 
-    public BSFListener getBsfListener() {
-        return bsfListener;
+    public BestSoFarListener getBestSoFarListener() {
+        return bestSoFarListener;
     }
 
-    public void setBsfListener(BSFListener bsfListener) {
-        this.bsfListener = bsfListener;
-    }
-
-    public Semaphore getSemaphore() {
-        return semaphore;
-    }
-
-    public void setSemaphore(Semaphore semaphore) {
-        this.semaphore = semaphore;
+    public void setBestSoFarListener(BestSoFarListener bestSoFarListener) {
+        this.bestSoFarListener = bestSoFarListener;
     }
 
     public boolean isRunning() {

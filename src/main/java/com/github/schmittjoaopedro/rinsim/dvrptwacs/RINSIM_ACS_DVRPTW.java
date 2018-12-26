@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.rinsim.dvrptwacs;
 
 import com.github.rinde.rinsim.core.Simulator;
+import com.github.rinde.rinsim.core.SimulatorAPI;
 import com.github.rinde.rinsim.core.model.pdp.*;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.road.RoadModelBuilders;
@@ -27,6 +28,7 @@ import javax.measure.quantity.Velocity;
 import javax.measure.unit.SI;
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 /**
@@ -58,7 +60,7 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
 
     private StatisticsDTO statistics;
 
-    private Map<String, List<String>> salesmenRouteTrace;
+    private Map<String, List<String>> salesmenRouteTrace = new HashMap<>();;
 
     private List<Salesman> salesmen = new ArrayList<>();
 
@@ -88,6 +90,8 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
 
     private Solver solver;
 
+    private Semaphore semaphore;
+
     public RINSIM_ACS_DVRPTW(File problemFile, boolean useGui) throws Exception {
         Iterator<String> problemDataLines = Arrays.asList(FileUtils.readFileToString(problemFile, "UTF-8").split("\n")).iterator();
         setProblemName(problemFile);
@@ -104,23 +108,19 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
     public void run() {
         simulator.start();
         statistics = simulator.getModelProvider().getModel(StatsTracker.class).getStatistics();
-        salesmenRouteTrace = simulator.getModelProvider()
-                .getModel(RoadModel.class)
-                .getObjectsOfType(Salesman.class)
-                .stream()
-                .collect(Collectors.toMap(
-                        salesman -> "Salesman-" + salesman.getId(),
-                        Salesman::getRouteTrace
-                ));
         solver.finishStatistics();
     }
 
     private void setSimulator(File problemFile, boolean useGui) {
+        Simulator.Builder simulatorBuilder;
+
+        // Create dependencies
+        semaphore = new Semaphore(1, true);
+        solver = new Solver(semaphore, problemFile, 1, timeSlices, workingDay);
         // Create simulator
-        Simulator.Builder simulatorBuilder = Simulator.builder();
+        simulatorBuilder = Simulator.builder();
         simulatorBuilder.setRandomSeed(123L);
         // Add events handler
-        solver = new Solver(problemFile, 1, timeSlices, workingDay);
         simulatorBuilder.addModel(
                 ScenarioController
                         .builder(scenario)
@@ -128,14 +128,7 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
                         .withEventHandler(AddParcelEvent.class, AddParcelEvent.defaultHandler())
                         .withEventHandler(TimeOutEvent.class, TimeOutEvent.ignoreHandler())
                         .withEventHandler(AddSolverEvent.class, (evt, sim) -> sim.register(solver))
-                        .withEventHandler(AddVehicleEvent.class,
-                                (evt, sim) -> {
-                                    Salesman salesman = new Salesman(evt.getVehicleDTO(), new SalesmanAcsDvrptwStrategy());
-                                    salesman.setId(salesmen.size());
-                                    salesmen.add(salesman);
-                                    sim.register(salesman);
-                                }
-                        ));
+                        .withEventHandler(AddVehicleEvent.class, (evt, sim) -> createVehicle(evt.getVehicleDTO(), sim)));
         if (useGui) {
             // Add GUI visualizer
             simulatorBuilder.addModel(
@@ -151,11 +144,26 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
                             .withResolution(1024, 768)
                             .withAutoPlay()
                             .withAutoClose()
-                            // For testing we allow to change the speed up via the args.
-                            //.withSpeedUp(150)
                             .withTitleAppendix("Experiment example"));
         }
         simulator = simulatorBuilder.build();
+    }
+
+    private void createVehicle(VehicleDTO vehicleDTO, SimulatorAPI sim) {
+        Salesman salesman;
+        String salesmanId;
+        SalesmanAcsDvrptwStrategy salesmanStrategy;
+        List<String> routeTrace;
+        // Create new Salesman with custom strategy applied of the Necula algorithm
+        routeTrace = new ArrayList<>();
+        salesmanStrategy = new SalesmanAcsDvrptwStrategy(semaphore, solver);
+        salesman = new Salesman(vehicleDTO, salesmanStrategy);
+        salesman.setId(salesmen.size());
+        salesmanId = "Salesman-" + salesman.getId();
+        salesmenRouteTrace.put(salesmanId, routeTrace);
+        salesmanStrategy.setTraceRoute(routeTrace);
+        salesmen.add(salesman);
+        sim.register(salesman);
     }
 
     private void setScenario(File problemFile) {
@@ -270,7 +278,6 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
 
     private void setVehicleInformation(Iterator<String> problemDataLines) {
         String[] temp;
-        VehicleDTO vehicle;
         while (!problemDataLines.next().contains("VEHICLE")) ;
         problemDataLines.next(); // Skip line with "NUMBER		 CAPACITY";
         temp = getTabulatedData(problemDataLines.next());

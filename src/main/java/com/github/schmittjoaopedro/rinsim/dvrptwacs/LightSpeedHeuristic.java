@@ -10,7 +10,12 @@ import javax.measure.quantity.Length;
 import javax.measure.quantity.Velocity;
 import javax.measure.unit.Unit;
 
-public class SimulatedHeuristic implements GeomHeuristic {
+/**
+ * As DVRPTW proposed by Necula considers the matrix distance cost using travel time, we consider the heuristic used to
+ * calculate the vehicle speed of RinSim as non necessary because the cost returned by the heuristic was already
+ * calculated in the matrix distance cost.
+ */
+public class LightSpeedHeuristic implements GeomHeuristic {
 
     @Override
     public double estimateCost(Graph<?> graph, Point point, Point point1) {
@@ -23,7 +28,8 @@ public class SimulatedHeuristic implements GeomHeuristic {
     }
 
     @Override
-    public double calculateTravelTime(Graph<?> graph, Point point, Point point1, Unit<Length> unit, Measure<Double, Velocity> measure, Unit<Duration> unit1) {
+    public double calculateTravelTime(Graph<?> graph, Point point, Point point1, Unit<Length> unit,
+                                      Measure<Double, Velocity> measure, Unit<Duration> unit1) {
         return 0;
     }
 }

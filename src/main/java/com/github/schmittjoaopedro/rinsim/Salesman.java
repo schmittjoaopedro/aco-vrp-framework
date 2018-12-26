@@ -3,11 +3,9 @@ package com.github.schmittjoaopedro.rinsim;
 import com.github.rinde.rinsim.core.model.pdp.*;
 import com.github.rinde.rinsim.core.model.road.RoadModel;
 import com.github.rinde.rinsim.core.model.time.TimeLapse;
-import com.github.schmittjoaopedro.rinsim.dvrptwacs.Solver;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class Salesman extends Vehicle {
 
@@ -21,13 +19,7 @@ public class Salesman extends Vehicle {
 
     private Depot depot;
 
-    private Semaphore semaphore;
-
-    private Solver solver;
-
-    private List<String> routeTrace = new ArrayList<>();
-
-    private boolean isActivated = false;
+    private boolean active = false;
 
     public Salesman(VehicleDTO dto, SalesmanStrategy vs) {
         super(dto);
@@ -48,14 +40,6 @@ public class Salesman extends Vehicle {
     public List<Parcel> getRoute() {
         if (route == null) route = new ArrayList<>();
         return route;
-    }
-
-    public Solver getSolver() {
-        return solver;
-    }
-
-    public void setSolver(Solver solver) {
-        this.solver = solver;
     }
 
     public void setRoute(List<Parcel> route) {
@@ -86,27 +70,12 @@ public class Salesman extends Vehicle {
         this.id = id;
     }
 
-    public Semaphore getSemaphore() {
-        return semaphore;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setSemaphore(Semaphore semaphore) {
-        this.semaphore = semaphore;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public boolean isActivated() {
-        return isActivated;
-    }
-
-    public void setActivated(boolean activated) {
-        isActivated = activated;
-    }
-
-    public List<String> getRouteTrace() {
-        return routeTrace;
-    }
-
-    public void setRouteTrace(List<String> routeTrace) {
-        this.routeTrace = routeTrace;
-    }
 }

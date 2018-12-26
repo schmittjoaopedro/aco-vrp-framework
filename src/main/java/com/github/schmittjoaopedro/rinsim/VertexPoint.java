@@ -7,10 +7,6 @@ public class VertexPoint extends Point {
 
     private Vertex vertex;
 
-    public VertexPoint(double pX, double pY) {
-        super(pX, pY);
-    }
-
     public VertexPoint(Vertex vertex) {
         super(vertex.getX(), vertex.getY());
         this.vertex = vertex;
