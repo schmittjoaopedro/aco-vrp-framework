@@ -14,7 +14,7 @@ public class DVRPTW_ACS_Test {
 
     private static boolean discreteTime = true;
 
-    private static boolean printLog = true;
+    private static boolean printLog = false;
 
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dvrptw").getFile().substring(1)).toString();
