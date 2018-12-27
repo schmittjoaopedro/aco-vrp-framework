@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 
 import java.util.List;
+import java.util.Random;
 
 public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
 
@@ -22,15 +23,13 @@ public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
     private static final int OVAL_RADIUS_PX = 2;
     private static final int OVAL_DIAMETER_PX = 2 * OVAL_RADIUS_PX;
     private final Color foregroundInfo;
-    private final Color backgroundInfo;
-    private final Color black;
+    private final Device device;
 
     PathRenderer(RoadModel rm, PDPModel pm, Device d) {
         roadModel = rm;
         pdpModel = pm;
-        black = d.getSystemColor(SWT.COLOR_BLACK);
+        device = d;
         foregroundInfo = d.getSystemColor(SWT.COLOR_WHITE);
-        backgroundInfo = d.getSystemColor(SWT.COLOR_BLUE);
     }
 
     @Override
@@ -49,6 +48,7 @@ public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
         Point depotPosition;
         List<Parcel> route;
         Parcel parcel;
+        Color salesmanColor;
         for (final Salesman salesmen : roadModel.getObjectsOfType(Salesman.class)) {
             xPrev = 0;
             yPrev = 0;
@@ -56,10 +56,11 @@ public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
             depotPosition = roadModel.getPosition(salesmen.getDepot());
             xDept = vp.toCoordX((int) depotPosition.x);
             yDept = vp.toCoordY((int) depotPosition.y);
+            salesmanColor = getSalesmanColor(salesmen.getId(), device);
             // Draw route parcel locations and line connecting them
             for (int i = 0; i < route.size(); i++) {
                 parcel = route.get(i);
-                gc.setForeground(black);
+                gc.setForeground(salesmanColor);
                 parcelPosition = parcel.getDeliveryLocation();
                 xCurr = vp.toCoordX(parcelPosition.x);
                 yCurr = vp.toCoordY(parcelPosition.y);
@@ -76,9 +77,14 @@ public class PathRenderer extends CanvasRenderer.AbstractCanvasRenderer {
                     gc.drawLine(xCurr, yCurr, xDept, yDept);
                 }
             }
-            gc.setBackground(backgroundInfo);
+            gc.setBackground(salesmanColor);
             gc.setForeground(foregroundInfo);
         }
+    }
+
+    private Color getSalesmanColor(int salesmanId, Device d) {
+        Random random = new Random(salesmanId); // Each salesman has a different ID
+        return new Color(d, random.nextInt(255), random.nextInt(255), random.nextInt(255));
     }
 
     public static PathRenderer.Builder builder() {
