@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.tsp.aco;
 
+import com.github.schmittjoaopedro.tsp.aco.ls.opt2.Opt2Operator;
 import com.github.schmittjoaopedro.tsp.graph.Edge;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
@@ -12,21 +13,21 @@ import java.util.Random;
 /**
  * Adapted from Dorigo and Stutzle MMAS original implementation to work with graph structures
  * of adjacent lists.
- *
+ * <p>
  * Heuristic from: http://www.aco-metaheuristic.org/aco-code/public-software.html
  * Software based on: http://adibaba.github.io/ACOTSPJava/
- *
+ * <p>
  * Algorithm reference:
- *
+ * <p>
  * - T. Stützle and H. H. Hoos, Improving the Ant System: A detailed report on the MAX-MIN Ant System.
- *   Technical report AIDA-96-12, FG Intellektik, FB Informatik, TU Darmstadt, 1996. TR.AIDA-96-12.ps.gz
- *   Later published in part as The Max-Min Ant System and Local Search for the Travelling Salesman Problem,
- *   IEEE International Conference on Evolutionary Computation, Piscataway, T. Bäck, Z. Michalewicz and
- *   X. Yao (Eds.), IEEE Press, pp. 309-314, 1997. ICEC97.ps.gz
- *
+ * Technical report AIDA-96-12, FG Intellektik, FB Informatik, TU Darmstadt, 1996. TR.AIDA-96-12.ps.gz
+ * Later published in part as The Max-Min Ant System and Local Search for the Travelling Salesman Problem,
+ * IEEE International Conference on Evolutionary Computation, Piscataway, T. Bäck, Z. Michalewicz and
+ * X. Yao (Eds.), IEEE Press, pp. 309-314, 1997. ICEC97.ps.gz
+ * <p>
  * - Max-Min Ant System T. Stützle and H. H. Hoos, MAX-MIN Ant System. Future Generation Computer Systems.
- *   16(8):889--914,2000.
- *
+ * 16(8):889--914,2000.
+ * <p>
  * -
  */
 public class MMAS {
@@ -121,11 +122,15 @@ public class MMAS {
     }
 
     public void initTry() {
+        initTry(false);
+    }
+
+    public void initTry(boolean localSearch) {
         lambda = 0.05;
         restartIteration = 1;
         bestSoFar.setCost(Double.MAX_VALUE);
         foundBest = 0;
-        trailMax = 1.0 / ((rho) * nnTour());
+        trailMax = 1.0 / ((rho) * nnTour(localSearch));
         trailMin = trailMax / (2.0 * graph.getVertexCount());
         initPheromoneTrails(trailMax);
         computeTotalInfo();
@@ -190,7 +195,7 @@ public class MMAS {
         sort(v, v2, last + 1, right);
     }
 
-    private double nnTour() {
+    private double nnTour(boolean localSearch) {
         int phase = 0;
         double help;
         Ant ant = antPopulation.get(0);
@@ -201,6 +206,12 @@ public class MMAS {
             chooseClosestNext(ant, phase);
         }
         ant.getTour()[graph.getVertexCount()] = ant.getTour()[0];
+        if (localSearch) {
+            Opt2Operator opt2Operator = new Opt2Operator();
+            opt2Operator.init(graph, random, ant.getTour());
+            opt2Operator.optimize();
+            ant.setTour(opt2Operator.getResult());
+        }
         ant.setCost(fitnessEvaluation(ant.getTour()));
         help = ant.getCost();
         antEmptyMemory(ant);
@@ -407,6 +418,20 @@ public class MMAS {
         }
     }
 
+    public void computeNnListTotalInfo() {
+        int h;
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            for (int j = 0; j < getDepth(); j++) {
+                h = nnList[i][j].getId();
+                if (pheromone[i][h] < pheromone[h][i])
+                    /* force pheromone trails to be symmetric as much as possible */
+                    pheromone[h][i] = pheromone[i][h];
+                total[i][h] = Math.pow(pheromone[i][h], alpha) * Math.pow(heuristic[i][h], beta);
+                total[h][i] = total[i][h];
+            }
+        }
+    }
+
     public boolean updateBestSoFar() {
         Ant iterationBest = findBest();
         boolean found = false;
@@ -540,6 +565,19 @@ public class MMAS {
         }
     }
 
+    public void evaporationLocalSearch() {
+        int helpCity;
+        for (int i = 0; i < graph.getVertexCount(); i++) {
+            for (int j = 0; j < getDepth(); j++) {
+                helpCity = nnList[i][j].getId();
+                pheromone[i][helpCity] = (1 - rho) * pheromone[i][helpCity];
+                if (pheromone[i][helpCity] < trailMin) {
+                    pheromone[i][helpCity] = trailMin;
+                }
+            }
+        }
+    }
+
     public void checkPheromoneTrailLimits() {
         Iterator<Edge> edges = graph.getEdges();
         Edge edge;
@@ -560,7 +598,7 @@ public class MMAS {
             int h = ant.getTour()[i + 1];
             pheromone[j][h] = pheromone[j][h] + dTau;
             if (symmetric) {
-                pheromone[h][j] = pheromone[h][j] + dTau;
+                pheromone[h][j] = pheromone[j][h];
             }
         }
     }
@@ -703,5 +741,9 @@ public class MMAS {
 
     public void setPheromone(double[][] pheromone) {
         this.pheromone = pheromone;
+    }
+
+    public double[][] getTotal() {
+        return total;
     }
 }

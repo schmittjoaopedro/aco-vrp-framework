@@ -1,9 +1,8 @@
 package com.github.schmittjoaopedro.tsp.aco.ls.us;
 
 
-import com.github.schmittjoaopedro.tsp.graph.Edge;
+import com.github.schmittjoaopedro.tsp.aco.ls.LocalSearchUtils;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
-import com.github.schmittjoaopedro.tsp.graph.Vertex;
 
 /**
  * Adapted from C++ version proposed in:
@@ -43,7 +42,7 @@ public class USOperator {
         if (hasSufficientVertices(graph.getVertexCount())) { // number of minimum vertices for US
             this.tour = tour;
             this.graph = graph;
-            this.cost = fitnessEvaluation(tour);
+            this.cost = LocalSearchUtils.fitnessEvaluation(graph, tour);
             problemSize = graph.getVertexCount();
             tspFile = new CoordinatesGenius(graph.getVertexCount());
             for (int i = 0; i < graph.getVertexCount(); i++) {
@@ -66,60 +65,12 @@ public class USOperator {
             this.phase = phase;
             this.route = route;
             subTourOptimization = true;
-            createSubTourMap(route, phase, subGraphLength);
-            Graph newGraph = createSubGraph(graph, route[0], subGraphLength);
-            return init(newGraph, createSubTour());
+            subTourMap = LocalSearchUtils.createSubTourMap(route, phase, subGraphLength);
+            Graph newGraph = LocalSearchUtils.createSubGraph(subTourMap, graph, route[0], subGraphLength);
+            return init(newGraph, LocalSearchUtils.createSubTour(subTourMap));
         } else {
             return false;
         }
-    }
-
-    public int[] createSubTour() {
-        int[] vertexTour = new int[subTourMap.length + 1];
-        for (int i = 0; i < subTourMap.length; i++) {
-            vertexTour[i] = i;
-        }
-        vertexTour[subTourMap.length] = vertexTour[0];
-        return vertexTour;
-    }
-
-    public Graph createSubGraph(Graph graph, int toId, int subTourLength) {
-        Graph newGraph = new Graph();
-        for (int i = 0; i < subTourLength; i++) {
-            Vertex vertex = new Vertex(i);
-            vertex.setX(graph.getVertex(subTourMap[i]).getX());
-            vertex.setY(graph.getVertex(subTourMap[i]).getY());
-            newGraph.addVertex(vertex);
-        }
-        int edgeId = 0;
-        for (int i = 0; i < subTourLength; i++) {
-            for (int j = 0; j < subTourLength; j++) {
-                if (i != j) {
-                    Edge edge = new Edge(edgeId++);
-                    edge.setFrom(newGraph.getVertex(i));
-                    edge.setTo(newGraph.getVertex(j));
-                    edge.setCost(graph.getEdge(subTourMap[i], subTourMap[j]).getCost());
-                    edge.getFrom().getAdj().put(edge.getToId(), edge);
-                    newGraph.addEdge(edge);
-                }
-            }
-        }
-        for (int i = 1; i < subTourLength; i++) {
-            newGraph.getEdge(i, 0).setCost(graph.getEdge(subTourMap[i], toId).getCost());
-        }
-        return newGraph;
-    }
-
-    public void createSubTourMap(int[] route, int phase, int subTourLength) {
-        subTourMap = new int[subTourLength];
-        subTourMap[0] = route[phase];
-        for (int i = 1; i < subTourLength; i++) {
-            subTourMap[i] = route[phase + i];
-        }
-    }
-
-    public boolean hasSufficientVertices(int i) {
-        return i > 9;
     }
 
     public void optimize() {
@@ -145,22 +96,7 @@ public class USOperator {
     }
 
     public int[] getResult() {
-        if (subTourOptimization) {
-            for (int i = 1; i < subTourMap.length; i++) {
-                route[phase + i] = subTourMap[tour[i]];
-            }
-            return route;
-        } else {
-            return tour;
-        }
-    }
-
-    private double fitnessEvaluation(int[] tour) {
-        double cost = 0.0;
-        for (int i = 0; i < graph.getVertexCount(); i++) {
-            cost += graph.getEdge(tour[i], tour[i + 1]).getCost();
-        }
-        return cost;
+        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, tour, route, phase);
     }
 
     public void setStopEternalLoops(boolean active) {
@@ -169,5 +105,9 @@ public class USOperator {
         } else {
             stopEternalLoops = active;
         }
+    }
+
+    private boolean hasSufficientVertices(int i) {
+        return i > 9; // Num of min edges necessary to US
     }
 }

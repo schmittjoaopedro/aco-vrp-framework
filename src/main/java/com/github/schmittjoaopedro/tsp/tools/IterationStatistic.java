@@ -129,7 +129,7 @@ public class IterationStatistic {
         log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 15));
         log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 15));
         log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 15));
-        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBranchFactor()), 15));
+        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 15));
         log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 15));
         return log.toString();
     }
