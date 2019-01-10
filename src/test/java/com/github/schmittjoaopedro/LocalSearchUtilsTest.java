@@ -1,12 +1,10 @@
 package com.github.schmittjoaopedro;
 
 import com.github.schmittjoaopedro.tsp.aco.ls.LocalSearchUtils;
-import com.github.schmittjoaopedro.tsp.aco.ls.opt3.LocalSearch3Opt;
+import com.github.schmittjoaopedro.tsp.aco.ls.opt3.asymmetric.Asymmetric3Opt;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-
-import java.util.Random;
 
 public class LocalSearchUtilsTest {
 
@@ -58,18 +56,13 @@ public class LocalSearchUtilsTest {
         Assertions.assertThat(LocalSearchUtils.getTourIgnoreIdxGreaterThan(symmetricOriginalTour, 5)).containsExactly(asymmetricOriginalTour);
 
         // Check if the 3-opt is working with asymmetric matrices
-        int[] symmetricTourOptimized = symmetricOriginalTour.clone();
-        LocalSearch3Opt.three_opt_first(new Random(1), symmetricTourOptimized, symmetricMatrix.length, symmetricMatrix, nnList, nnLength);
-        Assertions.assertThat(symmetricTourOptimized).containsExactly(0, 6, 1, 7, 2, 9, 4, 8, 3, 5, 0);
-        int[] asymmetricTourOptimized = LocalSearchUtils.getTourIgnoreIdxGreaterThan(symmetricTourOptimized, 5);
-        Assertions.assertThat(asymmetricTourOptimized).containsExactly(0, 1, 2, 4, 3, 0);
-
-        // Check cost calculation for symmetric matrix
-        Assertions.assertThat(LocalSearchUtils.fitnessEvaluation(symmetricOriginalTour, symmetricMatrix)).isEqualTo(52);
-        Assertions.assertThat(LocalSearchUtils.fitnessEvaluation(symmetricTourOptimized, symmetricMatrix)).isEqualTo(19);
+        int[] asymmetricTourOptimized = asymmetricOriginalTour.clone();
+        //LocalSearch3Opt.three_opt_first(new Random(1), symmetricTourOptimized, symmetricMatrix.length, symmetricMatrix, nnList, nnLength);
+        Asymmetric3Opt.threeOpt(asymmetricTourOptimized, symmetricMatrix);
+        Assertions.assertThat(asymmetricTourOptimized).containsExactly(0, 3, 4, 1, 2, 0);
         // Check cost calculation for asymmetric matrix
         Assertions.assertThat(LocalSearchUtils.fitnessEvaluation(asymmetricOriginalTour, asymmetricMatrix)).isEqualTo(52);
-        Assertions.assertThat(LocalSearchUtils.fitnessEvaluation(asymmetricTourOptimized, asymmetricMatrix)).isEqualTo(53);
+        Assertions.assertThat(LocalSearchUtils.fitnessEvaluation(asymmetricTourOptimized, asymmetricMatrix)).isEqualTo(27);
     }
 
 }
