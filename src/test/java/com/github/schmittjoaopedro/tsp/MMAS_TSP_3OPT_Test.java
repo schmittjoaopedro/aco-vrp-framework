@@ -455,34 +455,34 @@ public class MMAS_TSP_3OPT_Test {
 
         // Iteration 100
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIteration()).isEqualTo(100);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationMean()).isEqualTo(46539.28);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationSd()).isEqualTo(5539.94);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationMean()).isEqualTo(45957.45);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationSd()).isEqualTo(4602.68);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getDiversity()).isEqualTo(9.60);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getDiversity()).isEqualTo(9.97);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 200
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIteration()).isEqualTo(200);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationMean()).isEqualTo(45249.93);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationSd()).isEqualTo(3282.93);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationMean()).isEqualTo(45076.97);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationSd()).isEqualTo(2715.38);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getDiversity()).isEqualTo(12.41);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getDiversity()).isEqualTo(12.29);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 300
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIteration()).isEqualTo(300);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationMean()).isEqualTo(45727.83);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationSd()).isEqualTo(4702.16);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationMean()).isEqualTo(45415.77);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationSd()).isEqualTo(3887.25);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getDiversity()).isEqualTo(10.61);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getDiversity()).isEqualTo(10.38);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 400
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIteration()).isEqualTo(400);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationMean()).isEqualTo(44801.28);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationSd()).isEqualTo(3512.19);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationMean()).isEqualTo(44693.84);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationSd()).isEqualTo(3012.14);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getDiversity()).isEqualTo(12.47);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getDiversity()).isEqualTo(12.28);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 500
@@ -495,82 +495,82 @@ public class MMAS_TSP_3OPT_Test {
 
         // Iteration 600
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIteration()).isEqualTo(600);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationMean()).isEqualTo(44593.51);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationSd()).isEqualTo(2878.04);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getDiversity()).isEqualTo(10.62);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationMean()).isEqualTo(45662.02);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationSd()).isEqualTo(4250.74);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBranchFactor()).isEqualTo(1.021);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getDiversity()).isEqualTo(12.27);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 700
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIteration()).isEqualTo(700);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationMean()).isEqualTo(44798.19);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationSd()).isEqualTo(4365.93);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationMean()).isEqualTo(45176.69);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationSd()).isEqualTo(3859.48);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getDiversity()).isEqualTo(9.42);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getDiversity()).isEqualTo(11.65);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 800
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIteration()).isEqualTo(800);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationMean()).isEqualTo(44453.05);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationSd()).isEqualTo(2964.83);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationMean()).isEqualTo(44503.53);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationSd()).isEqualTo(3168.26);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getDiversity()).isEqualTo(10.02);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getDiversity()).isEqualTo(11.69);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 900
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIteration()).isEqualTo(900);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationMean()).isEqualTo(47044.34);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationSd()).isEqualTo(5796.51);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationMean()).isEqualTo(44262.24);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationSd()).isEqualTo(1486.96);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getDiversity()).isEqualTo(12.03);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getDiversity()).isEqualTo(12.95);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 1000
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIteration()).isEqualTo(1000);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationMean()).isEqualTo(46008.59);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationSd()).isEqualTo(4725.25);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationMean()).isEqualTo(45350.70);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationSd()).isEqualTo(3148.22);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getDiversity()).isEqualTo(12.24);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getDiversity()).isEqualTo(12.30);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 1100
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIteration()).isEqualTo(1100);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationMean()).isEqualTo(44852.64);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationSd()).isEqualTo(3134.83);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationMean()).isEqualTo(44327.50);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationSd()).isEqualTo(3028.52);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getDiversity()).isEqualTo(12.43);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getDiversity()).isEqualTo(9.26);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 1200
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIteration()).isEqualTo(1200);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationMean()).isEqualTo(44515.76);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationSd()).isEqualTo(3121.64);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationMean()).isEqualTo(45944.48);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationSd()).isEqualTo(4371.01);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getDiversity()).isEqualTo(10.87);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getDiversity()).isEqualTo(13.08);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 1300
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIteration()).isEqualTo(1300);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationMean()).isEqualTo(46502.97);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationSd()).isEqualTo(5028.82);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationMean()).isEqualTo(45033.34);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationSd()).isEqualTo(2975.97);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getDiversity()).isEqualTo(12.00);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getDiversity()).isEqualTo(13.56);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 1400
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIteration()).isEqualTo(1400);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationMean()).isEqualTo(44498.92);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationSd()).isEqualTo(3057.84);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationMean()).isEqualTo(44612.71);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationSd()).isEqualTo(2366.41);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getDiversity()).isEqualTo(12.19);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getDiversity()).isEqualTo(11.90);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBestSoFar()).isEqualTo(42926.52);
 
         // Iteration 1500
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIteration()).isEqualTo(1500);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationMean()).isEqualTo(45890.23);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationSd()).isEqualTo(4779.48);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationMean()).isEqualTo(45810.66);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationSd()).isEqualTo(4177.74);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBranchFactor()).isEqualTo(0.979);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getDiversity()).isEqualTo(11.74);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getDiversity()).isEqualTo(12.64);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(42926.52);
 
         assertThat(mmas_tsp_3opt.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(25000);
@@ -594,122 +594,122 @@ public class MMAS_TSP_3OPT_Test {
 
         // Iteration 100
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIteration()).isEqualTo(100);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationMean()).isEqualTo(56732.71);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationSd()).isEqualTo(6390.16);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationMean()).isEqualTo(56035.82);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationSd()).isEqualTo(4705.91);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getDiversity()).isEqualTo(18.69);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getDiversity()).isEqualTo(18.88);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 200
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIteration()).isEqualTo(200);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationMean()).isEqualTo(60634.80);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationSd()).isEqualTo(9367.97);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationMean()).isEqualTo(59168.22);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationSd()).isEqualTo(7413.60);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getDiversity()).isEqualTo(18.93);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getDiversity()).isEqualTo(18.66);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 300
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIteration()).isEqualTo(300);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationMean()).isEqualTo(56237.76);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationSd()).isEqualTo(6076.10);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationMean()).isEqualTo(56081.34);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationSd()).isEqualTo(5630.79);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getDiversity()).isEqualTo(18.27);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getDiversity()).isEqualTo(17.50);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 400
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIteration()).isEqualTo(400);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationMean()).isEqualTo(55767.27);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationSd()).isEqualTo(5173.08);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationMean()).isEqualTo(55720.09);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationSd()).isEqualTo(5026.00);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getDiversity()).isEqualTo(16.96);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getDiversity()).isEqualTo(16.62);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 500
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIteration()).isEqualTo(500);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationMean()).isEqualTo(58335.76);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationSd()).isEqualTo(7879.45);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationMean()).isEqualTo(56012.73);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationSd()).isEqualTo(4584.30);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getDiversity()).isEqualTo(16.58);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getDiversity()).isEqualTo(18.55);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 600
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIteration()).isEqualTo(600);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationMean()).isEqualTo(56363.96);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationSd()).isEqualTo(6600.82);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBranchFactor()).isEqualTo(1.013);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getDiversity()).isEqualTo(17.42);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationMean()).isEqualTo(56371.68);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationSd()).isEqualTo(5799.48);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBranchFactor()).isEqualTo(0.987);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getDiversity()).isEqualTo(17.82);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 700
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIteration()).isEqualTo(700);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationMean()).isEqualTo(58004.77);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationSd()).isEqualTo(8171.46);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationMean()).isEqualTo(58902.98);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationSd()).isEqualTo(7256.60);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getDiversity()).isEqualTo(17.47);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getDiversity()).isEqualTo(18.80);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 800
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIteration()).isEqualTo(800);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationMean()).isEqualTo(57868.95);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationSd()).isEqualTo(7908.50);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationMean()).isEqualTo(58065.19);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationSd()).isEqualTo(6706.72);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getDiversity()).isEqualTo(18.76);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getDiversity()).isEqualTo(21.09);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 900
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIteration()).isEqualTo(900);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationMean()).isEqualTo(59286.50);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationSd()).isEqualTo(9235.77);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationMean()).isEqualTo(55757.26);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationSd()).isEqualTo(4927.96);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getDiversity()).isEqualTo(17.58);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getDiversity()).isEqualTo(15.58);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 1000
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIteration()).isEqualTo(1000);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationMean()).isEqualTo(56560.17);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationSd()).isEqualTo(6578.65);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationMean()).isEqualTo(58996.73);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationSd()).isEqualTo(7517.69);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBranchFactor()).isEqualTo(1.013);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getDiversity()).isEqualTo(16.73);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getDiversity()).isEqualTo(20.27);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 1100
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIteration()).isEqualTo(1100);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationMean()).isEqualTo(55950.35);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationSd()).isEqualTo(5749.70);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getDiversity()).isEqualTo(15.63);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationMean()).isEqualTo(56382.01);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationSd()).isEqualTo(4949.07);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBranchFactor()).isEqualTo(1.025);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getDiversity()).isEqualTo(19.23);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 1200
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIteration()).isEqualTo(1200);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationMean()).isEqualTo(59154.74);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationSd()).isEqualTo(7896.44);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getDiversity()).isEqualTo(19.68);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationMean()).isEqualTo(55897.84);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationSd()).isEqualTo(4470.35);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBranchFactor()).isEqualTo(1.013);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getDiversity()).isEqualTo(18.79);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 1300
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIteration()).isEqualTo(1300);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationMean()).isEqualTo(57124.34);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationSd()).isEqualTo(7054.61);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationMean()).isEqualTo(57049.04);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationSd()).isEqualTo(6622.50);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getDiversity()).isEqualTo(16.94);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getDiversity()).isEqualTo(19.59);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 1400
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIteration()).isEqualTo(1400);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationMean()).isEqualTo(56262.64);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationSd()).isEqualTo(5978.23);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getDiversity()).isEqualTo(16.86);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationMean()).isEqualTo(57345.80);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationSd()).isEqualTo(5779.99);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBranchFactor()).isEqualTo(1.013);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getDiversity()).isEqualTo(19.07);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBestSoFar()).isEqualTo(52497.89);
 
         // Iteration 1500
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIteration()).isEqualTo(1500);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationMean()).isEqualTo(58749.35);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationSd()).isEqualTo(7518.05);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBranchFactor()).isEqualTo(0.987);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getDiversity()).isEqualTo(19.27);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationMean()).isEqualTo(58000.18);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationSd()).isEqualTo(6895.76);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBranchFactor()).isEqualTo(1.013);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getDiversity()).isEqualTo(19.16);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(52497.89);
 
         assertThat(mmas_tsp_3opt.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(45000);
@@ -733,122 +733,122 @@ public class MMAS_TSP_3OPT_Test {
 
         // Iteration 100
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIteration()).isEqualTo(100);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationMean()).isEqualTo(74124.14);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationSd()).isEqualTo(13289.65);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationMean()).isEqualTo(72825.59);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getIterationSd()).isEqualTo(11262.93);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getBranchFactor()).isEqualTo(1.152);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getDiversity()).isEqualTo(28.74);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getDiversity()).isEqualTo(29.50);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(0).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 200
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIteration()).isEqualTo(200);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationMean()).isEqualTo(72415.87);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationSd()).isEqualTo(12149.99);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationMean()).isEqualTo(70728.39);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getIterationSd()).isEqualTo(8828.53);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getBranchFactor()).isEqualTo(0.984);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getDiversity()).isEqualTo(23.02);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getDiversity()).isEqualTo(22.72);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(1).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 300
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIteration()).isEqualTo(300);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationMean()).isEqualTo(76042.65);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationSd()).isEqualTo(14149.88);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationMean()).isEqualTo(73567.28);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getIterationSd()).isEqualTo(10487.68);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getBranchFactor()).isEqualTo(0.984);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getDiversity()).isEqualTo(24.82);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getDiversity()).isEqualTo(24.13);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(2).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 400
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIteration()).isEqualTo(400);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationMean()).isEqualTo(72830.08);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationSd()).isEqualTo(12454.86);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationMean()).isEqualTo(70577.73);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getIterationSd()).isEqualTo(8462.58);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getBranchFactor()).isEqualTo(0.984);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getDiversity()).isEqualTo(25.32);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getDiversity()).isEqualTo(25.47);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(3).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 500
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIteration()).isEqualTo(500);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationMean()).isEqualTo(69921.88);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationSd()).isEqualTo(9192.39);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationMean()).isEqualTo(69759.01);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getIterationSd()).isEqualTo(8706.85);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getBranchFactor()).isEqualTo(0.976);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getDiversity()).isEqualTo(26.39);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getDiversity()).isEqualTo(26.70);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(4).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 600
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIteration()).isEqualTo(600);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationMean()).isEqualTo(75821.77);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationSd()).isEqualTo(14359.39);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationMean()).isEqualTo(71542.98);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getIterationSd()).isEqualTo(7965.19);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBranchFactor()).isEqualTo(0.976);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getDiversity()).isEqualTo(24.61);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getDiversity()).isEqualTo(24.59);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(5).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 700
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIteration()).isEqualTo(700);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationMean()).isEqualTo(78901.56);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationSd()).isEqualTo(14596.05);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationMean()).isEqualTo(73790.11);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getIterationSd()).isEqualTo(8296.89);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getBranchFactor()).isEqualTo(1.272);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getDiversity()).isEqualTo(30.02);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getDiversity()).isEqualTo(31.85);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(6).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 800
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIteration()).isEqualTo(800);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationMean()).isEqualTo(74673.76);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationSd()).isEqualTo(13692.05);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationMean()).isEqualTo(72349.17);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getIterationSd()).isEqualTo(9881.83);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getBranchFactor()).isEqualTo(1.004);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getDiversity()).isEqualTo(25.98);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getDiversity()).isEqualTo(25.78);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(7).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 900
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIteration()).isEqualTo(900);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationMean()).isEqualTo(78129.66);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationSd()).isEqualTo(15493.55);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationMean()).isEqualTo(68589.22);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getIterationSd()).isEqualTo(6417.42);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getBranchFactor()).isEqualTo(1.020);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getDiversity()).isEqualTo(24.35);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getDiversity()).isEqualTo(23.49);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(8).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 1000
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIteration()).isEqualTo(1000);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationMean()).isEqualTo(77449.00);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationSd()).isEqualTo(14460.70);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBranchFactor()).isEqualTo(1.004);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getDiversity()).isEqualTo(25.06);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationMean()).isEqualTo(73837.08);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getIterationSd()).isEqualTo(12652.77);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBranchFactor()).isEqualTo(0.984);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getDiversity()).isEqualTo(23.68);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(9).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 1100
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIteration()).isEqualTo(1100);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationMean()).isEqualTo(71598.43);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationSd()).isEqualTo(11956.74);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationMean()).isEqualTo(77512.75);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getIterationSd()).isEqualTo(12619.49);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBranchFactor()).isEqualTo(0.984);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getDiversity()).isEqualTo(24.18);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getDiversity()).isEqualTo(26.69);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(10).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 1200
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIteration()).isEqualTo(1200);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationMean()).isEqualTo(74900.02);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationSd()).isEqualTo(13160.31);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBranchFactor()).isEqualTo(0.984);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getDiversity()).isEqualTo(28.26);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationMean()).isEqualTo(74567.93);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getIterationSd()).isEqualTo(12889.88);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBranchFactor()).isEqualTo(1.000);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getDiversity()).isEqualTo(29.11);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(11).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 1300
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIteration()).isEqualTo(1300);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationMean()).isEqualTo(72905.44);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationSd()).isEqualTo(13080.50);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBranchFactor()).isEqualTo(0.976);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getDiversity()).isEqualTo(22.25);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationMean()).isEqualTo(69469.56);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getIterationSd()).isEqualTo(6627.85);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBranchFactor()).isEqualTo(0.984);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getDiversity()).isEqualTo(24.88);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(12).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 1400
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIteration()).isEqualTo(1400);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationMean()).isEqualTo(74711.83);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationSd()).isEqualTo(14088.44);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBranchFactor()).isEqualTo(0.976);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getDiversity()).isEqualTo(25.81);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationMean()).isEqualTo(71223.85);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getIterationSd()).isEqualTo(9755.02);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBranchFactor()).isEqualTo(0.984);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getDiversity()).isEqualTo(24.97);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(13).getBestSoFar()).isEqualTo(64724.61);
 
         // Iteration 1500
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIteration()).isEqualTo(1500);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationMean()).isEqualTo(71825.92);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationSd()).isEqualTo(11743.94);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationMean()).isEqualTo(68048.49);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getIterationSd()).isEqualTo(3939.43);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBranchFactor()).isEqualTo(0.984);
-        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getDiversity()).isEqualTo(27.96);
+        assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getDiversity()).isEqualTo(27.03);
         assertThat(mmas_tsp_3opt.getIterationStatistics().get(14).getBestSoFar()).isEqualTo(64724.61);
 
         assertThat(mmas_tsp_3opt.getGlobalStatistics().getTimeStatistics().get("MMAS Execution")).isLessThan(50000);

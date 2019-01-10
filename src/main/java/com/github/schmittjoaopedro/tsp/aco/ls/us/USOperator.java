@@ -22,15 +22,13 @@ public class USOperator {
 
     private CoordinatesGenius tspFile;
 
-    private int[] tour;
+    private int[] originalTour;
+
+    private int[] optimizedTour;
 
     private double cost;
 
-    private Graph graph;
-
     private int subTourMap[];
-
-    private int[] route;
 
     private int phase;
 
@@ -40,8 +38,7 @@ public class USOperator {
 
     public boolean init(Graph graph, int[] tour) {
         if (hasSufficientVertices(graph.getVertexCount())) { // number of minimum vertices for US
-            this.tour = tour;
-            this.graph = graph;
+            this.optimizedTour = tour;
             this.cost = LocalSearchUtils.fitnessEvaluation(graph, tour);
             problemSize = graph.getVertexCount();
             tspFile = new CoordinatesGenius(graph.getVertexCount());
@@ -57,17 +54,18 @@ public class USOperator {
         }
     }
 
-    public boolean init(Graph graph, int[] route, int phase) {
+    public boolean init(Graph graph, int[] tour, int phase) {
         int subGraphLength = graph.getVertexCount() - phase;
         if (phase < 0) {
-            return init(graph, route);
+            return init(graph, tour);
         } else if (hasSufficientVertices(subGraphLength)) { // number of minimum vertices for US of sub-tour
             this.phase = phase;
-            this.route = route;
+            this.originalTour = tour;
             subTourOptimization = true;
-            subTourMap = LocalSearchUtils.createSubTourMap(route, phase, subGraphLength);
-            Graph newGraph = LocalSearchUtils.createSubGraph(subTourMap, graph, route[0], subGraphLength);
-            return init(newGraph, LocalSearchUtils.createSubTour(subTourMap));
+            subTourMap = LocalSearchUtils.createSubTourMap(tour, phase, subGraphLength);
+            return init(
+                    LocalSearchUtils.createSubGraph(subTourMap, graph, tour[0], subGraphLength),
+                    LocalSearchUtils.createSubTour(subTourMap));
         } else {
             return false;
         }
@@ -78,25 +76,25 @@ public class USOperator {
         TourElem element;
         genius.initialize();
         genius.initNeighborhood(tspFile.task);
-        genius.littleTurns(tour[0], tspFile.g);
-        genius.addNextNode(tour[0], tspFile.task, tspFile.d);
+        genius.littleTurns(optimizedTour[0], tspFile.g);
+        genius.addNextNode(optimizedTour[0], tspFile.task, tspFile.d);
         for (int i = 1; i < problemSize; i++) {
-            genius.addOneTurns(tour[i], tspFile.g);
-            genius.addNextNode(tour[i], tspFile.task, tspFile.d);
+            genius.addOneTurns(optimizedTour[i], tspFile.g);
+            genius.addNextNode(optimizedTour[i], tspFile.task, tspFile.d);
         } //copy the tour and calculates the nearest neighbours of the nodes.
         if (genius.numberedTurns()) {
             genius.routeCopy(tspFile.task, tspFile.g, tspFile.d, cost);
             element = genius.t.ptr;
             for (int i = 0; i < problemSize; i++) {
-                tour[i] = element.node - 1;
+                optimizedTour[i] = element.node - 1;
                 element = element.next;
             }
-            tour[problemSize] = tour[0];
+            optimizedTour[problemSize] = optimizedTour[0];
         }
     }
 
     public int[] getResult() {
-        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, tour, route, phase);
+        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, optimizedTour, originalTour, phase);
     }
 
     public void setStopEternalLoops(boolean active) {
