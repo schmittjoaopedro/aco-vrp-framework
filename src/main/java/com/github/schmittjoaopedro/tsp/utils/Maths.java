@@ -4,6 +4,7 @@ import com.github.schmittjoaopedro.tsp.aco.Ant;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class Maths {
 
@@ -80,6 +81,16 @@ public class Maths {
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
+    }
+
+    public static int getValueByInequality(int[][] matrix, FunctionWithTwoArgs<Integer, Integer, Integer> function) {
+        int min = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                min = function.apply(min, matrix[i][j]);
+            }
+        }
+        return min;
     }
 
 }

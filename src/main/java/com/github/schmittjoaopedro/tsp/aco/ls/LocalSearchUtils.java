@@ -6,6 +6,18 @@ import com.github.schmittjoaopedro.tsp.graph.Vertex;
 
 public class LocalSearchUtils {
 
+    public static int[] getTourIgnoreIdxGreaterThan(int[] tour, int n) {
+        int[] newTour = new int[n + 1];
+        int counter = 0;
+        for (int idx : tour) {
+            if (idx < n) {
+                newTour[counter] = idx;
+                counter++;
+            }
+        }
+        return newTour;
+    }
+
     public static int[] createSubTourMap(int[] route, int phase, int subTourLength) {
         int[] subTourMap = new int[subTourLength];
         subTourMap[0] = route[phase];
