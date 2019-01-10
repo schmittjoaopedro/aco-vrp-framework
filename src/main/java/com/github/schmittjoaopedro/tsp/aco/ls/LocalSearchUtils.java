@@ -18,6 +18,10 @@ public class LocalSearchUtils {
         return newTour;
     }
 
+    /**
+     * Map the original tour node id's for a new sub-tour map. This structure is used to retrieve
+     * the original route id's after optimization process.
+     */
     public static int[] createSubTourMap(int[] route, int phase, int subTourLength) {
         int[] subTourMap = new int[subTourLength];
         subTourMap[0] = route[phase];
@@ -27,6 +31,10 @@ public class LocalSearchUtils {
         return subTourMap;
     }
 
+    /**
+     * Create a sub-graph from the original one to execute the optimization. This graph is relative
+     * to the IDs in the sub-tour map.
+     */
     public static Graph createSubGraph(int[] subTourMap, Graph graph, int toId, int subTourLength) {
         Graph newGraph = new Graph();
         for (int i = 0; i < subTourLength; i++) {
@@ -48,6 +56,11 @@ public class LocalSearchUtils {
                 }
             }
         }
+        /*
+        As we consider the current vehicle position is in the middle of the route, the last node to be visited
+        will back to the depot and not to the current vehicle position. Then we adapt the cost of the
+        edges to have the cost relative to the depot position.
+        */
         for (int i = 1; i < subTourLength; i++) {
             newGraph.getEdge(i, 0).setCost(graph.getEdge(subTourMap[i], toId).getCost());
         }
@@ -73,6 +86,8 @@ public class LocalSearchUtils {
 
     public static int[] getResult(boolean subTourOptimization, int[] subTourMap, int[] tourResult, int[] originalTour, int phase) {
         if (subTourOptimization) {
+            // In case of sub-tour optimization we need to rollback the original node IDs to the part of the route
+            // that already wasn't visited
             for (int i = 1; i < subTourMap.length; i++) {
                 originalTour[phase + i] = subTourMap[tourResult[i]];
             }
