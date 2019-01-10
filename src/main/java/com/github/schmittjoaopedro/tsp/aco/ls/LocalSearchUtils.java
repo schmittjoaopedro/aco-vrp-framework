@@ -70,6 +70,30 @@ public class LocalSearchUtils {
         }
     }
 
+    public static int[] getRotatedRouteToFirstNode(int route[], int firstNode) {
+        int newRoute[];
+        if (route[0] != firstNode) {
+            newRoute = new int[route.length];
+            // Finds first node position
+            int firstNodePosition = 1;
+            for (int i = 2; i < route.length; i++) {
+                if (route[i] == firstNode) {
+                    firstNodePosition = i;
+                    break;
+                }
+            }
+            // Ignore last position, because it represents the return to depot and here we assume that
+            // the depot will be the startNode element
+            int intersectionPoint = route.length - 1 - firstNodePosition; // Ignore the array + 1 length
+            System.arraycopy(route, firstNodePosition, newRoute, 0, intersectionPoint);
+            System.arraycopy(route, 0, newRoute, intersectionPoint, firstNodePosition);
+            newRoute[newRoute.length - 1] = firstNode;
+        } else {
+            newRoute = route.clone();
+        }
+        return newRoute;
+    }
+
     public static boolean isSymmetric(int[][] distances) {
         for (int i = 0; i < distances.length; i++) {
             for (int j = i; j < distances.length; j++) {
@@ -207,6 +231,16 @@ public class LocalSearchUtils {
             }
         }
         return nnList;
+    }
+
+    public static double fitnessEvaluation(int tour[], int[][] distances) {
+        double cost = 0;
+        for (int i = 0; i < tour.length - 1; i++) {
+            if (distances[tour[i]][tour[i + 1]] > 0) {
+                cost += distances[tour[i]][tour[i + 1]];
+            }
+        }
+        return cost;
     }
 
     private static void swap(double v[], int[] v2, int i, int j) {

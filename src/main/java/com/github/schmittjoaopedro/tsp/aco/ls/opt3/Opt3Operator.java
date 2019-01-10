@@ -36,6 +36,8 @@ public class Opt3Operator {
 
     private boolean subTourOptimization = false;
 
+    private boolean keepOriginalDepotPosition = false;
+
     private Random random;
 
     public boolean init(Graph graph, Random random, int[] route, int phase) {
@@ -111,11 +113,24 @@ public class Opt3Operator {
                 newRoute.add(graph.getVertex(tour[i]));
             }
         }
-        tour = new int[newRoute.size()];
+        int[] newTour = new int[newRoute.size()];
         for (int i = 0; i < newRoute.size(); i++) {
-            tour[i] = newRoute.get(i).getId();
+            newTour[i] = newRoute.get(i).getId();
         }
-        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, tour, route, phase);
+        if (isKeepOriginalDepotPosition()) {
+            // Differently of US, the 3-opt operator rotate the depot along the route.
+            // Therefore, in sub-tour optimization we fix the first node as depot
+            newTour = LocalSearchUtils.getRotatedRouteToFirstNode(newTour, 0);
+        }
+        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, newTour, route, phase);
+    }
+
+    public boolean isKeepOriginalDepotPosition() {
+        return keepOriginalDepotPosition;
+    }
+
+    public void setKeepOriginalDepotPosition(boolean keepOriginalDepotPosition) {
+        this.keepOriginalDepotPosition = keepOriginalDepotPosition;
     }
 
     private void defineStructures(Graph graph, int[] tour) {

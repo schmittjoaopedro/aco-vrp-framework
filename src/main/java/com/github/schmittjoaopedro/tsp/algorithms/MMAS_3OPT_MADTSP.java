@@ -3,22 +3,29 @@ package com.github.schmittjoaopedro.tsp.algorithms;
 import com.github.schmittjoaopedro.tsp.aco.Ant;
 import com.github.schmittjoaopedro.tsp.aco.MMAS;
 import com.github.schmittjoaopedro.tsp.aco.ls.opt3.Opt3Operator;
+import com.github.schmittjoaopedro.tsp.aco.ls.us.USOperator;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
+import com.github.schmittjoaopedro.tsp.tools.DBGP;
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.tsp.tools.MVBS;
+import com.github.schmittjoaopedro.tsp.utils.DebugLogger;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Max-Min Ant System for the Travelling Salesman Problem
- */
-public class MMAS_TSP_3OPT implements Runnable {
+public class MMAS_3OPT_MADTSP implements Runnable {
+
+    private MVBS mvbs;
 
     private Opt3Operator opt3Operator;
+
+    private DBGP dbgp;
 
     private Graph graph;
 
@@ -28,9 +35,15 @@ public class MMAS_TSP_3OPT implements Runnable {
 
     private int statisticInterval = 1;
 
-    private int seed;
+    private int mmasSeed;
+
+    private int dbgpSeed;
 
     private double rho;
+
+    private double magnitude;
+
+    private int frequency;
 
     private boolean showLog = true;
 
@@ -42,36 +55,53 @@ public class MMAS_TSP_3OPT implements Runnable {
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_TSP_3OPT(Graph graph, int maxIterations, int seed) {
+    public MMAS_3OPT_MADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency) {
         this.maxIterations = maxIterations;
-        this.rho = 0.2; // With Local Search the Rho is defined as 0.2
-        this.seed = seed;
+        this.rho = rho;
+        this.magnitude = magnitude;
+        this.frequency = frequency;
         this.graph = graph;
         mmas = new MMAS(graph);
+        dbgp = new DBGP(graph);
         iterationStatistics = new ArrayList<>(maxIterations);
-        random = new Random(seed);
     }
 
     @Override
     public void run() {
+        // Initialization DBGP
+        globalStatistics.startTimer();
+        dbgp.setLowerBound(0.0);
+        dbgp.setUpperBound(2.0);
+        dbgp.setRandom(new Random(getDbgpSeed()));
+        dbgp.setMagnitude(magnitude);
+        dbgp.setFrequency(frequency);
+        dbgp.initializeEnvironment();
+        globalStatistics.endTimer("DBGP Initialization");
         // Initialization MMAS
         globalStatistics.startTimer();
+        random = new Random(getMmasSeed());
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
-        mmas.setBeta(2.0);
+        mmas.setBeta(5.0);
         mmas.setQ_0(0.0);
-        mmas.setnAnts(25);
+        mmas.setnAnts(50);
         mmas.setDepth(20);
+        mmas.setEPSILON(0.000000000000000000000001);
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(random);
-        mmas.setSymmetric(true);
         mmas.computeNNList();
         mmas.initHeuristicInfo();
-        mmas.initTry(useLocalSearch);
+        mmas.initTry();
         opt3Operator = new Opt3Operator();
+        opt3Operator.setKeepOriginalDepotPosition(true);
         globalStatistics.endTimer("MMAS Initialization");
-
+        // Initialization moving vehicle benchmark simulator
+        globalStatistics.startTimer();
+        mvbs = new MVBS(graph, mmas);
+        mvbs.setMaxIterations(maxIterations);
+        mvbs.initialize();
+        globalStatistics.endTimer("MVBS Initialization");
         // Execute MMAS
         globalStatistics.startTimer();
         for (int i = 1; i <= maxIterations; i++) {
@@ -79,14 +109,17 @@ public class MMAS_TSP_3OPT implements Runnable {
             mmas.setCurrentIteration(i);
             // Construction
             iterationStatistic.startTimer();
-            mmas.constructSolutions();
+            mmas.computeNNList();
+            mmas.initHeuristicInfo();
+            mmas.computeTotalInfo();
+            mvbs.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
             iterationStatistic.startTimer();
-            executeLocalSearch();
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
                 if (useLocalSearch) {
+                    executeLocalSearch();
                     mmas.setPheromoneBoundsForLS();
                 } else {
                     mmas.setPheromoneBounds();
@@ -96,14 +129,15 @@ public class MMAS_TSP_3OPT implements Runnable {
             iterationStatistic.endTimer("Daemon");
             // Pheromone
             iterationStatistic.startTimer();
-            mmas.evaporationLocalSearch();
+            mmas.evaporation();
             mmas.pheromoneUpdate();
             if (useLocalSearch) {
                 mmas.updateUGB();
             }
-            mmas.computeNnListTotalInfo();
+            mmas.checkPheromoneTrailLimits();
             mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
+            mvbs.moveNext(i, mmas.getBestSoFar());
             // Statistics
             if (i % statisticInterval == 0) {
                 iterationStatistic.setIteration(i);
@@ -114,10 +148,15 @@ public class MMAS_TSP_3OPT implements Runnable {
                 iterationStatistic.setIterationWorst(mmas.findWorst().getCost());
                 iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
                 iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
+                iterationStatistic.setTour(mmas.getBestSoFar().getTour().clone());
+                iterationStatistic.setMvsbTour(mvbs.getTour().clone());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
                 }
+            }
+            if (dbgp.applyNewChanges(i) && i < maxIterations) {
+                mmas.getBestSoFar().setCost(Double.MAX_VALUE);
             }
         }
         globalStatistics.endTimer("MMAS Execution");
@@ -130,16 +169,17 @@ public class MMAS_TSP_3OPT implements Runnable {
     }
 
     public void executeLocalSearch() {
-        int result[];
-        double newCost;
-        for (Ant ant : mmas.getAntPopulation()) {
-            opt3Operator.initStaticVersion(graph, random, ant.getTour().clone());
+        Ant iterationBest = mmas.findBest();
+        if (opt3Operator.init(graph, random, iterationBest.getTour().clone(), mvbs.getPhase())) {
             opt3Operator.optimize();
-            result = opt3Operator.getResult();
-            newCost = mmas.fitnessEvaluation(result);
-            if (newCost < ant.getCost()) {
-                ant.setTour(result);
-                ant.setCost(newCost);
+            int result[] = opt3Operator.getResult();
+            double newCost = mmas.fitnessEvaluation(result);
+            if (newCost < iterationBest.getCost()) {
+                DebugLogger.validIntegrityLocalSearch(result, newCost, iterationBest.getCost());
+                iterationBest.setTour(result);
+                iterationBest.setCost(newCost);
+                mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
+                mmas.copyFromTo(iterationBest, mmas.getRestartBest());
             }
         }
     }
@@ -147,18 +187,6 @@ public class MMAS_TSP_3OPT implements Runnable {
     public List<IterationStatistic> getIterationStatistics() {
         return iterationStatistics;
     }
-
-    public void roundStatistics() {
-        for (IterationStatistic iterationStatistic : getIterationStatistics()) {
-            iterationStatistic.setIterationMean(Maths.round(iterationStatistic.getIterationMean(), 2));
-            iterationStatistic.setIterationSd(Maths.round(iterationStatistic.getIterationSd(), 2));
-            iterationStatistic.setBranchFactor(Maths.round(iterationStatistic.getBranchFactor(), 3));
-            iterationStatistic.setDiversity(Maths.round(iterationStatistic.getDiversity(), 2));
-            iterationStatistic.setBestSoFar(Maths.round(iterationStatistic.getBestSoFar(), 2));
-        }
-    }
-
-
 
     public void setIterationStatistics(List<IterationStatistic> iterationStatistics) {
         this.iterationStatistics = iterationStatistics;
@@ -187,4 +215,29 @@ public class MMAS_TSP_3OPT implements Runnable {
     public void setStatisticInterval(int statisticInterval) {
         this.statisticInterval = statisticInterval;
     }
+
+    public int getMmasSeed() {
+        return mmasSeed;
+    }
+
+    public void setMmasSeed(int mmasSeed) {
+        this.mmasSeed = mmasSeed;
+    }
+
+    public int getDbgpSeed() {
+        return dbgpSeed;
+    }
+
+    public void setDbgpSeed(int dbgpSeed) {
+        this.dbgpSeed = dbgpSeed;
+    }
+
+    public MVBS getMvbs() {
+        return mvbs;
+    }
+
+    public void setMvbs(MVBS mvbs) {
+        this.mvbs = mvbs;
+    }
+
 }

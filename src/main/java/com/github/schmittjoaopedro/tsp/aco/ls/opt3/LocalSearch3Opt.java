@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.tsp.aco.ls.opt3;
 
+import com.github.schmittjoaopedro.tsp.utils.DebugLogger;
+
 import java.util.Random;
 
 /**
@@ -113,7 +115,8 @@ public class LocalSearch3Opt {
                 s_c1 = tour[pos_c1 + 1];
 
                 h = 0; /* Search for one of the h-nearest neighbours */
-                whileLoop: while (h < nn_ls) {
+                whileLoop:
+                while (h < nn_ls) {
 
                     c2 = nn_list[c1][h]; /* second city, determine its position */
                     pos_c2 = pos[c2];
@@ -629,9 +632,7 @@ public class LocalSearch3Opt {
                                     pos[h_tour[i]] = j;
                                 }
                                 tour[n] = tour[0];
-                            }
-
-                            else if (h == 2) {
+                            } else if (h == 2) {
 
                                 /*
                                  * copy part from pos[h2] to pos[h5] and
@@ -816,9 +817,7 @@ public class LocalSearch3Opt {
                                         j = 0;
                                 }
                                 tour[n] = tour[0];
-                            }
-
-                            else if (h == 2) {
+                            } else if (h == 2) {
 
                                 /*
                                  * copy part from pos[h1] to pos[h6]
@@ -1003,9 +1002,7 @@ public class LocalSearch3Opt {
                                         j = 0;
                                 }
                                 tour[n] = tour[0];
-                            }
-
-                            else if (h == 2) {
+                            } else if (h == 2) {
 
                                 /*
                                  * copy part from pos[h4] to pos[h5]
