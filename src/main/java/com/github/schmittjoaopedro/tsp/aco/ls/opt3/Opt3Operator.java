@@ -12,6 +12,8 @@ public class Opt3Operator {
 
     private int[] tour;
 
+    private int[] optimizedTour;
+
     private int distances[][];
 
     private int n;
@@ -26,8 +28,6 @@ public class Opt3Operator {
 
     private int subTourMap[];
 
-    private int[] route;
-
     private int phase;
 
     private int max = 0;
@@ -40,17 +40,16 @@ public class Opt3Operator {
 
     private Random random;
 
-    public boolean init(Graph graph, Random random, int[] route, int phase) {
+    public boolean init(Graph graph, Random random, int[] tour, int phase) {
         int subGraphLength = graph.getVertexCount() - phase;
         if (phase < 0) {
-            return init(graph, random, route);
+            return init(graph, random, tour);
         } else if (hasSufficientVertices(subGraphLength)) { // number of minimum vertices for US of sub-tour
             this.phase = phase;
-            this.route = route;
             subTourOptimization = true;
-            subTourMap = LocalSearchUtils.createSubTourMap(route, phase, subGraphLength);
-            Graph newGraph = LocalSearchUtils.createSubGraph(subTourMap, graph, route[0], subGraphLength);
-            return init(newGraph, random, LocalSearchUtils.createSubTour(subTourMap));
+            subTourMap = LocalSearchUtils.createSubTourMap(tour, phase, subGraphLength);
+            Graph newGraph = LocalSearchUtils.createSubGraph(subTourMap, graph, tour[0], subGraphLength);
+            return init(newGraph, random, tour);
         } else {
             return false;
         }
@@ -60,16 +59,8 @@ public class Opt3Operator {
         if (hasSufficientVertices(graph.getVertexCount())) { // number of minimum vertices for US
             this.graph = graph;
             this.random = random;
-            n = graph.getVertexCount();
-            defineStructures(graph, tour);
-            symmetric = LocalSearchUtils.isSymmetric(distances);
-            if (!symmetric) {
-                distances = LocalSearchUtils.asymmetricToSymmetric(distances, min - 1, max + 1);
-                tour = LocalSearchUtils.convertToAssymetricTour(tour);
-                n = tour.length - 1;
-            }
-            nn_list = LocalSearchUtils.createNNList(n, nn_ls, distances);
             this.tour = tour;
+            defineStructures(graph);
             // Init from git
             return true;
         } else {
@@ -81,20 +72,10 @@ public class Opt3Operator {
         if (hasSufficientVertices(graph.getVertexCount())) { // number of minimum vertices for US
             this.graph = graph;
             this.random = random;
-            if (distances == null) {
-                n = graph.getVertexCount();
-                defineStructures(graph, tour);
-                symmetric = LocalSearchUtils.isSymmetric(distances);
-                if (!symmetric) {
-                    distances = LocalSearchUtils.asymmetricToSymmetric(distances, min - 1, max + 1);
-                    tour = LocalSearchUtils.convertToAssymetricTour(tour);
-                    n = tour.length - 1;
-                }
-                nn_list = LocalSearchUtils.createNNList(n, nn_ls, distances);
-            } else if (!symmetric) {
-                tour = LocalSearchUtils.convertToAssymetricTour(tour);
-            }
             this.tour = tour;
+            if (distances == null) {
+                defineStructures(graph);
+            }
             // Init from git
             return true;
         } else {
@@ -103,26 +84,37 @@ public class Opt3Operator {
     }
 
     public void optimize() {
-        LocalSearch3Opt.three_opt_first(random, tour, n, distances, nn_list, nn_ls);
+        if (subTourOptimization) {
+            optimizedTour = LocalSearchUtils.createSubTour(subTourMap);
+        } else {
+            optimizedTour = tour.clone();
+        }
+        if (!symmetric) {
+            optimizedTour = LocalSearchUtils.convertToAssymetricTour(optimizedTour);
+        }
+        LocalSearch3Opt.three_opt_first(random, optimizedTour, n, distances, nn_list, nn_ls);
     }
 
     public int[] getResult() {
-        List<Vertex> newRoute = new ArrayList<>();
-        for (int i = 0; i < tour.length; i++) {
-            if (graph.getVertex(tour[i]) != null) {
-                newRoute.add(graph.getVertex(tour[i]));
+        int[] tourResult = convertResult(optimizedTour);
+        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, tourResult, tour, phase);
+    }
+
+    public int[] convertResult(int[] tourToConvert) {
+        int count = 0;
+        int[] tourCopy = new int[graph.getVertexCount() + 1];
+        for (int i = 0; i < tourToConvert.length; i++) {
+            if (graph.getVertex(tourToConvert[i]) != null) {
+                tourCopy[count] = graph.getVertex(tourToConvert[i]).getId();
+                count++;
             }
-        }
-        int[] newTour = new int[newRoute.size()];
-        for (int i = 0; i < newRoute.size(); i++) {
-            newTour[i] = newRoute.get(i).getId();
         }
         if (isKeepOriginalDepotPosition()) {
             // Differently of US, the 3-opt operator rotate the depot along the route.
             // Therefore, in sub-tour optimization we fix the first node as depot
-            newTour = LocalSearchUtils.getRotatedRouteToFirstNode(newTour, 0);
+            tourCopy = LocalSearchUtils.getRotatedRouteToFirstNode(tourCopy, 0);
         }
-        return LocalSearchUtils.getResult(subTourOptimization, subTourMap, newTour, route, phase);
+        return tourCopy;
     }
 
     public boolean isKeepOriginalDepotPosition() {
@@ -133,17 +125,24 @@ public class Opt3Operator {
         this.keepOriginalDepotPosition = keepOriginalDepotPosition;
     }
 
-    private void defineStructures(Graph graph, int[] tour) {
-        distances = new int[tour.length - 1][tour.length - 1];
+    private void defineStructures(Graph graph) {
+        distances = new int[graph.getVertexCount()][graph.getVertexCount()];
         for (int i = 0; i < graph.getVertexCount(); i++) {
             for (int j = 0; j < graph.getVertexCount(); j++) {
                 if (i != j) {
                     distances[i][j] = (int) graph.getEdge(i, j).getCost();
-                    max = Math.max(max, distances[i][j]);
                     min = Math.min(min, distances[i][j]);
+                    max = Math.max(max, distances[i][j]);
                 }
             }
         }
+        symmetric = LocalSearchUtils.isSymmetric(distances);
+        n = graph.getVertexCount();
+        if (!symmetric) {
+            distances = LocalSearchUtils.asymmetricToSymmetric(distances, min - 1, max + 1);
+            n = distances.length;
+        }
+        nn_list = LocalSearchUtils.createNNList(n, nn_ls, distances);
     }
 
     private boolean hasSufficientVertices(int i) {

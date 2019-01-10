@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.tsp.graph;
 
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +18,7 @@ public final class GraphFactory {
             String distanceType = "EUC_2D";
             boolean started = false;
             for (int l = 0; l < fileContent.length; l++) {
+                fileContent[l] = fileContent[l].replaceAll("\r", StringUtils.EMPTY);
                 if (fileContent[l].equals("EOF")) {
                     break;
                 }
@@ -73,6 +75,7 @@ public final class GraphFactory {
             boolean distances = false;
             int edgesId = 0;
             for (String line : fileContent) {
+                line = line.replaceAll("\r", StringUtils.EMPTY);
                 if (line.equals("EOF")) break;
                 if (line.equals("Vertices (X Y)")) {
                     coordinates = true;

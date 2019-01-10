@@ -176,8 +176,8 @@ public class MMAS_3OPT_MADTSP implements Runnable {
             double newCost = mmas.fitnessEvaluation(result);
             if (newCost < iterationBest.getCost()) {
                 DebugLogger.validIntegrityLocalSearch(result, newCost, iterationBest.getCost());
-                iterationBest.setTour(result);
                 iterationBest.setCost(newCost);
+                iterationBest.setTour(result);
                 mmas.copyFromTo(iterationBest, mmas.getBestSoFar());
                 mmas.copyFromTo(iterationBest, mmas.getRestartBest());
             }

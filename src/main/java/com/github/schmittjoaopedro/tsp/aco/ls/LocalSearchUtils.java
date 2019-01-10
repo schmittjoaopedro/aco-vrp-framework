@@ -71,14 +71,14 @@ public class LocalSearchUtils {
         return cost;
     }
 
-    public static int[] getResult(boolean subTourOptimization, int[] subTourMap, int[] tour, int[] route, int phase) {
+    public static int[] getResult(boolean subTourOptimization, int[] subTourMap, int[] tourResult, int[] originalTour, int phase) {
         if (subTourOptimization) {
             for (int i = 1; i < subTourMap.length; i++) {
-                route[phase + i] = subTourMap[tour[i]];
+                originalTour[phase + i] = subTourMap[tourResult[i]];
             }
-            return route;
+            return originalTour;
         } else {
-            return tour;
+            return tourResult;
         }
     }
 
