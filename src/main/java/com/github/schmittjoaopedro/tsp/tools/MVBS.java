@@ -8,7 +8,7 @@ public class MVBS {
 
     private Graph graph;
 
-    private int intervalTime;
+    private double intervalTime;
 
     private int maxIterations;
 
@@ -28,13 +28,13 @@ public class MVBS {
     }
 
     public void initialize() {
-        intervalTime = maxIterations / graph.getVertexCount();
+        intervalTime = (double) maxIterations / graph.getVertexCount();
         tour = new int[graph.getVertexCount() + 1];
         visited = new boolean[graph.getVertexCount()];
     }
 
     public void moveNext(int iteration, Ant ant) {
-        if (((iteration - 1) % intervalTime == 0 || iteration == maxIterations) && phase < graph.getVertexCount()) {
+        if (iteration >= (phase + 1) * intervalTime) {
             phase++;
             tour[phase] = ant.getTour()[phase];
             visited[tour[phase]] = true;
@@ -47,7 +47,7 @@ public class MVBS {
 
     public boolean isValid(Ant ant) {
         for (int i = 0; i <= phase; i++) {
-            if(ant.getTour()[i] != tour[i]) {
+            if (ant.getTour()[i] != tour[i]) {
                 return false;
             }
         }

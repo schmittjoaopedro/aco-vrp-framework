@@ -4,8 +4,8 @@ import com.github.schmittjoaopedro.tsp.graph.Vertex;
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,8 +13,17 @@ public class TestUtils {
 
     public static String getTourString(GlobalStatistics globalStatistics) {
         StringBuilder tour = new StringBuilder("[");
+        Map<Integer, Integer> tourNodes = new HashMap<>();
+        AtomicInteger atomicInteger = new AtomicInteger(0);
         for (Vertex vertex : globalStatistics.getBestRoute()) {
             tour.append(vertex.getId()).append(", ");
+            if (!tourNodes.containsKey(vertex.getId())) {
+                tourNodes.put(vertex.getId(), 1);
+            }
+        }
+        tourNodes.forEach((key, count) -> atomicInteger.addAndGet(count));
+        if (atomicInteger.get() != globalStatistics.getBestRoute().size() - 1) {
+            throw new RuntimeException("Invalid number of vertices");
         }
         tour.delete(tour.length() - 2, tour.length()).append("]");
         return tour.toString();
