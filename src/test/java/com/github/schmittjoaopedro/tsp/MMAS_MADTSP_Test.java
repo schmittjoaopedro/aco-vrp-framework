@@ -25,7 +25,7 @@ public class MMAS_MADTSP_Test {
     @Test
     public void test_mmas_moving_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_1_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MADTSP mmas_madtsp = new MMAS_MADTSP(graph, 0.8, 1000, 0.1, 10);
+        MMAS_MADTSP mmas_madtsp = new MMAS_MADTSP(graph, 0.8, 1000, 0.1, 10, 1.0, 5.0);
         mmas_madtsp.setMmasSeed(1);
         mmas_madtsp.setDbgpSeed(1);
         mmas_madtsp.setStatisticInterval(1);
@@ -545,7 +545,7 @@ public class MMAS_MADTSP_Test {
     @Test
     public void test_mmas_moving_asymmetric_dynamic_tsp_kroA150_with_seed_1_mag_0_1_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA150));
-        MMAS_MADTSP mmas_madtsp = new MMAS_MADTSP(graph, 0.8, 1000, 0.1, 10);
+        MMAS_MADTSP mmas_madtsp = new MMAS_MADTSP(graph, 0.8, 1000, 0.1, 10, 1.0, 5.0);
         mmas_madtsp.setMmasSeed(1);
         mmas_madtsp.setDbgpSeed(1);
         mmas_madtsp.setStatisticInterval(1);
