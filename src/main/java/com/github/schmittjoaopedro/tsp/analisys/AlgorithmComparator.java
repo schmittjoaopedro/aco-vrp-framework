@@ -16,20 +16,33 @@ public class AlgorithmComparator {
 
     private static final String resultsPath = "C:\\Temp";
     private static int numIterations = 1000;
+    private static int numTrials = 30;
 
     public static void main(String[] args) throws Exception {
+
+        String[] tspInstances = {"KroA100.tsp"/*, "KroA150.tsp", "KroA200.tsp"*/};
+        int[] frequencies = {10, 100};
+        double[] magnitudes = {0.1, 0.5, 0.75};
+        double[] rhos = {0.02, 0.2, 0.4, 0.6, 0.8};
+        double[] alphas = {1.0};
+        double[] betas = {2.0, 3.0, 4.0, 5.0};
+
+        System.out.println("Executing " + (tspInstances.length * frequencies.length * magnitudes.length * rhos.length * alphas.length * betas.length));
+
         ExperimentResultWriter resultWriter = new ExperimentResultWriter();
         resultWriter.initialize(numIterations);
-        for (String test : new String[]{"KroA100.tsp", "KroA150.tsp", "KroA200.tsp"}) {
-            for (int freq : new int[]{10, 100}) {
-                for (double mag : new double[]{0.1, 0.5, 0.75}) {
-//                    for (double rho : new double[]{0.02, 0.2, 0.4, 0.6, 0.8}) {
-//                        for (double beta : new double[]{2.0, 3.0, 4.0, 5.0}) {
-                    executeMMASTest(resultWriter, test, mag, freq, 0.02, 1.0, 5.0);
-                    executeMMASUSTest(resultWriter, test, mag, freq, 0.8, 1.0, 5.0);
-                    executeMMAS3OPTTest(resultWriter, test, mag, freq, 0.02, 1.0, 5.0);
-//                        }
-//                    }
+        for (String test : tspInstances) {
+            for (int freq : frequencies) {
+                for (double mag : magnitudes) {
+                    for (double rho : rhos) {
+                        for (double alpha : alphas) {
+                            for (double beta : betas) {
+                                executeMMASTest(resultWriter, test, mag, freq, rho, alpha, beta);
+                                executeMMASUSTest(resultWriter, test, mag, freq, rho, alpha, beta);
+                                executeMMAS3OPTTest(resultWriter, test, mag, freq, rho, alpha, beta);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -37,7 +50,7 @@ public class AlgorithmComparator {
     }
 
     private static void executeMMASTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
-        int trials = 30;
+        int trials = numTrials;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
@@ -60,7 +73,7 @@ public class AlgorithmComparator {
     }
 
     private static void executeMMASUSTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
-        int trials = 30;
+        int trials = numTrials;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
@@ -83,7 +96,7 @@ public class AlgorithmComparator {
     }
 
     private static void executeMMAS3OPTTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
-        int trials = 30;
+        int trials = numTrials;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());

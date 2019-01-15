@@ -48,7 +48,7 @@ public class ExperimentResultWriter {
         StringBuilder finalResult = new StringBuilder();
         double mean = 0.0;
         for (IterationStatistic iter : result) {
-            finalResult.append(iter.getBestSoFar()).append('\n');
+            finalResult.append(iter).append('\n');
             mean += iter.getBestSoFar();
         }
         mean /= numIterations;
