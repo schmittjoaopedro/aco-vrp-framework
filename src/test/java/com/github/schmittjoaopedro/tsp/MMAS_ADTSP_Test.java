@@ -25,7 +25,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_5_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.5, 100);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.5, 100, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -72,7 +72,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_75_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -119,7 +119,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_5_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.5, 10);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.5, 10, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -166,7 +166,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_75_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.75, 10);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.75, 10, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -213,7 +213,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_5_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.5, 100);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.5, 100, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -260,7 +260,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_75_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -307,7 +307,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_5_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.5, 10);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.5, 10, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);
@@ -354,7 +354,7 @@ public class MMAS_ADTSP_Test {
     @Test
     public void test_mmas_asymmetric_dynamic_tsp_kroA200_with_seed_1_mag_0_75_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA200));
-        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.75, 10);
+        MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 100, 0.75, 10, 1.0, 5.0);
         mmas_adtsp.setMmasSeed(1);
         mmas_adtsp.setDbgpSeed(1);
         mmas_adtsp.setStatisticInterval(1);

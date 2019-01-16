@@ -15,7 +15,7 @@ public class ExperimentResultWriter {
 
     private double numIterations;
 
-    private String[] headerNames = {"ALG", "FREQ", "MAG", "RHO", "ALPHA", "BETA", "MEAN"};
+    private String[] headerNames = {"ALG", "INSTANCE", "FREQ", "MAG", "RHO", "ALPHA", "BETA", "MEAN", "SD_MEAN"};
 
     private List<String> keys = new ArrayList<>();
 
@@ -47,19 +47,24 @@ public class ExperimentResultWriter {
         keys.add(fileName);
         StringBuilder finalResult = new StringBuilder();
         double mean = 0.0;
+        double sdMean = 0.0;
         for (IterationStatistic iter : result) {
             finalResult.append(iter).append('\n');
             mean += iter.getBestSoFar();
+            sdMean += iter.getIterationSd();
         }
         mean /= numIterations;
+        sdMean /= numIterations;
         FileUtils.writeStringToFile(Paths.get(resultsPath, fileName).toFile(), finalResult.toString(), "UTF-8");
         addLine(fileName, algName);
+        addLine(fileName, testInstance);
         addLine(fileName, String.valueOf(freq));
         addLine(fileName, String.valueOf(mag));
         addLine(fileName, String.valueOf(rho));
         addLine(fileName, String.valueOf(alpha));
         addLine(fileName, String.valueOf(beta));
         addLine(fileName, String.valueOf(mean));
+        addLine(fileName, String.valueOf(sdMean));
         for (IterationStatistic iter : result) {
             addLine(fileName, String.valueOf(iter.getBestSoFar()));
         }

@@ -22,7 +22,7 @@ public class MMAS_MEM_ADTSP_Test {
     @Test
     public void test_mmas_mem_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_1_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 100, 0.1, 10);
+        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 100, 0.1, 10, 1.0, 5.0);
         mmas_mem_adtsp.setMmasSeed(1);
         mmas_mem_adtsp.setDbgpSeed(1);
         mmas_mem_adtsp.setStatisticInterval(1);
@@ -66,7 +66,7 @@ public class MMAS_MEM_ADTSP_Test {
     @Test
     public void test_mmas_mem_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_1_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, 0.1, 100);
+        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, 0.1, 100, 1.0, 5.0);
         mmas_mem_adtsp.setMmasSeed(1);
         mmas_mem_adtsp.setDbgpSeed(1);
         mmas_mem_adtsp.setStatisticInterval(1);
@@ -110,7 +110,7 @@ public class MMAS_MEM_ADTSP_Test {
     @Test
     public void test_mmas_mem_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_5_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 100, 0.5, 10);
+        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 100, 0.5, 10, 1.0, 5.0);
         mmas_mem_adtsp.setMmasSeed(1);
         mmas_mem_adtsp.setDbgpSeed(1);
         mmas_mem_adtsp.setStatisticInterval(1);
@@ -154,7 +154,7 @@ public class MMAS_MEM_ADTSP_Test {
     @Test
     public void test_mmas_mem_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_5_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, 0.5, 100);
+        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, 0.5, 100, 1.0, 5.0);
         mmas_mem_adtsp.setMmasSeed(1);
         mmas_mem_adtsp.setDbgpSeed(1);
         mmas_mem_adtsp.setStatisticInterval(1);
@@ -198,7 +198,7 @@ public class MMAS_MEM_ADTSP_Test {
     @Test
     public void test_mmas_mem_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_75_freq_10() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 100, 0.75, 10);
+        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 100, 0.75, 10, 1.0, 5.0);
         mmas_mem_adtsp.setMmasSeed(1);
         mmas_mem_adtsp.setDbgpSeed(1);
         mmas_mem_adtsp.setStatisticInterval(1);
@@ -242,7 +242,7 @@ public class MMAS_MEM_ADTSP_Test {
     @Test
     public void test_mmas_mem_asymmetric_dynamic_tsp_kroA100_with_seed_1_mag_0_75_freq_100() {
         Graph graph = GraphFactory.createGraphFromTSP(new File(kroA100));
-        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, 0.75, 100);
+        MMAS_MEM_ADTSP mmas_mem_adtsp = new MMAS_MEM_ADTSP(graph, 0.8, 1000, 0.75, 100, 1.0, 5.0);
         mmas_mem_adtsp.setMmasSeed(1);
         mmas_mem_adtsp.setDbgpSeed(1);
         mmas_mem_adtsp.setStatisticInterval(1);

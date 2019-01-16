@@ -19,7 +19,7 @@ public class TrialExecutorTest {
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             Graph graph = GraphFactory.createGraphFromTSP(new File(getClass().getClassLoader().getResource("tsp/KroA100.tsp").getFile()));
-            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100);
+            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, 0.8, 1000, 0.75, 100, 1.0, 5.0);
             mmas_adtsp.setDbgpSeed(1);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);

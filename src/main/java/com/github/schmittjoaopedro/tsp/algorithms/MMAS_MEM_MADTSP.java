@@ -49,13 +49,19 @@ public class MMAS_MEM_MADTSP implements Runnable {
 
     private boolean changed = false;
 
+    private double alpha;
+
+    private double beta;
+
     private List<IterationStatistic> iterationStatistics;
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
 
-    public MMAS_MEM_MADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency) {
+    public MMAS_MEM_MADTSP(Graph graph, double rho, int maxIterations, double magnitude, int frequency, double alpha, double beta) {
         this.maxIterations = maxIterations;
         this.rho = rho;
+        this.alpha = alpha;
+        this.beta = beta;
         this.magnitude = magnitude;
         this.frequency = frequency;
         this.graph = graph;
@@ -80,8 +86,8 @@ public class MMAS_MEM_MADTSP implements Runnable {
         Random random = new Random(getMmasSeed());
         globalStatistics.startTimer();
         mmas.setRho(rho);
-        mmas.setAlpha(1.0);
-        mmas.setBeta(5.0);
+        mmas.setAlpha(alpha);
+        mmas.setBeta(beta);
         mmas.setQ_0(0.0);
         mmas.setnAnts(50);
         mmas.setDepth(20);
