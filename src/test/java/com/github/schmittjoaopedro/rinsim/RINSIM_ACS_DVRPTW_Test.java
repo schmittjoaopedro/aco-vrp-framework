@@ -2,7 +2,7 @@ package com.github.schmittjoaopedro.rinsim;
 
 import com.github.rinde.rinsim.pdptw.common.StatisticsDTO;
 import com.github.schmittjoaopedro.rinsim.dvrptwacs.RINSIM_ACS_DVRPTW;
-import com.github.schmittjoaopedro.vrp.DVRPTW_ACS_Test;
+import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
 import com.github.schmittjoaopedro.vrp.dvrptwacs.LoggerOutput;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp;
+package com.github.schmittjoaopedro.vrp.dvrptw;
 
 import com.github.schmittjoaopedro.vrp.dvrptwacs.Solver;
 import com.github.schmittjoaopedro.vrp.dvrptwacs.LoggerOutput;
