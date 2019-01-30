@@ -4,8 +4,8 @@ public class NextNode {
 
     public int nn[];
 
-    public int theMostFarWay; // Used to build the nn list
+    public int theMostFarWay; // Used to optimize the nn list
 
-    public double maxDist; // Used to build the nn list
+    public double maxDist; // Used to optimize the nn list
 
 }

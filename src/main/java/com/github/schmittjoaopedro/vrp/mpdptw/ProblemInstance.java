@@ -1,5 +1,8 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import java.util.List;
+import java.util.Map;
+
 public class ProblemInstance {
 
     public int noNodes;
@@ -14,7 +17,9 @@ public class ProblemInstance {
 
     public double[][] distances;
 
-    public Request[] pickUpRequests;
+    public Request[] requests;
 
-    public Request[] deliveryRequests;
+    public Map<Integer, List<Request>> pickUpRequests;
+
+    public Map<Integer, Request> deliveryRequests;
 }

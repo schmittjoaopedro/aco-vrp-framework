@@ -2,7 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 
 public class Depot {
 
-    public long vertexId;
+    public int nodeId;
 
     public double x;
 

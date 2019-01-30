@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -52,21 +53,21 @@ public class DataReader {
         }
         problemInstance.noNodes = problemInstance.distances.length;
         // Load requests
-        problemInstance.noReq = problemInstance.noNodes - 1; // Ignore the depot because it doesn't hold a request
-        List<Request> pickupRequests = new ArrayList<>();
-        List<Request> deliveryRequests = new ArrayList<>();
+        List<Request> allRequests = new ArrayList<>();
+        problemInstance.pickUpRequests = new HashMap<>();
+        problemInstance.deliveryRequests = new HashMap<>();
         for (int i = 1; i < fileContent.length; i++) {
             lineData = fileContent[i].split(" ");
             if (i == 1) {
                 problemInstance.depot = new Depot();
-                problemInstance.depot.vertexId = Integer.parseInt(lineData[0]); // Depot start at zero index
+                problemInstance.depot.nodeId = Integer.parseInt(lineData[0]); // Depot start at zero index
                 problemInstance.depot.x = Double.parseDouble(lineData[1]);
                 problemInstance.depot.y = Double.parseDouble(lineData[2]);
                 problemInstance.depot.twStart = Double.parseDouble(lineData[4]);
                 problemInstance.depot.twEnd = Double.parseDouble(lineData[5]);
             } else {
                 Request request = new Request();
-                request.vertexId = Integer.parseInt(lineData[0]) + 1;
+                request.nodeId = Integer.parseInt(lineData[0]) + 1;
                 request.x = Double.parseDouble(lineData[1]);
                 request.y = Double.parseDouble(lineData[2]);
                 request.demand = Double.parseDouble(lineData[3]);
@@ -77,14 +78,20 @@ public class DataReader {
                 request.isDeliver = !request.isPickup;
                 request.requestId = Integer.parseInt(lineData[8]);
                 if (request.isPickup) {
-                    pickupRequests.add(request);
+                    if (!problemInstance.pickUpRequests.containsKey(request.requestId)) {
+                        problemInstance.pickUpRequests.put(request.requestId, new ArrayList<>());
+                    }
+                    problemInstance.pickUpRequests.get(request.requestId).add(request);
                 } else {
-                    deliveryRequests.add(request);
+                    if (!problemInstance.deliveryRequests.containsKey(request.requestId)) {
+                        problemInstance.deliveryRequests.put(request.requestId, request);
+                    }
                 }
+                allRequests.add(request);
             }
         }
-        problemInstance.pickUpRequests = pickupRequests.toArray(new Request[]{});
-        problemInstance.deliveryRequests = deliveryRequests.toArray(new Request[]{});
+        problemInstance.requests = allRequests.toArray(new Request[]{});
+        problemInstance.noReq = problemInstance.deliveryRequests.size();
         // Load vehicle information
         lineData = fileContent[0].split(" ");
         problemInstance.noMaxVehicles = Integer.valueOf(lineData[0]);
