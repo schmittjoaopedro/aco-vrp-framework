@@ -304,7 +304,7 @@ public class MMAS {
         int distance = 0;
         int[] pos2 = new int[graph.getVertexCount()];
         for (int i = 0; i < graph.getVertexCount(); i++) {
-            pos2[a2.getTour()[i]] = i;
+            pos2[a2.getTour()[i]] = i; // For each node whats store the index in the route of a2
         }
         for (int i = 0; i < graph.getVertexCount(); i++) {
             int j = a1.getTour()[i];

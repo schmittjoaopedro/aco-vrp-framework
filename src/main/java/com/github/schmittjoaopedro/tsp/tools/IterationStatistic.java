@@ -32,6 +32,8 @@ public class IterationStatistic {
 
     private Long currentTime;
 
+    private double penaltyRate;
+
     public void startTimer() {
         currentTime = System.currentTimeMillis();
     }
@@ -120,6 +122,14 @@ public class IterationStatistic {
         this.mvsbTour = mvsbTour;
     }
 
+    public double getPenaltyRate() {
+        return penaltyRate;
+    }
+
+    public void setPenaltyRate(double penaltyRate) {
+        this.penaltyRate = penaltyRate;
+    }
+
     @Override
     public String toString() {
         StringBuilder log = new StringBuilder();
@@ -131,6 +141,9 @@ public class IterationStatistic {
         log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 15));
         log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 15));
         log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 15));
+        if (getPenaltyRate() > 0) {
+            log.append("PENALTY RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 15));
+        }
         return log.toString();
     }
 }

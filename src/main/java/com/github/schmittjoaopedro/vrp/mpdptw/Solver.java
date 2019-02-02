@@ -31,12 +31,18 @@ public class Solver implements Runnable {
 
     private String filePath;
 
-    public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho) {
+    private int statisticInterval;
+
+    private boolean showLog;
+
+    public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.fileName = fileName;
         this.rootDirectory = rootDirectory;
         this.maxIterations = maxIterations;
         this.seed = seed;
         this.rho = rho;
+        this.statisticInterval = statisticInterval;
+        this.showLog = showLog;
     }
 
     @Override
@@ -46,7 +52,7 @@ public class Solver implements Runnable {
         initProblemInstance();
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
-        mmas.setBeta(2.0);
+        mmas.setBeta(5.0);
         mmas.setQ_0(0.0);
         mmas.setnAnts(problemInstance.noNodes);
         mmas.setDepth(20);
@@ -55,9 +61,50 @@ public class Solver implements Runnable {
         mmas.setRandom(new Random(seed));
         mmas.setSymmetric(false);
         mmas.computeNNList();
-        mmas.initHeuristicInfo();
         mmas.initTry();
         globalStatistics.endTimer("MMAS Initialization");
+
+        // Execute MMAS
+        globalStatistics.startTimer();
+        for (int i = 1; i <= maxIterations; i++) {
+            IterationStatistic iterationStatistic = new IterationStatistic();
+            mmas.setCurrentIteration(i);
+            // Construction
+            iterationStatistic.startTimer();
+            mmas.constructSolutions();
+            iterationStatistic.endTimer("Construction");
+            // Daemon
+            boolean hasBest = mmas.updateBestSoFar();
+            if (hasBest) {
+                mmas.setPheromoneBounds();
+            }
+            mmas.updateRestartBest();
+            iterationStatistic.endTimer("Daemon");
+            // Pheromone
+            iterationStatistic.startTimer();
+            mmas.evaporation();
+            mmas.pheromoneUpdate();
+            //mmas.checkPheromoneTrailLimits();
+            //mmas.searchControl(); // TODO: Rever
+            iterationStatistic.endTimer("Pheromone");
+            // Statistics
+            if (i % statisticInterval == 0) {
+                iterationStatistic.setIteration(i);
+                iterationStatistic.setBestSoFar(mmas.getBestSoFar().totalCost);
+                iterationStatistic.setDiversity(mmas.calculateDiversity());
+                iterationStatistic.setBranchFactor(mmas.nodeBranching());
+                iterationStatistic.setIterationBest(mmas.findBest().totalCost);
+                iterationStatistic.setIterationWorst(mmas.findWorst().totalCost);
+//                iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
+//                iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
+                iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
+                iterationStatistics.add(iterationStatistic);
+                if (showLog) {
+                    System.out.println(iterationStatistic);
+                }
+            }
+        }
+        System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
     }
 
     private void initProblemInstance() {

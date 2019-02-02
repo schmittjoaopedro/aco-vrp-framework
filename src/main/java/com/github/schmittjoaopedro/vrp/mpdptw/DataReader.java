@@ -54,8 +54,8 @@ public class DataReader {
         problemInstance.noNodes = problemInstance.distances.length;
         // Load requests
         List<Request> allRequests = new ArrayList<>();
-        problemInstance.pickUpRequests = new HashMap<>();
-        problemInstance.deliveryRequests = new HashMap<>();
+        problemInstance.pickups = new HashMap<>();
+        problemInstance.delivery = new HashMap<>();
         for (int i = 1; i < fileContent.length; i++) {
             lineData = fileContent[i].split(" ");
             if (i == 1) {
@@ -78,20 +78,20 @@ public class DataReader {
                 request.isDeliver = !request.isPickup;
                 request.requestId = Integer.parseInt(lineData[8]);
                 if (request.isPickup) {
-                    if (!problemInstance.pickUpRequests.containsKey(request.requestId)) {
-                        problemInstance.pickUpRequests.put(request.requestId, new ArrayList<>());
+                    if (!problemInstance.pickups.containsKey(request.requestId)) {
+                        problemInstance.pickups.put(request.requestId, new ArrayList<>());
                     }
-                    problemInstance.pickUpRequests.get(request.requestId).add(request);
+                    problemInstance.pickups.get(request.requestId).add(request);
                 } else {
-                    if (!problemInstance.deliveryRequests.containsKey(request.requestId)) {
-                        problemInstance.deliveryRequests.put(request.requestId, request);
+                    if (!problemInstance.delivery.containsKey(request.requestId)) {
+                        problemInstance.delivery.put(request.requestId, request);
                     }
                 }
                 allRequests.add(request);
             }
         }
         problemInstance.requests = allRequests.toArray(new Request[]{});
-        problemInstance.noReq = problemInstance.deliveryRequests.size();
+        problemInstance.noReq = problemInstance.delivery.size();
         // Load vehicle information
         lineData = fileContent[0].split(" ");
         problemInstance.noMaxVehicles = Integer.valueOf(lineData[0]);

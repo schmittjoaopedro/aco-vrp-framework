@@ -18,8 +18,8 @@ public class OptimalRequestSolver {
 
     public OptimalRequestSolver(int requestId, ProblemInstance instance) {
         this.instance = instance;
-        this.pickupRequests = instance.pickUpRequests.get(requestId);
-        this.deliveryRequest = instance.deliveryRequests.get(requestId);
+        this.pickupRequests = instance.pickups.get(requestId);
+        this.deliveryRequest = instance.delivery.get(requestId);
     }
 
     public void optimize() {

@@ -6,6 +6,8 @@ public class Ant {
 
     public ArrayList<ArrayList<Integer>> tours;
 
+    public ArrayList<ArrayList<Integer>> requests;
+
     public boolean[] visited;
 
     public boolean[] visitedRequests;
@@ -17,5 +19,9 @@ public class Ant {
     public double totalCost;
 
     public boolean feasible;
+
+    public double twPenalty;
+
+    public double capacityPenalty;
 
 }

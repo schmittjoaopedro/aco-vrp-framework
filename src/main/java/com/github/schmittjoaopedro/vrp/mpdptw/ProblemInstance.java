@@ -19,7 +19,7 @@ public class ProblemInstance {
 
     public Request[] requests;
 
-    public Map<Integer, List<Request>> pickUpRequests;
+    public Map<Integer, List<Request>> pickups;
 
-    public Map<Integer, Request> deliveryRequests;
+    public Map<Integer, Request> delivery;
 }
