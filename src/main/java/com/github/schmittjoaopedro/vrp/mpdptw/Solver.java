@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -66,6 +67,7 @@ public class Solver implements Runnable {
 
         // Execute MMAS
         globalStatistics.startTimer();
+        mmas.getBestSoFar().feasible = false;
         for (int i = 1; i <= maxIterations; i++) {
             IterationStatistic iterationStatistic = new IterationStatistic();
             mmas.setCurrentIteration(i);
@@ -84,8 +86,8 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-            //mmas.checkPheromoneTrailLimits();
-            //mmas.searchControl(); // TODO: Rever
+//            mmas.checkPheromoneTrailLimits();
+            mmas.searchControl(); // TODO: Rever
             iterationStatistic.endTimer("Pheromone");
             // Statistics
             if (i % statisticInterval == 0) {
@@ -95,6 +97,7 @@ public class Solver implements Runnable {
                 iterationStatistic.setBranchFactor(mmas.nodeBranching());
                 iterationStatistic.setIterationBest(mmas.findBest().totalCost);
                 iterationStatistic.setIterationWorst(mmas.findWorst().totalCost);
+                iterationStatistic.setFeasible(mmas.getBestSoFar().feasible);
 //                iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
 //                iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
@@ -104,7 +107,17 @@ public class Solver implements Runnable {
                 }
             }
         }
+        boolean feasible = true;
+        for (ArrayList route : mmas.getBestSoFar().tours) {
+            feasible &= mmas.isRouteFeasible(route);
+        }
+        mmas.getBestSoFar().feasible = feasible;
+        mmas.fitnessEvaluation(mmas.getBestSoFar());
         System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
+        for (ArrayList route : mmas.getBestSoFar().tours) {
+            System.out.println(StringUtils.join(route, "-"));
+        }
+        System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
     }
 
     private void initProblemInstance() {

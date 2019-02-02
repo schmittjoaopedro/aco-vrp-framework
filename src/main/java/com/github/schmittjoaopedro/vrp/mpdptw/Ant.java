@@ -14,6 +14,10 @@ public class Ant {
 
     public double[] departureTime;
 
+    public double[] demands;
+
+    public int toVisit;
+
     public ArrayList<Double> tourLengths;
 
     public double totalCost;

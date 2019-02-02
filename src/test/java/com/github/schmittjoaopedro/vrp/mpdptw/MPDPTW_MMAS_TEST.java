@@ -19,4 +19,16 @@ public class MPDPTW_MMAS_TEST {
         solver.run();
     }
 
+    @Test
+    public void mpdptw_large_4_25_4_test() {
+        Solver solver = new Solver(rootDirectory, "l_4_25_4.txt", 10000, 1, 0.02, 1, true);
+        solver.run();
+    }
+
+    @Test
+    public void mpdptw_normal_8_100_5_test() {
+        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 10000, 1, 0.02, 1, true);
+        solver.run();
+    }
+
 }

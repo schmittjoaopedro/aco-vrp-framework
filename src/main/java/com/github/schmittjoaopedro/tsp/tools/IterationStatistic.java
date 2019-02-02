@@ -34,6 +34,8 @@ public class IterationStatistic {
 
     private double penaltyRate;
 
+    private boolean feasible;
+
     public void startTimer() {
         currentTime = System.currentTimeMillis();
     }
@@ -130,6 +132,14 @@ public class IterationStatistic {
         this.penaltyRate = penaltyRate;
     }
 
+    public boolean isFeasible() {
+        return feasible;
+    }
+
+    public void setFeasible(boolean feasible) {
+        this.feasible = feasible;
+    }
+
     @Override
     public String toString() {
         StringBuilder log = new StringBuilder();
@@ -139,10 +149,11 @@ public class IterationStatistic {
         log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 15));
         log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 15));
         log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 15));
-        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 15));
-        log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 15));
+        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 10));
+        log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 10));
         if (getPenaltyRate() > 0) {
-            log.append("PENALTY RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 15));
+            log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
+            log.append("FEASIBLE: " + (feasible ? "T" : "F"));
         }
         return log.toString();
     }

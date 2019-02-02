@@ -51,8 +51,6 @@ public class MMAS {
 
     private double[][] pheromoneNodes;
 
-    private double[][] pheromoneRequests;
-
     private int[][] nnList;
 
     private Random random;
@@ -62,6 +60,14 @@ public class MMAS {
     private boolean symmetric = false;
 
     private double probabilities[];
+
+    public final double weight1 = 0.3;
+
+    public final double weight2 = 0.3;
+
+    public final double weight3 = 0.3;
+
+    public final double weight4 = 0.1;
 
     public MMAS(ProblemInstance instance) {
         this.instance = instance;
@@ -85,15 +91,9 @@ public class MMAS {
 
     public void allocateStructures() {
         pheromoneNodes = new double[instance.noNodes][instance.noNodes];
-        pheromoneRequests = new double[instance.noReq + 1][instance.noReq + 1];
         for (int i = 0; i < instance.noNodes; i++) {
             for (int j = 0; j < instance.noNodes; j++) {
                 pheromoneNodes[i][j] = 0.0;
-            }
-        }
-        for (int i = 0; i < pheromoneRequests.length; i++) {
-            for (int j = 0; j < pheromoneRequests.length; j++) {
-                pheromoneRequests[i][j] = 0.0;
             }
         }
         nnList = new int[instance.noNodes][depth];
@@ -211,13 +211,6 @@ public class MMAS {
                 }
             }
         }
-        for (int i = 0; i < pheromoneRequests.length; i++) {
-            for (int j = 0; j < pheromoneRequests.length; j++) {
-                if (i != j) {
-                    pheromoneRequests[i][j] = initialTrail;
-                }
-            }
-        }
     }
 
     public Ant findBest() {
@@ -235,13 +228,16 @@ public class MMAS {
     public boolean updateBestSoFar() {
         Ant iterationBest = findBest();
         boolean found = false;
-        if (iterationBest.totalCost < bestSoFar.totalCost) {
+        boolean isBetterCost = iterationBest.totalCost < bestSoFar.totalCost;
+        boolean isCurrentFeasible = bestSoFar.feasible;
+        boolean isNewFeasible = iterationBest.feasible;
+        if ((!isCurrentFeasible && isBetterCost) || (isNewFeasible && isBetterCost)) {
             found = true;
             copyFromTo(iterationBest, bestSoFar);
             copyFromTo(iterationBest, restartBest);
             foundBest = getCurrentIteration();
             restartFoundBest = getCurrentIteration();
-            // calculatedBranchFact = nodeBranching(lambda); // TODO: Rever
+            calculatedBranchFact = nodeBranching(lambda); // TODO: Rever
         }
         return found;
     }
@@ -262,13 +258,6 @@ public class MMAS {
     }
 
     public void evaporation() {
-        for (int i = 0; i < pheromoneRequests.length; i++) {
-            for (int j = 0; j < pheromoneRequests[i].length; j++) {
-                if (i != j) {
-                    pheromoneRequests[i][j] = (1.0 - rho) * pheromoneRequests[i][j];
-                }
-            }
-        }
         for (int i = 0; i < pheromoneNodes.length; i++) {
             for (int j = 0; j < pheromoneNodes[i].length; j++) {
                 if (i != j) {
@@ -303,13 +292,6 @@ public class MMAS {
                 pheromoneNodes[from][to] = pheromoneNodes[from][to] + dTau;
             }
         }
-        for (int i = 0; i < ant.requests.size(); i++) {
-            for (int j = 0; j < ant.requests.get(i).size() - 1; j++) {
-                from = ant.requests.get(i).get(j);
-                to = ant.requests.get(i).get(j + 1);
-                pheromoneRequests[from][to] = pheromoneRequests[from][to] + dTau;
-            }
-        }
     }
 
     public void checkPheromoneTrailLimits() {
@@ -320,17 +302,6 @@ public class MMAS {
                         pheromoneNodes[i][j] = trailMin;
                     } else if (pheromoneNodes[i][j] > trailMax) {
                         pheromoneNodes[i][j] = trailMax;
-                    }
-                }
-            }
-        }
-        for (int i = 0; i < pheromoneRequests.length; i++) {
-            for (int j = 0; j < pheromoneRequests.length; j++) {
-                if (i != j) {
-                    if (pheromoneRequests[i][j] < trailMin) {
-                        pheromoneRequests[i][j] = trailMin;
-                    } else if (pheromoneRequests[i][j] > trailMax) {
-                        pheromoneRequests[i][j] = trailMax;
                     }
                 }
             }
@@ -370,12 +341,12 @@ public class MMAS {
         to.departureTime = from.departureTime;
         to.visitedRequests = from.visitedRequests;
         to.tours = new ArrayList<>();
-        for (int i = 0; i < to.tours.size(); i++) {
-            to.tours.add(i, (ArrayList<Integer>) to.tours.get(0).clone());
+        for (int i = 0; i < from.tours.size(); i++) {
+            to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
         }
         to.tourLengths = new ArrayList<>();
-        for (int i = 0; i < to.tourLengths.size(); i++) {
-            to.tourLengths.add(i, to.tourLengths.get(0));
+        for (int i = 0; i < from.tourLengths.size(); i++) {
+            to.tourLengths.add(i, from.tourLengths.get(i));
         }
     }
 
@@ -433,79 +404,66 @@ public class MMAS {
     }
 
     public void antEmptyMemory(Ant ant) {
-        ant.feasible = false;
+        ant.feasible = true;
         ant.tours = new ArrayList<>();
         ant.requests = new ArrayList<>();
         ant.visited = new boolean[instance.noNodes];
+        ant.demands = new double[instance.noNodes];
         ant.tourLengths = new ArrayList<>();
         ant.totalCost = Double.MAX_VALUE;
         ant.departureTime = new double[instance.noNodes];
         ant.visitedRequests = new boolean[instance.noReq];
         ant.capacityPenalty = 0.0;
         ant.twPenalty = 0.0;
+        ant.toVisit = instance.noNodes;
     }
 
     public void constructSolutions() {
-        boolean isFeasible;
-        int reqStep, vehicle, lastPickupPos, pickupStep, currentReq;
-        int pickupInsertion[], deliveryInsertion[]; // Return position to insert request , the request id to insert
         Ant currentAnt;
-        Set<Integer> insertedPositions;
+        int vehicle, nextClient, requestId;
+        double departureTime;
+        double[] nextVisit;
+        boolean feasible;
+        double demand;
+        int currentPosition;
         for (Ant ant : antPopulation) {
             antEmptyMemory(ant);
         }
         for (int k = 0; k < antPopulation.size(); k++) {
-            reqStep = 0;
             vehicle = 0;
-            currentReq = instance.noReq; // It means that ant must to start a new vehicle
             currentAnt = antPopulation.get(k);
-            currentAnt.feasible = true;
+            currentAnt.toVisit--; // The depot is visited
             currentAnt.tours.add(vehicle, new ArrayList<>());
             currentAnt.tours.get(vehicle).add(instance.depot.nodeId);
-            currentAnt.tours.get(vehicle).add(instance.depot.nodeId);
             currentAnt.requests.add(vehicle, new ArrayList<>());
-            currentAnt.requests.get(vehicle).add(instance.noReq);
-            currentAnt.requests.get(vehicle).add(instance.noReq);
-
-            while (reqStep < instance.noReq) {
-                int reqId = neighbourNextRequest(currentAnt, currentReq);
-                // If reqId == noReq, it means that the vehicle must be closed and a
-                // new one started (because request indexes go from 0 to noReq - 1).
-                isFeasible = isRouteFeasible(currentAnt.tours.get(vehicle));
-                if (reqId == instance.noReq || !isFeasible) {
-                    vehicle++;
-                    currentReq = instance.noReq;
-                    currentAnt.feasible &= isFeasible;
-                    currentAnt.tours.add(vehicle, new ArrayList<>());
-                    currentAnt.requests.add(vehicle, new ArrayList<>());
-                    currentAnt.tours.get(vehicle).add(instance.depot.nodeId);
-                    currentAnt.tours.get(vehicle).add(instance.depot.nodeId);
-                    currentAnt.requests.get(vehicle).add(instance.noReq);
-                    currentAnt.requests.get(vehicle).add(instance.noReq);
-                } else {
-                    currentAnt.requests.get(vehicle).add(currentAnt.requests.get(vehicle).size() - 1, reqId);
-                    lastPickupPos = 0;
-                    pickupStep = 0;
-                    currentAnt.visitedRequests[reqId] = true;
-                    insertedPositions = new HashSet<>();
-                    // Selects the best position of each request pickup based on pheromone
-                    while (pickupStep < instance.pickups.get(reqId).size()) {
-                        pickupInsertion = neighbourNextNode(currentAnt, vehicle, 0, insertedPositions, instance.pickups.get(reqId));
-                        currentAnt.tours.get(vehicle).add(pickupInsertion[0], pickupInsertion[1]);
-                        currentAnt.visited[pickupInsertion[1]] = true;
-                        // Update the last pickup position for that pickups takes precedence over the delivery
-                        if (pickupInsertion[0] <= lastPickupPos) {
-                            lastPickupPos++;
-                        } else {
-                            lastPickupPos = pickupInsertion[0];
-                        }
-                        pickupStep++;
+            currentAnt.visited[instance.depot.nodeId] = true;
+            currentPosition = 0;
+            while (currentAnt.toVisit > 0) {
+                nextVisit = selectNextClient(currentAnt, vehicle, currentPosition);
+                nextClient = (int) nextVisit[0]; // [nextClient, heuristic, departureTime, demand, feasible, cumulativeCost]
+                if (nextVisit[0] != -1) { // a next client was found
+                    demand = nextVisit[3];
+                    departureTime = nextVisit[2];
+                    feasible = nextVisit[4] > 0; // flag to indicate if the route is feasible
+                    currentPosition++;
+                    currentAnt.tours.get(vehicle).add(currentPosition, nextClient);
+                    currentAnt.visited[nextClient] = true;
+                    currentAnt.feasible &= feasible; // In one move is infeasible, the full solution will be infeasible
+                    currentAnt.departureTime[nextClient] = departureTime;
+                    currentAnt.demands[nextClient] = demand;
+                    currentAnt.toVisit--;
+                    requestId = instance.requests[nextClient - 1].requestId;
+                    if (!currentAnt.requests.get(vehicle).contains(requestId)) {
+                        currentAnt.requests.get(vehicle).add(requestId);
                     }
-                    // Selects the best delivery position of request based on pheromone
-                    deliveryInsertion = neighbourNextNode(currentAnt, vehicle, lastPickupPos, insertedPositions, Arrays.asList(instance.delivery.get(reqId)));
-                    currentAnt.tours.get(vehicle).add(deliveryInsertion[0], deliveryInsertion[1]);
-                    currentAnt.visited[deliveryInsertion[1]] = true;
-                    reqStep++;
+                } else {
+                    currentAnt.tours.get(vehicle).add(instance.depot.nodeId); // Finish previous route
+                    // Starts a new route
+                    vehicle++;
+                    currentPosition = 0;
+                    currentAnt.tours.add(vehicle, new ArrayList<>());
+                    currentAnt.tours.get(vehicle).add(instance.depot.nodeId);
+                    currentAnt.requests.add(vehicle, new ArrayList<>());
                 }
             }
         }
@@ -514,81 +472,138 @@ public class MMAS {
         }
     }
 
-    private int[] neighbourNextNode(Ant ant, int vehicle, int startAt, Set<Integer> insertedPositions, List<Request> requestParts) {
+    /**
+     * returns three information
+     * 1 - next client, -1 indicate that no next client was found
+     * 2 - departure time, the calculated departure time to the next client
+     * 3 - feasible, if the next move is feasible
+     */
+    public double[] selectNextClient(Ant ant, int vehicle, int currIdx) {
+        int requestId;
+        double[] heuristic;
         double sum = 0.0;
-        int tourNode, pickupNode;
-        Double[] temp;
-
-        ArrayList<Integer> tour = ant.tours.get(vehicle);
-        int tourNoLastDepot = tour.size() - 1;
-        List<Double[]> probabilities = new ArrayList<>();
-
-        for (int i = startAt; i < tourNoLastDepot; i++) {
-            tourNode = tour.get(i);
-            for (int j = 0; j < requestParts.size(); j++) {
-                pickupNode = requestParts.get(j).nodeId;
-                if (!ant.visited[pickupNode] && isTimeFeasible(tourNode, pickupNode) && !insertedPositions.contains(tourNode)) {
-                    double heuristic = 1.0 / (
-                            (1.0 / (pickupNode < instance.requests.length ? instance.requests[pickupNode].twEnd : instance.depot.twEnd)) +
-                                    (1.0 - (1.0 / (pickupNode < instance.requests.length ? instance.requests[pickupNode].twStart : instance.depot.twStart))) +
-                                    (1.0 / instance.distances[tourNode][pickupNode])
-                    );
-//                    double heuristic = 1.0 / instance.distances[tourNode][pickupNode];
-                    sum += Math.pow(pheromoneNodes[tourNode][pickupNode], alpha) * Math.pow(heuristic, beta);
-                    temp = new Double[]{
-                            (double) i, // Insertion position
-                            (double) pickupNode, // Node to insert
-                            sum // Selection probability
-                    };
-                    probabilities.add(temp);
+        boolean hasRequest, valid;
+        ArrayList<double[]> newRequestProbs = new ArrayList<>();
+        ArrayList<double[]> currRequestProbs = new ArrayList<>();
+        ArrayList<double[]> probs = new ArrayList<>();
+        for (int i = 0; i < instance.noNodes; i++) {
+            if (!ant.visited[i]) {
+                // Calculate heuristic value for the next client and its feasibility
+                heuristic = HEURISTIC(ant, vehicle, currIdx, i);
+                // If the vehicle has request, validate if the deliver can be executed after all pickups were made
+                requestId = instance.requests[i - 1].requestId;
+                hasRequest = ant.requests.get(vehicle).contains(requestId);
+                valid = instance.requests[i - 1].isPickup;
+                if (hasRequest && instance.requests[i - 1].isDeliver) {
+                    valid = true;
+                    for (Request req : instance.pickups.get(requestId)) {
+                        if (!ant.visited[req.nodeId]) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+                // If the next client belongs to the current vehicle requests, add to new request probs
+                if (hasRequest && valid) {
+                    // [nextClient, heuristic, departureTime, demand, feasible, cumulativeCost]
+                    currRequestProbs.add(new double[]{i, heuristic[0], heuristic[1], heuristic[2], heuristic[3], 0.0});
+                } else if (heuristic[1] > 0 && valid) { // Else add to new request probs, but allow only new feasible requests
+                    newRequestProbs.add(new double[]{i, heuristic[0], heuristic[1], heuristic[2], heuristic[3], 0.0});
                 }
             }
         }
 
-        double rand = random.nextDouble() * sum;
-        int selected = 0;
-        if (probabilities.isEmpty()) {
-            for (int i = 0; i < requestParts.size(); i++) {
-                if (!ant.visited[requestParts.get(i).nodeId]) {
-                    selected = requestParts.get(i).nodeId;
-                    break;
+        // Check if there is at least one feasible node in the request list
+        boolean currReqFeasible = true;
+        for (double[] prob : currRequestProbs) {
+            if (prob[4] < 1) { //feasibility
+                currReqFeasible = false;
+                break;
+            }
+        }
+        // If there is some feasible node in current request
+        if (currReqFeasible) {
+            // Select only feasible moves
+            for (double[] prob : currRequestProbs) {
+                if (prob[4] > 0) { //feasibility
+                    sum += prob[1]; //heuristic
+                    prob[5] = sum;
+                    probs.add(prob);
                 }
             }
-            return new int[]{tourNoLastDepot, selected};
+            for (double[] prob : newRequestProbs) {
+                if (prob[4] > 0) {
+                    sum += prob[1];
+                    prob[5] = sum;
+                    probs.add(prob);
+                }
+            }
         } else {
-            while (selected != probabilities.size() - 1) {
-                if (rand < probabilities.get(selected)[2]) {
-                    break;
-                }
-                selected++;
-            }
-            insertedPositions.add(tour.get(probabilities.get(selected)[0].intValue()));
-            probabilities.get(selected)[0]++;
-            return new int[]{probabilities.get(selected)[0].intValue(), probabilities.get(selected)[1].intValue()};
-        }
-    }
-
-    private int neighbourNextRequest(Ant ant, int current) {
-        int noReqWithCloseRoute = instance.noReq + 1;
-        double[] probabilities = new double[noReqWithCloseRoute];
-        double sum = 0.0;
-        for (int r = 0; r < noReqWithCloseRoute; r++) {
-            if (r == current || (r != instance.noReq && ant.visitedRequests[r])) {
-                probabilities[r] = sum;
-            } else {
-                probabilities[r] = sum + Math.pow(pheromoneRequests[current][r], alpha);
-                sum = probabilities[r];
+            for (double[] prob : currRequestProbs) {
+                sum += prob[1];
+                prob[5] = sum;
+                probs.add(prob);
             }
         }
+        // If this route is done, returns a flag indicating no more clients to add
+        if (probs.isEmpty()) {
+            return new double[]{-1.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+        }
+        // Roulette wheel selection
         double rand = random.nextDouble() * sum;
         int selected = 0;
-        while (selected != probabilities.length - 1) {
-            if (rand < probabilities[selected]) {
+        while (selected != probs.size() - 1) {
+            if (rand <= probs.get(selected)[5]) {
                 break;
             }
             selected++;
         }
-        return selected;
+        return probs.get(selected);
+    }
+
+    public double[] HEURISTIC(Ant ant, int vehicle, int currIdx, int nextCity) {
+        double feasible = 1.0;
+        int currentCity = ant.tours.get(vehicle).get(currIdx);
+        double timeCostNext;
+        double demandCostNext;
+        double timeCostDepot;
+        // Calculate cost to next client
+        timeCostNext = ant.departureTime[currentCity] + instance.distances[currentCity][nextCity];
+        timeCostNext = Math.max(timeCostNext, instance.requests[nextCity - 1].twStart);
+        timeCostNext += instance.requests[nextCity - 1].serviceTime;
+        demandCostNext = ant.demands[currentCity] + instance.requests[nextCity - 1].demand;
+        if (timeCostNext > instance.requests[nextCity - 1].twEnd || demandCostNext > instance.vehicleCapacity) {
+            feasible = 0.0;
+        }
+        // Calculate cost to depot
+        timeCostDepot = timeCostNext + instance.distances[nextCity][instance.depot.nodeId];
+        timeCostDepot = Math.max(timeCostDepot, instance.depot.twStart);
+        if (timeCostDepot > instance.depot.twEnd) {
+            feasible = 0.0;
+        }
+        // Calculate heuristic
+        double deliveryUrgency = instance.requests[nextCity - 1].twEnd - timeCostNext;
+        double timeDifference = timeCostNext - ant.departureTime[currentCity];
+        double futureCost = calculateFutureCost(ant, vehicle, currentCity);
+        double cost = 1.0 / (weight1 * instance.distances[currentCity][nextCity] + weight2 * timeDifference + weight3 * futureCost + weight4 * deliveryUrgency);
+        cost = Math.pow(cost, beta);
+        cost = cost * Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
+        return new double[]{cost, timeCostNext, demandCostNext, feasible};
+    }
+
+    public double calculateFutureCost(Ant ant, int vehicle, int currentCity) {
+        double cost = 0.0;
+        for (int reqId : ant.requests.get(vehicle)) {
+            for (Request req : instance.pickups.get(reqId)) {
+                if (!ant.visited[req.nodeId]) {
+                    cost += instance.distances[currentCity][req.nodeId];
+                }
+            }
+            if (!ant.visited[instance.delivery.get(reqId).nodeId]) {
+                cost += instance.distances[currentCity][instance.delivery.get(reqId).nodeId];
+            }
+        }
+        return cost;
     }
 
     public Ant findWorst() {
