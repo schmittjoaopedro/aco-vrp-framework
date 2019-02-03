@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.tsp.utils.Maths;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Solver implements Runnable {
 
@@ -98,12 +100,13 @@ public class Solver implements Runnable {
                 iterationStatistic.setIterationBest(mmas.findBest().totalCost);
                 iterationStatistic.setIterationWorst(mmas.findWorst().totalCost);
                 iterationStatistic.setFeasible(mmas.getBestSoFar().feasible);
-//                iterationStatistic.setIterationMean(Maths.getPopMean(mmas.getAntPopulation()));
-//                iterationStatistic.setIterationSd(Maths.getPopultionStd(mmas.getAntPopulation()));
+                iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
+                iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
+                    logInFile(iterationStatistic.toString());
                 }
             }
         }
@@ -114,10 +117,13 @@ public class Solver implements Runnable {
         mmas.getBestSoFar().feasible = feasible;
         mmas.fitnessEvaluation(mmas.getBestSoFar());
         System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
+        logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible);
         for (ArrayList route : mmas.getBestSoFar().tours) {
             System.out.println(StringUtils.join(route, "-"));
+            logInFile(StringUtils.join(route, "-"));
         }
         System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
+        logInFile("Cost = " + mmas.getBestSoFar().totalCost);
     }
 
     private void initProblemInstance() {
@@ -129,5 +135,13 @@ public class Solver implements Runnable {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private void logInFile(String text) {
+        /*try {
+            FileUtils.writeStringToFile(new File("C:\\Temp\\result-" + fileName), text + "\n", "UTF-8", true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
     }
 }

@@ -753,4 +753,8 @@ public class MMAS {
     public double getCalculatedBranchFact() {
         return calculatedBranchFact;
     }
+
+    public List<Ant> getAntPopulation() {
+        return antPopulation;
+    }
 }

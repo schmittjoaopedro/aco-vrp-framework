@@ -59,6 +59,17 @@ public class Maths {
         return Math.sqrt(dev / (double) (population.size() - 1));
     }
 
+    public static double getStd(List<Double> costs) {
+        double dev = 0.0;
+        double mean = getMean(costs);
+        if (costs.size() <= 1)
+            return dev;
+        for (int j = 0; j < costs.size(); j++) {
+            dev += (costs.get(j) - mean) * (costs.get(j) - mean);
+        }
+        return Math.sqrt(dev / (double) (costs.size() - 1));
+    }
+
     public static double sd(double numArray[]) {
         double sum = 0.0, standardDeviation = 0.0;
         int length = numArray.length;
@@ -82,6 +93,14 @@ public class Maths {
             cost += ant.getCost();
         }
         return cost / (double) antPopulation.size();
+    }
+
+    public static double getMean(List<Double> costs) {
+        double mean = 0.0;
+        for (Double cost : costs) {
+            mean += cost;
+        }
+        return mean / (double) costs.size();
     }
 
 

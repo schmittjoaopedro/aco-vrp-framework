@@ -28,4 +28,8 @@ public class Ant {
 
     public double capacityPenalty;
 
+    public double getCost() {
+        return totalCost;
+    }
+
 }

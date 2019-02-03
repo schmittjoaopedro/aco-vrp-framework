@@ -26,9 +26,51 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
+    public void mpdptw_n_4_25_1_test() {
+        Solver solver = new Solver(rootDirectory, "n_4_25_1.txt", 10000, 1, 0.02, 1, true);
+        solver.run();
+    }
+
+    @Test
     public void mpdptw_normal_8_100_5_test() {
         Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 10000, 1, 0.02, 1, true);
         solver.run();
+    }
+
+    @Test
+    public void mpdptw_large_test() {
+        new Solver(rootDirectory, "l_4_25_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_8_25_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_4_50_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_8_50_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_4_100_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_8_100_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_4_400_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "l_8_400_1.txt", 10000, 1, 0.02, 1, true).run();
+    }
+
+    @Test
+    public void mpdptw_normal_test() {
+        new Solver(rootDirectory, "n_4_25_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_8_25_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_4_50_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_8_50_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_4_100_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_8_100_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_4_400_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "n_8_400_1.txt", 10000, 1, 0.02, 1, true).run();
+    }
+
+    @Test
+    public void mpdptw_without_test() {
+        new Solver(rootDirectory, "w_4_25_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_8_25_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_4_50_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_8_50_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_4_100_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_8_100_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_4_400_1.txt", 10000, 1, 0.02, 1, true).run();
+        new Solver(rootDirectory, "w_8_400_1.txt", 10000, 1, 0.02, 1, true).run();
     }
 
 }
