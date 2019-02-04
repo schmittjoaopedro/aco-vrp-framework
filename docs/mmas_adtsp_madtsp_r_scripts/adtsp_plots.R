@@ -1,7 +1,10 @@
 #pathName = "C:/Temp/ALL_RESULTS_COMPILED.csv"
-pathName = "C:/Temp/Diversity.csv"
-header <- read.csv(pathName, sep = ";", nrows = 1)
-data = read.csv(pathName, sep = ";", header = T, colClasses = paste(rep("character", ncol(header))))
+pathName = "C:/Temp/diversity.csv"
+type = "MADTSP"
+costType = "Diversity"
+dataSep = ","
+header <- read.csv(pathName, sep = dataSep, nrows = 1)
+data = read.csv(pathName, sep = dataSep, header = T, colClasses = paste(rep("character", ncol(header))))
 
 normalizeName <- function (algName) {
   g <- regexpr("\\_[^\\_]*$", algName)
@@ -21,12 +24,10 @@ getFormattedData <- function(data, instance, freq, mag) {
   return(dataFrame)
 }
 
-plotData <- function(data, instance, freq, mag, type) {
+plotData <- function(data, instance, freq, mag, type, costType) {
   formatedData <- getFormattedData(data, instance, freq, mag)
   fSize = 1.5
   title = paste(type, instance, " Freq:", freq, " Mag:", mag)
-  lwds = c(2, 2, 2, 2, 2)
-  cols = c("black", "red", "green", "blue", "gray")
   
   minVal <- min(formatedData[,2])
   maxVal <- max(formatedData[,2])
@@ -41,39 +42,38 @@ plotData <- function(data, instance, freq, mag, type) {
   print(minVal)
   
   plot(formatedData$Iteration, 
-       formatedData[,2], 
+       formatedData$MMAS_MEM_US, 
        type = "l", 
-       col = cols[1], 
+       col = "grey", 
        ylim = c(minVal, maxVal),
        main = title, 
        xlab = "Iteration", 
-       ylab = "Fitness", 
+       ylab = costType, 
        cex.lab=fSize, 
        cex.axis=fSize, 
        cex.main=fSize, 
-       lwd = lwds[1])
-  for (idx in 3:ncol(formatedData)) {
-    lines(formatedData$Iteration, 
-          formatedData[,idx], 
-          col = cols[idx-1], 
-          lty=10, 
-          lwd=lwds[idx-1])
-  }
+       lwd = 2)
+  
+  lines(formatedData$Iteration, formatedData$MMAS_MEM, col = "blue", lty=10, lwd=2)
+  lines(formatedData$Iteration, formatedData$MMAS_US, col = "green", lty=10, lwd=2)
+  lines(formatedData$Iteration, formatedData$MMAS_3OPT, col = "red", lty=10, lwd=2)
+  lines(formatedData$Iteration, formatedData$MMAS, col = "black", lty=10, lwd=2)
+
   legend("topleft", 
-         legend = names(formatedData)[2:ncol(formatedData)],
-         col = cols,
+         legend = c("MMAS_MEM_US", "MMAS_MEM", "MMAS_US", "MMAS_3OPT", "MMAS"),
+         col = c("grey", "blue", "green", "red", "black"),
          cex = fSize,
          lty=c(1, 10), 
-         lwd=lwds)
+         lwd=c(2,2,2,2,2))
 }
 
 par(mar=c(3,3,2,1))
 par(mfrow = c(2,3))
 par(mgp=c(2, 1, 0))
-plotData(data, "KroA150.tsp", "10", "0.1", "MADTSP")
-plotData(data, "KroA150.tsp", "10", "0.5", "MADTSP")
-plotData(data, "KroA150.tsp", "10", "0.75", "MADTSP")
-plotData(data, "KroA150.tsp", "100", "0.1", "MADTSP")
-plotData(data, "KroA150.tsp", "100", "0.5", "MADTSP")
-plotData(data, "KroA150.tsp", "100", "0.75", "MADTSP")
+plotData(data, "KroA150.tsp", "10", "0.1", type, costType)
+plotData(data, "KroA150.tsp", "10", "0.5", type, costType)
+plotData(data, "KroA150.tsp", "10", "0.75", type, costType)
+plotData(data, "KroA150.tsp", "100", "0.1", type, costType)
+plotData(data, "KroA150.tsp", "100", "0.5", type, costType)
+plotData(data, "KroA150.tsp", "100", "0.75", type, costType)
 

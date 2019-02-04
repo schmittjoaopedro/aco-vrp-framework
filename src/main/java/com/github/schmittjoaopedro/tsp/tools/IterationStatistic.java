@@ -26,6 +26,8 @@ public class IterationStatistic {
 
     private double bestSoFar;
 
+    private double bestSoFarSd;
+
     private int[] tour;
 
     private int[] mvsbTour;
@@ -128,6 +130,14 @@ public class IterationStatistic {
         return penaltyRate;
     }
 
+    public double getBestSoFarSd() {
+        return bestSoFarSd;
+    }
+
+    public void setBestSoFarSd(double bestSoFarSd) {
+        this.bestSoFarSd = bestSoFarSd;
+    }
+
     public void setPenaltyRate(double penaltyRate) {
         this.penaltyRate = penaltyRate;
     }
@@ -145,6 +155,7 @@ public class IterationStatistic {
         StringBuilder log = new StringBuilder();
         log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
         log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 15));
+        log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFarSd()), 15));
         log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 15));
         log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 15));
         log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 15));

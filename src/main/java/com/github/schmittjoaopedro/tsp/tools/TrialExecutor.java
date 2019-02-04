@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.tsp.tools;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,16 +29,20 @@ public class TrialExecutor {
             double diversity = 0.0;
             double mean = 0.0;
             double bestSoFar = 0.0;
+            double bestSoFars[] = new double[results.size()];
+            double bestSoFarSd = 0.0;
             double worst = 0.0;
             double best = 0.0;
             double branchFactor = 0.0;
 
+            int count = 0;
             for (List<IterationStatistic> result : results) {
                 iterationStatistic.setIteration(result.get(i).getIteration());
                 iterationSd += result.get(i).getIterationSd();
                 diversity += result.get(i).getDiversity();
                 mean += result.get(i).getIterationMean();
                 bestSoFar += result.get(i).getBestSoFar();
+                bestSoFars[count++] = result.get(i).getBestSoFar();
                 worst += result.get(i).getIterationWorst();
                 best += result.get(i).getIterationBest();
                 branchFactor += result.get(i).getBranchFactor();
@@ -49,11 +55,13 @@ public class TrialExecutor {
             worst /= results.size();
             best /= results.size();
             branchFactor /= results.size();
+            bestSoFarSd = Maths.sd(bestSoFars);
 
             iterationStatistic.setIterationSd(iterationSd);
             iterationStatistic.setDiversity(diversity);
             iterationStatistic.setIterationMean(mean);
             iterationStatistic.setBestSoFar(bestSoFar);
+            iterationStatistic.setBestSoFarSd(bestSoFarSd);
             iterationStatistic.setIterationWorst(worst);
             iterationStatistic.setIterationBest(best);
             iterationStatistic.setBranchFactor(branchFactor);
