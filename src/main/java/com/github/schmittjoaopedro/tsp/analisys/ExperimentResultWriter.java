@@ -51,7 +51,7 @@ public class ExperimentResultWriter {
         for (IterationStatistic iter : result) {
             finalResult.append(iter).append('\n');
             mean += iter.getBestSoFar();
-            sdMean += iter.getIterationSd();
+            sdMean += iter.getBestSoFarSd();
         }
         mean /= numIterations;
         sdMean /= numIterations;
