@@ -1,4 +1,4 @@
-pathName = "C:/Temp/ADTSPM/ALL_RESULTS_COMPILED.csv"
+pathName = "C:/Temp/ADTSP/ALL_RESULTS_COMPILED.csv"
 dataSep = ","
 header <- read.csv(pathName, sep = dataSep, nrows = 1)
 data = read.csv(pathName, sep = dataSep, header = T, colClasses = paste(rep("character", ncol(header))))
@@ -20,9 +20,11 @@ executeStatisticalTest <- function(data, instance, freq, mag) {
   rownames(temp) <- 1:1000
   temp <- data.frame(sapply(temp, function(x) as.numeric(as.character(x))))
   temp <- as.matrix(temp)
+  # Friedman
   log <- paste("Friedman test for instance =", instance, ", freq =", freq,", mag =",mag)
   ftest <- friedman.test(temp)$p.value
   log <- paste(log, "p-value =", round(ftest, digits = 5),"\n")
+  # Wilcoxn
   for (i in 1:ncol(temp)) {
     for (j in i:ncol(temp)) {
       if (i != j) {
@@ -32,7 +34,15 @@ executeStatisticalTest <- function(data, instance, freq, mag) {
       }
     }
   }
+  # Kruskal-Wallis
+  x <- c(temp[,1], temp[,2], temp[,3], temp[,4], temp[,5])
+  g <- factor(rep(1:5, c(1000, 1000, 1000, 1000, 1000)), labels = colnames(temp))
+  ktest <- kruskal.test(x, g)
+  log <- paste(log, "Kruskal-Wallis =", round(ktest$p.value, digits = 5), "\n")
+  log <- paste(log, "Mann-Whitney test with Bonferroni correction\n")
+  mwtest <- pairwise.wilcox.test(x, g, p.adj = "bonf")
   cat(log)
+  print(mwtest)
 }
 
 temp <- executeStatisticalTest(data, "KroA100.tsp", "10", "0.1")
