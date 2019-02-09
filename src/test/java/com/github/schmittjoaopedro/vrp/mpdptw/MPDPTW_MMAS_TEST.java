@@ -26,14 +26,14 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_n_4_25_1_test() {
+    public void mpdptw_normal_4_25_1_test() {
         Solver solver = new Solver(rootDirectory, "n_4_25_1.txt", 10000, 1, 0.02, 1, true);
         solver.run();
     }
 
     @Test
     public void mpdptw_normal_8_100_5_test() {
-        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 10000, 1, 0.02, 1, true);
+        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 1000, 1, 0.5, 1, true);
         solver.run();
     }
 

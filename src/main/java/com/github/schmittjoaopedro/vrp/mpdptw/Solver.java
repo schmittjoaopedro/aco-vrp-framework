@@ -58,11 +58,10 @@ public class Solver implements Runnable {
         mmas.setBeta(5.0);
         mmas.setQ_0(0.0);
         mmas.setnAnts(problemInstance.noNodes);
-        mmas.setDepth(20);
+        mmas.setDepth(problemInstance.noReq);
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));
-        mmas.setSymmetric(false);
         mmas.computeNNList();
         mmas.initTry();
         globalStatistics.endTimer("MMAS Initialization");
@@ -88,7 +87,7 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-//            mmas.checkPheromoneTrailLimits();
+            mmas.checkPheromoneTrailLimits();
             mmas.searchControl(); // TODO: Rever
             iterationStatistic.endTimer("Pheromone");
             // Statistics
@@ -123,6 +122,7 @@ public class Solver implements Runnable {
             logInFile(StringUtils.join(route, "-"));
         }
         System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
+        System.out.println("Penalty = " + mmas.getBestSoFar().twPenalty);
         logInFile("Cost = " + mmas.getBestSoFar().totalCost);
     }
 
