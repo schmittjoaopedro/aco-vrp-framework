@@ -32,8 +32,26 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
+    public void mpdptw_large_8_100_5_test() {
+        Solver solver = new Solver(rootDirectory, "l_8_100_5.txt", 1000, 1, 0.2, 1, true);
+        solver.run();
+    }
+
+    @Test
+    public void mpdptw_without_8_100_5_test() {
+        Solver solver = new Solver(rootDirectory, "w_8_100_5.txt", 1000, 1, 0.2, 1, true);
+        solver.run();
+    }
+
+    @Test
     public void mpdptw_normal_8_100_5_test() {
-        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 1000, 1, 0.5, 1, true);
+        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 1000, 1, 0.02, 1, true);
+        solver.run();
+    }
+
+    @Test
+    public void mpdptw_normal_8_400_1_test() {
+        Solver solver = new Solver(rootDirectory, "n_8_400_1.txt", 1000, 1, 0.02, 1, true);
         solver.run();
     }
 

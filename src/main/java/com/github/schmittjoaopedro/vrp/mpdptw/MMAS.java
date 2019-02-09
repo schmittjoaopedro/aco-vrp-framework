@@ -1,6 +1,5 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class MMAS {
@@ -8,8 +7,6 @@ public class MMAS {
     private ProblemInstance instance;
 
     private double upperBound;
-
-    private double EPSILON = 0.1;
 
     private double alpha;
 
@@ -25,8 +22,6 @@ public class MMAS {
 
     private double lambda;
 
-    private int foundBest;
-
     private int restartFoundBest;
 
     private int restartIteration;
@@ -34,6 +29,8 @@ public class MMAS {
     private double calculatedBranchFact;
 
     private int nAnts;
+
+    private int foundBest;
 
     private int depth;
 
@@ -47,8 +44,6 @@ public class MMAS {
 
     private Ant restartBest;
 
-    private Ant previousBestSoFar;
-
     private double[][] pheromoneNodes;
 
     private int[][] nnList;
@@ -56,10 +51,6 @@ public class MMAS {
     private Random random;
 
     private double branchFac = 1.00001;
-
-    private boolean symmetric = false;
-
-    private double probabilities[];
 
     public final double weight1 = 0.3;
 
@@ -80,7 +71,6 @@ public class MMAS {
         }
         bestSoFar = createEmptyAnt();
         restartBest = createEmptyAnt();
-        previousBestSoFar = createEmptyAnt();
     }
 
     public Ant createEmptyAnt() {
@@ -97,7 +87,6 @@ public class MMAS {
             }
         }
         nnList = new int[instance.noNodes][depth];
-        probabilities = new double[depth + 1];
     }
 
     public void computeNNList() {
@@ -206,7 +195,7 @@ public class MMAS {
     private void initPheromoneTrails(double initialTrail) {
         for (int i = 0; i < instance.noNodes; i++) {
             for (int j = 0; j < instance.noNodes; j++) {
-                if (i != j && isTimeFeasible(i, j)) {
+                if (i != j) {
                     pheromoneNodes[i][j] = initialTrail;
                 }
             }
@@ -245,8 +234,13 @@ public class MMAS {
     public void setPheromoneBounds() {
         double p_x = Math.exp(Math.log(0.05) / instance.noNodes);
         trailMin = 1.0 * (1.0 - p_x) / (p_x * ((depth + 1) / 2));
-        trailMax = 1.0 / (rho * instance.noNodes);
+        trailMax = 1.0 / (rho * bestSoFar.totalCost);
         trailMin = trailMax * trailMin;
+    }
+
+    public void setPheromoneBoundsForLS() {
+        trailMax = 1.0 / (rho * bestSoFar.totalCost);
+        trailMin = trailMax / (2.0 * instance.noNodes);
     }
 
     public void updateRestartBest() {
@@ -361,14 +355,30 @@ public class MMAS {
         return upperBound;
     }
 
+    public void populationFitnessEvaluation() {
+        double maxCapPenalty = 0.0, maxTwPenalty = 0.0;
+        double capFact, twFact;
+        for (Ant ant : antPopulation) {
+            fitnessEvaluation(ant);
+            maxCapPenalty = Math.max(ant.capacityPenalty, maxCapPenalty);
+            maxTwPenalty = Math.max(ant.twPenalty, maxTwPenalty);
+        }
+        for (Ant ant : antPopulation) {
+            capFact = 1.0;
+            twFact = 1.0;
+            if (maxCapPenalty > 0.0) capFact += (ant.capacityPenalty / maxCapPenalty);
+            if (maxTwPenalty > 0.0) twFact += (ant.twPenalty / maxTwPenalty);
+            ant.totalCost = ant.totalCost + (twFact * ant.twPenalty) + (capFact * ant.capacityPenalty);
+        }
+    }
+
     // TODO: Cost function must to consider the service time?
     public void fitnessEvaluation(Ant ant) {
         double currentTime, capacity, demand, twStart, twEnd, serviceTime;
         ant.totalCost = 0.0;
         int curr, next;
         for (int k = 0; k < ant.tours.size(); k++) {
-            double tourCost = 0.0;
-            ArrayList<Integer> tour = ant.tours.get(k);
+            double tourCost;
             currentTime = 0.0;
             capacity = 0.0;
             for (int i = 0; i < ant.tours.get(k).size() - 1; i++) {
@@ -400,7 +410,6 @@ public class MMAS {
             ant.tourLengths.add(k, tourCost);
             ant.totalCost += tourCost;
         }
-        ant.totalCost += ant.twPenalty + ant.capacityPenalty;
     }
 
     public void antEmptyMemory(Ant ant) {
@@ -429,7 +438,7 @@ public class MMAS {
         for (Ant ant : antPopulation) {
             antEmptyMemory(ant);
         }
-        for (int k = 0; k < antPopulation.size(); k++) {
+        for (int k = 0; k < antPopulation.size(); k++) {// For each ant
             vehicle = 0;
             currentAnt = antPopulation.get(k);
             currentAnt.toVisit--; // The depot is visited
@@ -441,14 +450,14 @@ public class MMAS {
             while (currentAnt.toVisit > 0) {
                 nextVisit = selectNextClient(currentAnt, vehicle, currentPosition);
                 nextClient = (int) nextVisit[0]; // [nextClient, heuristic, departureTime, demand, feasible, cumulativeCost]
-                if (nextVisit[0] != -1) { // a next client was found
+                if (nextVisit[0] != -1) { // a next visit node was found
                     demand = nextVisit[3];
                     departureTime = nextVisit[2];
                     feasible = nextVisit[4] > 0; // flag to indicate if the route is feasible
                     currentPosition++;
                     currentAnt.tours.get(vehicle).add(currentPosition, nextClient);
                     currentAnt.visited[nextClient] = true;
-                    currentAnt.feasible &= feasible; // In one move is infeasible, the full solution will be infeasible
+                    currentAnt.feasible &= feasible; // If in one move is infeasible, the full solution will be infeasible
                     currentAnt.departureTime[nextClient] = departureTime;
                     currentAnt.demands[nextClient] = demand;
                     currentAnt.toVisit--;
@@ -466,18 +475,11 @@ public class MMAS {
                     currentAnt.requests.add(vehicle, new ArrayList<>());
                 }
             }
+            currentAnt.tours.get(vehicle).add(instance.depot.nodeId); // Finish last route
         }
-        for (Ant ant : antPopulation) {
-            fitnessEvaluation(ant);
-        }
+        populationFitnessEvaluation();
     }
 
-    /**
-     * returns three information
-     * 1 - next client, -1 indicate that no next client was found
-     * 2 - departure time, the calculated departure time to the next client
-     * 3 - feasible, if the next move is feasible
-     */
     public double[] selectNextClient(Ant ant, int vehicle, int currIdx) {
         int requestId;
         double[] heuristic;
@@ -493,8 +495,8 @@ public class MMAS {
                 // If the vehicle has request, validate if the deliver can be executed after all pickups were made
                 requestId = instance.requests[i - 1].requestId;
                 hasRequest = ant.requests.get(vehicle).contains(requestId);
-                valid = instance.requests[i - 1].isPickup;
-                if (hasRequest && instance.requests[i - 1].isDeliver) {
+                valid = instance.requests[i - 1].isPickup; // We assume that all pickups requests are valid a-priori
+                if (hasRequest && instance.requests[i - 1].isDeliver) { // If the request is a delivery request we must to test if all pickups were made previously
                     valid = true;
                     for (Request req : instance.pickups.get(requestId)) {
                         if (!ant.visited[req.nodeId]) {
@@ -513,23 +515,21 @@ public class MMAS {
             }
         }
 
-        // Check if there is at least one feasible node in the request list
+        // Check if there is at least one unfeasible node in the request list
         boolean currReqFeasible = true;
         for (double[] prob : currRequestProbs) {
-            if (prob[4] < 1) { //feasibility
+            if (prob[4] < 1) { //unfeasible
                 currReqFeasible = false;
                 break;
             }
         }
-        // If there is some feasible node in current request
+        // If are all feasible nodes in current request
         if (currReqFeasible) {
             // Select only feasible moves
             for (double[] prob : currRequestProbs) {
-                if (prob[4] > 0) { //feasibility
-                    sum += prob[1]; //heuristic
-                    prob[5] = sum;
-                    probs.add(prob);
-                }
+                sum += prob[1]; //heuristic
+                prob[5] = sum;
+                probs.add(prob);
             }
             for (double[] prob : newRequestProbs) {
                 if (prob[4] > 0) {
@@ -584,14 +584,19 @@ public class MMAS {
         // Calculate heuristic
         double deliveryUrgency = instance.requests[nextCity - 1].twEnd - timeCostNext;
         double timeDifference = timeCostNext - ant.departureTime[currentCity];
-        double futureCost = calculateFutureCost(ant, vehicle, currentCity);
+        double futureCost = calculateFutureCost(ant, vehicle, currentCity, nextCity);
         double cost = 1.0 / (weight1 * instance.distances[currentCity][nextCity] + weight2 * timeDifference + weight3 * futureCost + weight4 * deliveryUrgency);
-        cost = Math.pow(cost, beta);
-        cost = cost * Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
+
+        // Original heuristic transition rule from Dorigo
+        cost = Math.pow(cost, beta) * Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
+
+        // Transition rule proposed by Afshar
+//        cost = (alpha * cost) + (beta * pheromoneNodes[currentCity][nextCity]);
+
         return new double[]{cost, timeCostNext, demandCostNext, feasible};
     }
 
-    public double calculateFutureCost(Ant ant, int vehicle, int currentCity) {
+    public double calculateFutureCost(Ant ant, int vehicle, int currentCity, int nextCity) {
         double cost = 0.0;
         for (int reqId : ant.requests.get(vehicle)) {
             for (Request req : instance.pickups.get(reqId)) {
@@ -602,6 +607,13 @@ public class MMAS {
             if (!ant.visited[instance.delivery.get(reqId).nodeId]) {
                 cost += instance.distances[currentCity][instance.delivery.get(reqId).nodeId];
             }
+        }
+        int reqId = instance.requests[nextCity - 1].requestId;
+        if (!ant.visitedRequests[reqId]) {
+            for (Request req : instance.pickups.get(reqId)) {
+                cost += instance.distances[currentCity][req.nodeId];
+            }
+            cost += instance.distances[currentCity][instance.delivery.get(reqId).nodeId];
         }
         return cost;
     }
@@ -730,10 +742,6 @@ public class MMAS {
         this.random = random;
     }
 
-    public void setSymmetric(boolean symmetric) {
-        this.symmetric = symmetric;
-    }
-
     public int getCurrentIteration() {
         return currentIteration;
     }
@@ -752,6 +760,10 @@ public class MMAS {
 
     public double getCalculatedBranchFact() {
         return calculatedBranchFact;
+    }
+
+    public int getFoundBest() {
+        return foundBest;
     }
 
     public List<Ant> getAntPopulation() {

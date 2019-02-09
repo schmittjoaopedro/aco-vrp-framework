@@ -22,8 +22,6 @@ public class Ant {
 
     public double totalCost;
 
-    public double penaltyCost;
-
     public boolean feasible;
 
     public double twPenalty;
