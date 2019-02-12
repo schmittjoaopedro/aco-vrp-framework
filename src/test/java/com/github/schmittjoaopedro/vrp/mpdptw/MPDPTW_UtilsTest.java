@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -400,5 +403,51 @@ public class MPDPTW_UtilsTest {
         // Request 21
         assertThat(optimalRequestSolver[21].getBestRoute()).containsExactly(0, 98, 101, 99, 104, 100, 103, 102, 105, 0);
         assertThat(optimalRequestSolver[21].getBestCost()).isEqualTo(1037.0);
+    }
+
+    @Test
+    public void relocateSimpleLocalSearchTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 24, 22, 23, 3, 4, 6, 25, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 7, 15, 8, 13, 14, 1, 2, 16, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 10, 11, 9, 12, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 18, 19, 20, 21, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 7)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(2, 5, 4, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(3)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(6)));
+        problemInstance.fitnessEvaluation(ant);
+        LocalSearch localSearch = new LocalSearch(problemInstance);
+        assertThat(ant.totalCost).isEqualTo(6909.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(2011.0);
+        assertThat(ant.feasible).isFalse();
+        Ant improvedAnt = localSearch.relocate(ant);
+        assertThat(improvedAnt.totalCost).isEqualTo(6495.0);
+        assertThat(improvedAnt.timeWindowPenalty).isEqualTo(1956.0);
+        assertThat(improvedAnt.feasible).isFalse();
+    }
+
+    @Test
+    public void relocateLoopLocalSearchTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 24, 22, 16, 23, 17, 25, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 7, 8, 4, 3, 1, 6, 2, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 13, 14, 11, 10, 9, 12, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 18, 19, 20, 21, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 7)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 2, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(4, 3)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(6)));
+        problemInstance.fitnessEvaluation(ant);
+        LocalSearch localSearch = new LocalSearch(problemInstance);
+        assertThat(ant.totalCost).isEqualTo(6786.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(1422.0);
+        assertThat(ant.feasible).isFalse();
+        Ant improvedAnt = localSearch.relocate(ant);
+        assertThat(improvedAnt.totalCost).isEqualTo(6086.0);
+        assertThat(improvedAnt.timeWindowPenalty).isEqualTo(0.0);
+        assertThat(improvedAnt.feasible).isTrue();
     }
 }

@@ -38,6 +38,8 @@ public class Solver implements Runnable {
 
     private boolean showLog;
 
+    private LocalSearch localSearch;
+
     public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.fileName = fileName;
         this.rootDirectory = rootDirectory;
@@ -57,7 +59,7 @@ public class Solver implements Runnable {
         mmas.setAlpha(1.0);
         mmas.setBeta(5.0);
         mmas.setQ_0(0.0);
-        mmas.setnAnts(problemInstance.noNodes);
+        mmas.setnAnts(50);
         mmas.setDepth(problemInstance.noReq);
         mmas.allocateAnts();
         mmas.allocateStructures();
@@ -65,6 +67,9 @@ public class Solver implements Runnable {
         mmas.computeNNList();
         mmas.initTry();
         globalStatistics.endTimer("MMAS Initialization");
+
+        // Init local search
+        this.localSearch = new LocalSearch(problemInstance);
 
         // Execute MMAS
         globalStatistics.startTimer();
@@ -77,9 +82,10 @@ public class Solver implements Runnable {
             mmas.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
+            executeLocalSearch();
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
-                mmas.setPheromoneBounds();
+                mmas.setPheromoneBoundsForLS();
             }
             mmas.updateRestartBest();
             iterationStatistic.endTimer("Daemon");
@@ -109,12 +115,16 @@ public class Solver implements Runnable {
                 }
             }
         }
+        printFinalRoute();
+    }
+
+    private void printFinalRoute() {
         boolean feasible = true;
         for (ArrayList route : mmas.getBestSoFar().tours) {
             feasible &= mmas.isRouteFeasible(route);
         }
         mmas.getBestSoFar().feasible = feasible;
-        mmas.fitnessEvaluation(mmas.getBestSoFar());
+        problemInstance.fitnessEvaluation(mmas.getBestSoFar());
         System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
         logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible);
         for (ArrayList route : mmas.getBestSoFar().tours) {
@@ -122,7 +132,7 @@ public class Solver implements Runnable {
             logInFile(StringUtils.join(route, "-"));
         }
         System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
-        System.out.println("Penalty = " + mmas.getBestSoFar().twPenalty);
+        System.out.println("Penalty = " + mmas.getBestSoFar().timeWindowPenalty);
         logInFile("Cost = " + mmas.getBestSoFar().totalCost);
     }
 
@@ -134,6 +144,30 @@ public class Solver implements Runnable {
             iterationStatistics = new ArrayList<>(maxIterations);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    private void executeLocalSearch() {
+        Ant bestAnt = mmas.findBest();
+        problemInstance.fitnessEvaluation(bestAnt);
+        Ant improvedAnt = localSearch.relocate(bestAnt);
+        if (bestAnt.feasible) {
+            if (improvedAnt.feasible) {
+                updateAnt(improvedAnt, bestAnt);
+            }
+        } else {
+            updateAnt(improvedAnt, bestAnt);
+        }
+    }
+
+    private void updateAnt(Ant improvedAnt, Ant bestAnt) {
+        if (improvedAnt.totalCost < bestAnt.totalCost ||
+                (improvedAnt.totalCost == bestAnt.totalCost && improvedAnt.timeWindowPenalty < bestAnt.timeWindowPenalty)) {
+            int antIndex = mmas.getAntPopulation().indexOf(bestAnt);
+            mmas.getAntPopulation().set(antIndex, improvedAnt);
+            mmas.penalizeAnt(improvedAnt);
+        } else {
+            mmas.penalizeAnt(bestAnt);
         }
     }
 

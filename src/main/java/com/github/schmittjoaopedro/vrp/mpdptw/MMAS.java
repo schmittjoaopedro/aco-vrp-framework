@@ -60,6 +60,10 @@ public class MMAS {
 
     public final double weight4 = 0.1;
 
+    private double maxCapPenalty = 0.0;
+
+    private double maxTwPenalty = 0.0;
+
     public MMAS(ProblemInstance instance) {
         this.instance = instance;
     }
@@ -67,16 +71,10 @@ public class MMAS {
     public void allocateAnts() {
         antPopulation = new ArrayList<>();
         for (int i = 0; i < getnAnts(); i++) {
-            antPopulation.add(i, createEmptyAnt());
+            antPopulation.add(i, AntUtils.createEmptyAnt(instance));
         }
-        bestSoFar = createEmptyAnt();
-        restartBest = createEmptyAnt();
-    }
-
-    public Ant createEmptyAnt() {
-        Ant ant = new Ant();
-        antEmptyMemory(ant);
-        return ant;
+        bestSoFar = AntUtils.createEmptyAnt(instance);
+        restartBest = AntUtils.createEmptyAnt(instance);
     }
 
     public void allocateStructures() {
@@ -222,8 +220,8 @@ public class MMAS {
         boolean isNewFeasible = iterationBest.feasible;
         if ((!isCurrentFeasible && isBetterCost) || (isNewFeasible && isBetterCost)) {
             found = true;
-            copyFromTo(iterationBest, bestSoFar);
-            copyFromTo(iterationBest, restartBest);
+            AntUtils.copyFromTo(iterationBest, bestSoFar);
+            AntUtils.copyFromTo(iterationBest, restartBest);
             foundBest = getCurrentIteration();
             restartFoundBest = getCurrentIteration();
             calculatedBranchFact = nodeBranching(lambda); // TODO: Rever
@@ -246,7 +244,7 @@ public class MMAS {
     public void updateRestartBest() {
         Ant iterationBest = findBest();
         if (iterationBest.totalCost < restartBest.totalCost) {
-            copyFromTo(iterationBest, restartBest);
+            AntUtils.copyFromTo(iterationBest, restartBest);
             restartFoundBest = getCurrentIteration();
         }
     }
@@ -326,24 +324,6 @@ public class MMAS {
             uGb = 1;
     }
 
-    public void copyFromTo(Ant from, Ant to) {
-        to.totalCost = from.totalCost;
-        to.capacityPenalty = from.capacityPenalty;
-        to.feasible = from.feasible;
-        to.visited = from.visited.clone();
-        to.twPenalty = from.twPenalty;
-        to.departureTime = from.departureTime;
-        to.visitedRequests = from.visitedRequests;
-        to.tours = new ArrayList<>();
-        for (int i = 0; i < from.tours.size(); i++) {
-            to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
-        }
-        to.tourLengths = new ArrayList<>();
-        for (int i = 0; i < from.tourLengths.size(); i++) {
-            to.tourLengths.add(i, from.tourLengths.get(i));
-        }
-    }
-
     private double nnTour() {
         OptimalRequestSolver optimalRequestSolver;
         upperBound = 0.0;
@@ -356,75 +336,29 @@ public class MMAS {
     }
 
     public void populationFitnessEvaluation() {
-        double maxCapPenalty = 0.0, maxTwPenalty = 0.0;
-        double capFact, twFact;
+        maxCapPenalty = 0.0;
+        maxTwPenalty = 0.0;
         for (Ant ant : antPopulation) {
-            fitnessEvaluation(ant);
+            instance.fitnessEvaluation(ant);
             maxCapPenalty = Math.max(ant.capacityPenalty, maxCapPenalty);
-            maxTwPenalty = Math.max(ant.twPenalty, maxTwPenalty);
+            maxTwPenalty = Math.max(ant.timeWindowPenalty, maxTwPenalty);
         }
         for (Ant ant : antPopulation) {
-            capFact = 1.0;
-            twFact = 1.0;
-            if (maxCapPenalty > 0.0) capFact += (ant.capacityPenalty / maxCapPenalty);
-            if (maxTwPenalty > 0.0) twFact += (ant.twPenalty / maxTwPenalty);
-            ant.totalCost = ant.totalCost + (twFact * ant.twPenalty) + (capFact * ant.capacityPenalty);
+            penalizeAnt(ant);
         }
     }
 
-    // TODO: Cost function must to consider the service time?
-    public void fitnessEvaluation(Ant ant) {
-        double currentTime, capacity, demand, twStart, twEnd, serviceTime;
-        ant.totalCost = 0.0;
-        int curr, next;
-        for (int k = 0; k < ant.tours.size(); k++) {
-            double tourCost;
-            currentTime = 0.0;
-            capacity = 0.0;
-            for (int i = 0; i < ant.tours.get(k).size() - 1; i++) {
-                curr = ant.tours.get(k).get(i);
-                next = ant.tours.get(k).get(i + 1);
-                if (next == instance.depot.nodeId) {
-                    twStart = instance.depot.twStart;
-                    twEnd = instance.depot.twEnd;
-                    demand = 0.0;
-                    serviceTime = 0.0;
-                } else {
-                    twStart = instance.requests[next - 1].twStart;
-                    twEnd = instance.requests[next - 1].twEnd;
-                    demand = instance.requests[next - 1].demand;
-                    serviceTime = instance.requests[next - 1].serviceTime;
-                }
-                currentTime += instance.distances[curr][next];
-                currentTime = Math.max(currentTime, twStart);
-                currentTime += serviceTime;
-                capacity += demand;
-                if (currentTime > twEnd) {
-                    ant.twPenalty += currentTime - twEnd;
-                }
-                if (capacity > instance.vehicleCapacity) {
-                    ant.capacityPenalty += capacity - instance.vehicleCapacity;
-                }
-            }
-            tourCost = currentTime;
-            ant.tourLengths.add(k, tourCost);
-            ant.totalCost += tourCost;
-        }
-    }
-
-    public void antEmptyMemory(Ant ant) {
-        ant.feasible = true;
-        ant.tours = new ArrayList<>();
-        ant.requests = new ArrayList<>();
-        ant.visited = new boolean[instance.noNodes];
-        ant.demands = new double[instance.noNodes];
-        ant.tourLengths = new ArrayList<>();
-        ant.totalCost = Double.MAX_VALUE;
-        ant.departureTime = new double[instance.noNodes];
-        ant.visitedRequests = new boolean[instance.noReq];
-        ant.capacityPenalty = 0.0;
-        ant.twPenalty = 0.0;
-        ant.toVisit = instance.noNodes;
+    public void penalizeAnt(Ant ant) {
+        double capFact;
+        double twFact;
+        capFact = 0.0;
+        twFact = 0.0;
+        if (maxCapPenalty > 0.0) capFact += (ant.capacityPenalty / maxCapPenalty);
+        if (maxTwPenalty > 0.0) twFact += (ant.timeWindowPenalty / maxTwPenalty);
+        ant.totalCost = ant.totalCost + (twFact * ant.totalCost) + (capFact * ant.totalCost);
+        //ant.totalCost = ant.totalCost + (twFact * ant.timeWindowPenalty) + (capFact * ant.capacityPenalty);
+        //ant.totalCost = ant.totalCost + (twFact * ant.totalCost) + (capFact * ant.totalCost);
+        //ant.totalCost = ant.totalCost * twFact * capFact;
     }
 
     public void constructSolutions() {
@@ -436,7 +370,7 @@ public class MMAS {
         double demand;
         int currentPosition;
         for (Ant ant : antPopulation) {
-            antEmptyMemory(ant);
+            AntUtils.antEmptyMemory(ant, instance);
         }
         for (int k = 0; k < antPopulation.size(); k++) {// For each ant
             vehicle = 0;
@@ -647,13 +581,13 @@ public class MMAS {
                 avgDistance += (double) distanceBetweenAnts(antPopulation.get(k), antPopulation.get(j));
             }
         }
-        return avgDistance / ((double) nAnts * (double) (nAnts - 1) / 2.0);
+        double difference = avgDistance / ((double) nAnts * (double) (nAnts - 1) / 2.0);
+        return difference / instance.noNodes;
     }
 
     private int distanceBetweenAnts(Ant a1, Ant a2) {
-        int curr, next;
+        int curr, next, distance = 0;
         Set<String> edgesA1 = new HashSet<>();
-        Set<String> edgesA2 = new HashSet<>();
 
         for (int k = 0; k < a1.tours.size(); k++) {
             for (int i = 0; i < a1.tours.get(k).size() - 1; i++) {
@@ -667,18 +601,12 @@ public class MMAS {
             for (int i = 0; i < a2.tours.get(k).size() - 1; i++) {
                 curr = a2.tours.get(k).get(i);
                 next = a2.tours.get(k).get(i + 1);
-                edgesA2.add(curr + "-" + next);
+                if (!edgesA1.contains(curr + "-" + next)) {
+                    distance++;
+                }
             }
         }
-
-        for (String edge : edgesA1) {
-            edgesA2.remove(edge);
-        }
-        for (String edge : edgesA2) {
-            edgesA1.remove(edge);
-        }
-
-        return edgesA2.size() + edgesA1.size();
+        return distance;
     }
 
     public double nodeBranching() {

@@ -24,7 +24,7 @@ public class Ant {
 
     public boolean feasible;
 
-    public double twPenalty;
+    public double timeWindowPenalty;
 
     public double capacityPenalty;
 
