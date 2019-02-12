@@ -60,7 +60,7 @@ public class Solver implements Runnable {
         mmas.setBeta(5.0);
         mmas.setQ_0(0.0);
         mmas.setnAnts(50);
-        mmas.setDepth(problemInstance.noReq);
+        mmas.setDepth(problemInstance.noNodes);
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));

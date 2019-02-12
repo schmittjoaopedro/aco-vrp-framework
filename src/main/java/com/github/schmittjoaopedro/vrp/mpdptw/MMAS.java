@@ -64,6 +64,8 @@ public class MMAS {
 
     private double maxTwPenalty = 0.0;
 
+    private int noInfeasibleNodes = 0;
+
     public MMAS(ProblemInstance instance) {
         this.instance = instance;
     }
@@ -92,7 +94,7 @@ public class MMAS {
         int[] helpVector = new int[instance.noNodes];
         for (int i = 0; i < instance.noNodes; i++) {
             for (int j = 0; j < instance.noNodes; j++) {
-                if (i != j && isTimeFeasible(i, j)) {
+                if (i != j && instance.isTimeFeasible(i, j)) {
                     distanceVector[j] = instance.distances[i][j];
                 } else {
                     distanceVector[j] = Double.MAX_VALUE;
@@ -129,20 +131,6 @@ public class MMAS {
         swap(v, v2, left, last);
         sort(v, v2, left, last);
         sort(v, v2, last + 1, right);
-    }
-
-    // Check if the end time window of node j is achievable departing from node i
-    public boolean isTimeFeasible(int i, int j) {
-        boolean feasible = true;
-        // requests does not index the node depot, therefore we have to adjust the indexes to ignore the depot
-        if (i == 0 || j == 0) {
-            feasible = true;
-        } else {
-            i--;
-            j--;
-            feasible = instance.requests[i].twStart + instance.requests[i].serviceTime + instance.distances[i][j] < instance.requests[j].twEnd;
-        }
-        return feasible;
     }
 
     // TODO: Service time must be accomplished before end time window?
@@ -304,6 +292,7 @@ public class MMAS {
         if (getCurrentIteration() % 100 == 0) {
             calculatedBranchFact = nodeBranching(lambda);
             if (calculatedBranchFact < branchFac && getCurrentIteration() - restartFoundBest > 250) {
+                System.out.println("Restart trails!!!");
                 restartBest.totalCost = Double.MAX_VALUE;
                 initPheromoneTrails(trailMax);
                 restartIteration = getCurrentIteration();
@@ -525,7 +514,7 @@ public class MMAS {
         cost = Math.pow(cost, beta) * Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
 
         // Transition rule proposed by Afshar
-//        cost = (alpha * cost) + (beta * pheromoneNodes[currentCity][nextCity]);
+        //cost = (alpha * cost) + (beta * pheromoneNodes[currentCity][nextCity]);
 
         return new double[]{cost, timeCostNext, demandCostNext, feasible};
     }
@@ -619,23 +608,25 @@ public class MMAS {
         double cutoff;
         double avg = 0.0;
         double numBranches[] = new double[instance.noNodes];
-        for (int m = 0; m < instance.noNodes; m++) {
-            min = pheromoneNodes[m][0];
-            max = min;
-            for (int i = 1; i < instance.noNodes; i++) {
-                max = Math.max(pheromoneNodes[m][i], max);
-                min = Math.min(pheromoneNodes[m][i], min);
+        for (int m = 1; m < instance.noNodes; m++) {
+            min = Double.MAX_VALUE;
+            max = Double.MIN_VALUE;
+            for (int i = 0; i < instance.noNodes; i++) {
+                if (m != i) {
+                    max = Math.max(pheromoneNodes[m][i], max);
+                    min = Math.min(pheromoneNodes[m][i], min);
+                }
             }
             cutoff = min + l * (max - min);
             for (int i = 0; i < depth; i++) {
-                if (pheromoneNodes[m][i] > cutoff)
+                if (m != i && pheromoneNodes[m][i] > cutoff)
                     numBranches[m] += 1.0;
             }
         }
         for (int m = 0; m < instance.noNodes; m++) {
             avg += numBranches[m];
         }
-        return (avg / (double) (instance.noNodes * 2));
+        return (avg / (double) instance.noNodes);
     }
 
     public void setAlpha(double alpha) {

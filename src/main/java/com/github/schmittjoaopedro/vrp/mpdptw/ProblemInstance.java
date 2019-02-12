@@ -76,6 +76,21 @@ public class ProblemInstance {
         }
     }
 
+
+    // Check if the end time window of node j is achievable departing from node i
+    public boolean isTimeFeasible(int i, int j) {
+        boolean feasible = true;
+        // requests does not index the node depot, therefore we have to adjust the indexes to ignore the depot
+        if (i == 0 || j == 0) {
+            feasible = true;
+        } else {
+            i--;
+            j--;
+            feasible = requests[i].twStart + requests[i].serviceTime + distances[i][j] < requests[j].twEnd;
+        }
+        return feasible;
+    }
+
     class FitnessResult {
 
         public double cost;
