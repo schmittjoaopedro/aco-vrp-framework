@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("Duplicates")
 public class OptimalRequestSolver {
 
     private List<Request> pickupRequests;
@@ -63,13 +64,15 @@ public class OptimalRequestSolver {
             nextTime = currentTime + instance.distances[request.nodeId][deliveryRequest.nodeId];
             nextTime = Math.max(nextTime, deliveryRequest.twStart);
             nextTime += deliveryRequest.serviceTime;
-            nextTime += instance.distances[deliveryRequest.nodeId][instance.depot.nodeId];
             nextCapacity = currentCapacity + deliveryRequest.demand;
-            currSequence[phase] = deliveryRequest.nodeId;
-            currSequence[phase + 1] = instance.depot.nodeId;
             if (nextTime < deliveryRequest.twEnd && nextCapacity < instance.vehicleCapacity && nextTime < bestCost) {
-                bestCost = nextTime;
-                bestRoute = currSequence.clone();
+                nextTime += instance.distances[deliveryRequest.nodeId][instance.depot.nodeId];
+                currSequence[phase] = deliveryRequest.nodeId;
+                currSequence[phase + 1] = instance.depot.nodeId;
+                if (nextTime < instance.depot.twEnd && nextTime < bestCost) {
+                    bestCost = nextTime;
+                    bestRoute = currSequence.clone();
+                }
             }
         }
     }
