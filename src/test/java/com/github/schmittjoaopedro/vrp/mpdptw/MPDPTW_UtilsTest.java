@@ -417,11 +417,13 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(2, 5, 4, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6)));
+
         problemInstance.fitnessEvaluation(ant);
-        LocalSearch localSearch = new LocalSearch(problemInstance);
         assertThat(ant.totalCost).isEqualTo(6909.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(2011.0);
         assertThat(ant.feasible).isFalse();
+
+        LocalSearch localSearch = new LocalSearch(problemInstance);
         Ant improvedAnt = localSearch.relocate(ant);
         assertThat(improvedAnt.totalCost).isEqualTo(6495.0);
         assertThat(improvedAnt.timeWindowPenalty).isEqualTo(1956.0);
@@ -440,14 +442,38 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 2, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(4, 3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6)));
+
         problemInstance.fitnessEvaluation(ant);
-        LocalSearch localSearch = new LocalSearch(problemInstance);
         assertThat(ant.totalCost).isEqualTo(6786.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(1422.0);
         assertThat(ant.feasible).isFalse();
+
+        LocalSearch localSearch = new LocalSearch(problemInstance);
         Ant improvedAnt = localSearch.relocate(ant);
         assertThat(improvedAnt.totalCost).isEqualTo(6086.0);
         assertThat(improvedAnt.timeWindowPenalty).isEqualTo(0.0);
         assertThat(improvedAnt.feasible).isTrue();
+    }
+
+    @Test
+    public void feasibilityLocalSearch() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        problemInstance.fitnessEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(5305.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(844.0);
+        assertThat(ant.feasible).isFalse();
+
+        FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
+        Ant improvedAnt = feasibilitySearch.feasibility(ant);
+        assertThat(improvedAnt.feasible).isTrue();
+        assertThat(improvedAnt.totalCost).isEqualTo(8307.0);
+        assertThat(improvedAnt.timeWindowPenalty).isEqualTo(0.0);
     }
 }

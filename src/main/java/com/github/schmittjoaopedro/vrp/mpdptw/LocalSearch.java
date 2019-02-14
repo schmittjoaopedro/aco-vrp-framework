@@ -20,25 +20,24 @@ public class LocalSearch {
         int node, removalIdx;
         List<Integer> tour, tourCloned;
         ProblemInstance.FitnessResult originalCost;
-
         while (improvement) {
             improvement = false;
             for (int vehicle = 0; vehicle < tempAnt.tours.size(); vehicle++) {
                 tour = tempAnt.tours.get(vehicle);
                 tourCloned = new ArrayList<>(tour);
-                originalCost = instance.tourCost(tour);
+                originalCost = instance.fitnessEvaluation(tour);
                 for (int nodeIdx = 1; nodeIdx < tour.size() - 1; nodeIdx++) { // Ignore depot at first and last position
                     node = tourCloned.get(nodeIdx);
                     removalIdx = removeNode(tour, node);
                     if (instance.requests[node - 1].isPickup) {
                         if (bestPickupInsertion(originalCost, tour, node, removalIdx)) {
-                            originalCost = instance.tourCost(tour);
+                            originalCost = instance.fitnessEvaluation(tour);
                             AntUtils.copyFromTo(tempAnt, improvedAnt);
                             improvement = true;
                         }
                     } else if (instance.requests[node - 1].isDeliver) { // Or try best delivery insertion
                         if (bestDeliveryInsertion(originalCost, tour, node, removalIdx)) {
-                            originalCost = instance.tourCost(tour);
+                            originalCost = instance.fitnessEvaluation(tour);
                             AntUtils.copyFromTo(tempAnt, improvedAnt);
                             improvement = true;
                         }
@@ -75,7 +74,7 @@ public class LocalSearch {
         }
         for (int i = 1; i <= deliveryIdx; i++) {
             tour.add(i, pickupNode);
-            insertionCost = instance.tourCost(tour);
+            insertionCost = instance.fitnessEvaluation(tour);
             if (bestInsertionCost.feasible) {
                 if (insertionCost.feasible && insertionCost.cost < bestInsertionCost.cost) {
                     bestInsertionCost = insertionCost;
@@ -116,7 +115,7 @@ public class LocalSearch {
         }
         for (int i = lastPickupIdx + 1; i < tour.size(); i++) {
             tour.add(i, deliveryNode);
-            insertionCost = instance.tourCost(tour);
+            insertionCost = instance.fitnessEvaluation(tour);
             if (bestInsertionCost.feasible) {
                 if (insertionCost.feasible && insertionCost.cost < bestInsertionCost.cost) {
                     bestInsertionCost = insertionCost;

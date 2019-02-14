@@ -156,13 +156,20 @@ public class Solver implements Runnable {
                 updateAnt(improvedAnt, bestAnt);
             }
         } else {
-            updateAnt(improvedAnt, bestAnt);
+            FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
+            Ant feasibleAnt = feasibilitySearch.feasibility(improvedAnt);
+            if (feasibleAnt.feasible) {
+                updateAnt(feasibleAnt, bestAnt);
+            } else {
+                updateAnt(improvedAnt, bestAnt);
+            }
         }
     }
 
     private void updateAnt(Ant improvedAnt, Ant bestAnt) {
         if (improvedAnt.totalCost < bestAnt.totalCost ||
-                (improvedAnt.totalCost == bestAnt.totalCost && improvedAnt.timeWindowPenalty < bestAnt.timeWindowPenalty)) {
+                (improvedAnt.totalCost == bestAnt.totalCost && improvedAnt.timeWindowPenalty < bestAnt.timeWindowPenalty) ||
+                (improvedAnt.feasible && !bestAnt.feasible)) {
             int antIndex = mmas.getAntPopulation().indexOf(bestAnt);
             mmas.getAntPopulation().set(antIndex, improvedAnt);
             mmas.penalizeAnt(improvedAnt);

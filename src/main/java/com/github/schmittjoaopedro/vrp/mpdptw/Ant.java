@@ -8,6 +8,8 @@ public class Ant {
 
     public ArrayList<ArrayList<Integer>> requests;
 
+    public ArrayList<Double> capacity;
+
     public boolean[] visited;
 
     public boolean[] visitedRequests;
