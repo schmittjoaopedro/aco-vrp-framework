@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -418,7 +417,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6)));
 
-        problemInstance.fitnessEvaluation(ant);
+        problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(6909.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(2011.0);
         assertThat(ant.feasible).isFalse();
@@ -443,7 +442,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(4, 3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6)));
 
-        problemInstance.fitnessEvaluation(ant);
+        problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(6786.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(1422.0);
         assertThat(ant.feasible).isFalse();
@@ -465,7 +464,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
         ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
-        problemInstance.fitnessEvaluation(ant);
+        problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(5305.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(844.0);
         assertThat(ant.feasible).isFalse();

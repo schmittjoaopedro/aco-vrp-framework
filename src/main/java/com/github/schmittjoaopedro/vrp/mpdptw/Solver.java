@@ -120,11 +120,19 @@ public class Solver implements Runnable {
 
     private void printFinalRoute() {
         boolean feasible = true;
+        double cost = 0.0;
         for (ArrayList route : mmas.getBestSoFar().tours) {
             feasible &= mmas.isRouteFeasible(route);
         }
         mmas.getBestSoFar().feasible = feasible;
-        problemInstance.fitnessEvaluation(mmas.getBestSoFar());
+        problemInstance.restrictionsEvaluation(mmas.getBestSoFar());
+        mmas.getBestSoFar().totalCost = 0.0;
+        for (int i = 0; i < mmas.getBestSoFar().tours.size(); i++) {
+            cost = costEvaluation(mmas.getBestSoFar().tours.get(i));
+            mmas.getBestSoFar().tourLengths.set(i, cost);
+            mmas.getBestSoFar().totalCost += cost;
+        }
+        System.out.println("Instance = " + fileName);
         System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
         logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible);
         for (ArrayList route : mmas.getBestSoFar().tours) {
@@ -134,6 +142,14 @@ public class Solver implements Runnable {
         System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
         System.out.println("Penalty = " + mmas.getBestSoFar().timeWindowPenalty);
         logInFile("Cost = " + mmas.getBestSoFar().totalCost);
+    }
+
+    public double costEvaluation(List<Integer> tour) {
+        double cost = 0.0;
+        for (int i = 0; i < tour.size() - 1; i++) {
+            cost += problemInstance.distances[tour.get(i)][tour.get(i + 1)];
+        }
+        return cost;
     }
 
     private void initProblemInstance() {
@@ -149,7 +165,7 @@ public class Solver implements Runnable {
 
     private void executeLocalSearch() {
         Ant bestAnt = mmas.findBest();
-        problemInstance.fitnessEvaluation(bestAnt);
+        problemInstance.restrictionsEvaluation(bestAnt);
         Ant improvedAnt = localSearch.relocate(bestAnt);
         if (bestAnt.feasible) {
             if (improvedAnt.feasible) {

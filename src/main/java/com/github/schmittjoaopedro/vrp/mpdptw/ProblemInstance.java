@@ -23,7 +23,7 @@ public class ProblemInstance {
 
     public Map<Integer, Request> delivery;
 
-    public FitnessResult fitnessEvaluation(List<Integer> tour) {
+    public FitnessResult restrictionsEvaluation(List<Integer> tour) {
         FitnessResult fitnessResult = new FitnessResult();
         double currentTime = 0.0;
         double capacity = 0.0;
@@ -62,13 +62,13 @@ public class ProblemInstance {
     }
 
     // TODO: Cost function must to consider the service time?
-    public void fitnessEvaluation(Ant ant) {
+    public void restrictionsEvaluation(Ant ant) {
         ant.totalCost = 0.0;
         ant.feasible = true;
         ant.timeWindowPenalty = 0.0;
         ant.capacityPenalty = 0.0;
         for (int k = 0; k < ant.tours.size(); k++) {
-            ProblemInstance.FitnessResult fitnessResult = fitnessEvaluation(ant.tours.get(k));
+            ProblemInstance.FitnessResult fitnessResult = restrictionsEvaluation(ant.tours.get(k));
             ant.tourLengths.add(k, fitnessResult.cost);
             ant.totalCost += fitnessResult.cost;
             ant.feasible &= fitnessResult.feasible;

@@ -9,7 +9,7 @@ public class MPDPTW_MMAS_TEST {
 
     private static final String rootDirectory;
 
-    private static int statisticInterval = 1;
+    private static int statisticInterval = 100;
 
     private static int maxIterations = 1000;
 
@@ -19,8 +19,16 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_25_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
-        solver.run();
+//        Solver solver = new Solver(rootDirectory, "n_4_400_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
+//        solver.run();
+        Solver solver2 = new Solver(rootDirectory, "n_4_400_2.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        solver2.run();
+        Solver solver3 = new Solver(rootDirectory, "n_4_400_3.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        solver3.run();
+        Solver solver4 = new Solver(rootDirectory, "n_4_400_4.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        solver4.run();
+        Solver solver5 = new Solver(rootDirectory, "n_4_400_5.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        solver5.run();
     }
 
     @Test

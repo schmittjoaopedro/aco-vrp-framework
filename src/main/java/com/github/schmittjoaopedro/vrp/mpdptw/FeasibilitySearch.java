@@ -20,13 +20,13 @@ public class FeasibilitySearch {
         for (int k1 = 0; k1 < improvedAnt.tours.size(); k1++) {
             tour = improvedAnt.tours.get(k1);
             requests = improvedAnt.requests.get(k1);
-            fitness = instance.fitnessEvaluation(tour);
+            fitness = instance.restrictionsEvaluation(tour);
             while (!fitness.feasible && requests.size() > 1) {
                 requestId = removeCostlyRequest(tour, requests, fitness);
-                fitness = instance.fitnessEvaluation(tour);
+                fitness = instance.restrictionsEvaluation(tour);
                 foundVehicle = false;
                 for (int k2 = 0; k2 < improvedAnt.tours.size(); k2++) {
-                    if (k1 != k2 && instance.fitnessEvaluation(improvedAnt.tours.get(k2)).feasible) {
+                    if (k1 != k2 && instance.restrictionsEvaluation(improvedAnt.tours.get(k2)).feasible) {
                         newTour = new ArrayList<>(improvedAnt.tours.get(k2));
                         fitnessInsertion = insertCheapestRequest(newTour, requestId);
                         if (fitnessInsertion.feasible) {
@@ -48,7 +48,7 @@ public class FeasibilitySearch {
                     improvedAnt.requests.get(improvedAnt.requests.size() - 1).add(requestId);
                 }
             }
-            if (requests.size() == 1 && !instance.fitnessEvaluation(tour).feasible) {
+            if (requests.size() == 1 && !instance.restrictionsEvaluation(tour).feasible) {
                 OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(requests.get(0), instance);
                 optimalRequestSolver.optimize();
                 newTour = new ArrayList<>();
@@ -58,7 +58,7 @@ public class FeasibilitySearch {
                 improvedAnt.tours.set(k1, newTour);
             }
         }
-        instance.fitnessEvaluation(improvedAnt);
+        instance.restrictionsEvaluation(improvedAnt);
         return improvedAnt;
     }
 
@@ -78,7 +78,7 @@ public class FeasibilitySearch {
                     n++;
                 }
             }
-            newCost = instance.fitnessEvaluation(tourCloned);
+            newCost = instance.restrictionsEvaluation(tourCloned);
             if (bestRemove.feasible) {
                 if (newCost.feasible && bestRemove.cost > newCost.cost) {
                     bestRemove = newCost;
@@ -141,7 +141,7 @@ public class FeasibilitySearch {
             }
         }
         tour.add(bestIdx, node);
-        return instance.fitnessEvaluation(tour);
+        return instance.restrictionsEvaluation(tour);
     }
 
 }

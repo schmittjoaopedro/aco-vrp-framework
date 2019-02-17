@@ -392,7 +392,7 @@ public class MMAS {
         // Calculate fitness
         maxTwPenalty = 0.0;
         for (Ant ant : antPopulation) {
-            instance.fitnessEvaluation(ant);
+            instance.restrictionsEvaluation(ant);
             if (ant.capacityPenalty > 0) {
                 throw new RuntimeException("Invalid capacity penaly!!");
             }
