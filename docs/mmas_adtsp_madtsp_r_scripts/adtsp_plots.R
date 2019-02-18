@@ -1,6 +1,6 @@
-#pathName = "C:/Temp/ALL_RESULTS_COMPILED.csv"
-pathName = "C:/Temp/diversity.csv"
-type = "MADTSP"
+#pathName = "C:/Temp/ADTSP/ALL_RESULTS_COMPILED.csv"
+pathName = "C:/Temp/ADTSP/diversity.csv"
+type = "ADTSP"
 costType = "Diversity"
 dataSep = ","
 header <- read.csv(pathName, sep = dataSep, nrows = 1)

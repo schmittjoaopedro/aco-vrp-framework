@@ -1,9 +1,9 @@
-tempPath <- "C:/Temp/"
-pathName = "C:/Temp/ALL_RESULTS_COMPILED.csv"
-dataSep = ","
+tempPath <- "C:/Temp/ADTSP/"
+pathName = "C:/Temp/ADTSP/ALL_RESULTS_COMPILED.csv"
+dataSep = ";"
 header <- read.csv(pathName, sep = dataSep, nrows = 1)
 data = read.csv(pathName, sep = dataSep, header = T, colClasses = paste(rep("character", ncol(header))))
-probType <- "MADTSP"
+probType <- "ADTSP"
 
 normalizeName <- function (algName) {
   g <- regexpr("\\_[^\\_]*$", algName)
@@ -40,8 +40,8 @@ for (idx in 2:ncol(data)) {
                     "freq_", freqName, "_",
                     "mag_", magName, "_",
                     "rho_", rhoName, "_",
-                    "alpha_", alphaName, "_",
-                    "beta_", betaName, "_",
+                    "alpha_", format(round(as.numeric(alphaName), 1), nsmall = 1), "_",
+                    "beta_", format(round(as.numeric(betaName), 1), nsmall = 1), "_",
                     algName, "_", probType, ".txt", sep ="")
   data <- readFile(paste(tempPath, fileName, sep = ""), data, idx)
 }
