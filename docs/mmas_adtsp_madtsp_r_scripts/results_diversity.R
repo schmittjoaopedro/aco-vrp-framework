@@ -1,9 +1,9 @@
 tempPath <- "C:/Temp/ADTSP/"
 pathName = "C:/Temp/ADTSP/ALL_RESULTS_COMPILED.csv"
-dataSep = ";"
+dataSep = ","
 header <- read.csv(pathName, sep = dataSep, nrows = 1)
 data = read.csv(pathName, sep = dataSep, header = T, colClasses = paste(rep("character", ncol(header))))
-probType <- "ADTSP"
+probType <- "MADTSP"
 
 normalizeName <- function (algName) {
   g <- regexpr("\\_[^\\_]*$", algName)
@@ -17,8 +17,15 @@ readFile <- function(fileName, data, idx) {
   close(conn)
   values <- c()
   for (i in 1:length(linn)){
+    
+    # For Diversity
     temp <- regexpr("DIV:*", linn[i])
     value <- substr(linn[i], temp[1] + attr(temp, "match.length"), nchar(linn[i]))
+    
+    # For last iteration
+    #temp <- regexpr("BSF. SD:(.*)IT. WORST", linn[i])
+    #value <- substr(linn[i], temp[1] + 8, temp[1] + attr(temp, "match.length") - 10)
+    
     value <- as.double(value)
     data[8 + i,idx] <- value
     values <- c(values, value)
@@ -47,3 +54,4 @@ for (idx in 2:ncol(data)) {
 }
 
 write.csv(data, file = paste(tempPath, "diversity.csv", sep = ""), quote = F, row.names = F)
+  

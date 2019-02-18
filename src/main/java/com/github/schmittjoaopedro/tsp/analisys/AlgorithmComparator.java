@@ -33,11 +33,11 @@ public class AlgorithmComparator {
 //                    for (double rho : rhos) {
 //                        for (double alpha : alphas) {
 //                            for (double beta : betas) {
-                    executeMMASTest(resultWriter, test, mag, freq, 0.2, 1.0, 5.0);
-                    executeMMAS3OPTTest(resultWriter, test, mag, freq, 0.6, 1.0, 5.0);
-                    executeMMASUSTest(resultWriter, test, mag, freq, 0.4, 1.0, 5.0);
-                    executeMMASMEMTest(resultWriter, test, mag, freq, 0.02, 1.0, 5.0);
-                    executeMMASMEMUSTest(resultWriter, test, mag, freq, 0.6, 1.0, 5.0);
+//                    executeMMASTest(resultWriter, test, mag, freq, 0.2, 1.0, 5.0);
+                    executeMMAS3OPTTest(resultWriter, test, mag, freq, 0.8, 1.0, 5.0);
+//                    executeMMASUSTest(resultWriter, test, mag, freq, 0.4, 1.0, 5.0);
+//                    executeMMASMEMTest(resultWriter, test, mag, freq, 0.02, 1.0, 5.0);
+//                    executeMMASMEMUSTest(resultWriter, test, mag, freq, 0.6, 1.0, 5.0);
 //                            }
 //                        }
 //                    }
@@ -53,7 +53,7 @@ public class AlgorithmComparator {
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
             Graph graph = GraphFactory.createGraphFromTSP(file);
-            MMAS_MADTSP mmas_adtsp = new MMAS_MADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
+            MMAS_ADTSP mmas_adtsp = new MMAS_ADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
             mmas_adtsp.setDbgpSeed(i);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -64,7 +64,7 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_MADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
@@ -76,7 +76,7 @@ public class AlgorithmComparator {
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
             Graph graph = GraphFactory.createGraphFromTSP(file);
-            MMAS_US_MADTSP mmas_adtsp = new MMAS_US_MADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
+            MMAS_US_ADTSP mmas_adtsp = new MMAS_US_ADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
             mmas_adtsp.setDbgpSeed(i);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -87,7 +87,7 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_US_MADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_US_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
@@ -99,7 +99,7 @@ public class AlgorithmComparator {
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
             Graph graph = GraphFactory.createGraphFromTSP(file);
-            MMAS_3OPT_MADTSP mmas_adtsp = new MMAS_3OPT_MADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
+            MMAS_3OPT_ADTSP mmas_adtsp = new MMAS_3OPT_ADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
             mmas_adtsp.setDbgpSeed(i);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -110,7 +110,7 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_3OPT_MADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_3OPT_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
@@ -122,7 +122,7 @@ public class AlgorithmComparator {
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
             Graph graph = GraphFactory.createGraphFromTSP(file);
-            MMAS_MEM_MADTSP mmas_adtsp = new MMAS_MEM_MADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
+            MMAS_MEM_ADTSP mmas_adtsp = new MMAS_MEM_ADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
             mmas_adtsp.setDbgpSeed(i);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -133,7 +133,7 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_MEM_MADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_MEM_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
@@ -145,7 +145,7 @@ public class AlgorithmComparator {
         for (int i = 0; i < trials; i++) {
             File file = new File(AlgorithmComparator.class.getClassLoader().getResource("tsp/" + testInstance).getFile());
             Graph graph = GraphFactory.createGraphFromTSP(file);
-            MMAS_MEM_US_MADTSP mmas_adtsp = new MMAS_MEM_US_MADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
+            MMAS_MEM_US_ADTSP mmas_adtsp = new MMAS_MEM_US_ADTSP(graph, rho, numIterations, mag, freq, alpha, beta);
             mmas_adtsp.setDbgpSeed(i);
             mmas_adtsp.setMmasSeed(i);
             mmas_adtsp.setStatisticInterval(1);
@@ -156,7 +156,7 @@ public class AlgorithmComparator {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
-            results.add(((MMAS_MEM_US_MADTSP) algs.get(i)).getIterationStatistics());
+            results.add(((MMAS_MEM_US_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
         resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);

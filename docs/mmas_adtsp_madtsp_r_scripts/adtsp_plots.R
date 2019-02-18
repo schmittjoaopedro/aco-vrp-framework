@@ -1,6 +1,6 @@
 #pathName = "C:/Temp/ADTSP/ALL_RESULTS_COMPILED.csv"
 pathName = "C:/Temp/ADTSP/diversity.csv"
-type = "ADTSP"
+type = "ADTSPMV"
 costType = "Diversity"
 dataSep = ","
 header <- read.csv(pathName, sep = dataSep, nrows = 1)
@@ -26,7 +26,7 @@ getFormattedData <- function(data, instance, freq, mag) {
 
 plotData <- function(data, instance, freq, mag, type, costType) {
   formatedData <- getFormattedData(data, instance, freq, mag)
-  fSize = 1.5
+  fSize = 1.7
   title = paste(type, instance, " Freq:", freq, " Mag:", mag)
   
   minVal <- min(formatedData[,2])
@@ -67,7 +67,7 @@ plotData <- function(data, instance, freq, mag, type, costType) {
          lwd=c(2,2,2,2,2))
 }
 
-par(mar=c(3,3,2,1))
+par(mar=c(3,4,2,1))
 par(mfrow = c(2,3))
 par(mgp=c(2, 1, 0))
 plotData(data, "KroA150.tsp", "10", "0.1", type, costType)

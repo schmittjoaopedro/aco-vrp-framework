@@ -1,5 +1,5 @@
 pathName = "C:/Temp/ADTSP/ALL_RESULTS_COMPILED.csv"
-dataSep = ";"
+dataSep = ","
 header <- read.csv(pathName, sep = dataSep, nrows = 1)
 data = read.csv(pathName, sep = dataSep, header = T, colClasses = paste(rep("character", ncol(header))))
 probType <- "MADTSP"
