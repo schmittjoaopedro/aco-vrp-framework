@@ -128,28 +128,26 @@ public class Solver implements Runnable {
         problemInstance.restrictionsEvaluation(mmas.getBestSoFar());
         mmas.getBestSoFar().totalCost = 0.0;
         for (int i = 0; i < mmas.getBestSoFar().tours.size(); i++) {
-            cost = costEvaluation(mmas.getBestSoFar().tours.get(i));
+            cost = problemInstance.costEvaluation(mmas.getBestSoFar().tours.get(i));
             mmas.getBestSoFar().tourLengths.set(i, cost);
             mmas.getBestSoFar().totalCost += cost;
         }
         System.out.println("Instance = " + fileName);
-        System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
-        logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible);
+        System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible + "\nRoutes");
+        logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible + "\nRoutes");
         for (ArrayList route : mmas.getBestSoFar().tours) {
             System.out.println(StringUtils.join(route, "-"));
             logInFile(StringUtils.join(route, "-"));
         }
+        System.out.println("Requests");
+        logInFile("Requests");
+        for (ArrayList requests : mmas.getBestSoFar().requests) {
+            System.out.println(StringUtils.join(requests, "-"));
+            logInFile(StringUtils.join(requests, "-"));
+        }
         System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
         System.out.println("Penalty = " + mmas.getBestSoFar().timeWindowPenalty);
         logInFile("Cost = " + mmas.getBestSoFar().totalCost);
-    }
-
-    public double costEvaluation(List<Integer> tour) {
-        double cost = 0.0;
-        for (int i = 0; i < tour.size() - 1; i++) {
-            cost += problemInstance.distances[tour.get(i)][tour.get(i + 1)];
-        }
-        return cost;
     }
 
     private void initProblemInstance() {

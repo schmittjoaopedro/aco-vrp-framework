@@ -1,12 +1,15 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
+import com.github.schmittjoaopedro.vrp.mpdptw.coelho.RemovalOperator;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -474,5 +477,49 @@ public class MPDPTW_UtilsTest {
         assertThat(improvedAnt.feasible).isTrue();
         assertThat(improvedAnt.totalCost).isEqualTo(8307.0);
         assertThat(improvedAnt.timeWindowPenalty).isEqualTo(0.0);
+    }
+
+    @Test
+    public void removalOperatorFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(5305.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(844.0);
+        assertThat(ant.feasible).isFalse();
+
+        RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
+        List<RemovalOperator.Req> removeRequests = removalOperator.removeRequests(ant.tours, ant.requests, 6);
+
+        assertThat(removeRequests).hasSize(6);
+        assertThat(removeRequests.get(0).vehicleId).isEqualTo(2);
+        assertThat(removeRequests.get(0).requestId).isEqualTo(2);
+        assertThat(removeRequests.get(0).cost).isEqualTo(0.0);
+        assertThat(removeRequests.get(1).vehicleId).isEqualTo(1);
+        assertThat(removeRequests.get(1).requestId).isEqualTo(5);
+        assertThat(removeRequests.get(1).cost).isEqualTo(-349.0);
+        assertThat(removeRequests.get(2).vehicleId).isEqualTo(1);
+        assertThat(removeRequests.get(2).requestId).isEqualTo(6);
+        assertThat(removeRequests.get(2).cost).isEqualTo(-470.0);
+        assertThat(removeRequests.get(3).vehicleId).isEqualTo(2);
+        assertThat(removeRequests.get(3).requestId).isEqualTo(3);
+        assertThat(removeRequests.get(3).cost).isEqualTo(-108.0);
+        assertThat(removeRequests.get(4).vehicleId).isEqualTo(0);
+        assertThat(removeRequests.get(4).requestId).isEqualTo(1);
+        assertThat(removeRequests.get(4).cost).isEqualTo(-275.0);
+        assertThat(removeRequests.get(5).vehicleId).isEqualTo(0);
+        assertThat(removeRequests.get(5).requestId).isEqualTo(0);
+        assertThat(removeRequests.get(5).cost).isEqualTo(-91.0);
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(1859.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
+        assertThat(ant.feasible).isFalse();
+
     }
 }

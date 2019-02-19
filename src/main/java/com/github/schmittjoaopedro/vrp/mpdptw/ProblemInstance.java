@@ -75,6 +75,11 @@ public class ProblemInstance {
             ant.timeWindowPenalty += fitnessResult.timeWindowPenalty;
             ant.capacityPenalty += fitnessResult.capacityPenalty;
         }
+        int attendedRequests = 0;
+        for (int i = 0; i < ant.requests.size(); i++) {
+            attendedRequests += ant.requests.get(i).size();
+        }
+        ant.feasible &= attendedRequests == noReq;
         ant.feasible &= ant.tours.size() < noMaxVehicles;
     }
 
@@ -98,7 +103,30 @@ public class ProblemInstance {
         return currentTime + distances[i][j] + requests[reqJ].serviceTime < requests[reqJ].twEnd;
     }
 
-    class FitnessResult {
+    public double costEvaluation(List<Integer> tour) {
+        double cost = 0.0;
+        for (int i = 0; i < tour.size() - 1; i++) {
+            cost += distances[tour.get(i)][tour.get(i + 1)];
+        }
+        return cost;
+    }
+
+    public double costEvaluation(List<Integer> tour, Integer requestToIgnore) {
+        double cost = 0.0;
+        int from, to;
+        for (int i = 0; i < tour.size() - 1; i++) {
+            from = tour.get(i);
+            to = tour.get(i + 1);
+            if (to != depot.nodeId && requests[to - 1].requestId == requestToIgnore) {
+                i++;
+                to = tour.get(i + 1);
+            }
+            cost += distances[from][to];
+        }
+        return cost;
+    }
+
+    public class FitnessResult {
 
         public double cost;
 

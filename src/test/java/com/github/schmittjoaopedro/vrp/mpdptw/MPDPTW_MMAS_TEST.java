@@ -9,9 +9,9 @@ public class MPDPTW_MMAS_TEST {
 
     private static final String rootDirectory;
 
-    private static int statisticInterval = 100;
+    private static int statisticInterval = 1;
 
-    private static int maxIterations = 1000;
+    private static int maxIterations = 10;
 
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
@@ -63,13 +63,13 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_normal_8_400_1_test() {
-        Solver solver = new Solver(rootDirectory, "n_8_400_1.txt", maxIterations, 1, 0.02, 1, true);
+        Solver solver = new Solver(rootDirectory, "n_8_400_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
     public void mpdptw_large_4_400_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_400_1.txt", maxIterations, 1, 0.02, 1, true);
+        Solver solver = new Solver(rootDirectory, "l_4_400_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
