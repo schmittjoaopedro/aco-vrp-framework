@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -14,30 +15,35 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
+    @Ignore
     public void mpdptw_large_4_25_1_test() {
         Solver solver = new Solver(rootDirectory, "l_4_25_1.txt", 10000, 1, 0.02, 1, true);
         solver.run();
     }
 
     @Test
+    @Ignore
     public void mpdptw_large_4_25_4_test() {
         Solver solver = new Solver(rootDirectory, "l_4_25_4.txt", 10000, 1, 0.02, 1, true);
         solver.run();
     }
 
     @Test
+    @Ignore
     public void mpdptw_n_4_25_1_test() {
         Solver solver = new Solver(rootDirectory, "n_4_25_1.txt", 10000, 1, 0.02, 1, true);
         solver.run();
     }
 
     @Test
+    @Ignore
     public void mpdptw_normal_8_100_5_test() {
         Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", 10000, 1, 0.02, 1, true);
         solver.run();
     }
 
     @Test
+    @Ignore
     public void mpdptw_large_test() {
         new Solver(rootDirectory, "l_4_25_1.txt", 10000, 1, 0.02, 1, true).run();
         new Solver(rootDirectory, "l_8_25_1.txt", 10000, 1, 0.02, 1, true).run();
@@ -50,6 +56,7 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
+    @Ignore
     public void mpdptw_normal_test() {
         new Solver(rootDirectory, "n_4_25_1.txt", 10000, 1, 0.02, 1, true).run();
         new Solver(rootDirectory, "n_8_25_1.txt", 10000, 1, 0.02, 1, true).run();
@@ -62,6 +69,7 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
+    @Ignore
     public void mpdptw_without_test() {
         new Solver(rootDirectory, "w_4_25_1.txt", 10000, 1, 0.02, 1, true).run();
         new Solver(rootDirectory, "w_8_25_1.txt", 10000, 1, 0.02, 1, true).run();
