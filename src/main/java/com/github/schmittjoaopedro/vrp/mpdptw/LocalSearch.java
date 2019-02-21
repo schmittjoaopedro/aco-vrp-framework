@@ -7,7 +7,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.coelho.Req;
 import java.util.List;
 import java.util.Random;
 
-public class LocalSearchALNS {
+public class LocalSearch {
 
     private ProblemInstance instance;
 
@@ -19,7 +19,7 @@ public class LocalSearchALNS {
 
     private LocalSearchRelocate localSearchRelocate;
 
-    public LocalSearchALNS(ProblemInstance instance, Random random) {
+    public LocalSearch(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
         this.removalOperator = new RemovalOperator(instance, random);

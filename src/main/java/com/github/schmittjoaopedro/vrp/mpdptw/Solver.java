@@ -36,7 +36,7 @@ public class Solver implements Runnable {
 
     private boolean showLog;
 
-    private LocalSearchALNS localSearchALNS;
+    private LocalSearch localSearch;
 
     public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.fileName = fileName;
@@ -67,7 +67,7 @@ public class Solver implements Runnable {
         globalStatistics.endTimer("MMAS Initialization");
 
         // Init local search
-        this.localSearchALNS = new LocalSearchALNS(problemInstance, new Random(seed));
+        this.localSearch = new LocalSearch(problemInstance, new Random(seed));
 
         // Execute MMAS
         globalStatistics.startTimer();
@@ -173,7 +173,7 @@ public class Solver implements Runnable {
     private void executeLocalSearch() {
         Ant bestAnt = mmas.findBest();
         problemInstance.restrictionsEvaluation(bestAnt);
-        Ant improvedAnt = localSearchALNS.optimize(bestAnt);
+        Ant improvedAnt = localSearch.optimize(bestAnt);
         if (bestAnt.feasible) {
             if (improvedAnt.feasible) {
                 updateAnt(improvedAnt, bestAnt);
@@ -181,7 +181,7 @@ public class Solver implements Runnable {
         } else {
             FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
             Ant feasibleAnt = feasibilitySearch.feasibility(improvedAnt);
-            improvedAnt = localSearchALNS.optimize(feasibleAnt);
+            improvedAnt = localSearch.optimize(feasibleAnt);
             if (improvedAnt.feasible && improvedAnt.totalCost < feasibleAnt.totalCost) {
                 feasibleAnt = improvedAnt;
             }
