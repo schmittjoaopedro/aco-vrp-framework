@@ -7,9 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Solver implements Runnable {
@@ -38,7 +36,7 @@ public class Solver implements Runnable {
 
     private boolean showLog;
 
-    private LocalSearch localSearch;
+    private LocalSearchALNS localSearchALNS;
 
     public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.fileName = fileName;
@@ -57,7 +55,7 @@ public class Solver implements Runnable {
         initProblemInstance();
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
-        mmas.setBeta(5.0);
+        mmas.setBeta(2.0);
         mmas.setQ_0(0.0);
         mmas.setnAnts(50);
         mmas.setDepth(problemInstance.noNodes);
@@ -69,7 +67,7 @@ public class Solver implements Runnable {
         globalStatistics.endTimer("MMAS Initialization");
 
         // Init local search
-        this.localSearch = new LocalSearch(problemInstance);
+        this.localSearchALNS = new LocalSearchALNS(problemInstance, new Random(seed));
 
         // Execute MMAS
         globalStatistics.startTimer();
@@ -148,6 +146,17 @@ public class Solver implements Runnable {
         System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
         System.out.println("Penalty = " + mmas.getBestSoFar().timeWindowPenalty);
         logInFile("Cost = " + mmas.getBestSoFar().totalCost);
+
+        Set<Integer> processedNodes = new HashSet<>();
+        for (int k = 0; k < mmas.getBestSoFar().tours.size(); k++) {
+            for (int i = 1; i < mmas.getBestSoFar().tours.get(k).size() - 1; i++) {
+                if (processedNodes.contains(mmas.getBestSoFar().tours.get(k).get(i))) {
+                    throw new RuntimeException("Invalid route, duplicated nodes");
+                } else {
+                    processedNodes.add(mmas.getBestSoFar().tours.get(k).get(i));
+                }
+            }
+        }
     }
 
     private void initProblemInstance() {
@@ -164,7 +173,7 @@ public class Solver implements Runnable {
     private void executeLocalSearch() {
         Ant bestAnt = mmas.findBest();
         problemInstance.restrictionsEvaluation(bestAnt);
-        Ant improvedAnt = localSearch.relocate(bestAnt);
+        Ant improvedAnt = localSearchALNS.optimize(bestAnt);
         if (bestAnt.feasible) {
             if (improvedAnt.feasible) {
                 updateAnt(improvedAnt, bestAnt);
@@ -172,6 +181,10 @@ public class Solver implements Runnable {
         } else {
             FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
             Ant feasibleAnt = feasibilitySearch.feasibility(improvedAnt);
+            improvedAnt = localSearchALNS.optimize(feasibleAnt);
+            if (improvedAnt.feasible && improvedAnt.totalCost < feasibleAnt.totalCost) {
+                feasibleAnt = improvedAnt;
+            }
             if (feasibleAnt.feasible) {
                 updateAnt(feasibleAnt, bestAnt);
             } else {

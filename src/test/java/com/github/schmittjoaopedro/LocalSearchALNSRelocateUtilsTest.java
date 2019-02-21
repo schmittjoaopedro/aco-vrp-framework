@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
-public class LocalSearchUtilsTest {
+public class LocalSearchALNSRelocateUtilsTest {
 
     @Test
     public void testMatrixLocalSearchUtils() {

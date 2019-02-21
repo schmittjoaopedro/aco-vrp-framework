@@ -3,11 +3,11 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalSearch {
+public class LocalSearchRelocate {
 
     private ProblemInstance instance;
 
-    public LocalSearch(ProblemInstance instance) {
+    public LocalSearchRelocate(ProblemInstance instance) {
         this.instance = instance;
     }
 

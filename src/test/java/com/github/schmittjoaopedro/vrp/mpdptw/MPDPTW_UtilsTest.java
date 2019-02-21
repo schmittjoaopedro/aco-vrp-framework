@@ -1,7 +1,9 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
+import com.github.schmittjoaopedro.vrp.mpdptw.coelho.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.coelho.RemovalOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.coelho.Req;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -425,8 +427,8 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.timeWindowPenalty).isEqualTo(2011.0);
         assertThat(ant.feasible).isFalse();
 
-        LocalSearch localSearch = new LocalSearch(problemInstance);
-        Ant improvedAnt = localSearch.relocate(ant);
+        LocalSearchRelocate localSearchRelocate = new LocalSearchRelocate(problemInstance);
+        Ant improvedAnt = localSearchRelocate.relocate(ant);
         assertThat(improvedAnt.totalCost).isEqualTo(6495.0);
         assertThat(improvedAnt.timeWindowPenalty).isEqualTo(1956.0);
         assertThat(improvedAnt.feasible).isFalse();
@@ -450,8 +452,8 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.timeWindowPenalty).isEqualTo(1422.0);
         assertThat(ant.feasible).isFalse();
 
-        LocalSearch localSearch = new LocalSearch(problemInstance);
-        Ant improvedAnt = localSearch.relocate(ant);
+        LocalSearchRelocate localSearchRelocate = new LocalSearchRelocate(problemInstance);
+        Ant improvedAnt = localSearchRelocate.relocate(ant);
         assertThat(improvedAnt.totalCost).isEqualTo(6086.0);
         assertThat(improvedAnt.timeWindowPenalty).isEqualTo(0.0);
         assertThat(improvedAnt.feasible).isTrue();
@@ -495,31 +497,99 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
-        List<RemovalOperator.Req> removeRequests = removalOperator.removeRequests(ant.tours, ant.requests, 6);
+        List<Req> removedRequests = removalOperator.removeRequests(ant.tours, ant.requests, 6);
 
-        assertThat(removeRequests).hasSize(6);
-        assertThat(removeRequests.get(0).vehicleId).isEqualTo(2);
-        assertThat(removeRequests.get(0).requestId).isEqualTo(2);
-        assertThat(removeRequests.get(0).cost).isEqualTo(0.0);
-        assertThat(removeRequests.get(1).vehicleId).isEqualTo(1);
-        assertThat(removeRequests.get(1).requestId).isEqualTo(5);
-        assertThat(removeRequests.get(1).cost).isEqualTo(-349.0);
-        assertThat(removeRequests.get(2).vehicleId).isEqualTo(1);
-        assertThat(removeRequests.get(2).requestId).isEqualTo(6);
-        assertThat(removeRequests.get(2).cost).isEqualTo(-470.0);
-        assertThat(removeRequests.get(3).vehicleId).isEqualTo(2);
-        assertThat(removeRequests.get(3).requestId).isEqualTo(3);
-        assertThat(removeRequests.get(3).cost).isEqualTo(-108.0);
-        assertThat(removeRequests.get(4).vehicleId).isEqualTo(0);
-        assertThat(removeRequests.get(4).requestId).isEqualTo(1);
-        assertThat(removeRequests.get(4).cost).isEqualTo(-275.0);
-        assertThat(removeRequests.get(5).vehicleId).isEqualTo(0);
-        assertThat(removeRequests.get(5).requestId).isEqualTo(0);
-        assertThat(removeRequests.get(5).cost).isEqualTo(-91.0);
+        assertThat(removedRequests).hasSize(6);
+        assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(0).requestId).isEqualTo(2);
+        assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(1).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(1).requestId).isEqualTo(5);
+        assertThat(removedRequests.get(1).cost).isEqualTo(-349.0);
+        assertThat(removedRequests.get(2).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(6);
+        assertThat(removedRequests.get(2).cost).isEqualTo(-470.0);
+        assertThat(removedRequests.get(3).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(3).requestId).isEqualTo(3);
+        assertThat(removedRequests.get(3).cost).isEqualTo(-108.0);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(1);
+        assertThat(removedRequests.get(4).cost).isEqualTo(-275.0);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(5).cost).isEqualTo(-91.0);
         problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(2);
+        assertThat(ant.requests).hasSize(2);
+        assertThat(ant.tourLengths).hasSize(2);
         assertThat(ant.totalCost).isEqualTo(1859.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
         assertThat(ant.feasible).isFalse();
 
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(5);
+        assertThat(ant.requests).hasSize(5);
+        assertThat(ant.tourLengths).hasSize(5);
+        assertThat(ant.totalCost).isEqualTo(7994.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
+        assertThat(ant.feasible).isTrue();
     }
+
+    @Test
+    public void feasibilitySearchDuplicationOfRequestsTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_4.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 17, 8, 5, 1, 3, 2, 7, 16, 9, 18, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 20, 24, 12, 21, 19, 23, 25, 22, 13, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 10, 14, 15, 11, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(6, 2, 1, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(4, 8, 7)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(3, 5)));
+
+        problemInstance.restrictionsEvaluation(ant);
+
+        assertThat(ant.tourLengths).hasSize(3);
+        assertThat(ant.totalCost).isEqualTo(4885.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(798.0);
+        assertThat(ant.feasible).isFalse();
+
+        FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
+        ant = feasibilitySearch.feasibility(ant);
+
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tourLengths).hasSize(7);
+        assertThat(ant.totalCost).isEqualTo(8705.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
+
+        assertThat(ant.tours.get(0)).containsExactly(0, 17, 16, 18, 0);
+        assertThat(ant.requests.get(0)).containsExactly(6);
+        assertThat(ant.tourLengths.get(0)).isEqualTo(781.0);
+
+        assertThat(ant.tours.get(1)).containsExactly(0, 20, 19, 21, 22, 0);
+        assertThat(ant.requests.get(1)).containsExactly(7);
+        assertThat(ant.tourLengths.get(1)).isEqualTo(1020.0);
+
+        assertThat(ant.tours.get(2)).containsExactly(0, 10, 14, 15, 11, 0);
+        assertThat(ant.requests.get(2)).containsExactly(3, 5);
+        assertThat(ant.tourLengths.get(2)).isEqualTo(1368.0);
+
+        assertThat(ant.tours.get(3)).containsExactly(0, 5, 3, 4, 6, 0);
+        assertThat(ant.requests.get(3)).containsExactly(1);
+        assertThat(ant.tourLengths.get(3)).isEqualTo(1483.0);
+
+        assertThat(ant.tours.get(4)).containsExactly(0, 8, 7, 9, 0);
+        assertThat(ant.requests.get(4)).containsExactly(2);
+        assertThat(ant.tourLengths.get(4)).isEqualTo(1358.0);
+
+        assertThat(ant.tours.get(5)).containsExactly(0, 1, 12, 2, 13, 0);
+        assertThat(ant.requests.get(5)).containsExactly(0, 4);
+        assertThat(ant.tourLengths.get(5)).isEqualTo(1246.0);
+
+        assertThat(ant.tours.get(6)).containsExactly(0, 24, 23, 25, 0);
+        assertThat(ant.requests.get(6)).containsExactly(8);
+        assertThat(ant.tourLengths.get(6)).isEqualTo(1449.0);
+    }
+
 }

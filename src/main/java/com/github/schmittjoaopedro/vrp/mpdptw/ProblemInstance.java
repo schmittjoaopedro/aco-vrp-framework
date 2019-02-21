@@ -67,6 +67,7 @@ public class ProblemInstance {
         ant.feasible = true;
         ant.timeWindowPenalty = 0.0;
         ant.capacityPenalty = 0.0;
+        ant.tourLengths.clear();
         for (int k = 0; k < ant.tours.size(); k++) {
             ProblemInstance.FitnessResult fitnessResult = restrictionsEvaluation(ant.tours.get(k));
             ant.tourLengths.add(k, fitnessResult.cost);
@@ -79,7 +80,9 @@ public class ProblemInstance {
         for (int i = 0; i < ant.requests.size(); i++) {
             attendedRequests += ant.requests.get(i).size();
         }
-        ant.feasible &= attendedRequests == noReq;
+        if (attendedRequests != noReq) {
+            throw new RuntimeException("Infeasible number of requests");
+        }
         ant.feasible &= ant.tours.size() < noMaxVehicles;
     }
 

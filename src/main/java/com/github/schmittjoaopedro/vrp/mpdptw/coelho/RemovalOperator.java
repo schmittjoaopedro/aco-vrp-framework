@@ -39,7 +39,20 @@ public class RemovalOperator {
             removeAllNodes(solution, requests, request);
             removedRequests.add(request);
         }
+        removeEmptyVehicles(solution, requests);
         return removedRequests;
+    }
+
+    private void removeEmptyVehicles(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
+        int position = 0;
+        while (solution.size() > position) {
+            if (requests.get(position).isEmpty()) {
+                solution.remove(position);
+                requests.remove(position);
+            } else {
+                position++;
+            }
+        }
     }
 
     private ArrayList<Req> getAllRequestsFromSolution(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
@@ -87,25 +100,4 @@ public class RemovalOperator {
         array.remove(position);
     }
 
-    public class Req {
-
-        public int vehicleId;
-        public int requestId;
-        public double cost;
-
-        public Req(int vehicleId, int requestId) {
-            this.vehicleId = vehicleId;
-            this.requestId = requestId;
-        }
-
-        public Req(int vehicleId, int requestId, double cost) {
-            this.vehicleId = vehicleId;
-            this.requestId = requestId;
-            this.cost = cost;
-        }
-
-        public double getCost() {
-            return cost;
-        }
-    }
 }

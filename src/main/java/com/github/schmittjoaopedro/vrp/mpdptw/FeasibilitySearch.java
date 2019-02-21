@@ -11,9 +11,8 @@ public class FeasibilitySearch {
     }
 
     public Ant feasibility(Ant ant) {
-        int requestId;
-        boolean foundVehicle;
-        ArrayList<Integer> tour, requests, newTour;
+        int requestId, bestVehicle;
+        ArrayList<Integer> tour, bestTour = null, requests, newTour;
         ProblemInstance.FitnessResult fitness, fitnessInsertion;
         Ant improvedAnt = AntUtils.createEmptyAnt(instance);
         AntUtils.copyFromTo(ant, improvedAnt);
@@ -24,19 +23,22 @@ public class FeasibilitySearch {
             while (!fitness.feasible && requests.size() > 1) {
                 requestId = removeCostlyRequest(tour, requests, fitness);
                 fitness = instance.restrictionsEvaluation(tour);
-                foundVehicle = false;
+                bestVehicle = -1;
                 for (int k2 = 0; k2 < improvedAnt.tours.size(); k2++) {
                     if (k1 != k2 && instance.restrictionsEvaluation(improvedAnt.tours.get(k2)).feasible) {
                         newTour = new ArrayList<>(improvedAnt.tours.get(k2));
                         fitnessInsertion = insertCheapestRequest(newTour, requestId);
                         if (fitnessInsertion.feasible) {
-                            improvedAnt.tours.set(k2, newTour);
-                            improvedAnt.requests.get(k2).add(requestId);
-                            foundVehicle = true;
+                            bestVehicle = k2;
+                            bestTour = newTour;
                         }
                     }
                 }
-                if (!foundVehicle) {
+                if (bestVehicle != -1) {
+                    improvedAnt.tours.set(bestVehicle, bestTour);
+                    improvedAnt.requests.get(bestVehicle).add(requestId);
+                    bestTour = null;
+                } else {
                     OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(requestId, instance);
                     optimalRequestSolver.optimize();
                     newTour = new ArrayList<>();
