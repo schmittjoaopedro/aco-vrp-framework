@@ -482,7 +482,7 @@ public class MPDPTW_UtilsTest {
     }
 
     @Test
-    public void removalOperatorFromCoelhoTest() throws IOException {
+    public void expensiveRequestsRemovalOperatorFromCoelhoTest() throws IOException {
         ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Ant ant = AntUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
@@ -497,7 +497,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
-        List<Req> removedRequests = removalOperator.removeRequests(ant.tours, ant.requests, 6);
+        List<Req> removedRequests = removalOperator.removeExpensiveRequests(ant.tours, ant.requests, 6);
 
         assertThat(removedRequests).hasSize(6);
         assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
@@ -518,7 +518,11 @@ public class MPDPTW_UtilsTest {
         assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
         assertThat(removedRequests.get(5).requestId).isEqualTo(0);
         assertThat(removedRequests.get(5).cost).isEqualTo(-91.0);
-        problemInstance.restrictionsEvaluation(ant);
+        try {
+            problemInstance.restrictionsEvaluation(ant);
+        } catch (Exception ex) {
+            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
+        }
         assertThat(ant.tours).hasSize(2);
         assertThat(ant.requests).hasSize(2);
         assertThat(ant.tourLengths).hasSize(2);
@@ -534,6 +538,186 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tourLengths).hasSize(5);
         assertThat(ant.totalCost).isEqualTo(7994.0);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
+        assertThat(ant.feasible).isTrue();
+    }
+
+    @Test
+    public void randomRequestsRemovalOperatorFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(5305.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(844.0);
+        assertThat(ant.feasible).isFalse();
+
+        RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
+        List<Req> removedRequests = removalOperator.removeRandomRequest(ant.tours, ant.requests, 6);
+
+        assertThat(removedRequests).hasSize(6);
+        assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(0).requestId).isEqualTo(2);
+        assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(1).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(1).requestId).isEqualTo(4);
+        assertThat(removedRequests.get(1).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(2).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(2).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(3).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(3).requestId).isEqualTo(3);
+        assertThat(removedRequests.get(3).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(1);
+        assertThat(removedRequests.get(4).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(7);
+        assertThat(removedRequests.get(5).cost).isEqualTo(0.0);
+        try {
+            problemInstance.restrictionsEvaluation(ant);
+        } catch (Exception ex) {
+            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
+        }
+        assertThat(ant.tours).hasSize(1);
+        assertThat(ant.requests).hasSize(1);
+        assertThat(ant.tourLengths).hasSize(1);
+        assertThat(ant.totalCost).isEqualTo(1930.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(195.0);
+        assertThat(ant.feasible).isFalse();
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(6815.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(195.0);
+        assertThat(ant.feasible).isFalse();
+    }
+
+    @Test
+    public void shawRequestsRemovalOperatorFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(5305.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(844.0);
+        assertThat(ant.feasible).isFalse();
+
+        RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
+        List<Req> removedRequests = removalOperator.removeShawRequests(ant.tours, ant.requests, 6);
+
+        assertThat(removedRequests).hasSize(6);
+        assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(0).requestId).isEqualTo(2);
+        assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(1).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(1).requestId).isEqualTo(1);
+        assertThat(removedRequests.get(1).cost).isEqualTo(203.0);
+        assertThat(removedRequests.get(2).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(5);
+        assertThat(removedRequests.get(2).cost).isEqualTo(81.0);
+        assertThat(removedRequests.get(3).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(3).requestId).isEqualTo(4);
+        assertThat(removedRequests.get(3).cost).isEqualTo(291.0);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(4).cost).isEqualTo(439.0);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(3);
+        assertThat(removedRequests.get(5).cost).isEqualTo(98.0);
+        try {
+            problemInstance.restrictionsEvaluation(ant);
+        } catch (Exception ex) {
+            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
+        }
+        assertThat(ant.tours).hasSize(2);
+        assertThat(ant.requests).hasSize(2);
+        assertThat(ant.tourLengths).hasSize(2);
+        assertThat(ant.totalCost).isEqualTo(2879.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isFalse();
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(6504.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+    }
+
+    @Test
+    public void mostExpensiveNodesRequestsRemovalOperatorFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(5305.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(844.0);
+        assertThat(ant.feasible).isFalse();
+
+        RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
+        List<Req> removedRequests = removalOperator.removeMostExpensiveNodes(ant.tours, ant.requests, 6);
+
+        assertThat(removedRequests).hasSize(6);
+        assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(0).requestId).isEqualTo(2);
+        assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
+        assertThat(removedRequests.get(1).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(1).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(1).cost).isEqualTo(-395.0);
+        assertThat(removedRequests.get(2).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(3);
+        assertThat(removedRequests.get(2).cost).isEqualTo(-299.0);
+        assertThat(removedRequests.get(3).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(3).requestId).isEqualTo(6);
+        assertThat(removedRequests.get(3).cost).isEqualTo(-65.0);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(5);
+        assertThat(removedRequests.get(4).cost).isEqualTo(-483.0);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(1);
+        assertThat(removedRequests.get(5).cost).isEqualTo(-103.0);
+        try {
+            problemInstance.restrictionsEvaluation(ant);
+        } catch (Exception ex) {
+            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
+        }
+        assertThat(ant.tours).hasSize(2);
+        assertThat(ant.requests).hasSize(2);
+        assertThat(ant.tourLengths).hasSize(2);
+        assertThat(ant.totalCost).isEqualTo(1859.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isFalse();
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(5);
+        assertThat(ant.requests).hasSize(5);
+        assertThat(ant.tourLengths).hasSize(5);
+        assertThat(ant.totalCost).isEqualTo(7994.0);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
         assertThat(ant.feasible).isTrue();
     }
 

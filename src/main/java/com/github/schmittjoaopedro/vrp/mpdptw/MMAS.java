@@ -563,7 +563,10 @@ public class MMAS {
         nextClient.heuristic = Math.pow(cost, beta) * Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
 
         // Transition rule proposed by Afshar
-        //nextClient.heuristic = (alpha * cost) + (beta * pheromoneNodes[currentCity][nextCity]);
+        //nextClient.heuristic = (beta * cost) + (alpha * pheromoneNodes[currentCity][nextCity]);
+
+        // Only pheromone
+        //nextClient.heuristic = Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
 
         return nextClient;
     }

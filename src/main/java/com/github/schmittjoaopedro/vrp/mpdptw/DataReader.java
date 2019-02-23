@@ -45,7 +45,7 @@ public class DataReader {
                     edge.setFrom(i);
                     i.getAdj().put(j.getId(), edge);
                     edge.setTo(j);
-                    edge.setCost(Maths.getTSPEuclideanDistance(i, j));
+                    edge.setCost(Maths.getEuclideanDistance(i, j));
                     problemInstance.distances[i.getId()][j.getId()] = edge.getCost();
                     graph.addEdge(edge);
                 }

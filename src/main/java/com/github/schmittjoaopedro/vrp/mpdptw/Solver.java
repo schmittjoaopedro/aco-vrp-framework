@@ -117,36 +117,34 @@ public class Solver implements Runnable {
     }
 
     private void printFinalRoute() {
+        Ant ant = mmas.getBestSoFar();
+        String msg = "";
+        problemInstance.restrictionsEvaluation(ant);
         boolean feasible = true;
-        double cost = 0.0;
-        for (ArrayList route : mmas.getBestSoFar().tours) {
+        double cost;
+        for (ArrayList route : ant.tours) {
             feasible &= mmas.isRouteFeasible(route);
         }
-        mmas.getBestSoFar().feasible = feasible;
-        problemInstance.restrictionsEvaluation(mmas.getBestSoFar());
-        mmas.getBestSoFar().totalCost = 0.0;
-        for (int i = 0; i < mmas.getBestSoFar().tours.size(); i++) {
-            cost = problemInstance.costEvaluation(mmas.getBestSoFar().tours.get(i));
-            mmas.getBestSoFar().tourLengths.set(i, cost);
-            mmas.getBestSoFar().totalCost += cost;
+        ant.feasible &= feasible;
+        ant.totalCost = 0.0;
+        for (int i = 0; i < ant.tours.size(); i++) {
+            cost = problemInstance.costEvaluation(ant.tours.get(i));
+            ant.tourLengths.set(i, cost);
+            ant.totalCost += cost;
         }
-        System.out.println("Instance = " + fileName);
-        System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible + "\nRoutes");
-        logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible + "\nRoutes");
-        for (ArrayList route : mmas.getBestSoFar().tours) {
-            System.out.println(StringUtils.join(route, "-"));
-            logInFile(StringUtils.join(route, "-"));
+        msg += "\nInstance = " + fileName;
+        msg += "\nBest solution feasibility = " + ant.feasible + "\nRoutes";
+        for (ArrayList route : ant.tours) {
+            msg += "\n" + StringUtils.join(route, "-");
         }
-        System.out.println("Requests");
-        logInFile("Requests");
-        for (ArrayList requests : mmas.getBestSoFar().requests) {
-            System.out.println(StringUtils.join(requests, "-"));
-            logInFile(StringUtils.join(requests, "-"));
+        msg += "\nRequests";
+        for (ArrayList requests : ant.requests) {
+            msg += "\n" + StringUtils.join(requests, "-");
         }
-        System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
-        System.out.println("Penalty = " + mmas.getBestSoFar().timeWindowPenalty);
-        logInFile("Cost = " + mmas.getBestSoFar().totalCost);
-
+        msg += "\nCost = " + ant.totalCost;
+        msg += "\nPenalty = " + ant.timeWindowPenalty;
+        System.out.println(msg);
+        logInFile(msg);
         Set<Integer> processedNodes = new HashSet<>();
         for (int k = 0; k < mmas.getBestSoFar().tours.size(); k++) {
             for (int i = 1; i < mmas.getBestSoFar().tours.get(k).size() - 1; i++) {
@@ -171,12 +169,18 @@ public class Solver implements Runnable {
     }
 
     private void executeLocalSearch() {
-        Ant bestAnt = mmas.findBest();
-        problemInstance.restrictionsEvaluation(bestAnt);
-        Ant improvedAnt = localSearch.optimize(bestAnt);
-        if (bestAnt.feasible) {
+        //for (Ant ant : mmas.getAntPopulation()) {
+        //    executeLocalSearch(ant);
+        //}
+        executeLocalSearch(mmas.findBest());
+    }
+
+    private void executeLocalSearch(Ant ant) {
+        problemInstance.restrictionsEvaluation(ant);
+        Ant improvedAnt = localSearch.optimize(ant);
+        if (ant.feasible) {
             if (improvedAnt.feasible) {
-                updateAnt(improvedAnt, bestAnt);
+                updateAnt(improvedAnt, ant);
             }
         } else {
             FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
@@ -186,9 +190,9 @@ public class Solver implements Runnable {
                 feasibleAnt = improvedAnt;
             }
             if (feasibleAnt.feasible) {
-                updateAnt(feasibleAnt, bestAnt);
+                updateAnt(feasibleAnt, ant);
             } else {
-                updateAnt(improvedAnt, bestAnt);
+                updateAnt(improvedAnt, ant);
             }
         }
     }

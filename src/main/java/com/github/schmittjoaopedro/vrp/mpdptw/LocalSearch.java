@@ -4,6 +4,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.coelho.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.coelho.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.coelho.Req;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -28,6 +29,24 @@ public class LocalSearch {
     }
 
     public Ant optimize(Ant ant) {
+        Ant tempAnt = ant;
+        boolean improvement = true;
+        double oldCost = ant.totalCost;
+        while (improvement) {
+            improvement = false;
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest);
+            if (tempAnt.totalCost < oldCost) {
+                oldCost = tempAnt.totalCost;
+                improvement = true;
+            }
+        }
+        return tempAnt;
+    }
+
+    public Ant optimize(Ant ant, RemovalOperator.Type removalType) {
         Ant tempAnt = AntUtils.createEmptyAnt(instance);
         Ant improvedAnt = AntUtils.createEmptyAnt(instance);
         AntUtils.copyFromTo(ant, tempAnt);
@@ -37,7 +56,7 @@ public class LocalSearch {
         boolean improvement = true;
         double oldCost = improvedAnt.totalCost;
         while (improvement) {
-            List<Req> removedRequests = removalOperator.removeRequests(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
+            List<Req> removedRequests = removeRequests(tempAnt, removalType);
             insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests);
             Ant tempAnt2 = localSearchRelocate.relocate(tempAnt);
             instance.restrictionsEvaluation(tempAnt);
@@ -54,6 +73,26 @@ public class LocalSearch {
         } else {
             return ant;
         }
+    }
+
+    private List<Req> removeRequests(Ant tempAnt, RemovalOperator.Type removalType) {
+        List<Req> removedRequests = new ArrayList<>();
+        switch (removalType) {
+            case Random:
+                removedRequests = removalOperator.removeRandomRequest(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
+                break;
+            case Shaw:
+                removedRequests = removalOperator.removeShawRequests(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
+                break;
+            case ExpensiveNode:
+                removedRequests = removalOperator.removeMostExpensiveNodes(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
+                break;
+            case ExpensiveRequest:
+                removedRequests = removalOperator.removeExpensiveRequests(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
+                break;
+        }
+
+        return removedRequests;
     }
 
     private int generateNoRemovalRequests() {

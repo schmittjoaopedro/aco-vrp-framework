@@ -11,7 +11,7 @@ public class MPDPTW_MMAS_TEST {
 
     private static int statisticInterval = 10;
 
-    private static int maxIterations = 1000;
+    private static int maxIterations = 100;
 
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
@@ -19,7 +19,7 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_25_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "w_4_25_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
@@ -60,42 +60,10 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_large_4_400_1_test() {
-        execute("l_4_400_1");
-        execute("l_4_400_2");
-        execute("l_4_400_3");
-        execute("l_4_400_4");
-        execute("l_4_400_5");
-
-        execute("l_8_400_1");
-        execute("l_8_400_2");
-        execute("l_8_400_3");
-        execute("l_8_400_4");
-        execute("l_8_400_5");
-
-        execute("n_4_400_1");
-        execute("n_4_400_2");
-        execute("n_4_400_3");
-        execute("n_4_400_4");
-        execute("n_4_400_5");
-
-        execute("n_8_400_1");
-        execute("n_8_400_2");
-        execute("n_8_400_3");
-        execute("n_8_400_4");
-        execute("n_8_400_5");
-
-        execute("w_4_400_1");
-        execute("w_4_400_2");
-        execute("w_4_400_3");
-        execute("w_4_400_4");
-        execute("w_4_400_5");
-
-        execute("w_8_400_1");
-        execute("w_8_400_2");
-        execute("w_8_400_3");
-        execute("w_8_400_4");
-        execute("w_8_400_5");
+    public void mpdptw_test() {
+        for (int i = 1; i <= 5; i++) {
+            execute("w_8_400_" + i);
+        }
     }
 
     private void execute(String file) {

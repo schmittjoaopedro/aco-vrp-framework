@@ -80,10 +80,11 @@ public class ProblemInstance {
         for (int i = 0; i < ant.requests.size(); i++) {
             attendedRequests += ant.requests.get(i).size();
         }
+        ant.feasible &= ant.tours.size() < noMaxVehicles;
         if (attendedRequests != noReq) {
+            ant.feasible = false;
             throw new RuntimeException("Infeasible number of requests");
         }
-        ant.feasible &= ant.tours.size() < noMaxVehicles;
     }
 
 
