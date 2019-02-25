@@ -44,15 +44,14 @@ public class RemovalOperator {
         ArrayList<Req> removedRequests = new ArrayList<>();
         removedRequests.add(request);
         removeRequest(solution, requests, request);
-        double rnd;
-        int requestD, assignedReqSize;
+        double y;
+        int requestD;
         while (removedRequests.size() < noReqToRemove) {
             request = removedRequests.get((int) (random.nextDouble() * removedRequests.size()));
             assignedRequests = getMostRelatedRequests(request, requests);
             assignedRequests.sort(Comparator.comparing(Req::getCost));
-            rnd = random.nextDouble();
-            assignedReqSize = (int) Math.min(D, assignedRequests.size() - 1);
-            requestD = (int) (rnd * assignedReqSize);
+            y = random.nextDouble();
+            requestD = (int) (Math.pow(y, D) * assignedRequests.size());
             request = assignedRequests.get(requestD);
             removeRequest(solution, requests, request);
             removedRequests.add(request);
@@ -67,14 +66,13 @@ public class RemovalOperator {
         ArrayList<Req> removedRequests = new ArrayList<>();
         removedRequests.add(request);
         removeRequest(solution, requests, request);
-        double rnd;
-        int requestD, assignedReqSize;
+        double y;
+        int requestD;
         while (removedRequests.size() < noReqToRemove) {
             assignedRequests = getMostExpensiveNodesRequests(solution, requests);
             assignedRequests.sort(Comparator.comparing(Req::getCost));
-            rnd = random.nextDouble();
-            assignedReqSize = (int) Math.min(D, assignedRequests.size() - 1);
-            requestD = (int) (rnd * assignedReqSize);
+            y = random.nextDouble();
+            requestD = (int) (Math.pow(y, D) * assignedRequests.size());
             request = assignedRequests.get(requestD);
             removeRequest(solution, requests, request);
             removedRequests.add(request);
@@ -89,14 +87,13 @@ public class RemovalOperator {
         ArrayList<Req> removedRequests = new ArrayList<>();
         removedRequests.add(request);
         removeRequest(solution, requests, request);
-        double rnd;
-        int requestD, assignedReqSize;
+        double y;
+        int requestD;
         while (removedRequests.size() < noReqToRemove) {
             assignedRequests = getMostExpensiveRequests(solution, requests);
             assignedRequests.sort(Comparator.comparing(Req::getCost));
-            rnd = random.nextDouble();
-            assignedReqSize = (int) Math.min(D, assignedRequests.size() - 1);
-            requestD = (int) (rnd * assignedReqSize);
+            y = random.nextDouble();
+            requestD = (int) (Math.pow(y, D) * assignedRequests.size());
             request = assignedRequests.get(requestD);
             removeRequest(solution, requests, request);
             removedRequests.add(request);
