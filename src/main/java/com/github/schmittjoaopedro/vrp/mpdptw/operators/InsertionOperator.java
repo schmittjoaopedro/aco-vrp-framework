@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.mpdptw.coelho;
+package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
@@ -254,14 +254,6 @@ public class InsertionOperator {
         } else {
             return instance.requests[next - 1].twEnd - instance.requests[next - 1].serviceTime - tNext;
         }
-    }
-
-    public enum PickupMethod {
-        Simple, Random, Cheapest, Expensive
-    }
-
-    public enum InsertionMethod {
-        Greedy, Regret3, RegretM, Regret3Noise, RegretMNoise
     }
 
     public class BestPickup {

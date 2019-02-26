@@ -1,12 +1,14 @@
-package com.github.schmittjoaopedro.vrp.mpdptw;
+package com.github.schmittjoaopedro.vrp.mpdptw.operators;
+
+import com.github.schmittjoaopedro.vrp.mpdptw.*;
 
 import java.util.ArrayList;
 
-public class FeasibilitySearch {
+public class FeasibilityOperator {
 
     private ProblemInstance instance;
 
-    public FeasibilitySearch(ProblemInstance instance) {
+    public FeasibilityOperator(ProblemInstance instance) {
         this.instance = instance;
     }
 

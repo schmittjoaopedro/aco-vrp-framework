@@ -1,13 +1,17 @@
-package com.github.schmittjoaopedro.vrp.mpdptw;
+package com.github.schmittjoaopedro.vrp.mpdptw.operators;
+
+import com.github.schmittjoaopedro.vrp.mpdptw.Ant;
+import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
+import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalSearchRelocate {
+public class RelocateNodeOperator {
 
     private ProblemInstance instance;
 
-    public LocalSearchRelocate(ProblemInstance instance) {
+    public RelocateNodeOperator(ProblemInstance instance) {
         this.instance = instance;
     }
 
@@ -46,7 +50,10 @@ public class LocalSearchRelocate {
             }
         }
         instance.restrictionsEvaluation(improvedAnt);
-        return improvedAnt;
+        double improvedAntCost = improvedAnt.totalCost + improvedAnt.timeWindowPenalty;
+        double antCost = ant.totalCost + ant.timeWindowPenalty;
+        boolean improved = improvedAntCost < antCost || (!ant.feasible && improvedAnt.feasible);
+        return improved ? improvedAnt : ant;
     }
 
     private int removeNode(List<Integer> tour, int node) {

@@ -52,4 +52,26 @@ public class AntUtils {
         return ant;
     }
 
+    public static void addEmptyVehicle(Ant ant) {
+        ArrayList<Integer> tour = new ArrayList<>();
+        tour.add(0);
+        tour.add(0);
+        ant.tours.add(tour);
+        ant.requests.add(new ArrayList<>());
+        ant.tourLengths.add(0.0);
+    }
+
+    public static void removeEmptyVehicles(Ant ant) {
+        int position = 0;
+        while (ant.tours.size() > position) {
+            if (ant.requests.get(position).isEmpty()) {
+                ant.tours.remove(position);
+                ant.requests.remove(position);
+                ant.tourLengths.remove(position);
+            } else {
+                position++;
+            }
+        }
+    }
+
 }

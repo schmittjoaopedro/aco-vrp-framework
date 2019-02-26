@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class MapPrinter {
 
-    public static void printResult(Ant bestSoFar, ProblemInstance instance, int width, int height) {
+    public static void printResult(Ant bestSoFar, ProblemInstance instance, int width, int height, String filename) {
         double margin = 5;
         // Get map bounds
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
@@ -71,7 +71,7 @@ public class MapPrinter {
                 }
             }
             indexHtml.append("\n</svg>");
-            FileUtils.writeStringToFile(new File("C:\\temp\\index.html"), indexHtml.toString(), "UTF-8");
+            FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\" + filename + ".html"), indexHtml.toString(), "UTF-8");
         } catch (IOException e) {
         }
     }
