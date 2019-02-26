@@ -30,12 +30,12 @@ public class MapPrinter {
             indexHtml.append("\t</defs>");
             for (Request request : instance.requests) {
                 if (request.isPickup) {
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, request.x, request.y, "red");
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, request.x, request.y, "red", String.valueOf(request.requestId));
                 } else {
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, request.x, request.y, "blue");
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, request.x, request.y, "blue", String.valueOf(request.requestId));
                 }
             }
-            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black");
+            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
             double xCoordSource, yCoordSource, xCoordTarget, yCoordTarget;
             for (int k = 0; k < bestSoFar.tours.size(); k++) {
                 int r = (int) (Math.random() * 255);
@@ -76,12 +76,15 @@ public class MapPrinter {
         }
     }
 
-    private static void drawNode(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml, double xCoord, double yCoord, String color) {
+    private static void drawNode(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml, double xCoord, double yCoord, String color, String text) {
+        double x = ((width / maxX) * xCoord) + margin;
+        double y = ((height / maxY) * yCoord) + margin;
         indexHtml.append("\n\t<circle cx=\"");
-        indexHtml.append(((width / maxX) * xCoord) + margin);
+        indexHtml.append(x);
         indexHtml.append("\" cy=\"");
-        indexHtml.append(((height / maxY) * yCoord) + margin);
+        indexHtml.append(y);
         indexHtml.append("\" r=\"4\" fill=\"" + color + "\" />");
+        indexHtml.append("<text x=\"" + x + "\" y=\"" + y + "\" fill=\"black\">" + text + "</text>");
     }
 
 }
