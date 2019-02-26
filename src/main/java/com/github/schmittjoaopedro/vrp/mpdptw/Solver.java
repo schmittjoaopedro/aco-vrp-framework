@@ -115,6 +115,7 @@ public class Solver implements Runnable {
                 }
             }
         }
+        globalStatistics.endTimer("Algorithm");
         printFinalRoute();
     }
 
@@ -145,6 +146,7 @@ public class Solver implements Runnable {
         }
         msg += "\nCost = " + ant.totalCost;
         msg += "\nPenalty = " + ant.timeWindowPenalty;
+        msg += "\nTotal time (ms) = " + globalStatistics.getTimeStatistics().get("Algorithm");
         System.out.println(msg);
         logInFile(msg);
         Set<Integer> processedNodes = new HashSet<>();
@@ -157,6 +159,7 @@ public class Solver implements Runnable {
                 }
             }
         }
+        MapPrinter.printResult(ant, problemInstance, 1200, 1000);
     }
 
     private void initProblemInstance() {
