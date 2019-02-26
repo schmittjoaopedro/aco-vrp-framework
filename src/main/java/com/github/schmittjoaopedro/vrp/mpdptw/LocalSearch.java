@@ -34,10 +34,22 @@ public class LocalSearch {
         double oldCost = ant.totalCost;
         while (improvement) {
             improvement = false;
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Random);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Random);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Random);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Random);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Simple);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Simple);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Simple);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Simple);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Expensive);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Expensive);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Expensive);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Expensive);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Cheapest);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Cheapest);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Cheapest);
+            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Cheapest);
             if (tempAnt.totalCost < oldCost) {
                 oldCost = tempAnt.totalCost;
                 improvement = true;
@@ -46,7 +58,7 @@ public class LocalSearch {
         return tempAnt;
     }
 
-    public Ant optimize(Ant ant, RemovalOperator.Type removalType) {
+    public Ant optimize(Ant ant, RemovalOperator.Type removalMethod, InsertionOperator.PickupMethod pickupMethod) {
         Ant tempAnt = AntUtils.createEmptyAnt(instance);
         Ant improvedAnt = AntUtils.createEmptyAnt(instance);
         AntUtils.copyFromTo(ant, tempAnt);
@@ -56,8 +68,8 @@ public class LocalSearch {
         boolean improvement = true;
         double oldCost = improvedAnt.totalCost;
         while (improvement) {
-            List<Req> removedRequests = removeRequests(tempAnt, removalType);
-            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests);
+            List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
+            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, InsertionOperator.InsertionMethod.Greedy);
             Ant tempAnt2 = localSearchRelocate.relocate(tempAnt);
             instance.restrictionsEvaluation(tempAnt);
             if (tempAnt2.totalCost < tempAnt.totalCost) {

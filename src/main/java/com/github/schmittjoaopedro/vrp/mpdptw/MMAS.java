@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.*;
 
 public class MMAS {
@@ -332,7 +334,7 @@ public class MMAS {
         double twFact;
         twFact = 0.0;
         if (maxTwPenalty > 0.0) twFact += (ant.timeWindowPenalty / maxTwPenalty);
-        ant.totalCost = ant.totalCost + (twFact * ant.totalCost);
+        //ant.totalCost = ant.totalCost + (twFact * ant.totalCost);
         //ant.totalCost = ant.totalCost + (twFact * ant.timeWindowPenalty) + (capFact * ant.capacityPenalty);
         //ant.totalCost = ant.totalCost + (twFact * ant.totalCost) + (capFact * ant.totalCost);
         //ant.totalCost = ant.totalCost * twFact * capFact;
@@ -401,6 +403,11 @@ public class MMAS {
         for (Ant ant : antPopulation) {
             penalizeAnt(ant);
         }
+    }
+
+    private void logAntRoute(Ant ant) {
+        System.out.print("Ant " + antPopulation.indexOf(ant) + " => ");
+        System.out.println(StringUtils.join(ant.tours, ','));
     }
 
     public NextClient selectNextClient(Ant ant, int vehicle, int currIdx) {

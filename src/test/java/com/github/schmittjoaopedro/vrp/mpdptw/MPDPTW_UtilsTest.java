@@ -531,7 +531,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
-        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        insertionOperator.insertRequestsSequentially(ant.tours, ant.requests, removedRequests);
         problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.tours).hasSize(5);
         assertThat(ant.requests).hasSize(5);
@@ -539,6 +539,16 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.totalCost).isEqualTo(7994.507221317509);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
         assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 7, 13, 14, 8, 1, 2, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 15, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 5, 3, 4, 6, 0);
+        assertThat(ant.tours.get(4)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(0, 2, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5);
+        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(3)).containsExactly(1);
+        assertThat(ant.requests.get(4)).containsExactly(6);
     }
 
     @Test
@@ -591,7 +601,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
-        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        insertionOperator.insertRequestsSequentially(ant.tours, ant.requests, removedRequests);
         problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
@@ -599,6 +609,14 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.totalCost).isEqualTo(6815.880141099831);
         assertThat(ant.timeWindowPenalty).isEqualTo(195.30256708647335);
         assertThat(ant.feasible).isFalse();
+        assertThat(ant.tours.get(0)).containsExactly(0, 15, 18, 16, 19, 20, 21, 17, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 13, 14, 8, 1, 2, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 5, 3, 4, 6, 0);
+        assertThat(ant.requests.get(0)).containsExactly(5, 6);
+        assertThat(ant.requests.get(1)).containsExactly(2, 4, 0);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
+        assertThat(ant.requests.get(3)).containsExactly(1);
     }
 
     @Test
@@ -651,14 +669,22 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
-        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        insertionOperator.insertRequestsSequentially(ant.tours, ant.requests, removedRequests);
         problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
         assertThat(ant.tourLengths).hasSize(4);
-        assertThat(ant.totalCost).isEqualTo(6578.747782215118);
+        assertThat(ant.totalCost).isEqualTo(6463.277154314603);
         assertThat(ant.timeWindowPenalty).isEqualTo(0);
         assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(5, 2);
+        assertThat(ant.requests.get(1)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(4, 0, 1);
+        assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
     @Test
@@ -711,7 +737,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
-        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests);
+        insertionOperator.insertRequestsSequentially(ant.tours, ant.requests, removedRequests);
         problemInstance.restrictionsEvaluation(ant);
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
@@ -719,6 +745,161 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.totalCost).isEqualTo(6463.277154314602);
         assertThat(ant.timeWindowPenalty).isEqualTo(0);
         assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 0, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2);
+        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(3)).containsExactly(6);
+
+    }
+
+    @Test
+    public void greedyInsertionOrderFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        List<Req> removedRequests = new ArrayList<>();
+        removedRequests.add(new Req(2, 2, 0));
+        removedRequests.add(new Req(2, 7, 0));
+        removedRequests.add(new Req(0, 0, 0));
+        removedRequests.add(new Req(0, 4, 0));
+        removedRequests.add(new Req(2, 3, 0));
+        removedRequests.add(new Req(1, 6, 0));
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests, InsertionOperator.PickupMethod.Random, InsertionOperator.InsertionMethod.Greedy);
+
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(6463.277154314602);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 0, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2);
+        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(3)).containsExactly(6);
+    }
+
+    @Test
+    public void simpleInsertionOrderFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        List<Req> removedRequests = new ArrayList<>();
+        removedRequests.add(new Req(2, 2, 0));
+        removedRequests.add(new Req(2, 7, 0));
+        removedRequests.add(new Req(0, 0, 0));
+        removedRequests.add(new Req(0, 4, 0));
+        removedRequests.add(new Req(2, 3, 0));
+        removedRequests.add(new Req(1, 6, 0));
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests, InsertionOperator.PickupMethod.Simple, InsertionOperator.InsertionMethod.Greedy);
+
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(6463.277154314602);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 0, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2);
+        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(3)).containsExactly(6);
+    }
+
+    @Test
+    public void cheapestInsertionOrderFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        List<Req> removedRequests = new ArrayList<>();
+        removedRequests.add(new Req(2, 2, 0));
+        removedRequests.add(new Req(2, 7, 0));
+        removedRequests.add(new Req(0, 0, 0));
+        removedRequests.add(new Req(0, 4, 0));
+        removedRequests.add(new Req(2, 3, 0));
+        removedRequests.add(new Req(1, 6, 0));
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests, InsertionOperator.PickupMethod.Cheapest, InsertionOperator.InsertionMethod.Greedy);
+
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(5);
+        assertThat(ant.requests).hasSize(5);
+        assertThat(ant.tourLengths).hasSize(5);
+        assertThat(ant.totalCost).isEqualTo(7586.378772245391);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 22, 24, 25, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 11, 10, 9, 12, 0);
+        assertThat(ant.tours.get(4)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 0, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2);
+        assertThat(ant.requests.get(2)).containsExactly(7);
+        assertThat(ant.requests.get(3)).containsExactly(3);
+        assertThat(ant.requests.get(4)).containsExactly(6);
+    }
+
+    @Test
+    public void expensiveInsertionOrderFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        List<Req> removedRequests = new ArrayList<>();
+        removedRequests.add(new Req(2, 2, 0));
+        removedRequests.add(new Req(2, 7, 0));
+        removedRequests.add(new Req(0, 0, 0));
+        removedRequests.add(new Req(0, 4, 0));
+        removedRequests.add(new Req(2, 3, 0));
+        removedRequests.add(new Req(1, 6, 0));
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests, InsertionOperator.PickupMethod.Expensive, InsertionOperator.InsertionMethod.Greedy);
+
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(6463.277154314602);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 0, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2);
+        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
     @Test

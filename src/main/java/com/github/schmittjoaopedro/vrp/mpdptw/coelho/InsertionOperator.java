@@ -4,10 +4,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class InsertionOperator {
 
@@ -20,25 +17,33 @@ public class InsertionOperator {
         this.random = random;
     }
 
-    public void insertRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert) {
+    public void insertRequestsSequentially(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert) {
+        insertRequests(solution, requests, requestsToInsert, PickupMethod.Random, InsertionMethod.Greedy);
+    }
+
+    public void insertRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
         Req currReq;
+        ArrayList<Integer> newRoute;
+        BestRequest bestRequest;
         for (int r = 0; r < requestsToInsert.size(); r++) {
-            boolean foundVehicle = false;
             currReq = requestsToInsert.get(r);
+            bestRequest = null;
             for (int k = 0; k < solution.size(); k++) {
-                if (insertRequestOnVehicle(currReq, solution.get(k))) {
-                    requests.get(k).add(currReq.requestId);
-                    foundVehicle = true;
-                    break;
+                newRoute = new ArrayList<>(solution.get(k));
+                if (insertRequestOnVehicle(currReq, newRoute, pickupMethod, insertionMethod)) {
+                    double cost = instance.costEvaluation(newRoute);
+                    if (bestRequest == null || cost < bestRequest.cost) {
+                        bestRequest = new BestRequest(cost, k, newRoute);
+                    }
                 }
             }
-            if (!foundVehicle) {
+            if (bestRequest == null) {
                 requests.add(new ArrayList<>());
                 requests.get(requests.size() - 1).add(currReq.requestId);
                 solution.add(new ArrayList<>());
                 solution.get(requests.size() - 1).add(0);
                 solution.get(requests.size() - 1).add(0);
-                if (!insertRequestOnVehicle(currReq, solution.get(solution.size() - 1))) {
+                if (!insertRequestOnVehicle(currReq, solution.get(solution.size() - 1), PickupMethod.Random, insertionMethod)) {
                     OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
                     optimalRequestSolver.optimize();
                     ArrayList<Integer> newTour = new ArrayList<>();
@@ -48,36 +53,97 @@ public class InsertionOperator {
                     solution.get(requests.size() - 1).clear();
                     solution.get(requests.size() - 1).addAll(newTour);
                 }
+            } else {
+                switch (insertionMethod) {
+                    case Greedy:
+                        solution.set(bestRequest.vehicle, bestRequest.route);
+                        requests.get(bestRequest.vehicle).add(currReq.requestId);
+                        break;
+                }
             }
         }
     }
 
-    public boolean insertRequestOnVehicle(Req request, ArrayList<Integer> kRoute) {
+    public boolean insertRequestOnVehicle(Req request, ArrayList<Integer> kRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
         ArrayList<Integer> route = new ArrayList();
         route.addAll(kRoute);
-        List<Request> pickups = getPickups(request.requestId);
+        List<Request> pickups = getPickups(request.requestId, pickupMethod);
         Request delivery = instance.delivery.get(request.requestId);
-        Request pickup;
-        Integer bestPosition;
+        BestPickup pickup;
+        BestPosition bestPosition = null;
         while (!pickups.isEmpty()) {
-            pickup = pickups.get(0);
-            bestPosition = insertAtBestPosition(pickup.nodeId, route, 0);
-            pickups.remove(pickup);
+            pickup = selectAPickup(kRoute, pickups, pickupMethod, insertionMethod);
+            if (pickup == null) return false;
+            pickups.remove(pickup.pickupNode);
+            switch (pickupMethod) {
+                case Simple:
+                case Random:
+                    bestPosition = insertAtBestPosition(pickup.pickupNode.nodeId, route, insertionMethod, 0);
+                    break;
+                case Expensive:
+                case Cheapest:
+                    bestPosition = pickup.bestPosition;
+                    break;
+            }
             if (bestPosition == null) {
                 return false;
             } else {
-                route.add(bestPosition, pickup.nodeId);
+                route.add(bestPosition.position, pickup.pickupNode.nodeId);
             }
         }
-        bestPosition = insertAtBestPosition(delivery.nodeId, route, getLastPickupIndex(route, request.requestId));
+        bestPosition = insertAtBestPosition(delivery.nodeId, route, insertionMethod, getLastPickupIndex(route, request.requestId));
         if (bestPosition == null) {
             return false;
         } else {
-            route.add(bestPosition, delivery.nodeId);
+            route.add(bestPosition.position, delivery.nodeId);
         }
         kRoute.clear();
         kRoute.addAll(route);
         return true;
+    }
+
+    private BestPickup selectAPickup(ArrayList<Integer> kRoute, List<Request> pickups, PickupMethod method, InsertionMethod insertionMethod) {
+        BestPickup bestPickup = null;
+        switch (method) {
+            case Simple:
+            case Random:
+                bestPickup = new BestPickup(pickups.get(0), null);
+                break;
+            case Cheapest:
+            case Expensive:
+                BestPosition bestPos;
+                Map<Request, BestPosition> costs = new HashMap<>();
+                for (Request pickup : pickups) {
+                    bestPos = insertAtBestPosition(pickup.nodeId, kRoute, insertionMethod, 0);
+                    if (bestPos != null) {
+                        costs.put(pickup, bestPos);
+                    }
+                }
+                for (Map.Entry<Request, BestPosition> entry : costs.entrySet()) {
+                    if (bestPickup == null) {
+                        bestPickup = new BestPickup(entry.getKey(), entry.getValue());
+                    } else if (PickupMethod.Cheapest.equals(method) && entry.getValue().cost < bestPickup.bestPosition.cost) {
+                        bestPickup.pickupNode = entry.getKey();
+                        bestPickup.bestPosition = entry.getValue();
+                    } else if (PickupMethod.Expensive.equals(method) && entry.getValue().cost > bestPickup.bestPosition.cost) {
+                        bestPickup.pickupNode = entry.getKey();
+                        bestPickup.bestPosition = entry.getValue();
+                    }
+                }
+                break;
+        }
+        return bestPickup;
+    }
+
+    private double generateRandomNoise(InsertionMethod insertionMethod) {
+        double randomNoise = 0.0;
+        switch (insertionMethod) {
+            case Regret3:
+            case RegretM:
+                randomNoise = (0.5 - Math.random()) * instance.maxDistance;
+                break;
+        }
+        return randomNoise;
     }
 
     private int getLastPickupIndex(ArrayList<Integer> route, int requestId) {
@@ -92,16 +158,18 @@ public class InsertionOperator {
         return pos;
     }
 
-    private List<Request> getPickups(int requestId) {
+    private List<Request> getPickups(int requestId, PickupMethod method) {
         List<Request> pickups = new ArrayList<>();
         pickups.addAll(instance.pickups.get(requestId));
-        Collections.shuffle(pickups, random);
+        if (PickupMethod.Random.equals(method)) {
+            Collections.shuffle(pickups, random);
+        }
         return pickups;
     }
 
-    private Integer insertAtBestPosition(Integer i, ArrayList<Integer> route, int prevPos) {
+    private BestPosition insertAtBestPosition(Integer i, ArrayList<Integer> route, InsertionMethod insertionMethod, int prevPos) {
         double bestCost = Double.MAX_VALUE;
-        Integer bestPosition = null;
+        BestPosition bestPosition = null;
         int prev = route.get(prevPos);
         prevPos++;
         int next = route.get(prevPos);
@@ -125,7 +193,7 @@ public class InsertionOperator {
                 break;
             }
             tNext = travelTime + dists[prev][next];
-            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next];
+            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next] + generateRandomNoise(insertionMethod);
             addedDuration = tNewNext - tNext;
             twEndNext = twEnd(next);
             slackNext = slackNext(next, tNext);
@@ -137,8 +205,8 @@ public class InsertionOperator {
                 if (newCost < bestCost) {
                     route.add(currIdx, i);
                     if (instance.restrictionsEvaluation(route).feasible) {
-                        bestPosition = currIdx;
                         bestCost = newCost;
+                        bestPosition = new BestPosition(currIdx, bestCost);
                     }
                     route.remove(currIdx);
                 }
@@ -185,6 +253,46 @@ public class InsertionOperator {
             return instance.depot.twEnd - tNext;
         } else {
             return instance.requests[next - 1].twEnd - instance.requests[next - 1].serviceTime - tNext;
+        }
+    }
+
+    public enum PickupMethod {
+        Simple, Random, Cheapest, Expensive
+    }
+
+    public enum InsertionMethod {
+        Greedy, Regret3, RegretM, Regret3Noise, RegretMNoise
+    }
+
+    public class BestPickup {
+        public Request pickupNode;
+        public BestPosition bestPosition;
+
+        public BestPickup(Request pickupNode, BestPosition bestPosition) {
+            this.pickupNode = pickupNode;
+            this.bestPosition = bestPosition;
+        }
+    }
+
+    public class BestPosition {
+        public int position;
+        public double cost;
+
+        public BestPosition(int position, double cost) {
+            this.position = position;
+            this.cost = cost;
+        }
+    }
+
+    public class BestRequest {
+        public double cost;
+        public int vehicle;
+        public ArrayList<Integer> route;
+
+        public BestRequest(double cost, int vehicle, ArrayList<Integer> route) {
+            this.cost = cost;
+            this.vehicle = vehicle;
+            this.route = route;
         }
     }
 

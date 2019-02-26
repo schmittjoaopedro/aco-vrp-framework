@@ -17,11 +17,25 @@ public class ProblemInstance {
 
     public double[][] distances;
 
+    public double maxDistance;
+
     public Request[] requests;
 
     public Map<Integer, List<Request>> pickups;
 
     public Map<Integer, Request> delivery;
+
+    public void calculateMaxDistance() {
+        for (int i = 0; i < distances.length; i++) {
+            for (int j = 0; j < distances.length; j++) {
+                if (i != j) {
+                    if (distances[i][j] > maxDistance) {
+                        maxDistance = distances[i][j];
+                    }
+                }
+            }
+        }
+    }
 
     public FitnessResult restrictionsEvaluation(List<Integer> tour) {
         FitnessResult fitnessResult = new FitnessResult();
@@ -85,6 +99,12 @@ public class ProblemInstance {
             ant.feasible = false;
             throw new RuntimeException("Infeasible number of requests");
         }
+        double total = 0.0;
+        for (int k = 0; k < ant.tours.size(); k++) {
+            ant.tourLengths.set(k, costEvaluation(ant.tours.get(k)));
+            total += ant.tourLengths.get(k);
+        }
+        ant.totalCost = total;
     }
 
 

@@ -3,9 +3,11 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -182,7 +184,7 @@ public class Solver implements Runnable {
             if (improvedAnt.feasible) {
                 updateAnt(improvedAnt, ant);
             }
-        } else {
+        } else if (!mmas.getBestSoFar().feasible) {
             FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
             Ant feasibleAnt = feasibilitySearch.feasibility(improvedAnt);
             improvedAnt = localSearch.optimize(feasibleAnt);
@@ -191,9 +193,9 @@ public class Solver implements Runnable {
             }
             if (feasibleAnt.feasible) {
                 updateAnt(feasibleAnt, ant);
-            } else {
-                updateAnt(improvedAnt, ant);
             }
+        } else {
+            updateAnt(improvedAnt, ant);
         }
     }
 
@@ -210,10 +212,10 @@ public class Solver implements Runnable {
     }
 
     private void logInFile(String text) {
-        /*try {
+        try {
             FileUtils.writeStringToFile(new File("C:\\Temp\\result-" + fileName), text + "\n", "UTF-8", true);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 }

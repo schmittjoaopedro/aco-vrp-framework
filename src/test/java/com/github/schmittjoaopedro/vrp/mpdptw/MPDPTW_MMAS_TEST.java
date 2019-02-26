@@ -9,9 +9,9 @@ public class MPDPTW_MMAS_TEST {
 
     private static final String rootDirectory;
 
-    private static int statisticInterval = 10;
+    private static int statisticInterval = 20;
 
-    private static int maxIterations = 1000;
+    private static int maxIterations = 100;
 
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
@@ -19,13 +19,13 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_25_4.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "l_4_25_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
     public void mpdptw_large_4_25_4_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_25_4.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "l_8_50_3.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
@@ -61,8 +61,14 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_test() {
-        for (int i = 1; i <= 5; i++) {
-            execute("w_8_400_" + i);
+        for (String noVert : new String[]{"25", "50", "100", "400"}) {
+            for (String typ : new String[]{"l", "n", "w"}) {
+                for (String reqSize : new String[]{"4", "8"}) {
+                    for (String id : new String[]{"1", "2", "3", "4", "5"}) {
+                        execute(typ + "_" + reqSize + "_" + noVert + "_" + id);
+                    }
+                }
+            }
         }
     }
 

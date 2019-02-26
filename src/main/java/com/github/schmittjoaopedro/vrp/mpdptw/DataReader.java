@@ -96,6 +96,7 @@ public class DataReader {
         lineData = fileContent[0].split(" ");
         problemInstance.noMaxVehicles = Integer.valueOf(lineData[0]);
         problemInstance.vehicleCapacity = Double.parseDouble(lineData[1]);
+        problemInstance.calculateMaxDistance();
         return problemInstance;
     }
 
