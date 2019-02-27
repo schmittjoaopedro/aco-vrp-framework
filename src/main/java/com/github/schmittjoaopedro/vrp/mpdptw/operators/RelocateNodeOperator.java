@@ -50,10 +50,7 @@ public class RelocateNodeOperator {
             }
         }
         instance.restrictionsEvaluation(improvedAnt);
-        double improvedAntCost = improvedAnt.totalCost + improvedAnt.timeWindowPenalty;
-        double antCost = ant.totalCost + ant.timeWindowPenalty;
-        boolean improved = improvedAntCost < antCost || (!ant.feasible && improvedAnt.feasible);
-        return improved ? improvedAnt : ant;
+        return AntUtils.getBetterAnt(ant, improvedAnt);
     }
 
     private int removeNode(List<Integer> tour, int node) {

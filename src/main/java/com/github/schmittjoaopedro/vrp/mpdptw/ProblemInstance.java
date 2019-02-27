@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProblemInstance {
 
@@ -83,6 +82,7 @@ public class ProblemInstance {
         ant.capacityPenalty = 0.0;
         ant.tourLengths.clear();
         for (int k = 0; k < ant.tours.size(); k++) {
+            isPrecedenceValid(ant.tours.get(k), ant.requests.get(k));
             ProblemInstance.FitnessResult fitnessResult = restrictionsEvaluation(ant.tours.get(k));
             ant.tourLengths.add(k, fitnessResult.cost);
             ant.totalCost += fitnessResult.cost;
@@ -105,6 +105,50 @@ public class ProblemInstance {
             total += ant.tourLengths.get(k);
         }
         ant.totalCost = total;
+    }
+
+    public void isPrecedenceValid(ArrayList<Integer> antTour, ArrayList<Integer> antRequests) {
+        int node;
+        Request req;
+        Set<Integer> requestsTemp = new HashSet<>();
+        Map<Integer, Integer> lastPickupPosition = new HashMap<>();
+        Map<Integer, Integer> deliveryPosition = new HashMap<>();
+        Map<Integer, Integer> totalPickups = new HashMap<>();
+        for (int i = 1; i < antTour.size() - 1; i++) {
+            node = antTour.get(i);
+            req = requests[node - 1];
+            if (req.isDeliver) {
+                requestsTemp.add(req.requestId);
+                deliveryPosition.put(req.requestId, i);
+            } else {
+                Integer last = lastPickupPosition.get(req.requestId);
+                Integer total = totalPickups.get(req.requestId);
+                if (last == null || i > last) {
+                    last = i;
+                }
+                lastPickupPosition.put(req.requestId, last);
+                if (total == null) {
+                    total = 1;
+                } else {
+                    total++;
+                }
+                totalPickups.put(req.requestId, total);
+            }
+        }
+        if (requestsTemp.size() != antRequests.size()) {
+            throw new RuntimeException("Invalid number of requests");
+        }
+        for (int reqId : antRequests) {
+            if (!requestsTemp.contains(reqId)) {
+                throw new RuntimeException("Invalid assigned request");
+            }
+            if (totalPickups.get(reqId) != pickups.get(reqId).size()) {
+                throw new RuntimeException("Invalid number of pickups assigned");
+            }
+            if (deliveryPosition.get(reqId) < lastPickupPosition.get(reqId)) {
+                throw new RuntimeException("Invalid precedence of pickups and deliveries assigned");
+            }
+        }
     }
 
 

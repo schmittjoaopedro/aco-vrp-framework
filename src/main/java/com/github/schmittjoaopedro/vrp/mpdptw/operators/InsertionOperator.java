@@ -30,7 +30,7 @@ public class InsertionOperator {
             bestRequest = null;
             for (int k = 0; k < solution.size(); k++) {
                 newRoute = new ArrayList<>(solution.get(k));
-                if (insertRequestOnVehicle(currReq, newRoute, pickupMethod, insertionMethod)) {
+                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, insertionMethod)) {
                     double cost = instance.costEvaluation(newRoute);
                     if (bestRequest == null || cost < bestRequest.cost) {
                         bestRequest = new BestRequest(cost, k, newRoute);
@@ -43,7 +43,7 @@ public class InsertionOperator {
                 solution.add(new ArrayList<>());
                 solution.get(requests.size() - 1).add(0);
                 solution.get(requests.size() - 1).add(0);
-                if (!insertRequestOnVehicle(currReq, solution.get(solution.size() - 1), PickupMethod.Random, insertionMethod)) {
+                if (!insertRequestOnVehicle(currReq.requestId, solution.get(solution.size() - 1), PickupMethod.Random, insertionMethod)) {
                     OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
                     optimalRequestSolver.optimize();
                     ArrayList<Integer> newTour = new ArrayList<>();
@@ -64,11 +64,11 @@ public class InsertionOperator {
         }
     }
 
-    public boolean insertRequestOnVehicle(Req request, ArrayList<Integer> kRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
+    public boolean insertRequestOnVehicle(int requestId, ArrayList<Integer> kRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
         ArrayList<Integer> route = new ArrayList();
         route.addAll(kRoute);
-        List<Request> pickups = getPickups(request.requestId, pickupMethod);
-        Request delivery = instance.delivery.get(request.requestId);
+        List<Request> pickups = getPickups(requestId, pickupMethod);
+        Request delivery = instance.delivery.get(requestId);
         BestPickup pickup;
         BestPosition bestPosition = null;
         while (!pickups.isEmpty()) {
@@ -91,7 +91,7 @@ public class InsertionOperator {
                 route.add(bestPosition.position, pickup.pickupNode.nodeId);
             }
         }
-        bestPosition = insertAtBestPosition(delivery.nodeId, route, insertionMethod, getLastPickupIndex(route, request.requestId));
+        bestPosition = insertAtBestPosition(delivery.nodeId, route, insertionMethod, getLastPickupIndex(route, requestId));
         if (bestPosition == null) {
             return false;
         } else {

@@ -993,4 +993,39 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tourLengths.get(3)).isEqualTo(1256.3149262813738);
     }
 
+    @Test
+    public void exchangeRequestOperatorTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 20, 3, 4, 1, 18, 2, 6, 19, 21, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 13, 14, 16, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 6, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5, 4)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(5927.087154117183);
+        assertThat(ant.timeWindowPenalty).isEqualTo(12366.95362047243);
+        assertThat(ant.feasible).isFalse();
+
+        ExchangeRequestOperator exchangeRequestOperator = new ExchangeRequestOperator(problemInstance);
+        ant = exchangeRequestOperator.exchange(ant);
+
+        assertThat(ant.totalCost).isEqualTo(4840.728795302382);
+        assertThat(ant.timeWindowPenalty).isEqualTo(1432.9171617906222);
+        assertThat(ant.feasible).isFalse();
+        assertThat(ant.tours).hasSize(3);
+        assertThat(ant.requests).hasSize(3);
+        assertThat(ant.tourLengths).hasSize(3);
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 4, 13, 14, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 15, 18, 16, 19, 20, 21, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0);
+        assertThat(ant.requests.get(0)).containsExactly(0, 1, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 6);
+        assertThat(ant.requests.get(2)).containsExactly(7, 2, 3);
+        assertThat(ant.tourLengths.get(0)).isEqualTo(1552.875163449549);
+        assertThat(ant.tourLengths.get(1)).isEqualTo(1605.9472675931243);
+        assertThat(ant.tourLengths.get(2)).isEqualTo(1681.9063642597093);
+    }
+
 }

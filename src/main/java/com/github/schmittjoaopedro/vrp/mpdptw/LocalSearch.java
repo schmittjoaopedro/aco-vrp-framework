@@ -20,6 +20,8 @@ public class LocalSearch {
 
     private RelocateRequestOperator relocateRequestOperator;
 
+    private ExchangeRequestOperator exchangeRequestOperator;
+
     public LocalSearch(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
@@ -27,6 +29,7 @@ public class LocalSearch {
         this.insertionOperator = new InsertionOperator(instance, random);
         this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
+        this.exchangeRequestOperator = new ExchangeRequestOperator(instance);
     }
 
     public Ant optimize(Ant ant) {
@@ -36,6 +39,7 @@ public class LocalSearch {
         double newCost;
         while (improvement) {
             improvement = false;
+            tempAnt = exchangeRequestOperator.exchange(tempAnt);
             tempAnt = relocateNodeOperator.relocate(tempAnt);
             tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random);
             tempAnt = relocateRequestOperator.relocate(tempAnt);
@@ -54,19 +58,14 @@ public class LocalSearch {
         AntUtils.copyFromTo(ant, tempAnt);
         AntUtils.copyFromTo(ant, improvedAnt);
         boolean improvement = true;
-        double oldCost = ant.totalCost + ant.timeWindowPenalty;
-        double improvedCost = oldCost;
-        double tempCost;
         boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
             insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, InsertionMethod.Greedy);
             instance.restrictionsEvaluation(tempAnt);
-            tempCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
-            improvement = tempCost < improvedCost || (!improvedAnt.feasible && tempAnt.feasible);
+            improvement = AntUtils.getBetterAnt(improvedAnt, tempAnt) == tempAnt;
             if (improvement) {
                 AntUtils.copyFromTo(tempAnt, improvedAnt);
-                improvedCost = tempCost;
                 improved = true;
             }
         }
