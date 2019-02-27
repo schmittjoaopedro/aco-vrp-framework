@@ -5,6 +5,7 @@ import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +58,7 @@ public class DataReader {
         problemInstance.pickups = new HashMap<>();
         problemInstance.delivery = new HashMap<>();
         for (int i = 1; i < fileContent.length; i++) {
-            lineData = fileContent[i].split(" ");
+            lineData = fileContent[i].replaceAll("\r", StringUtils.EMPTY).split(" ");
             if (i == 1) {
                 problemInstance.depot = new Depot();
                 problemInstance.depot.nodeId = Integer.parseInt(lineData[0]); // Depot start at zero index
