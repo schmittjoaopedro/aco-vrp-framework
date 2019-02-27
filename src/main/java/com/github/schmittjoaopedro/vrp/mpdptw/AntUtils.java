@@ -52,4 +52,61 @@ public class AntUtils {
         return ant;
     }
 
+    public static void addEmptyVehicle(Ant ant) {
+        ArrayList<Integer> tour = new ArrayList<>();
+        tour.add(0);
+        tour.add(0);
+        ant.tours.add(tour);
+        ant.requests.add(new ArrayList<>());
+        ant.tourLengths.add(0.0);
+    }
+
+    public static void removeEmptyVehicles(Ant ant) {
+        int position = 0;
+        while (ant.tours.size() > position) {
+            if (ant.requests.get(position).isEmpty()) {
+                ant.tours.remove(position);
+                ant.requests.remove(position);
+                ant.tourLengths.remove(position);
+            } else {
+                position++;
+            }
+        }
+    }
+
+    public static void removeRequest(ProblemInstance instance, Ant ant, int vehicle, Integer requestId) {
+        int nodeIdx = 0;
+        int node;
+        while (nodeIdx < ant.tours.get(vehicle).size()) {
+            node = ant.tours.get(vehicle).get(nodeIdx);
+            if (node != instance.depot.nodeId && instance.requests[node - 1].requestId == requestId) {
+                ant.tours.get(vehicle).remove(nodeIdx);
+            } else {
+                nodeIdx++;
+            }
+        }
+        ant.requests.get(vehicle).remove(requestId);
+    }
+
+    public static int findRequestVehicleOwner(Ant ant, Integer requestId) {
+        int vehicle = 0;
+        for (int k = 0; k < ant.requests.size(); k++) {
+            if (ant.requests.get(k).contains(requestId)) {
+                vehicle = k;
+                break;
+            }
+        }
+        return vehicle;
+    }
+
+    public static Ant getBetterAnt(Ant oldAnt, Ant newAnt) {
+        double oldCost = oldAnt.totalCost + oldAnt.timeWindowPenalty;
+        double newCost = newAnt.totalCost + newAnt.timeWindowPenalty;
+        if (oldAnt.feasible) {
+            return newAnt.feasible && newCost < oldCost ? newAnt : oldAnt;
+        } else {
+            return newCost < oldCost ? newAnt : oldAnt;
+        }
+    }
+
 }

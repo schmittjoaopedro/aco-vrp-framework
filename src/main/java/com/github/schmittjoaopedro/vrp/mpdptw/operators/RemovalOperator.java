@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.mpdptw.coelho;
+package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
@@ -213,10 +213,6 @@ public class RemovalOperator {
             }
         }
         array.remove(position);
-    }
-
-    public enum Type {
-        Random, Shaw, ExpensiveNode, ExpensiveRequest
     }
 
 }

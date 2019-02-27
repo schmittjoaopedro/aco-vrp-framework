@@ -1,8 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.coelho.InsertionOperator;
-import com.github.schmittjoaopedro.vrp.mpdptw.coelho.RemovalOperator;
-import com.github.schmittjoaopedro.vrp.mpdptw.coelho.Req;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,76 +16,67 @@ public class LocalSearch {
 
     private InsertionOperator insertionOperator;
 
-    private LocalSearchRelocate localSearchRelocate;
+    private RelocateNodeOperator relocateNodeOperator;
+
+    private RelocateRequestOperator relocateRequestOperator;
+
+    private ExchangeRequestOperator exchangeRequestOperator;
 
     public LocalSearch(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
         this.removalOperator = new RemovalOperator(instance, random);
         this.insertionOperator = new InsertionOperator(instance, random);
-        this.localSearchRelocate = new LocalSearchRelocate(instance);
+        this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
+        this.relocateNodeOperator = new RelocateNodeOperator(instance);
+        this.exchangeRequestOperator = new ExchangeRequestOperator(instance);
     }
 
     public Ant optimize(Ant ant) {
         Ant tempAnt = ant;
         boolean improvement = true;
-        double oldCost = ant.totalCost;
+        double oldCost = ant.totalCost + ant.timeWindowPenalty;
+        double newCost;
         while (improvement) {
             improvement = false;
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Random);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Random);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Random);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Random);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Simple);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Simple);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Simple);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Simple);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Expensive);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Expensive);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Expensive);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Expensive);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Random, InsertionOperator.PickupMethod.Cheapest);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.Shaw, InsertionOperator.PickupMethod.Cheapest);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveNode, InsertionOperator.PickupMethod.Cheapest);
-            tempAnt = optimize(tempAnt, RemovalOperator.Type.ExpensiveRequest, InsertionOperator.PickupMethod.Cheapest);
-            if (tempAnt.totalCost < oldCost) {
-                oldCost = tempAnt.totalCost;
+            tempAnt = exchangeRequestOperator.exchange(tempAnt);
+            tempAnt = relocateNodeOperator.relocate(tempAnt);
+            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random);
+            tempAnt = relocateRequestOperator.relocate(tempAnt);
+            newCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
+            if (newCost < oldCost) {
+                oldCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
                 improvement = true;
             }
         }
         return tempAnt;
     }
 
-    public Ant optimize(Ant ant, RemovalOperator.Type removalMethod, InsertionOperator.PickupMethod pickupMethod) {
+    public Ant optimize(Ant ant, RemovalMethod removalMethod, PickupMethod pickupMethod) {
         Ant tempAnt = AntUtils.createEmptyAnt(instance);
         Ant improvedAnt = AntUtils.createEmptyAnt(instance);
         AntUtils.copyFromTo(ant, tempAnt);
         AntUtils.copyFromTo(ant, improvedAnt);
-        instance.restrictionsEvaluation(tempAnt);
-        instance.restrictionsEvaluation(improvedAnt);
         boolean improvement = true;
-        double oldCost = improvedAnt.totalCost;
+        boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
-            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, InsertionOperator.InsertionMethod.Greedy);
-            Ant tempAnt2 = localSearchRelocate.relocate(tempAnt);
+            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, InsertionMethod.Greedy);
             instance.restrictionsEvaluation(tempAnt);
-            if (tempAnt2.totalCost < tempAnt.totalCost) {
-                tempAnt = tempAnt2;
-            }
-            improvement = tempAnt.totalCost < improvedAnt.totalCost;
+            improvement = AntUtils.getBetterAnt(improvedAnt, tempAnt) == tempAnt;
             if (improvement) {
                 AntUtils.copyFromTo(tempAnt, improvedAnt);
+                improved = true;
             }
         }
-        if (improvedAnt.totalCost < oldCost) {
+        if (improved) {
             return improvedAnt;
         } else {
             return ant;
         }
     }
 
-    private List<Req> removeRequests(Ant tempAnt, RemovalOperator.Type removalType) {
+    private List<Req> removeRequests(Ant tempAnt, RemovalMethod removalType) {
         List<Req> removedRequests = new ArrayList<>();
         switch (removalType) {
             case Random:

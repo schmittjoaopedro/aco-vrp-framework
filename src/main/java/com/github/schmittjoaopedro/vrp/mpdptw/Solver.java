@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.FeasibilityOperator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -159,7 +160,7 @@ public class Solver implements Runnable {
                 }
             }
         }
-        MapPrinter.printResult(ant, problemInstance, 1200, 1000);
+        MapPrinter.printResult(ant, problemInstance, 1200, 1000, fileName);
     }
 
     private void initProblemInstance() {
@@ -188,8 +189,8 @@ public class Solver implements Runnable {
                 updateAnt(improvedAnt, ant);
             }
         } else if (!mmas.getBestSoFar().feasible) {
-            FeasibilitySearch feasibilitySearch = new FeasibilitySearch(problemInstance);
-            Ant feasibleAnt = feasibilitySearch.feasibility(improvedAnt);
+            FeasibilityOperator feasibilityOperator = new FeasibilityOperator(problemInstance);
+            Ant feasibleAnt = feasibilityOperator.feasibility(improvedAnt);
             improvedAnt = localSearch.optimize(feasibleAnt);
             if (improvedAnt.feasible && improvedAnt.totalCost < feasibleAnt.totalCost) {
                 feasibleAnt = improvedAnt;
@@ -216,7 +217,7 @@ public class Solver implements Runnable {
 
     private void logInFile(String text) {
         try {
-            FileUtils.writeStringToFile(new File("C:\\Temp\\result-" + fileName), text + "\n", "UTF-8", true);
+            FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + fileName), text + "\n", "UTF-8", true);
         } catch (IOException e) {
             e.printStackTrace();
         }
