@@ -11,7 +11,7 @@ public class MPDPTW_MMAS_TEST {
 
     private static int statisticInterval = 1;
 
-    private static int maxIterations = 100;
+    private static int maxIterations = 1000;
 
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
@@ -61,7 +61,7 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_test() {
-        for (String noVert : new String[]{"25", "50", "100", "400"}) {
+        for (String noVert : new String[]{"400", "100", "50", "25"}) {
             for (String typ : new String[]{"l", "n", "w"}) {
                 for (String reqSize : new String[]{"4", "8"}) {
                     for (String id : new String[]{"1", "2", "3", "4", "5"}) {
