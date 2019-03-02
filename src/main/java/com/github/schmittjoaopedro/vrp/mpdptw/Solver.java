@@ -222,4 +222,8 @@ public class Solver implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public Ant getBestSolution() {
+        return mmas.getBestSoFar();
+    }
 }

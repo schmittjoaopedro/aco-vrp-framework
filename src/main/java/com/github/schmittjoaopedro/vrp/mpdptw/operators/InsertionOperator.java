@@ -29,16 +29,16 @@ public class InsertionOperator {
                 break;
             case Regret3:
             case Regret3Noise:
-                insertRegretRequests(solution, requests, requestsToInsert, 3, pickupMethod);
+                insertRegretRequests(solution, requests, requestsToInsert, 3, insertionMethod, pickupMethod);
                 break;
             case RegretM:
             case RegretMNoise:
-                insertRegretRequests(solution, requests, requestsToInsert, solution.size(), pickupMethod);
+                insertRegretRequests(solution, requests, requestsToInsert, solution.size(), insertionMethod, pickupMethod);
                 break;
         }
     }
 
-    public void insertRegretRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, int regretLevel, PickupMethod pickupMethod) {
+    public void insertRegretRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, int regretLevel, InsertionMethod insertionMethod, PickupMethod pickupMethod) {
         Req currReq;
         double vehicleCost, costDiff, cost;
         ArrayList<Integer> newRoute;
@@ -56,7 +56,7 @@ public class InsertionOperator {
             for (int k = 0; k < solution.size(); k++) {
                 vehicleCost = vehicleCosts[k];
                 newRoute = new ArrayList<>(solution.get(k));
-                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) {
+                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, insertionMethod)) {
                     cost = instance.costEvaluation(newRoute);
                     costDiff = cost - vehicleCost; // Smaller differences means greater reduction in the solution cost
                     bestRequestPositions.add(new BestRequest(costDiff, k, currReq.requestId, newRoute));
@@ -67,7 +67,7 @@ public class InsertionOperator {
             newRoute.add(0);
             newRoute.add(0);
             // Creates a new vehicle and try the insertion using the heuristic method
-            if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) {
+            if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, insertionMethod)) {
                 cost = instance.costEvaluation(newRoute);
                 bestRequestPositions.add(new BestRequest(cost, solution.size(), currReq.requestId, newRoute));
             }
@@ -234,7 +234,7 @@ public class InsertionOperator {
         switch (insertionMethod) {
             case Regret3:
             case RegretM:
-                randomNoise = (0.5 - Math.random()) * instance.maxDistance;
+                randomNoise = (0.5 - random.nextDouble()) * instance.maxDistance;
                 break;
         }
         return randomNoise;

@@ -4,6 +4,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.Ant;
 import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
 
 import java.util.ArrayList;
 
@@ -36,9 +37,9 @@ public class ExchangeRequestOperator {
                         v2 = AntUtils.findRequestVehicleOwner(tempAnt, r2);
                         v2RouteOrigin = new ArrayList<>(tempAnt.tours.get(v2));
                         AntUtils.removeRequest(instance, tempAnt, v2, r2);
-                        if (insertRequest(tempAnt, v1, r2)) {
+                        if (insertRequest(tempAnt.tours, v1, r2)) {
                             tempAnt.requests.get(v1).add(r2);
-                            if (insertRequest(tempAnt, v2, r1)) {
+                            if (insertRequest(tempAnt.tours, v2, r1)) {
                                 tempAnt.requests.get(v2).add(r1);
                                 instance.restrictionsEvaluation(tempAnt);
                                 tempCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
@@ -63,11 +64,57 @@ public class ExchangeRequestOperator {
         return AntUtils.getBetterAnt(ant, improvedAnt);
     }
 
-    private boolean insertRequest(Ant ant, int vehicle, int reqId) {
+    public Solution exchange(Solution solution) {
+        Solution improvedSol = solution.copy();
+        Solution tempSol = improvedSol.copy();
+        boolean improvement = true;
+        int v1, v2;
+        double improvedCost = improvedSol.totalCost;
+        double tempCost;
+        ArrayList<Integer> v1RouteOrigin, v2RouteOrigin;
+        while (improvement) {
+            improvement = false;
+            for (int r1 = 0; r1 < instance.noReq; r1++) {
+                v1 = tempSol.findRequestVehicleOwner(r1);
+                v1RouteOrigin = new ArrayList<>(tempSol.tours.get(v1));
+                tempSol.removeRequest(instance, v1, r1);
+                for (int r2 = 0; r2 < instance.noReq; r2++) {
+                    if (r1 != r2) {
+                        v2 = tempSol.findRequestVehicleOwner(r2);
+                        v2RouteOrigin = new ArrayList<>(tempSol.tours.get(v2));
+                        tempSol.removeRequest(instance, v2, r2);
+                        if (insertRequest(tempSol.tours, v1, r2)) {
+                            tempSol.requests.get(v1).add(r2);
+                            if (insertRequest(tempSol.tours, v2, r1)) {
+                                tempSol.requests.get(v2).add(r1);
+                                instance.restrictionsEvaluation(tempSol);
+                                tempCost = tempSol.totalCost;
+                                if (tempCost < improvedCost) {
+                                    improvedSol = tempSol.copy();
+                                    improvedCost = tempCost;
+                                    improvement = true;
+                                }
+                                tempSol.removeRequest(instance, v2, r1);
+                            }
+                            tempSol.removeRequest(instance, v1, r2);
+                        }
+                        tempSol.tours.set(v2, v2RouteOrigin);
+                        tempSol.requests.get(v2).add(r2);
+                    }
+                }
+                tempSol.tours.set(v1, v1RouteOrigin);
+                tempSol.requests.get(v1).add(r1);
+            }
+        }
+        instance.restrictionsEvaluation(improvedSol);
+        return solution.getBestSolution(improvedSol);
+    }
+
+    private boolean insertRequest(ArrayList<ArrayList<Integer>> tours, int vehicle, int reqId) {
         int lastPickup = 0;
         for (Request pickup : instance.pickups.get(reqId)) {
-            int bestPosition = getBestPosition(pickup.nodeId, ant.tours.get(vehicle), 0);
-            ant.tours.get(vehicle).add(bestPosition, pickup.nodeId);
+            int bestPosition = getBestPosition(pickup.nodeId, tours.get(vehicle), 0);
+            tours.get(vehicle).add(bestPosition, pickup.nodeId);
             if (lastPickup >= bestPosition) {
                 lastPickup++;
             } else {
@@ -75,8 +122,8 @@ public class ExchangeRequestOperator {
             }
         }
         int deliveryId = instance.delivery.get(reqId).nodeId;
-        int bestPosition = getBestPosition(deliveryId, ant.tours.get(vehicle), lastPickup);
-        ant.tours.get(vehicle).add(bestPosition, deliveryId);
+        int bestPosition = getBestPosition(deliveryId, tours.get(vehicle), lastPickup);
+        tours.get(vehicle).add(bestPosition, deliveryId);
         return true;
     }
 

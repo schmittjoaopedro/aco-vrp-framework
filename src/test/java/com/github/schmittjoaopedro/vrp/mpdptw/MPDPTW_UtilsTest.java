@@ -931,7 +931,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(2)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.tours.get(3)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
-        assertThat(ant.requests.get(1)).containsExactly(5, 0, 2);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
         assertThat(ant.requests.get(2)).containsExactly(6);
         assertThat(ant.requests.get(3)).containsExactly(7, 3);
     }

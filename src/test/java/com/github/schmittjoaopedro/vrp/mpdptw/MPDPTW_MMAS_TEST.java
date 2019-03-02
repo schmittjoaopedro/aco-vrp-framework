@@ -25,13 +25,13 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_4_test() {
-        Solver solver = new Solver(rootDirectory, "l_8_50_3.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "n_8_25_3.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
     public void mpdptw_normal_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "n_4_25_1.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "w_8_400_1.txt", maxIterations, 1, 0.8, statisticInterval, true);
         solver.run();
     }
 

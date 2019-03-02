@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 import com.github.schmittjoaopedro.vrp.mpdptw.Ant;
 import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
 
 import java.util.Random;
 
@@ -52,6 +53,42 @@ public class RelocateRequestOperator {
         }
         instance.restrictionsEvaluation(improvedAnt);
         return AntUtils.getBetterAnt(ant, improvedAnt);
+    }
+
+    public Solution relocate(Solution solution) {
+        Solution tempSol;
+        Solution improvedSol = solution.copy();
+        boolean improvement = true;
+        int vehicle;
+        double improvedCost, tempCost;
+        while (improvement) {
+            improvement = false;
+            for (int requestId = 0; requestId < instance.noReq; requestId++) {
+                tempSol = improvedSol.copy();
+                vehicle = tempSol.findRequestVehicleOwner(requestId);
+                tempSol.removeRequest(instance, vehicle, requestId);
+                tempSol.removeEmptyVehicles();
+                tempSol.addEmptyVehicle();
+                for (int k = 0; k < tempSol.tours.size(); k++) {
+                    if (k != vehicle) {
+                        if (insertionOperator.insertRequestOnVehicle(requestId, tempSol.tours.get(k), PickupMethod.Random, InsertionMethod.Greedy)) {
+                            tempSol.requests.get(k).add(requestId);
+                            instance.restrictionsEvaluation(tempSol);
+                            improvedCost = improvedSol.totalCost;
+                            tempCost = tempSol.totalCost;
+                            if (tempCost < improvedCost) {
+                                tempSol.removeEmptyVehicles();
+                                improvedSol = tempSol.copy();
+                                improvement = true;
+                            }
+                            tempSol.removeRequest(instance, k, requestId);
+                        }
+                    }
+                }
+            }
+        }
+        instance.restrictionsEvaluation(improvedSol);
+        return solution.getBestSolution(improvedSol);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
+
 import java.util.*;
 
 public class ProblemInstance {
@@ -74,7 +76,6 @@ public class ProblemInstance {
         return fitnessResult;
     }
 
-    // TODO: Cost function must to consider the service time?
     public void restrictionsEvaluation(Ant ant) {
         ant.totalCost = 0.0;
         ant.feasible = true;
@@ -107,7 +108,35 @@ public class ProblemInstance {
         ant.totalCost = total;
     }
 
-    public void isPrecedenceValid(ArrayList<Integer> antTour, ArrayList<Integer> antRequests) {
+    public void restrictionsEvaluation(Solution solution) {
+        solution.totalCost = 0.0;
+        solution.feasible = true;
+        solution.tourLengths.clear();
+        for (int k = 0; k < solution.tours.size(); k++) {
+            isPrecedenceValid(solution.tours.get(k), solution.requests.get(k));
+            ProblemInstance.FitnessResult fitnessResult = restrictionsEvaluation(solution.tours.get(k));
+            solution.tourLengths.add(k, fitnessResult.cost);
+            solution.totalCost += fitnessResult.cost;
+            solution.feasible &= fitnessResult.feasible;
+        }
+        int attendedRequests = 0;
+        for (int i = 0; i < solution.requests.size(); i++) {
+            attendedRequests += solution.requests.get(i).size();
+        }
+        solution.feasible &= solution.tours.size() < noMaxVehicles;
+        if (attendedRequests != noReq) {
+            solution.feasible = false;
+            throw new RuntimeException("Infeasible number of requests");
+        }
+        double total = 0.0;
+        for (int k = 0; k < solution.tours.size(); k++) {
+            solution.tourLengths.set(k, costEvaluation(solution.tours.get(k)));
+            total += solution.tourLengths.get(k);
+        }
+        solution.totalCost = total;
+    }
+
+    public void isPrecedenceValid(ArrayList<Integer> antTour, ArrayList<Integer> requests) {
         int node;
         Request req;
         Set<Integer> requestsTemp = new HashSet<>();
@@ -116,7 +145,7 @@ public class ProblemInstance {
         Map<Integer, Integer> totalPickups = new HashMap<>();
         for (int i = 1; i < antTour.size() - 1; i++) {
             node = antTour.get(i);
-            req = requests[node - 1];
+            req = this.requests[node - 1];
             if (req.isDeliver) {
                 requestsTemp.add(req.requestId);
                 deliveryPosition.put(req.requestId, i);
@@ -135,10 +164,10 @@ public class ProblemInstance {
                 totalPickups.put(req.requestId, total);
             }
         }
-        if (requestsTemp.size() != antRequests.size()) {
+        if (requestsTemp.size() != requests.size()) {
             throw new RuntimeException("Invalid number of requests");
         }
-        for (int reqId : antRequests) {
+        for (int reqId : requests) {
             if (!requestsTemp.contains(reqId)) {
                 throw new RuntimeException("Invalid assigned request");
             }
