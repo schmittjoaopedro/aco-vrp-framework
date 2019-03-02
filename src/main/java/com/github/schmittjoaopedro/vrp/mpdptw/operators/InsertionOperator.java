@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
+import com.github.schmittjoaopedro.vrp.dvrptwacs.Insertion;
 import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
@@ -18,10 +19,107 @@ public class InsertionOperator {
     }
 
     public void insertRequestsSequentially(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert) {
-        insertRequests(solution, requests, requestsToInsert, PickupMethod.Random, InsertionMethod.Greedy);
+        insertGreedyRequests(solution, requests, requestsToInsert, PickupMethod.Random);
     }
 
     public void insertRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
+        switch (insertionMethod) {
+            case Greedy:
+                insertGreedyRequests(solution, requests, requestsToInsert, pickupMethod);
+                break;
+            case Regret3:
+            case Regret3Noise:
+                insertRegretRequests(solution, requests, requestsToInsert, 3, pickupMethod);
+                break;
+            case RegretM:
+            case RegretMNoise:
+                insertRegretRequests(solution, requests, requestsToInsert, solution.size(), pickupMethod);
+                break;
+        }
+    }
+
+    public void insertRegretRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, int regretLevel, PickupMethod pickupMethod) {
+        Req currReq;
+        double vehicleCost, costDiff, cost;
+        ArrayList<Integer> newRoute;
+        double[] vehicleCosts = new double[solution.size()];
+        List<BestRequest> bestRequestPositions;
+        List<BestRequest> requestsCosts = new ArrayList<>();
+        // Compute current routes costs to calculate the request insertion cost differences
+        for (int k = 0; k < solution.size(); k++) {
+            vehicleCosts[k] = instance.costEvaluation(solution.get(k));
+        }
+        // Compute the gain (time difference) for each request insertion
+        for (int r = 0; r < requestsToInsert.size(); r++) {
+            currReq = requestsToInsert.get(r);
+            bestRequestPositions = new ArrayList<>();
+            for (int k = 0; k < solution.size(); k++) {
+                vehicleCost = vehicleCosts[k];
+                newRoute = new ArrayList<>(solution.get(k));
+                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) {
+                    cost = instance.costEvaluation(newRoute);
+                    costDiff = cost - vehicleCost; // Smaller differences means greater reduction in the solution cost
+                    bestRequestPositions.add(new BestRequest(costDiff, k, currReq.requestId, newRoute));
+                }
+            }
+            // Compute cost of a new route insertion
+            newRoute = new ArrayList<>();
+            newRoute.add(0);
+            newRoute.add(0);
+            // Creates a new vehicle and try the insertion using the heuristic method
+            if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) {
+                cost = instance.costEvaluation(newRoute);
+                bestRequestPositions.add(new BestRequest(cost, solution.size(), currReq.requestId, newRoute));
+            }
+            // Use the optimal solver to execute the insertion heuristic
+            else {
+                OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
+                optimalRequestSolver.optimize();
+                ArrayList<Integer> newTour = new ArrayList<>();
+                for (int i : optimalRequestSolver.getBestRoute()) {
+                    newTour.add(i);
+                }
+                cost = instance.costEvaluation(newRoute);
+                bestRequestPositions.add(new BestRequest(cost, solution.size(), currReq.requestId, newRoute));
+            }
+            // Get the best request based on regret value
+            requestsCosts.add(getRegretRequestValue(bestRequestPositions, regretLevel));
+        }
+        requestsCosts.sort(Comparator.comparing(BestRequest::getCost).reversed());
+        requestsToInsert.clear();
+        for (BestRequest reqRegret : requestsCosts) {
+            requestsToInsert.add(new Req(reqRegret.vehicle, reqRegret.reqId, 0.0));
+        }
+        insertGreedyRequests(solution, requests, requestsToInsert, pickupMethod);
+    }
+
+    private BestRequest getRegretRequestValue(List<BestRequest> requestPositions, int regretLevel) {
+        BestRequest temp, worstRegret = null;
+        double costDiff;
+        // Sort the vector to
+        requestPositions.sort(Comparator.comparing(BestRequest::getCost));
+        int regretIdx;
+        BestRequest req = requestPositions.get(0);
+        regretIdx = regretLevel + 1;
+        regretIdx = Math.min(regretIdx, requestPositions.size());
+        // Find worst regret based on cost difference of the k cheapest request related to the current request
+        for (int i = 1; i < regretIdx; i++) {
+            temp = requestPositions.get(i);
+            if (temp != req) {
+                costDiff = temp.cost - req.cost;
+                if (worstRegret == null || costDiff > worstRegret.cost) {
+                    worstRegret = new BestRequest(costDiff, temp.vehicle, temp.reqId, temp.route);
+                }
+            }
+        }
+        if (worstRegret == null) {
+            worstRegret = new BestRequest(req.cost, req.vehicle, req.reqId, req.route);
+        }
+        return worstRegret;
+    }
+
+
+    public void insertGreedyRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, PickupMethod pickupMethod) {
         Req currReq;
         ArrayList<Integer> newRoute;
         BestRequest bestRequest;
@@ -30,10 +128,10 @@ public class InsertionOperator {
             bestRequest = null;
             for (int k = 0; k < solution.size(); k++) {
                 newRoute = new ArrayList<>(solution.get(k));
-                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, insertionMethod)) {
+                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) {
                     double cost = instance.costEvaluation(newRoute);
                     if (bestRequest == null || cost < bestRequest.cost) {
-                        bestRequest = new BestRequest(cost, k, newRoute);
+                        bestRequest = new BestRequest(cost, k, currReq.requestId, newRoute);
                     }
                 }
             }
@@ -43,7 +141,7 @@ public class InsertionOperator {
                 solution.add(new ArrayList<>());
                 solution.get(requests.size() - 1).add(0);
                 solution.get(requests.size() - 1).add(0);
-                if (!insertRequestOnVehicle(currReq.requestId, solution.get(solution.size() - 1), PickupMethod.Random, insertionMethod)) {
+                if (!insertRequestOnVehicle(currReq.requestId, solution.get(solution.size() - 1), PickupMethod.Random, InsertionMethod.Greedy)) {
                     OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
                     optimalRequestSolver.optimize();
                     ArrayList<Integer> newTour = new ArrayList<>();
@@ -54,12 +152,8 @@ public class InsertionOperator {
                     solution.get(requests.size() - 1).addAll(newTour);
                 }
             } else {
-                switch (insertionMethod) {
-                    case Greedy:
-                        solution.set(bestRequest.vehicle, bestRequest.route);
-                        requests.get(bestRequest.vehicle).add(currReq.requestId);
-                        break;
-                }
+                solution.set(bestRequest.vehicle, bestRequest.route);
+                requests.get(bestRequest.vehicle).add(currReq.requestId);
             }
         }
     }
@@ -279,12 +373,23 @@ public class InsertionOperator {
     public class BestRequest {
         public double cost;
         public int vehicle;
+        public int reqId;
         public ArrayList<Integer> route;
 
-        public BestRequest(double cost, int vehicle, ArrayList<Integer> route) {
+        public BestRequest(double cost, int vehicle, int reqId, ArrayList<Integer> route) {
             this.cost = cost;
             this.vehicle = vehicle;
+            this.reqId = reqId;
             this.route = route;
+        }
+
+        public double getCost() {
+            return cost;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + vehicle + "," + reqId + ") = " + cost;
         }
     }
 

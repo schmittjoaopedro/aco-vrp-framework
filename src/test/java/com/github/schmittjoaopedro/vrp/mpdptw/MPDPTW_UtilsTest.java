@@ -865,6 +865,78 @@ public class MPDPTW_UtilsTest {
     }
 
     @Test
+    public void greedyInsertionMethodFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        List<Req> removedRequests = new ArrayList<>();
+        removedRequests.add(new Req(2, 2, 0));
+        removedRequests.add(new Req(2, 7, 0));
+        removedRequests.add(new Req(0, 0, 0));
+        removedRequests.add(new Req(0, 4, 0));
+        removedRequests.add(new Req(2, 3, 0));
+        removedRequests.add(new Req(1, 6, 0));
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests, PickupMethod.Simple, InsertionMethod.Greedy);
+
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(5633.559595589823);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 16, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 0, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 2);
+        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(3)).containsExactly(6);
+    }
+
+    @Test
+    public void regret3NoNoiseInsertionMethodFromCoelhoTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        List<Req> removedRequests = new ArrayList<>();
+        removedRequests.add(new Req(2, 2, 0));
+        removedRequests.add(new Req(2, 7, 0));
+        removedRequests.add(new Req(0, 0, 0));
+        removedRequests.add(new Req(0, 4, 0));
+        removedRequests.add(new Req(2, 3, 0));
+        removedRequests.add(new Req(1, 6, 0));
+
+        InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
+        insertionOperator.insertRequests(ant.tours, ant.requests, removedRequests, PickupMethod.Simple, InsertionMethod.Regret3);
+
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourLengths).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(5108.8608230373175);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0);
+        assertThat(ant.feasible).isTrue();
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 1, 16, 2, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 4);
+        assertThat(ant.requests.get(1)).containsExactly(5, 0, 2);
+        assertThat(ant.requests.get(2)).containsExactly(6);
+        assertThat(ant.requests.get(3)).containsExactly(7, 3);
+    }
+
+    @Test
     public void expensiveInsertionOrderFromCoelhoTest() throws IOException {
         ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Ant ant = AntUtils.createEmptyAnt(problemInstance);

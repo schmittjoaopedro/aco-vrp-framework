@@ -41,7 +41,7 @@ public class LocalSearch {
             improvement = false;
             //tempAnt = exchangeRequestOperator.exchange(tempAnt);
             tempAnt = relocateNodeOperator.relocate(tempAnt);
-            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random);
+            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Greedy);
             tempAnt = relocateRequestOperator.relocate(tempAnt);
             newCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
             if (newCost < oldCost) {
@@ -52,7 +52,7 @@ public class LocalSearch {
         return tempAnt;
     }
 
-    public Ant optimize(Ant ant, RemovalMethod removalMethod, PickupMethod pickupMethod) {
+    public Ant optimize(Ant ant, RemovalMethod removalMethod, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
         Ant tempAnt = AntUtils.createEmptyAnt(instance);
         Ant improvedAnt = AntUtils.createEmptyAnt(instance);
         AntUtils.copyFromTo(ant, tempAnt);
@@ -61,7 +61,7 @@ public class LocalSearch {
         boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
-            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, InsertionMethod.Greedy);
+            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, insertionMethod);
             instance.restrictionsEvaluation(tempAnt);
             improvement = AntUtils.getBetterAnt(improvedAnt, tempAnt) == tempAnt;
             if (improvement) {
