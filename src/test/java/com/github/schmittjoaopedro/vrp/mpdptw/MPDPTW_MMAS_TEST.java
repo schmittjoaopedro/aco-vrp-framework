@@ -9,7 +9,7 @@ public class MPDPTW_MMAS_TEST {
 
     private static final String rootDirectory;
 
-    private static int statisticInterval = 1;
+    private static int statisticInterval = 100;
 
     private static int maxIterations = 1000;
 
@@ -19,7 +19,7 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_25_2.txt", maxIterations, 1, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "l_4_25_3.txt", maxIterations, 1, 0.02, statisticInterval, true);
         solver.run();
     }
 
@@ -61,7 +61,8 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_test() {
-        for (String noVert : new String[]{"400", "100", "50", "25"}) {
+        //for (String noVert : new String[]{"400", "100", "50", "25"}) {
+        for (String noVert : new String[]{"25", "50", "100", "400"}) {
             for (String typ : new String[]{"l", "n", "w"}) {
                 for (String reqSize : new String[]{"4", "8"}) {
                     for (String id : new String[]{"1", "2", "3", "4", "5"}) {

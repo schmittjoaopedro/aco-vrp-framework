@@ -61,7 +61,6 @@ public class ProblemInstance {
             }
             currentTime += distances[curr][next];
             currentTime = Math.max(currentTime, twStart);
-            currentTime += serviceTime;
             capacity += demand;
             if (currentTime > twEnd) {
                 fitnessResult.timeWindowPenalty += currentTime - twEnd;
@@ -71,6 +70,7 @@ public class ProblemInstance {
                 fitnessResult.capacityPenalty += capacity - vehicleCapacity;
                 fitnessResult.feasible = false;
             }
+            currentTime += serviceTime;
         }
         fitnessResult.cost = currentTime;
         return fitnessResult;

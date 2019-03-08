@@ -154,12 +154,12 @@ public class MMAS {
             }
             currentTime += instance.distances[current][next];
             currentTime = Math.max(currentTime, twStart);
-            currentTime += serviceTime;
             capacity += demand;
             if (currentTime > twEnd || capacity > instance.vehicleCapacity) {
                 feasible = false;
                 break;
             }
+            currentTime += serviceTime;
         }
         return feasible;
     }
@@ -528,11 +528,11 @@ public class MMAS {
         // Calculate cost to next client
         departureTime = ant.departureTime[currentCity] + instance.distances[currentCity][nextCity];
         departureTime = Math.max(departureTime, nextReq.twStart);
-        departureTime += nextReq.serviceTime;
         demand = ant.demands[currentCity] + nextReq.demand;
         if (departureTime > nextReq.twEnd || demand > instance.vehicleCapacity) {
             nextClient.feasible = false;
         }
+        departureTime += nextReq.serviceTime;
         nextClient.departureTime = departureTime;
         nextClient.demand = demand;
         // Is fair to calculate the cost to the delivery before to calculate the cost to depot
@@ -540,10 +540,10 @@ public class MMAS {
             Request depotReq = instance.delivery.get(nextReq.requestId);
             timeCostDelivery = departureTime + instance.distances[nextCity][depotReq.nodeId];
             timeCostDelivery = Math.max(depotReq.twStart, timeCostDelivery);
-            timeCostDelivery += depotReq.serviceTime;
             if (timeCostDelivery > depotReq.twEnd) {
                 nextClient.feasible = false;
             }
+            timeCostDelivery += depotReq.serviceTime;
             // Calculate cost to depot
             timeCostDepot = timeCostDelivery + instance.distances[depotReq.nodeId][instance.depot.nodeId];
             timeCostDepot = Math.max(timeCostDepot, instance.depot.twStart);

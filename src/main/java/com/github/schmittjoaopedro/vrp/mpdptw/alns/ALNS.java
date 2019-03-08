@@ -33,13 +33,21 @@ public class ALNS {
 
     private double c;
 
-    private int segment = 100;
+    private double segment = 100.0;
 
-    private double theta1 = 33;
+    private double sigma1 = 33;
 
-    private double theta2 = 9;
+    private double sigma2 = 20;
 
-    private double theta3 = 13;
+    private double sigma3 = 12;
+
+    private double d;
+
+    private double w;
+
+    private double minWeight = 1.0;
+
+    private double maxWeight = 20.0;
 
     private InsertionOperator insertionOperator;
 
@@ -59,22 +67,27 @@ public class ALNS {
 
     private Random random;
 
-    private double eta = 0.1; //η
+    private double rho = 0.1; //η
 
     private RelocateRequestOperator relocateRequestOperator;
 
     private ExchangeRequestOperator exchangeRequestOperator;
 
-    public ALNS(String rootDirectory, String fileName, double initialT, double minT, double c, Solution initialSolution, int maxIterations, Random random) {
+    public ALNS(String rootDirectory, String fileName, Solution initialSolution, int maxIterations, Random random) {
         this.rootDirectory = rootDirectory;
         this.fileName = fileName;
-        this.initialT = initialT; // Temperature
+        this.maxIterations = maxIterations;
+        this.random = random;
+
         this.solution = initialSolution.copy();
         this.solutionBest = initialSolution.copy();
-        this.maxIterations = maxIterations;
-        this.c = c; // Colling rate
-        this.minT = minT;
-        this.random = random;
+
+        d = solution.totalCost;
+        w = 0.05;
+        c = 0.9995;
+        initialT = (1.0 + w) * d;
+        T = initialT;
+        minT = (1.0 + w) * d * Math.pow(c, 30000);
     }
 
     public void execute() {
@@ -85,14 +98,20 @@ public class ALNS {
         this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
         this.exchangeRequestOperator = new ExchangeRequestOperator(instance);
 
-        roUsages = new int[RemovalMethod.values().length];
         roScores = new double[RemovalMethod.values().length];
         roWeights = new double[RemovalMethod.values().length];
+        roUsages = new int[RemovalMethod.values().length];
+
         riScores = new double[InsertionMethod.values().length];
         riWeights = new double[InsertionMethod.values().length];
         riUsages = new int[InsertionMethod.values().length];
 
-        T = initialT;
+        for (int i = 0; i < roWeights.length; i++) {
+            roWeights[i] = 1.0;
+        }
+        for (int i = 0; i < riWeights.length; i++) {
+            riWeights[i] = 1.0;
+        }
 
         while (!stopCriteriaMeet()) {
             Solution solutionNew = solution.copy();
@@ -102,30 +121,38 @@ public class ALNS {
             List<Req> removedRequests = removeRequests(solutionNew, ro, q);
             insertRequests(solutionNew, ri, removedRequests);
             instance.restrictionsEvaluation(solutionNew);
-            increaseUsages(ro, ri);
             if (solutionNew.totalCost < solutionBest.totalCost) {
-                solutionBest = solution = applyImprovement(solutionNew);
-                increaseScores(ro, ri, theta1);
+                solution = applyImprovement(solutionNew);
+                updateBest(solution);
+                updateScores(ro, ri, sigma1);
             } else if (solutionNew.totalCost < solution.totalCost) {
                 solution = solutionNew;
-                increaseScores(ro, ri, theta2);
+                updateScores(ro, ri, sigma2);
             } else if (accept(solutionNew, solution)) {
                 solution = solutionNew;
-                increaseScores(ro, ri, theta3);
+                updateScores(ro, ri, sigma3);
             }
             T = T * c;
             if (T < minT) {
-                T = minT;
+                T = initialT;
             }
             if (endOfSegment()) {
                 updateWeights();
                 resetOperatorsScores();
-                applyImprovement(solution);
+                solution = applyImprovement(solution);
+                updateBest(solution);
                 System.out.println("Iter " + iteration + " BFS = " + solution.totalCost + ", feasible = " + solution.feasible);
             }
             iteration++;
         }
         printFinalRoute();
+    }
+
+    private void updateBest(Solution solution) {
+        if (solution.feasible && solution.totalCost < solutionBest.totalCost) {
+            solutionBest = solution.copy();
+            System.out.println("NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible);
+        }
     }
 
     private void resetOperatorsScores() {
@@ -141,13 +168,21 @@ public class ALNS {
 
     private void updateWeights() {
         for (int ri = 0; ri < riWeights.length; ri++) {
-            if (riUsages[ri] != 0) {
-                riWeights[ri] = (1.0 - eta) * riWeights[ri] + eta * (riScores[ri] / riUsages[ri]);
+            riWeights[ri] = (1.0 - rho) * riWeights[ri] + rho * (riUsages[ri] / segment) * riScores[ri];
+            if (riWeights[ri] < minWeight) {
+                riWeights[ri] = minWeight;
+            }
+            if (riWeights[ri] > maxWeight) {
+                riWeights[ri] = maxWeight;
             }
         }
         for (int ro = 0; ro < roWeights.length; ro++) {
-            if (roUsages[ro] != 0) {
-                roWeights[ro] = (1.0 - eta) * roWeights[ro] + eta * (roScores[ro] / riUsages[ro]);
+            roWeights[ro] = (1.0 - rho) * roWeights[ro] + rho * (roUsages[ro] / segment) * roScores[ro];
+            if (roWeights[ro] < minWeight) {
+                roWeights[ro] = minWeight;
+            }
+            if (roWeights[ro] > maxWeight) {
+                roWeights[ro] = maxWeight;
             }
         }
     }
@@ -160,14 +195,10 @@ public class ALNS {
         return random.nextDouble() < Math.pow(Math.E, -(newSolution.totalCost - solution.totalCost) / T);
     }
 
-    private void increaseScores(int ro, int ri, double theta) {
-        roWeights[ro] = roWeights[ro] + theta;
-        riWeights[ri] = riWeights[ri] + theta;
-    }
-
-    private void increaseUsages(int ro, int ri) {
-        roUsages[ro] = roUsages[ro] + 1;
-        riUsages[ri] = riUsages[ri] + 1;
+    private void updateScores(int ro, int ri, double sigma) {
+        // The score must be divivid accordingly Ropke (pg 8)
+        roScores[ro] = roScores[ro] + (sigma / 2.0);
+        riScores[ri] = riScores[ri] + (sigma / 2.0);
     }
 
     private Solution applyImprovement(Solution solution) {
@@ -238,22 +269,26 @@ public class ALNS {
     }
 
     private int selectRemovalOperator() {
-        return getNextRouletteWheelOperator(roWeights);
+        int ro = getNextRouletteWheelOperator(roWeights);
+        roUsages[ro] = roUsages[ro] + 1;
+        return ro;
     }
 
     private int selectInsertionOperator() {
-        return getNextRouletteWheelOperator(riWeights);
+        int ri = getNextRouletteWheelOperator(riWeights);
+        riUsages[ri] = riUsages[ri] + 1;
+        return ri;
     }
 
-    private int getNextRouletteWheelOperator(double[] rewards) {
+    private int getNextRouletteWheelOperator(double[] weights) {
         double sum = 0.0;
-        double probs[] = new double[rewards.length];
-        for (int i = 0; i < rewards.length; i++) {
-            probs[i] = sum + rewards[i];
+        double probs[] = new double[weights.length];
+        for (int i = 0; i < weights.length; i++) {
+            probs[i] = sum + weights[i];
             sum = probs[i];
         }
         if (sum == 0.0) {
-            return (int) (random.nextDouble() * rewards.length);
+            return (int) (random.nextDouble() * weights.length);
         } else {
             int count = 0;
             double rand = random.nextDouble() * sum;

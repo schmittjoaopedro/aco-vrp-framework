@@ -1100,4 +1100,20 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tourLengths.get(2)).isEqualTo(1681.9063642597093);
     }
 
+    @Test
+    public void timeWindowsWithServiceTimeFeasibilityTest() throws IOException {
+        // Check if the service time of the target point is not considered in the
+        // end time windows summation
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
+        Ant ant = AntUtils.createEmptyAnt(problemInstance);
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 3, 1, 26, 25, 5, 2, 4, 27, 6, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 12, 23, 13, 22, 24, 11, 14, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 19, 9, 16, 7, 15, 8, 18, 10, 20, 17, 21, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(1, 0, 7)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(6, 3)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(4, 5, 2)));
+        problemInstance.restrictionsEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(4713.749202925907);
+        assertThat(ant.feasible).isTrue();
+    }
 }

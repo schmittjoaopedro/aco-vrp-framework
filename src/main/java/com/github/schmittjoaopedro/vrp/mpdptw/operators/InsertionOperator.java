@@ -282,16 +282,16 @@ public class InsertionOperator {
         }
         while (currIdx < route.size()) {
             infeasible = false;
-            t = travelTime + dists[prev][i];
-            if (t > reqI.twEnd) {
-                break;
+            t = travelTime + dists[prev][i]; // Vehicle arrival time at(k, i)
+            if (t > reqI.twEnd) { // t > bi
+                break; // Exit algorithm
             }
-            tNext = travelTime + dists[prev][next];
-            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next] + generateRandomNoise(insertionMethod);
-            addedDuration = tNewNext - tNext;
+            tNext = travelTime + dists[prev][next]; // Set t_next the actual arrival time at next
+            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next] + generateRandomNoise(insertionMethod); // t'_next <- arrival time at next if i is inserted before
+            addedDuration = tNewNext - tNext; // addedDuration = t'_next - t_next
             twEndNext = twEnd(next);
             slackNext = slackNext(next, tNext);
-            if (tNext > twEndNext || addedDuration > slackNext) {
+            if (tNext > twEndNext || addedDuration > slackNext) { // t_next > b_next  OR addedDuration > slack_next
                 infeasible = true;
             }
             if (!infeasible) {
@@ -346,7 +346,7 @@ public class InsertionOperator {
         if (next == instance.depot.nodeId) {
             return instance.depot.twEnd - tNext;
         } else {
-            return instance.requests[next - 1].twEnd - instance.requests[next - 1].serviceTime - tNext;
+            return instance.requests[next - 1].twEnd - tNext;
         }
     }
 

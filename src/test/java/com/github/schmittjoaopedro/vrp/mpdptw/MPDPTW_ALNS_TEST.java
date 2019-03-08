@@ -18,7 +18,7 @@ public class MPDPTW_ALNS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        String problemFile = "l_4_25_1.txt";
+        String problemFile = "w_8_400_1.txt";
         Solver solver = new Solver(rootDirectory, problemFile, 1, 1, 0.02, 1, true);
         solver.run();
         Ant bestSolution = solver.getBestSolution();
@@ -32,13 +32,8 @@ public class MPDPTW_ALNS_TEST {
         solution.totalCost = bestSolution.totalCost;
         solution.feasible = bestSolution.feasible;
 
-        double d = solution.totalCost;
-        double w = 0.05;
-        double initialT = (1.0 + w) * d;
-        double c = 0.9995;
-        double minT = (1.0 + w) * d * Math.pow(c, 30000);
         int maxIterations = 100000;
-        ALNS alns = new ALNS(rootDirectory, problemFile, initialT, minT, c, solution, maxIterations, new Random(1));
+        ALNS alns = new ALNS(rootDirectory, problemFile, solution, maxIterations, new Random(1));
         alns.execute();
     }
 
