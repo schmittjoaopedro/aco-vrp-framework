@@ -180,7 +180,6 @@ public class ProblemInstance {
         }
     }
 
-
     // Check if the end time window of node j is achievable departing from node i
     public boolean isTimeFeasible(int i, int j) {
         boolean feasible;
@@ -198,6 +197,51 @@ public class ProblemInstance {
     public boolean isTimeFeasible(double currentTime, int i, int j) {
         int reqJ = j - 1;
         return currentTime + distances[i][j] + requests[reqJ].serviceTime < requests[reqJ].twEnd;
+    }
+
+    /**
+     * Accordingly: Lu, Q., & Dessouky, M. M. (2006). Discrete Optimization A new insertion-based construction
+     * heuristic for solving the pickup and delivery problem with time windows, 175, 672–687.
+     */
+    public double[] calculateSlackTimes(ArrayList<Integer> route) {
+        int node, prev, reqId;
+        double ei, si, li, cost = 0.0;
+        double arrivalTimes[] = new double[route.size()];
+        double waitingTimes[] = new double[route.size()];
+        for (int k = 1; k < route.size(); k++) {
+            prev = route.get(k - 1);
+            node = route.get(k);
+            if (node == depot.nodeId) {
+                ei = depot.twStart;
+                si = 0.0;
+            } else {
+                reqId = node - 1;
+                ei = requests[reqId].twStart;
+                si = requests[reqId].serviceTime;
+            }
+            arrivalTimes[k] = cost + distances[prev][node];
+            waitingTimes[k] = Math.max(0, ei - arrivalTimes[k]);
+            cost = Math.max(ei, arrivalTimes[k]);
+            cost += si;
+        }
+        double[] slackTimes = new double[route.size()];
+        for (int k = route.size() - 1; k >= 0; k--) {
+            node = route.get(k);
+            if (node == depot.nodeId) {
+                ei = depot.twStart;
+                li = depot.twEnd;
+            } else {
+                reqId = node - 1;
+                ei = requests[reqId].twStart;
+                li = requests[reqId].twEnd;
+            }
+            if (k == route.size() - 1) { // Is last node
+                slackTimes[k] = li - Math.max(arrivalTimes[k], ei);
+            } else { // Intermediary nodes
+                slackTimes[k] = Math.min(li - Math.max(arrivalTimes[k], ei), slackTimes[k + 1] + waitingTimes[k + 1]);
+            }
+        }
+        return slackTimes;
     }
 
     public double costEvaluation(List<Integer> tour) {

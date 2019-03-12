@@ -31,7 +31,7 @@ public class ALNS {
 
     private ProblemInstance instance;
 
-    private double c;
+    private double c; // cooling rate
 
     private double segment = 100.0;
 
@@ -41,9 +41,9 @@ public class ALNS {
 
     private double sigma3 = 12;
 
-    private double d;
+    private double d; // initial cost
 
-    private double w;
+    private double w; // temp control
 
     private double minWeight = 1.0;
 
@@ -86,8 +86,9 @@ public class ALNS {
         w = 0.05;
         c = 0.9995;
         initialT = (1.0 + w) * d;
+        //initialT = d * w / Math.log(2);
         T = initialT;
-        minT = (1.0 + w) * d * Math.pow(c, 30000);
+        minT = initialT * Math.pow(c, 30000);
     }
 
     public void execute() {
@@ -141,7 +142,10 @@ public class ALNS {
                 resetOperatorsScores();
                 solution = applyImprovement(solution);
                 updateBest(solution);
-                System.out.println("Iter " + iteration + " BFS = " + solution.totalCost + ", feasible = " + solution.feasible);
+                System.out.println("Iter " + iteration +
+                        " Best = " + String.format("%.2f", solution.totalCost) + ", feasible = " + solution.feasible +
+                        " BSF = " + String.format("%.2f", solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
+                        ", T = " + T + ", minT = " + minT);
             }
             iteration++;
         }

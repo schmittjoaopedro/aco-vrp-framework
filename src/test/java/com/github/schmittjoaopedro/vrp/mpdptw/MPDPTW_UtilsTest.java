@@ -1116,4 +1116,13 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.totalCost).isEqualTo(4713.749202925907);
         assertThat(ant.feasible).isTrue();
     }
+
+    @Test
+    public void slackTimeCalculationTest() throws IOException {
+        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ArrayList<Integer> route = new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 6, 0));
+        double[] slackTimes = problemInstance.calculateSlackTimes(route);
+        assertThat(slackTimes).hasSize(route.size());
+        assertThat(slackTimes).containsExactly(159.9197004287602, 159.9197004287602, 186.28051010531715, 186.28051010531715, 186.28051010531715, 257.7465420002027, 310.0, 321.5992424351118);
+    }
 }

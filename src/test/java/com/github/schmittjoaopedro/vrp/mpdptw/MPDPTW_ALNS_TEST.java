@@ -18,7 +18,7 @@ public class MPDPTW_ALNS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        String problemFile = "w_8_400_1.txt";
+        String problemFile = "l_4_400_1.txt";
         Solver solver = new Solver(rootDirectory, problemFile, 1, 1, 0.02, 1, true);
         solver.run();
         Ant bestSolution = solver.getBestSolution();
