@@ -248,7 +248,7 @@ public class ProblemInstance {
      * Savelsbergh MW. The vehicle routing problem with time windows: Minimizing route duration.
      * ORSA journal on computing. 1992 May;4(2):146-54.
      */
-    public double[] slackTimesSavelsbergh(ArrayList<Integer> route) {
+    public double[] slackTimesSavelsbergh(ArrayList<Integer> route, boolean sumWaitingTimes) {
         double[] slackTimes = new double[route.size()];
         double[] departureTimes = new double[route.size()];
         double[] waitingTimes = new double[route.size()];
@@ -294,6 +294,11 @@ public class ProblemInstance {
                     cost = cost + distances[prev][node] + si;
                 }
                 slackTimes[i] = Math.min(slackTimes[i], li - (departureTime + cost));
+            }
+        }
+        if (sumWaitingTimes) {
+            for (int i = 0; i < slackTimes.length; i++) {
+                slackTimes[i] = slackTimes[i] + waitingTimes[i];
             }
         }
         return slackTimes;
