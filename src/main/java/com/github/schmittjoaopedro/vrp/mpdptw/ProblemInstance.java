@@ -203,7 +203,7 @@ public class ProblemInstance {
      * Accordingly: Lu, Q., & Dessouky, M. M. (2006). Discrete Optimization A new insertion-based construction
      * heuristic for solving the pickup and delivery problem with time windows, 175, 672–687.
      */
-    public double[] calculateSlackTimes(ArrayList<Integer> route) {
+    public double[] calculateSlackTimesLu(ArrayList<Integer> route) {
         int node, prev, reqId;
         double ei, si, li, cost = 0.0;
         double arrivalTimes[] = new double[route.size()];
@@ -239,6 +239,61 @@ public class ProblemInstance {
                 slackTimes[k] = li - Math.max(arrivalTimes[k], ei);
             } else { // Intermediary nodes
                 slackTimes[k] = Math.min(li - Math.max(arrivalTimes[k], ei), slackTimes[k + 1] + waitingTimes[k + 1]);
+            }
+        }
+        return slackTimes;
+    }
+
+    /**
+     * Savelsbergh MW. The vehicle routing problem with time windows: Minimizing route duration.
+     * ORSA journal on computing. 1992 May;4(2):146-54.
+     */
+    public double[] slackTimesSavelsbergh(ArrayList<Integer> route) {
+        double[] slackTimes = new double[route.size()];
+        double[] departureTimes = new double[route.size()];
+        double[] waitingTimes = new double[route.size()];
+        int node, prev, reqId;
+        double ei, si, li, arrivalTime = 0.0, waitingTime;
+        for (int k = 0; k < route.size(); k++) {
+            node = route.get(k);
+            if (node == depot.nodeId) {
+                ei = depot.twStart;
+                si = 0.0;
+            } else {
+                reqId = node - 1;
+                ei = requests[reqId].twStart;
+                si = requests[reqId].serviceTime;
+            }
+            if (k > 0) {
+                prev = route.get(k - 1);
+                arrivalTime = departureTimes[k - 1] + distances[prev][node]; // Calculate cost to next vertex
+            }
+            waitingTime = Math.max(0, ei - arrivalTime); // Calculate waiting time
+            departureTimes[k] = arrivalTime + waitingTime + si; // Departure time of the current position
+            if (k > 0) {
+                waitingTimes[k] = waitingTime;
+            }
+        }
+        double departureTime, cost;
+        for (int i = 0; i < route.size(); i++) {
+            departureTime = departureTimes[i];
+            slackTimes[i] = Double.MAX_VALUE;
+            cost = 0.0;
+            for (int k = i; k < route.size(); k++) {
+                node = route.get(k);
+                if (node == depot.nodeId) {
+                    li = depot.twEnd;
+                    si = 0.0;
+                } else {
+                    reqId = node - 1;
+                    li = requests[reqId].twEnd;
+                    si = requests[reqId].serviceTime;
+                }
+                if (k - i > 0) {
+                    prev = route.get(k - 1);
+                    cost = cost + distances[prev][node] + si;
+                }
+                slackTimes[i] = Math.min(slackTimes[i], li - (departureTime + cost));
             }
         }
         return slackTimes;

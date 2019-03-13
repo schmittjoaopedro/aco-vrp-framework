@@ -1118,11 +1118,48 @@ public class MPDPTW_UtilsTest {
     }
 
     @Test
-    public void slackTimeCalculationTest() throws IOException {
+    public void slackTimeLuCalculationTest() throws IOException {
         ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         ArrayList<Integer> route = new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 6, 0));
-        double[] slackTimes = problemInstance.calculateSlackTimes(route);
+        double[] slackTimes = problemInstance.calculateSlackTimesLu(route);
         assertThat(slackTimes).hasSize(route.size());
         assertThat(slackTimes).containsExactly(159.9197004287602, 159.9197004287602, 186.28051010531715, 186.28051010531715, 186.28051010531715, 257.7465420002027, 310.0, 321.5992424351118);
     }
+
+    @Test
+    public void slackTimeSavelsberghTest() throws Exception {
+        ProblemInstance problemInstance = new ProblemInstance();
+        problemInstance.depot = new Depot();
+
+        problemInstance.depot.nodeId = 0;
+        problemInstance.depot.twStart = 6.0;
+        problemInstance.depot.twEnd = 18.0;
+
+        problemInstance.distances = new double[4][4];
+        problemInstance.distances[0][1] = 0.5;
+        problemInstance.distances[1][2] = 0.5;
+        problemInstance.distances[2][3] = 0.5;
+        problemInstance.distances[3][0] = 0.5;
+
+        problemInstance.requests = new Request[3];
+        problemInstance.requests[0] = new Request();
+        problemInstance.requests[0].nodeId = 1;
+        problemInstance.requests[0].twStart = 10.0;
+        problemInstance.requests[0].twEnd = 14.0;
+        problemInstance.requests[1] = new Request();
+        problemInstance.requests[1].nodeId = 2;
+        problemInstance.requests[1].twStart = 8.0;
+        problemInstance.requests[1].twEnd = 12.0;
+        problemInstance.requests[2] = new Request();
+        problemInstance.requests[2].nodeId = 3;
+        problemInstance.requests[2].twStart = 13.0;
+        problemInstance.requests[2].twEnd = 17.0;
+
+        ArrayList<Integer> route = new ArrayList(Arrays.asList(0, 1, 2, 3, 0));
+        double[] slackTimes = problemInstance.slackTimesSavelsbergh(route);
+        assertThat(slackTimes).hasSize(route.size());
+        assertThat(slackTimes).containsExactly(5.0, 1.5, 1.5, 4.0, 4.5);
+
+    }
+
 }

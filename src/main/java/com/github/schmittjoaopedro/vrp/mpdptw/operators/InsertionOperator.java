@@ -1,6 +1,5 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
-import com.github.schmittjoaopedro.vrp.dvrptwacs.Insertion;
 import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
@@ -290,7 +289,7 @@ public class InsertionOperator {
             tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next] + generateRandomNoise(insertionMethod); // t'_next <- arrival time at next if i is inserted before
             addedDuration = tNewNext - tNext; // addedDuration = t'_next - t_next
             twEndNext = twEnd(next);
-            slackNext = slackNext(next, tNext);
+            slackNext = slackNext(next, tNext); // TODO: Should be the savelsbergh calculation
             if (tNext > twEndNext || addedDuration > slackNext) { // t_next > b_next  OR addedDuration > slack_next
                 infeasible = true;
             }
