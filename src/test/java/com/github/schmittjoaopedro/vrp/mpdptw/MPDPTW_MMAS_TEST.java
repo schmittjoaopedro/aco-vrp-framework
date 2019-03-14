@@ -9,11 +9,11 @@ public class MPDPTW_MMAS_TEST {
 
     private static final String rootDirectory;
 
-    private static int statisticInterval = 100;
+    private static int statisticInterval = 1;
 
     private static int maxIterations = 1000;
 
-    private static int seed = 2;
+    private static int seed = 1;
 
     static {
         rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
@@ -21,7 +21,7 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_50_1.txt", maxIterations, seed, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "l_4_400_1.txt", maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 

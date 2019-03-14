@@ -158,14 +158,12 @@ public class InsertionOperator {
     }
 
     public boolean insertRequestOnVehicle(int requestId, ArrayList<Integer> kRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
-        ArrayList<Integer> route = new ArrayList();
-        route.addAll(kRoute);
+        BestPosition bestPosition = null;
+        ArrayList<Integer> route = new ArrayList(kRoute);
         List<Request> pickups = getPickups(requestId, pickupMethod);
         Request delivery = instance.delivery.get(requestId);
-        BestPickup pickup;
-        BestPosition bestPosition = null;
         while (!pickups.isEmpty()) {
-            pickup = selectAPickup(kRoute, pickups, pickupMethod, insertionMethod);
+            BestPickup pickup = selectAPickup(kRoute, pickups, pickupMethod, insertionMethod);
             if (pickup == null) return false;
             pickups.remove(pickup.pickupNode);
             switch (pickupMethod) {
@@ -231,8 +229,8 @@ public class InsertionOperator {
     private double generateRandomNoise(InsertionMethod insertionMethod) {
         double randomNoise = 0.0;
         switch (insertionMethod) {
-            case Regret3:
-            case RegretM:
+            case Regret3Noise:
+            case RegretMNoise:
                 randomNoise = (0.5 - random.nextDouble()) * instance.maxDistance;
                 break;
         }
@@ -261,7 +259,8 @@ public class InsertionOperator {
     }
 
     private BestPosition insertAtBestPosition(Integer i, ArrayList<Integer> route, InsertionMethod insertionMethod, int prevPos) {
-        double bestCost = Double.MAX_VALUE;
+        double deltaBestCost = Double.MAX_VALUE;
+        double slackTimes[] = instance.slackTimesSavelsbergh(route, true);
         BestPosition bestPosition = null;
         int prev = route.get(prevPos);
         prevPos++;
@@ -286,20 +285,20 @@ public class InsertionOperator {
                 break; // Exit algorithm
             }
             tNext = travelTime + dists[prev][next]; // Set t_next the actual arrival time at next
-            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next] + generateRandomNoise(insertionMethod); // t'_next <- arrival time at next if i is inserted before
+            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next]; // t'_next <- arrival time at next if i is inserted before
             addedDuration = tNewNext - tNext; // addedDuration = t'_next - t_next
             twEndNext = twEnd(next);
-            slackNext = slackNext(next, tNext); // TODO: Should be the savelsbergh calculation
+            slackNext = slackTimes[currIdx];//slackNext(next, tNext); // TODO: Should be the savelsbergh calculation
             if (tNext > twEndNext || addedDuration > slackNext) { // t_next > b_next  OR addedDuration > slack_next
                 infeasible = true;
             }
             if (!infeasible) {
-                newCost = dists[prev][i] + dists[i][next] - dists[prev][next];
-                if (newCost < bestCost) {
+                newCost = dists[prev][i] + dists[i][next] - dists[prev][next] + generateRandomNoise(insertionMethod);
+                if (newCost < deltaBestCost) {
                     route.add(currIdx, i);
                     if (instance.restrictionsEvaluation(route).feasible) {
-                        bestCost = newCost;
-                        bestPosition = new BestPosition(currIdx, bestCost);
+                        deltaBestCost = newCost;
+                        bestPosition = new BestPosition(currIdx, deltaBestCost);
                     }
                     route.remove(currIdx);
                 }
