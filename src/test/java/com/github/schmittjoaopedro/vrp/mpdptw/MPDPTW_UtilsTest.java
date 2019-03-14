@@ -1156,7 +1156,7 @@ public class MPDPTW_UtilsTest {
         problemInstance.requests[2].twEnd = 17.0;
 
         ArrayList<Integer> route = new ArrayList(Arrays.asList(0, 1, 2, 3, 0));
-        double[] slackTimes = problemInstance.slackTimesSavelsbergh(route);
+        double[] slackTimes = problemInstance.slackTimesSavelsbergh(route, false);
         assertThat(slackTimes).hasSize(route.size());
         assertThat(slackTimes).containsExactly(5.0, 1.5, 1.5, 4.0, 4.5);
 
