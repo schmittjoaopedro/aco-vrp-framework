@@ -1,7 +1,5 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.*;
 
 public class MMAS {
@@ -13,8 +11,6 @@ public class MMAS {
     private double alpha;
 
     private double beta;
-
-    private double q_0;
 
     private double rho;
 
@@ -62,8 +58,6 @@ public class MMAS {
 
     public final double weight4 = 0.1;
 
-    private double maxTwPenalty = 0.0;
-
     public MMAS(ProblemInstance instance) {
         this.instance = instance;
     }
@@ -92,7 +86,7 @@ public class MMAS {
         int[] helpVector = new int[instance.noNodes];
         for (int i = 0; i < instance.noNodes; i++) {
             for (int j = 0; j < instance.noNodes; j++) {
-                if (i != j && instance.isTimeFeasible(i, j)) {
+                if (i != j && instance.isFeasible(i, j)) {
                     distanceVector[j] = instance.distances[i][j];
                 } else {
                     distanceVector[j] = Double.MAX_VALUE;
@@ -129,39 +123,6 @@ public class MMAS {
         swap(v, v2, left, last);
         sort(v, v2, left, last);
         sort(v, v2, last + 1, right);
-    }
-
-    // TODO: Service time must be accomplished before end time window?
-    public boolean isRouteFeasible(ArrayList<Integer> tour) {
-        double currentTime, capacity, demand, twStart, twEnd, serviceTime;
-        boolean feasible = true;
-        int current, next;
-        currentTime = 0.0;
-        capacity = 0.0;
-        for (int i = 0; i < tour.size() - 1; i++) {
-            current = tour.get(i);
-            next = tour.get(i + 1);
-            if (next == instance.depot.nodeId) {
-                twStart = instance.depot.twStart;
-                twEnd = instance.depot.twEnd;
-                serviceTime = 0.0;
-                demand = 0.0;
-            } else {
-                twStart = instance.requests[next - 1].twStart;
-                twEnd = instance.requests[next - 1].twEnd;
-                serviceTime = instance.requests[next - 1].serviceTime;
-                demand = instance.requests[next - 1].demand;
-            }
-            currentTime += instance.distances[current][next];
-            currentTime = Math.max(currentTime, twStart);
-            capacity += demand;
-            if (currentTime > twEnd || capacity > instance.vehicleCapacity) {
-                feasible = false;
-                break;
-            }
-            currentTime += serviceTime;
-        }
-        return feasible;
     }
 
     public void initTry() {
@@ -330,16 +291,6 @@ public class MMAS {
         return upperBound;
     }
 
-    public void penalizeAnt(Ant ant) {
-        double twFact;
-        twFact = 0.0;
-        if (maxTwPenalty > 0.0) twFact += (ant.timeWindowPenalty / maxTwPenalty);
-        //ant.totalCost = ant.totalCost + (twFact * ant.totalCost);
-        //ant.totalCost = ant.totalCost + (twFact * ant.timeWindowPenalty) + (capFact * ant.capacityPenalty);
-        //ant.totalCost = ant.totalCost + (twFact * ant.totalCost) + (capFact * ant.totalCost);
-        //ant.totalCost = ant.totalCost * twFact * capFact;
-    }
-
     public void constructSolutions() {
         int vehicle, requestId;
         double vehicleCapacity;
@@ -392,22 +343,12 @@ public class MMAS {
             ant.tours.get(vehicle).add(instance.depot.nodeId); // Finish last route
         }
         // Calculate fitness
-        maxTwPenalty = 0.0;
         for (Ant ant : antPopulation) {
             instance.restrictionsEvaluation(ant);
             if (ant.capacityPenalty > 0) {
                 throw new RuntimeException("Invalid capacity penaly!!");
             }
-            maxTwPenalty = Math.max(ant.timeWindowPenalty, maxTwPenalty);
         }
-        for (Ant ant : antPopulation) {
-            penalizeAnt(ant);
-        }
-    }
-
-    private void logAntRoute(Ant ant) {
-        System.out.print("Ant " + antPopulation.indexOf(ant) + " => ");
-        System.out.println(StringUtils.join(ant.tours, ','));
     }
 
     public NextClient selectNextClient(Ant ant, int vehicle, int currIdx) {
@@ -508,9 +449,11 @@ public class MMAS {
             supported = ant.capacity.get(vehicle) + instance.delivery.get(requestId).demand > 0;
             // Check if all requests from the nextCity request are feasbile from the current point
             for (Request req : instance.pickups.get(requestId)) {
-                supported &= instance.isTimeFeasible(currentCity, req.nodeId);
+                supported &= instance.isFeasible(currentCity, req.nodeId);
             }
-            supported &= instance.isTimeFeasible(currentCity, instance.delivery.get(requestId).nodeId);
+            if (currentCity != 0) { // Depot never will be feasibly with delivery points
+                supported &= instance.isFeasible(currentCity, instance.delivery.get(requestId).nodeId);
+            }
         }
         return supported;
     }
@@ -694,10 +637,6 @@ public class MMAS {
 
     public void setBeta(double beta) {
         this.beta = beta;
-    }
-
-    public void setQ_0(double q_0) {
-        this.q_0 = q_0;
     }
 
     public void setRho(double rho) {

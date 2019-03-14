@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
+import com.github.schmittjoaopedro.vrp.preprocessing.InfeasibleRequestsPairs;
 
 import java.util.*;
 
@@ -19,6 +20,8 @@ public class ProblemInstance {
     public double[][] distances;
 
     public double maxDistance;
+
+    public boolean requestsFeasibility[][];
 
     public Request[] requests;
 
@@ -77,6 +80,10 @@ public class ProblemInstance {
     }
 
     public void restrictionsEvaluation(Ant ant) {
+        restrictionsEvaluation(ant, true);
+    }
+
+    public void restrictionsEvaluation(Ant ant, boolean noReqsRestriction) {
         ant.totalCost = 0.0;
         ant.feasible = true;
         ant.timeWindowPenalty = 0.0;
@@ -96,9 +103,8 @@ public class ProblemInstance {
             attendedRequests += ant.requests.get(i).size();
         }
         ant.feasible &= ant.tours.size() < noMaxVehicles;
-        if (attendedRequests != noReq) {
+        if (attendedRequests != noReq && noReqsRestriction) {
             ant.feasible = false;
-            throw new RuntimeException("Infeasible number of requests");
         }
         double total = 0.0;
         for (int k = 0; k < ant.tours.size(); k++) {
@@ -181,22 +187,33 @@ public class ProblemInstance {
     }
 
     // Check if the end time window of node j is achievable departing from node i
-    public boolean isTimeFeasible(int i, int j) {
+    public boolean isFeasible(int i, int j) {
         boolean feasible;
-        // requests does not index the node depot, therefore we have to adjust the indexes to ignore the depot
-        if (i == 0 || j == 0) {
+        int reqJ, reqI;
+        if (i == 0 && j == 0) {
             feasible = true;
+        } else if (i == 0 && j != 0) {
+            // from depot we only can go to pickups
+            reqJ = j - 1;
+            feasible = requests[reqJ].isPickup;
+        } else if (i != 0 && j == 0) {
+            // from deliveries we can go to depot
+            reqI = i - 1;
+            feasible = requests[reqI].isDeliver;
         } else {
-            int reqI = i - 1;
-            int reqJ = j - 1;
-            feasible = requests[reqI].twStart + requests[reqI].serviceTime + distances[i][j] < requests[reqJ].twEnd;
+            reqI = i - 1;
+            reqJ = j - 1;
+            feasible = requests[reqI].twStart + requests[reqI].serviceTime + distances[i][j] < requests[reqJ].twEnd; // is time feasible
+            if (requestsFeasibility != null && feasible && requests[reqI].requestId != requests[reqJ].requestId) {
+                feasible = requestsFeasibility[requests[reqI].requestId][requests[reqJ].requestId];
+            }
         }
         return feasible;
     }
 
-    public boolean isTimeFeasible(double currentTime, int i, int j) {
-        int reqJ = j - 1;
-        return currentTime + distances[i][j] + requests[reqJ].serviceTime < requests[reqJ].twEnd;
+    public void requestPairsFeasibility(Random random) {
+        InfeasibleRequestsPairs infeasibleRequestsPairs = new InfeasibleRequestsPairs(this, random);
+        this.requestsFeasibility = infeasibleRequestsPairs.calculateFeasibilityPairs();
     }
 
     /**

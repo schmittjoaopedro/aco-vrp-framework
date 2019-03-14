@@ -59,7 +59,6 @@ public class Solver implements Runnable {
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
         mmas.setBeta(2.0);
-        mmas.setQ_0(0.0);
         mmas.setnAnts(50);
         mmas.setDepth(problemInstance.noNodes);
         mmas.allocateAnts();
@@ -127,7 +126,7 @@ public class Solver implements Runnable {
         boolean feasible = true;
         double cost;
         for (ArrayList route : ant.tours) {
-            feasible &= mmas.isRouteFeasible(route);
+            feasible &= problemInstance.restrictionsEvaluation(route).feasible;
         }
         ant.feasible &= feasible;
         ant.totalCost = 0.0;
@@ -209,9 +208,6 @@ public class Solver implements Runnable {
                 (improvedAnt.feasible && !bestAnt.feasible)) {
             int antIndex = mmas.getAntPopulation().indexOf(bestAnt);
             mmas.getAntPopulation().set(antIndex, improvedAnt);
-            mmas.penalizeAnt(improvedAnt);
-        } else {
-            mmas.penalizeAnt(bestAnt);
         }
     }
 
