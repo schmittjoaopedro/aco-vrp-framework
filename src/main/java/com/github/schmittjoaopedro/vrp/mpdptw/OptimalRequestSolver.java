@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,14 @@ public class OptimalRequestSolver {
             optimizedBranch(request, currentTime, currentCapacity, visitedPickups, currentRoute, 2);
             visitedPickups.remove(request);
         }
+    }
+
+    public ArrayList<Integer> getTour() {
+        ArrayList<Integer> newTour = new ArrayList<>();
+        for (int i : getBestRoute()) {
+            newTour.add(i);
+        }
+        return newTour;
     }
 
     private void optimizedBranch(Request request, double currentTime, double currentCapacity, Set<Request> visitedPickups, int[] currSequence, int phase) {

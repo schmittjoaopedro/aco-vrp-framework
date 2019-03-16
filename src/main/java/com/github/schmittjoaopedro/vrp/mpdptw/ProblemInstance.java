@@ -344,6 +344,19 @@ public class ProblemInstance {
         return cost;
     }
 
+    public Integer[] getPickupNodes(int requestId) {
+        List<Request> picks = pickups.get(requestId);
+        Integer[] nodeIds = new Integer[picks.size()];
+        for (int i = 0; i < picks.size(); i++) {
+            nodeIds[i] = picks.get(i).nodeId;
+        }
+        return nodeIds;
+    }
+
+    public Integer getDelivery(int requestId) {
+        return delivery.get(requestId).nodeId;
+    }
+
     public class FitnessResult {
 
         public double cost;

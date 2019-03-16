@@ -58,7 +58,7 @@ public class Solver implements Runnable {
         initProblemInstance();
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
-        mmas.setBeta(2.0);
+        mmas.setBeta(5.0);
         mmas.setnAnts(50);
         mmas.setDepth(problemInstance.noNodes);
         mmas.allocateAnts();
@@ -82,7 +82,7 @@ public class Solver implements Runnable {
             mmas.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
-            executeLocalSearch();
+            //executeLocalSearch();
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
                 mmas.setPheromoneBoundsForLS();
@@ -93,7 +93,7 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-            mmas.checkPheromoneTrailLimits();
+            //mmas.checkPheromoneTrailLimits();
             mmas.searchControl(); // TODO: Rever
             iterationStatistic.endTimer("Pheromone");
             // Statistics
