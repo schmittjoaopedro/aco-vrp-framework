@@ -34,13 +34,13 @@ public class RelocateNodeOperator {
                     node = tourCloned.get(nodeIdx);
                     removalIdx = removeNode(tour, node);
                     if (instance.requests[node - 1].isPickup) {
-                        if (bestPickupInsertion(originalCost, tour, node, removalIdx)) {
+                        if (bestPickupInsertion(originalCost, tour, node, removalIdx, 1)) {
                             originalCost = instance.restrictionsEvaluation(tour);
                             AntUtils.copyFromTo(tempAnt, improvedAnt);
                             improvement = true;
                         }
                     } else if (instance.requests[node - 1].isDeliver) { // Or try best delivery insertion
-                        if (bestDeliveryInsertion(originalCost, tour, node, removalIdx)) {
+                        if (bestDeliveryInsertion(originalCost, tour, node, removalIdx, 1)) {
                             originalCost = instance.restrictionsEvaluation(tour);
                             AntUtils.copyFromTo(tempAnt, improvedAnt);
                             improvement = true;
@@ -51,6 +51,34 @@ public class RelocateNodeOperator {
         }
         instance.restrictionsEvaluation(improvedAnt);
         return AntUtils.getBetterAnt(ant, improvedAnt);
+    }
+
+    public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt) {
+        ArrayList<Integer> tempTour = new ArrayList<>(tour);
+        ArrayList<Integer> bestTour = new ArrayList<>(tour);
+        boolean improvement = true;
+        while (improvement) {
+            improvement = false;
+            ProblemInstance.FitnessResult originalCost = instance.restrictionsEvaluation(bestTour);
+            for (int nodeIdx = 1; nodeIdx < tempTour.size() - 1; nodeIdx++) { // Ignore depot at first and last position
+                int node = tempTour.get(nodeIdx);
+                int removalIdx = removeNode(tempTour, node);
+                if (instance.requests[node - 1].isPickup) {
+                    if (bestPickupInsertion(originalCost, tempTour, node, removalIdx, startAt)) {
+                        originalCost = instance.restrictionsEvaluation(tempTour);
+                        bestTour = new ArrayList<>(tempTour);
+                        improvement = true;
+                    }
+                } else if (instance.requests[node - 1].isDeliver) { // Or try best delivery insertion
+                    if (bestDeliveryInsertion(originalCost, tour, node, removalIdx, startAt)) {
+                        originalCost = instance.restrictionsEvaluation(tour);
+                        bestTour = new ArrayList<>(tempTour);
+                        improvement = true;
+                    }
+                }
+            }
+        }
+        return bestTour;
     }
 
     private int removeNode(List<Integer> tour, int node) {
@@ -64,19 +92,19 @@ public class RelocateNodeOperator {
         return nodeIdx;
     }
 
-    private boolean bestPickupInsertion(ProblemInstance.FitnessResult originalCost, List<Integer> tour, int pickupNode, int bestInsertion) {
+    private boolean bestPickupInsertion(ProblemInstance.FitnessResult originalCost, List<Integer> tour, int pickupNode, int bestInsertion, int startAt) {
         ProblemInstance.FitnessResult insertionCost;
         ProblemInstance.FitnessResult bestInsertionCost = originalCost;
         int deliveryIdx = 0;
         boolean improvement = false;
-        for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
+        for (int i = startAt; i < tour.size() - 1; i++) { // Ignore depot at first and last position
             if (instance.requests[tour.get(i) - 1].isDeliver && // First check if this is a delivery point
                     instance.requests[pickupNode - 1].requestId == instance.requests[tour.get(i) - 1].requestId) { // Check if this is the same pickup-delivery request
                 deliveryIdx = i;
                 break;
             }
         }
-        for (int i = 1; i <= deliveryIdx; i++) {
+        for (int i = startAt; i <= deliveryIdx; i++) {
             tour.add(i, pickupNode);
             insertionCost = instance.restrictionsEvaluation(tour);
             if (bestInsertionCost.feasible) {
@@ -106,7 +134,7 @@ public class RelocateNodeOperator {
         return improvement;
     }
 
-    private boolean bestDeliveryInsertion(ProblemInstance.FitnessResult originalCost, List<Integer> tour, int deliveryNode, int bestInsertion) {
+    private boolean bestDeliveryInsertion(ProblemInstance.FitnessResult originalCost, List<Integer> tour, int deliveryNode, int bestInsertion, int startAt) {
         ProblemInstance.FitnessResult insertionCost;
         ProblemInstance.FitnessResult bestInsertionCost = originalCost;
         int lastPickupIdx = 0;
@@ -117,6 +145,7 @@ public class RelocateNodeOperator {
                 lastPickupIdx = i;
             }
         }
+        lastPickupIdx = Math.max(lastPickupIdx, startAt);
         for (int i = lastPickupIdx + 1; i < tour.size(); i++) {
             tour.add(i, deliveryNode);
             insertionCost = instance.restrictionsEvaluation(tour);
