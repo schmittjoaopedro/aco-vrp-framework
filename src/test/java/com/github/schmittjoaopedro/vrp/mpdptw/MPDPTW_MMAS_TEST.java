@@ -21,7 +21,7 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "l_4_400_1.txt", maxIterations, seed, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "n_4_400_5.txt", maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 

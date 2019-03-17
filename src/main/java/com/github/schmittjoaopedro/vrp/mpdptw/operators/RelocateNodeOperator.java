@@ -1,8 +1,10 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
+import com.github.schmittjoaopedro.vrp.dvrptwacs.Problem;
 import com.github.schmittjoaopedro.vrp.mpdptw.Ant;
 import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +13,11 @@ public class RelocateNodeOperator {
 
     private ProblemInstance instance;
 
+    private InsertionOperator insertionOperator;
+
     public RelocateNodeOperator(ProblemInstance instance) {
         this.instance = instance;
+        this.insertionOperator = new InsertionOperator(instance, null);
     }
 
     public Ant relocate(Ant ant) {
@@ -59,26 +64,43 @@ public class RelocateNodeOperator {
         boolean improvement = true;
         while (improvement) {
             improvement = false;
-            ProblemInstance.FitnessResult originalCost = instance.restrictionsEvaluation(bestTour);
-            for (int nodeIdx = 1; nodeIdx < tempTour.size() - 1; nodeIdx++) { // Ignore depot at first and last position
-                int node = tempTour.get(nodeIdx);
-                int removalIdx = removeNode(tempTour, node);
-                if (instance.requests[node - 1].isPickup) {
-                    if (bestPickupInsertion(originalCost, tempTour, node, removalIdx, startAt)) {
-                        originalCost = instance.restrictionsEvaluation(tempTour);
-                        bestTour = new ArrayList<>(tempTour);
-                        improvement = true;
-                    }
-                } else if (instance.requests[node - 1].isDeliver) { // Or try best delivery insertion
-                    if (bestDeliveryInsertion(originalCost, tour, node, removalIdx, startAt)) {
-                        originalCost = instance.restrictionsEvaluation(tour);
-                        bestTour = new ArrayList<>(tempTour);
-                        improvement = true;
-                    }
+            ProblemInstance.FitnessResult newCost, bestCost;
+            for (int n1 = startAt; n1 < tempTour.size() - 1; n1++) { // Ignore depot at first and last position
+                int node1 = bestTour.get(n1);
+                bestCost = instance.restrictionsEvaluation(tempTour);
+                int bestPos = removeNode(tempTour, node1); // To insert back we consider plus 1
+                int innerLimit = tempTour.size();
+                int innerStartAt = startAt;
+                Request req = instance.requests[node1 - 1];
+                if (req.isDeliver) {
+                    innerStartAt = getLastPickupIdx(tempTour, req) + 1; // To start after the last pickup position
+                    innerStartAt = Math.max(innerStartAt, startAt);
+                } else {
+                    innerLimit = getLastDeliverIdx(tempTour, req) + 1; // Until before delivery point
                 }
+                for (int n2 = innerStartAt; n2 < innerLimit; n2++) {
+                    tempTour.add(n2, node1);
+                    newCost = instance.restrictionsEvaluation(tempTour);
+                    if (isBetter(bestCost, newCost)) {
+                        bestPos = n2;
+                        bestCost = newCost;
+                        improvement = true;
+                    }
+                    tempTour.remove(n2);
+                }
+                tempTour.add(bestPos, node1);
             }
+            bestTour = tempTour;
         }
         return bestTour;
+    }
+
+    private boolean isBetter(ProblemInstance.FitnessResult original, ProblemInstance.FitnessResult testing) {
+        if (original.feasible) {
+            return testing.feasible && testing.cost < original.cost;
+        } else {
+            return testing.feasible || (testing.cost + testing.timeWindowPenalty < original.cost + original.timeWindowPenalty);
+        }
     }
 
     private int removeNode(List<Integer> tour, int node) {
@@ -137,14 +159,8 @@ public class RelocateNodeOperator {
     private boolean bestDeliveryInsertion(ProblemInstance.FitnessResult originalCost, List<Integer> tour, int deliveryNode, int bestInsertion, int startAt) {
         ProblemInstance.FitnessResult insertionCost;
         ProblemInstance.FitnessResult bestInsertionCost = originalCost;
-        int lastPickupIdx = 0;
         boolean improvement = false;
-        for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
-            if (instance.requests[tour.get(i) - 1].isPickup && // First check if this is a delivery point
-                    instance.requests[tour.get(i) - 1].requestId == instance.requests[deliveryNode - 1].requestId) { // Check if this is the same pickup-delivery request
-                lastPickupIdx = i;
-            }
-        }
+        int lastPickupIdx = getLastPickupIdx(tour, instance.requests[deliveryNode - 1]);
         lastPickupIdx = Math.max(lastPickupIdx, startAt);
         for (int i = lastPickupIdx + 1; i < tour.size(); i++) {
             tour.add(i, deliveryNode);
@@ -174,6 +190,28 @@ public class RelocateNodeOperator {
         }
         tour.add(bestInsertion, deliveryNode);
         return improvement;
+    }
+
+    private int getLastPickupIdx(List<Integer> tour, Request request) {
+        int lastPickupIdx = 0;
+        for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
+            if (instance.requests[tour.get(i) - 1].isPickup && // First check if this is a pickup point
+                    instance.requests[tour.get(i) - 1].requestId == request.requestId) { // Check if this is the same pickup-delivery request
+                lastPickupIdx = i;
+            }
+        }
+        return lastPickupIdx;
+    }
+
+    private int getLastDeliverIdx(List<Integer> tour, Request request) {
+        int lastDeliveryIdx = 0;
+        for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
+            if (instance.requests[tour.get(i) - 1].isDeliver && // First check if this is a delivery point
+                    instance.requests[tour.get(i) - 1].requestId == request.requestId) { // Check if this is the same pickup-delivery request
+                lastDeliveryIdx = i;
+            }
+        }
+        return lastDeliveryIdx;
     }
 
 }

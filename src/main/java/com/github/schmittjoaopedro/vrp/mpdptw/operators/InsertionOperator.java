@@ -258,7 +258,7 @@ public class InsertionOperator {
         return pickups;
     }
 
-    private BestPosition insertAtBestPosition(Integer i, ArrayList<Integer> route, InsertionMethod insertionMethod, int prevPos) {
+    public BestPosition insertAtBestPosition(Integer i, ArrayList<Integer> route, InsertionMethod insertionMethod, int prevPos) {
         double deltaBestCost = Double.MAX_VALUE;
         double slackTimes[] = instance.slackTimesSavelsbergh(route, true);
         BestPosition bestPosition = null;

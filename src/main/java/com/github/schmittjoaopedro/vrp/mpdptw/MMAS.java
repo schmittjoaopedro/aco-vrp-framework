@@ -294,14 +294,9 @@ public class MMAS {
     }
 
     public void constructSolutions() {
-        for (Ant ant : antPopulation) {
-            AntUtils.antEmptyMemory(ant, instance);
-        }
         for (Ant ant : antPopulation) {// For each ant
+            AntUtils.antEmptyMemory(ant, instance);
             constructAntSolution(ant);
-        }
-        // Calculate fitness
-        for (Ant ant : antPopulation) {
             instance.restrictionsEvaluation(ant);
             if (ant.capacityPenalty > 0) {
                 throw new RuntimeException("Invalid capacity penaly!!");
@@ -313,6 +308,8 @@ public class MMAS {
         AntUtils.addEmptyVehicle(ant);
         int vehicle = 0;
         int currIdx = 0;
+        ant.visited[0] = true;
+        ant.toVisit--; // Remove depot
         ArrayList<Integer> remainingTour = new ArrayList<>();
         while (ant.toVisit > 0) {
             int nextNode = selectNextNode(ant, vehicle, currIdx, remainingTour);
@@ -323,24 +320,29 @@ public class MMAS {
                 vehicle++;
                 currIdx = 0;
             } else {
-                ant.tours.get(vehicle).add(nextNode);
+                ant.tours.get(vehicle).add(ant.tours.get(vehicle).size() - 1, nextNode);
                 ant.visited[nextNode] = true;
                 int reqId = instance.requests[nextNode - 1].requestId;
                 boolean containsNodeReq = ant.requests.get(vehicle).contains(reqId);
                 if (!containsNodeReq) {
                     ant.requests.get(vehicle).add(reqId);
                 }
-                removeNode(remainingTour, nextNode);
                 ant.toVisit--;
+                ArrayList<Integer> route = new ArrayList<>(ant.tours.get(vehicle));
+                route.addAll(route.size() - 1, remainingTour);
+                instance.restrictionsEvaluation(route);
                 currIdx++;
             }
         }
     }
 
     private void removeNode(ArrayList<Integer> route, int node) {
-        int idx = 0;
-        for (; idx < route.size() && route.get(idx) != node; idx++) ;
-        route.remove(idx);
+        for (int i = 0; i < route.size(); i++) {
+            if (route.get(i) == node) {
+                route.remove(i);
+                break;
+            }
+        }
     }
 
     private void addRemainingTour(Ant ant, int vehicle, ArrayList<Integer> remainingTour) {
@@ -354,7 +356,7 @@ public class MMAS {
 
     private void addRemainingTour(ArrayList<Integer> tour, ArrayList<Integer> remainingTour) {
         for (int i = 0; i < remainingTour.size(); i++) {
-            tour.add(tour.size() - 2, remainingTour.get(i));
+            tour.add(tour.size() - 1, remainingTour.get(i)); // Add before depot
         }
     }
 
@@ -362,44 +364,83 @@ public class MMAS {
         Map<Integer, ArrayList<Integer>> feasibleRemainingRoutes = new HashMap<>();
         Map<Integer, Double> feasibleCosts = new HashMap<>();
         int curr = ant.tours.get(vehicle).get(currIdx);
+        boolean hasProb = false;
         double routeCost = instance.restrictionsEvaluation(ant.tours.get(vehicle)).cost;
         for (int i = 0; i < instance.noNodes; i++) {
             if (!ant.visited[i]) {
                 Request req = instance.requests[i - 1];
                 double newCost = routeCost - instance.distances[curr][0] + instance.distances[curr][i];
                 newCost = Math.max(newCost, req.twStart);
-                newCost += req.serviceTime;
                 if (newCost < req.twEnd) {
+                    newCost += req.serviceTime;
                     ArrayList<Integer> tempRemainingTour = new ArrayList<>(remainingTour);
                     ArrayList<Integer> tempTour = new ArrayList<>(ant.tours.get(vehicle));
-                    tempTour.add(i);
+                    tempTour.add(tempTour.size() - 1, i); // insert before depot
                     addNextNodesRequests(ant.requests.get(vehicle), tempRemainingTour, i);
                     removeNode(tempRemainingTour, i);
                     addRemainingTour(tempTour, tempRemainingTour);
-                    if (optimize(tempTour, currIdx + 1)) {
+                    if (!isPrecedenceViolated(tempRemainingTour, i) && optimize(tempTour, currIdx + 2)) { // Start after the next position
                         double tau = pheromoneNodes[curr][i];
-                        double eta = instance.distances[curr][i];
+                        double eta = 1.0 / newCost;
                         double cost = Math.pow(tau, alpha) + Math.pow(eta, beta);
                         feasibleCosts.put(i, cost);
-                        feasibleRemainingRoutes.put(i, new ArrayList<>(tempTour.subList(currIdx + 1, tempTour.size() - 1)));
+                        feasibleRemainingRoutes.put(i, new ArrayList<>(tempTour.subList(currIdx + 2, tempTour.size() - 1))); // Ignore current and next nodes
+                        hasProb = true;
                     }
                 }
             }
         }
         int next = -1;
+        if (hasProb) {
+            double[] probs = new double[instance.noNodes];
+            for (Map.Entry<Integer, Double> costs : feasibleCosts.entrySet()) {
+                probs[costs.getKey()] = costs.getValue();
+            }
+            double sum = 0.0;
+            for (int i = 0; i < probs.length; i++) {
+                sum += probs[i];
+                probs[i] = sum;
+            }
+            next = getNextRouletteSelection(probs, sum);
+            remainingTour.clear();
+            remainingTour.addAll(feasibleRemainingRoutes.get(next));
+        }
         return next;
+    }
+
+    private int getNextRouletteSelection(double[] probs, double sum) {
+        int count = 0;
+        double partialSum = probs[count];
+        double rand = random.nextDouble() * sum;
+        while (partialSum <= rand) {
+            count++;
+            partialSum = probs[count];
+        }
+        return count;
+    }
+
+    private boolean isPrecedenceViolated(ArrayList<Integer> tempRemainingTour, int node) {
+        Request req = instance.requests[node - 1];
+        if (req.isDeliver) {
+            for (int i = 0; i < tempRemainingTour.size(); i++) {
+                Request req2 = instance.requests[tempRemainingTour.get(i) - 1];
+                if (req.requestId == req2.requestId && req2.isPickup) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean optimize(ArrayList<Integer> tour, int startAt) {
         RelocateNodeOperator relocateNodeOperator = new RelocateNodeOperator(instance);
         ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt);
-        if (instance.costEvaluation(improved) < instance.costEvaluation(tour)) {
+        ProblemInstance.FitnessResult result = instance.restrictionsEvaluation(improved);
+        if (result.feasible) {
             tour.clear();
             tour.addAll(improved);
-            return true;
-        } else {
-            return false;
         }
+        return result.feasible;
     }
 
     private void addNextNodesRequests(ArrayList<Integer> requests, ArrayList<Integer> tempRemainingTour, int nextNode) {
