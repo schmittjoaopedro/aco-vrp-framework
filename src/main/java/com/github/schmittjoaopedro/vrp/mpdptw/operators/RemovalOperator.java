@@ -151,6 +151,9 @@ public class RemovalOperator {
         return assignedRequests;
     }
 
+    /*
+     * Return an array of requests ordered by the relatedness of the most expensive requests (cost gain in removing a request from the route).
+     */
     private ArrayList<Req> getMostExpensiveRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
         for (int k = 0; k < requests.size(); k++) { // For each vehicle k of vehicles from S
@@ -165,6 +168,10 @@ public class RemovalOperator {
         return assignedRequests;
     }
 
+    /*
+     * Return an array of requests ordered by the relatedness of the most expensive requests by their nodes (cost gain in
+     * removing the request with the most expensive node from the route).
+     */
     private ArrayList<Req> getMostExpensiveNodesRequests(ArrayList<ArrayList<Integer>> solution) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
         double[] expensiveRequests = new double[instance.noReq];
