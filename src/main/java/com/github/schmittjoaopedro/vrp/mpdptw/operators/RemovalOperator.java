@@ -5,6 +5,12 @@ import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 
 import java.util.*;
 
+/**
+ * Removal operators allow a solution to be changed by partially destroying it, removing some requests from the routes
+ * of some vehicles. We define a set RO of removal operators containing four different heuristics to remove nodes from
+ * a solution. The number "q" of requests to remove is drawn between limits established in Section 4, while we set
+ * alpha as the number of requests already assigned to a route.
+ */
 public class RemovalOperator {
 
     private ProblemInstance instance;

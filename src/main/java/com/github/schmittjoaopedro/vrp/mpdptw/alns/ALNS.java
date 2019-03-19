@@ -9,6 +9,11 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * ALNS applied for the MPDPTW proposed in:
+ * Naccache, S., Côté, J., & Coelho, L. C. (2018). The multi-pickup and delivery problem with time windows.
+ * European Journal of Operational Research, 269(1), 353–362. https://doi.org/10.1016/j.ejor.2018.01.035
+ */
 public class ALNS {
 
     private double initialT;
@@ -299,9 +304,12 @@ public class ALNS {
         return removedRequests;
     }
 
+    /*
+     * Based on experiments evaluated by Naccache (2018) (Table 3).
+     */
     private int generateRandomQ() {
         int min = (int) Math.min(6, 0.15 * instance.noReq);
-        int max = (int) Math.min(18, 0.4 * instance.noReq) + 1;
+        int max = (int) Math.min(18, 0.4 * instance.noReq);
         return min + (int) (random.nextDouble() * (max - min));
     }
 

@@ -17,8 +17,8 @@ public class MPDPTW_ALNS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
-        int maxIterations = 25000;
-        ALNS alns = new ALNS(rootDirectory, "n_8_100_3.txt", maxIterations, new Random(1));
+        int maxIterations = 100000;
+        ALNS alns = new ALNS(rootDirectory, "w_8_400_1.txt", maxIterations, new Random(1));
         alns.execute();
     }
 
