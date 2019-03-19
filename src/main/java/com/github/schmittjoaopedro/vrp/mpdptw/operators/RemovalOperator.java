@@ -18,90 +18,108 @@ public class RemovalOperator {
         this.random = random;
     }
 
-    // Random removal
+    /*
+     * Random removal: here we randomly remove q requests from a solution. The motivation behind this operator is to
+     * increase the diversity. At the beginning, the set L contains all the assigned request in solution S. At each
+     * iteration, a request r is randomly selected in the list. All nodes are removed from solution S and r is removed
+     * from L too.
+     */
     public List<Req> removeRandomRequest(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
-        ArrayList<Req> assignedRequests;
-        Req request = selectRandomRequestFromSolution(requests);
         ArrayList<Req> removedRequests = new ArrayList<>();
-        removedRequests.add(request);
-        removeRequest(solution, requests, request);
-        int requestD;
-        while (removedRequests.size() < noReqToRemove) {
-            assignedRequests = getAllRequests(requests);
-            requestD = (int) (random.nextDouble() * assignedRequests.size());
-            request = assignedRequests.get(requestD);
-            removeRequest(solution, requests, request);
-            removedRequests.add(request);
+        ArrayList<Req> assignedRequests = getAllRequests(requests); // L a set of assigned requests in S
+        while (removedRequests.size() < noReqToRemove) { // For i = 1 to q do
+            int r = (int) (random.nextDouble() * assignedRequests.size()); // a randomly chosen request in L
+            Req request = assignedRequests.get(r);
+            removedRequests.add(request);  // L <- L\{r}
+            assignedRequests.remove(request);
+            removeRequest(solution, requests, request); // Un-assign all the nodes of request r in solution S
         }
         removeEmptyVehicles(solution, requests);
         return removedRequests;
     }
 
-    // Shaw removal
+    /*
+     * Shaw removal: this operator removes clusters of requests that are related one to each other. A seed request is
+     * randomly selected, ant the its q-1 most related neighbors are removed from the solution S. The idea o shaw removal
+     * is to remove requests that are similar to each other, in the hope that they can be all inserted elsewhere in a
+     * more profitable position. First, a function g(r_1, r_2, S) that measures the relatedness between two requests
+     * by means of distance between the delivery nodes is defined. Second, an assigned request r is randomly selected
+     * from the solution. The nodes of r are removed from the solution and the request r is stored inside the set of
+     * removed requests R. Finally, the removal loop occurs. A request r is randomly selected in R. Assigned requests
+     * from S are put inside the set o assigned requests S and sorted accordingly g(). A random number between 0 and 1
+     * is chosen. The request located in position y^D is removed from the solution and added to R. D is a parameter set to 6.
+     */
     public List<Req> removeShawRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
-        ArrayList<Req> assignedRequests;
-        Req request = selectRandomRequestFromSolution(requests);
-        ArrayList<Req> removedRequests = new ArrayList<>();
-        removedRequests.add(request);
-        removeRequest(solution, requests, request);
-        double y;
-        int requestD;
-        while (removedRequests.size() < noReqToRemove) {
-            request = removedRequests.get((int) (random.nextDouble() * removedRequests.size()));
-            assignedRequests = getMostRelatedRequests(request, requests);
-            assignedRequests.sort(Comparator.comparing(Req::getCost));
-            y = random.nextDouble();
-            requestD = (int) (Math.pow(y, D) * assignedRequests.size());
-            request = assignedRequests.get(requestD);
-            removeRequest(solution, requests, request);
-            removedRequests.add(request);
+        ArrayList<Req> R = new ArrayList<>(); // R <- {r} : set of removed requests
+        Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
+        R.add(r);
+        removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
+        while (R.size() < noReqToRemove) {
+            r = R.get((int) (random.nextDouble() * R.size())); // r <- a randomly chosen request in R
+            ArrayList<Req> assignedRequests = getMostRelatedRequests(r, requests); // an array of assigned requests in S
+            assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
+            double y = random.nextDouble(); // y <- a randomly number between 0 and 1
+            int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
+            r = assignedRequests.get(requestD);
+            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
+            R.add(r); // R <- R U {L[y^D|L|]}
         }
         removeEmptyVehicles(solution, requests);
-        return removedRequests;
+        return R;
     }
 
+    /*
+     * Most expensive nodes: here we identify the nodes that lead to the biggest savings when removed from the solution, in
+     * the hope that a less expensive insertion position can be found for them later. This operator can be seen as a variant
+     * of the shaw removal where the relatedness between to requests g(r_1, r_2, S) is the cost of removing the most expensive
+     * arcs connecting a request of r_1. The final value is multiplied by -1 to have the most expensive requests in the first
+     * position of the array.
+     */
     public List<Req> removeMostExpensiveNodes(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
-        ArrayList<Req> assignedRequests;
-        Req request = selectRandomRequestFromSolution(requests);
-        ArrayList<Req> removedRequests = new ArrayList<>();
-        removedRequests.add(request);
-        removeRequest(solution, requests, request);
-        double y;
-        int requestD;
-        while (removedRequests.size() < noReqToRemove) {
-            assignedRequests = getMostExpensiveNodesRequests(solution, requests);
-            assignedRequests.sort(Comparator.comparing(Req::getCost));
-            y = random.nextDouble();
-            requestD = (int) (Math.pow(y, D) * assignedRequests.size());
-            request = assignedRequests.get(requestD);
-            removeRequest(solution, requests, request);
-            removedRequests.add(request);
+        ArrayList<Req> R = new ArrayList<>(); // R <- {r} : set of removed requests
+        Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
+        R.add(r);
+        removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
+        while (R.size() < noReqToRemove) {
+            // array of requests with the cost of the most expensive nodes removal (gain of removal)
+            ArrayList<Req> assignedRequests = getMostExpensiveNodesRequests(solution);
+            assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
+            double y = random.nextDouble(); // y <- a randomly number between 0 and 1
+            int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
+            r = assignedRequests.get(requestD);
+            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
+            R.add(r); // R <- R U {L[y^D|L|]}
         }
         removeEmptyVehicles(solution, requests);
-        return removedRequests;
+        return R;
     }
 
+    /*
+     * Most expensive requests: this operator is similar to the most expensive nodes, but act on full requests instead of
+     * individual nodes. This operator can be seen as a variant of shaw removal where the relatedness of two requests g(r1, r2, S)
+     * is the cost of removing request r1 from S. The final value is multiplied by -1 to have the most expensive requests in the
+     * first positions of the array.
+     */
     public List<Req> removeExpensiveRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
-        ArrayList<Req> assignedRequests;
-        Req request = selectRandomRequestFromSolution(requests);
-        ArrayList<Req> removedRequests = new ArrayList<>();
-        removedRequests.add(request);
-        removeRequest(solution, requests, request);
-        double y;
-        int requestD;
-        while (removedRequests.size() < noReqToRemove) {
-            assignedRequests = getMostExpensiveRequests(solution, requests);
-            assignedRequests.sort(Comparator.comparing(Req::getCost));
-            y = random.nextDouble();
-            requestD = (int) (Math.pow(y, D) * assignedRequests.size());
-            request = assignedRequests.get(requestD);
-            removeRequest(solution, requests, request);
-            removedRequests.add(request);
+        ArrayList<Req> R = new ArrayList<>();  // R <- {r} : set of removed requests
+        Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
+        R.add(r);
+        removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
+        while (R.size() < noReqToRemove) {
+            // Array of requests with the cost of the most expensive requests (removal gain)
+            ArrayList<Req> assignedRequests = getMostExpensiveRequests(solution, requests);
+            assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
+            double y = random.nextDouble(); // y <- a randomly number between 0 and 1
+            int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
+            r = assignedRequests.get(requestD);
+            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
+            R.add(r); // R <- R U {L[y^D|L|]}
         }
         removeEmptyVehicles(solution, requests);
-        return removedRequests;
+        return R;
     }
 
+    // Remove vehicles with empty request list
     private void removeEmptyVehicles(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
         int position = 0;
         while (solution.size() > position) {
@@ -114,16 +132,19 @@ public class RemovalOperator {
         }
     }
 
+    /*
+     * Return an array of request ordered by the relatedness (distance between delivery points)
+     * with the request parameter.
+     */
     private ArrayList<Req> getMostRelatedRequests(Req request, ArrayList<ArrayList<Integer>> requests) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
-        int requestId;
-        double relatedCost;
-        for (int vehicleId = 0; vehicleId < requests.size(); vehicleId++) {
-            for (int requestIdx = 0; requestIdx < requests.get(vehicleId).size(); requestIdx++) {
-                requestId = requests.get(vehicleId).get(requestIdx);
-                if (requestId != request.requestId) {
-                    relatedCost = instance.distances[instance.delivery.get(request.requestId).nodeId][instance.delivery.get(requestId).nodeId];
-                    assignedRequests.add(new Req(vehicleId, requestId, relatedCost));
+        for (int k = 0; k < requests.size(); k++) { // For each vehicle k in vehicles
+            for (int r = 0; r < requests.get(k).size(); r++) { // For each request r in vehicle k
+                int reqId = requests.get(k).get(r);
+                if (reqId != request.requestId) {
+                    // Get the distance between the delivery points between the request parameter and the current request r of vehicle k
+                    double relatedCost = instance.distances[instance.delivery.get(request.requestId).nodeId][instance.delivery.get(reqId).nodeId];
+                    assignedRequests.add(new Req(k, reqId, relatedCost)); // Add the request with the related cost to the list of assigned requests
                 }
             }
         }
@@ -132,43 +153,37 @@ public class RemovalOperator {
 
     private ArrayList<Req> getMostExpensiveRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
-        int requestId;
-        double originalRoutCost, newRouteCost;
-        for (int vehicleId = 0; vehicleId < requests.size(); vehicleId++) {
-            originalRoutCost = instance.costEvaluation(solution.get(vehicleId));
-            for (int requestIdx = 0; requestIdx < requests.get(vehicleId).size(); requestIdx++) {
-                requestId = requests.get(vehicleId).get(requestIdx);
-                newRouteCost = instance.costEvaluation(solution.get(vehicleId), requestId);
-                newRouteCost = (originalRoutCost - newRouteCost) * -1.0;
-                assignedRequests.add(new Req(vehicleId, requestId, newRouteCost));
+        for (int k = 0; k < requests.size(); k++) { // For each vehicle k of vehicles from S
+            double originalRoutCost = instance.costEvaluation(solution.get(k)); // Calculate the current vehicle k route cost
+            for (int r = 0; r < requests.get(k).size(); r++) { // For each request of vehicle k
+                int requestId = requests.get(k).get(r); // obtain the request id
+                double newRouteCost = instance.costEvaluation(solution.get(k), requestId); // calculate the route cost ignoring the current request r
+                double gain = (originalRoutCost - newRouteCost) * -1.0; // calculate the gain of removing request r
+                assignedRequests.add(new Req(k, requestId, gain));
             }
         }
         return assignedRequests;
     }
 
-    private ArrayList<Req> getMostExpensiveNodesRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
+    private ArrayList<Req> getMostExpensiveNodesRequests(ArrayList<ArrayList<Integer>> solution) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
-        int requestId, prev, curr, next;
-        double cost, newCost;
         double[] expensiveRequests = new double[instance.noReq];
         int[] vehicleRequests = new int[instance.noReq];
-        for (int vehicleId = 0; vehicleId < requests.size(); vehicleId++) {
-            for (int i = 1; i < solution.get(vehicleId).size() - 1; i++) {
-                prev = solution.get(vehicleId).get(i - 1);
-                curr = solution.get(vehicleId).get(i);
-                next = solution.get(vehicleId).get(i + 1);
-                requestId = instance.requests[curr - 1].requestId;
-                cost = instance.distances[prev][curr] + instance.distances[curr][next];
-                newCost = instance.distances[prev][next];
-                if (expensiveRequests[requestId] < (cost - newCost)) {
-                    expensiveRequests[requestId] = cost - newCost;
-                }
-                vehicleRequests[requestId] = vehicleId;
+        for (int k = 0; k < solution.size(); k++) { // for each vehicle k in vehicles from solution
+            for (int i = 1; i < solution.get(k).size() - 1; i++) { // for each node i from route of vehicle k (ignoring depots)
+                int prev = solution.get(k).get(i - 1); // Get previous node
+                int curr = solution.get(k).get(i); // Get current node
+                int next = solution.get(k).get(i + 1); // get next node
+                int requestId = instance.requests[curr - 1].requestId;
+                double cost = instance.distances[prev][curr] + instance.distances[curr][next]; // Calculate the cost of (prev->curr->next)
+                double newCost = cost - instance.distances[prev][next]; // Calculate the gain in remove the current node (prev->next)
+                expensiveRequests[requestId] = Math.max(expensiveRequests[requestId], newCost); // Store the biggest gains
+                vehicleRequests[requestId] = k;
             }
         }
         for (int i = 0; i < expensiveRequests.length; i++) {
-            if (expensiveRequests[i] != 0) {
-                assignedRequests.add(new Req(vehicleRequests[i], i, expensiveRequests[i] * -1.0));
+            if (expensiveRequests[i] != 0) { // Zero values can occur when a given node presents negative gain
+                assignedRequests.add(new Req(vehicleRequests[i], i, expensiveRequests[i] * -1.0)); // Multiply by -1 to execute descending sorting.
             }
         }
         return assignedRequests;
@@ -176,31 +191,30 @@ public class RemovalOperator {
 
     private ArrayList<Req> getAllRequests(ArrayList<ArrayList<Integer>> requests) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
-        int requestId;
-        for (int vehicleId = 0; vehicleId < requests.size(); vehicleId++) {
-            for (int requestIdx = 0; requestIdx < requests.get(vehicleId).size(); requestIdx++) {
-                requestId = requests.get(vehicleId).get(requestIdx);
-                assignedRequests.add(new Req(vehicleId, requestId, 0.0));
+        int rId;
+        for (int k = 0; k < requests.size(); k++) {
+            for (int r = 0; r < requests.get(k).size(); r++) {
+                rId = requests.get(k).get(r);
+                assignedRequests.add(new Req(k, rId, 0.0));
             }
         }
         return assignedRequests;
     }
 
     private Req selectRandomRequestFromSolution(ArrayList<ArrayList<Integer>> requests) {
-        double noVehicles = requests.size();
-        int rndVehicle = (int) (random.nextDouble() * noVehicles);
-        ArrayList<Integer> vehicleRequests = requests.get(rndVehicle);
-        double noRequests = vehicleRequests.size();
-        int rndRequest = (int) (random.nextDouble() * noRequests);
-        int removedRequest = requests.get(rndVehicle).get(rndRequest);
-        return new Req(rndVehicle, removedRequest);
+        int rndVehicle = (int) (random.nextDouble() * requests.size()); // Select a random vehicle
+        int rndRequest = (int) (random.nextDouble() * requests.get(rndVehicle).size()); // Select a random request from the vehicle
+        return new Req(rndVehicle, requests.get(rndVehicle).get(rndRequest));
     }
 
     private void removeRequest(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, Req request) {
+        // Remove all pickups node from solution
         for (Request req : instance.pickups.get(request.requestId)) {
             removeItem(solution.get(request.vehicleId), req.nodeId);
         }
+        // Remove the delivery node from solution
         removeItem(solution.get(request.vehicleId), instance.delivery.get(request.requestId).nodeId);
+        // Remove request id from solution
         removeItem(requests.get(request.vehicleId), request.requestId);
     }
 
