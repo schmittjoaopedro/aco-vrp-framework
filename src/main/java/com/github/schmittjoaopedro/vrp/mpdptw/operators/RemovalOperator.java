@@ -74,6 +74,7 @@ public class RemovalOperator {
      * of the shaw removal where the relatedness between to requests g(r_1, r_2, S) is the cost of removing the most expensive
      * arcs connecting a request of r_1. The final value is multiplied by -1 to have the most expensive requests in the first
      * position of the array.
+     * Accordingly email from Jean-François Côté I can ignore the step 5 from algorithm 3.
      */
     public List<Req> removeMostExpensiveNodes(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
         ArrayList<Req> R = new ArrayList<>(); // R <- {r} : set of removed requests
@@ -99,6 +100,7 @@ public class RemovalOperator {
      * individual nodes. This operator can be seen as a variant of shaw removal where the relatedness of two requests g(r1, r2, S)
      * is the cost of removing request r1 from S. The final value is multiplied by -1 to have the most expensive requests in the
      * first positions of the array.
+     * Accordingly email from Jean-François Côté I can ignore the step 5 from algorithm 3.
      */
     public List<Req> removeExpensiveRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
         ArrayList<Req> R = new ArrayList<>();  // R <- {r} : set of removed requests
