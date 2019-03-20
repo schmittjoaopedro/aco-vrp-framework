@@ -1,11 +1,17 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 
 import java.util.*;
 
+/**
+ * Insertion operators aim at building a feasible solution after some requests have been removed from it. We developed
+ * a set IO of insertion operators containing five heuristics. Each of these five insertion operators require
+ * evaluating the best position to insert a node. Algorithm 4 presents the general heuristic.
+ */
 public class InsertionOperator {
 
     private ProblemInstance instance;
@@ -117,44 +123,50 @@ public class InsertionOperator {
         return worstRegret;
     }
 
-
+    /*
+     * Greedy insertion: select a remaining request and inserted it based on a greedy criterion, namely in the position
+     * yielding the lowest increase in the objective function.
+     */
     public void insertGreedyRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, PickupMethod pickupMethod) {
-        Req currReq;
-        ArrayList<Integer> newRoute;
-        BestRequest bestRequest;
-        for (int r = 0; r < requestsToInsert.size(); r++) {
-            currReq = requestsToInsert.get(r);
-            bestRequest = null;
-            for (int k = 0; k < solution.size(); k++) {
-                newRoute = new ArrayList<>(solution.get(k));
-                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) {
-                    double cost = instance.costEvaluation(newRoute);
-                    if (bestRequest == null || cost < bestRequest.cost) {
-                        bestRequest = new BestRequest(cost, k, currReq.requestId, newRoute);
+        for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
+            Req currReq = requestsToInsert.get(r);
+            BestRequest bestRequest = null;
+            int lastVehicle = requests.size() - 1;
+            if (solution.get(lastVehicle).size() > 2) {
+                // Create a new vehicle to let available to the greedy operator
+                requests.add(new ArrayList<>());
+                solution.add(new ArrayList<>());
+                lastVehicle++;
+                solution.get(lastVehicle).add(0);
+                solution.get(lastVehicle).add(0);
+            }
+            for (int k = 0; k < solution.size(); k++) { // For each vehicle from solution
+                double vehicleCost = instance.costEvaluation(solution.get(k)); // Evaluate the vehicle route cost
+                ArrayList<Integer> newRoute = new ArrayList<>(solution.get(k)); // Clone the route from vehicle k to evict update the original one
+                if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) { // If the request insertion is feasible
+                    double lost = (instance.costEvaluation(newRoute) - vehicleCost); // Calculate the lost of insert request r in vehicle k
+                    // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
+                    if (bestRequest == null || lost < bestRequest.cost) {
+                        bestRequest = new BestRequest(lost, k, currReq.requestId, newRoute);
                     }
                 }
             }
             if (bestRequest == null) {
-                requests.add(new ArrayList<>());
-                requests.get(requests.size() - 1).add(currReq.requestId);
-                solution.add(new ArrayList<>());
-                solution.get(requests.size() - 1).add(0);
-                solution.get(requests.size() - 1).add(0);
-                if (!insertRequestOnVehicle(currReq.requestId, solution.get(solution.size() - 1), PickupMethod.Random, InsertionMethod.Greedy)) {
-                    OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
-                    optimalRequestSolver.optimize();
-                    ArrayList<Integer> newTour = new ArrayList<>();
-                    for (int i : optimalRequestSolver.getBestRoute()) {
-                        newTour.add(i);
-                    }
-                    solution.get(requests.size() - 1).clear();
-                    solution.get(requests.size() - 1).addAll(newTour);
+                // Use the optimal solver to build a feasible request
+                OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
+                optimalRequestSolver.optimize();
+                solution.get(lastVehicle).clear();
+                for (int i : optimalRequestSolver.getBestRoute()) {
+                    solution.get(lastVehicle).add(i);
                 }
+                requests.get(lastVehicle).add(currReq.requestId);
             } else {
+                // Add the inserted request on the vehicle
                 solution.set(bestRequest.vehicle, bestRequest.route);
                 requests.get(bestRequest.vehicle).add(currReq.requestId);
             }
         }
+        removeEmptyVehicles(solution, requests);
     }
 
     public boolean insertRequestOnVehicle(int requestId, ArrayList<Integer> kRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
@@ -337,6 +349,19 @@ public class InsertionOperator {
             return 0.0;
         } else {
             return instance.requests[next - 1].serviceTime;
+        }
+    }
+
+    // Remove empty vehicles
+    private void removeEmptyVehicles(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
+        int position = 0;
+        while (solution.size() > position) {
+            if (requests.get(position).isEmpty()) {
+                solution.remove(position);
+                requests.remove(position);
+            } else {
+                position++;
+            }
         }
     }
 

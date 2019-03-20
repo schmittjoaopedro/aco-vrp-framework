@@ -237,9 +237,8 @@ public class ALNS {
     }
 
     private void updateScores(int ro, int ri, double sigma) {
-        // The score must be divivid accordingly Ropke (pg 8)
-        roScores[ro] = roScores[ro] + (sigma / 2.0);
-        riScores[ri] = riScores[ri] + (sigma / 2.0);
+        roScores[ro] = roScores[ro] + sigma;
+        riScores[ri] = riScores[ri] + sigma;
     }
 
     private Solution applyImprovement(Solution solution) {
