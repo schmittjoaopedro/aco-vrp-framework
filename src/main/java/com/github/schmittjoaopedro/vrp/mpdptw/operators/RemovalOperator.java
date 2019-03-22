@@ -87,18 +87,34 @@ public class RemovalOperator {
         Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
         R.add(r);
         removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
+        // array of requests with the cost of the most expensive nodes removal (gain of removal)
+        ArrayList<Req> assignedRequests = getMostExpensiveNodesRequests(solution);
+        assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
         while (R.size() < noReqToRemove) {
-            // array of requests with the cost of the most expensive nodes removal (gain of removal)
-            ArrayList<Req> assignedRequests = getMostExpensiveNodesRequests(solution);
-            assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
             double y = random.nextDouble(); // y <- a randomly number between 0 and 1
             int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
             r = assignedRequests.get(requestD);
-            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
             R.add(r); // R <- R U {L[y^D|L|]}
+            assignedRequests.remove(r); // L <- L \{r}
+            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
+            updateChangedVehicles(solution, r, assignedRequests); // Update vehicle that had their route changed
         }
-        removeEmptyVehicles(solution, requests);
+        removeEmptyVehicles(solution, requests); // Remove empty vehicles at the end, to evict update indices during algorithm execution
         return R;
+    }
+
+    private void updateChangedVehicles(ArrayList<ArrayList<Integer>> solution, Req r, ArrayList<Req> assignedRequests) {
+        int i = 0;
+        Map<Integer, RemovalRequest> requestMap = getRequestsCostsByExpensiveNode(solution.get(r.vehicleId)); // Recalculate the requests costs for the current vehicle
+        while (i < assignedRequests.size()) {
+            if (assignedRequests.get(i).vehicleId == r.vehicleId) { // If still exists requests associated with the given vehicle
+                RemovalRequest removalRequest = requestMap.get(assignedRequests.get(i).requestId);
+                Req req = new Req(r.vehicleId, removalRequest.requestId, removalRequest.cost); // Set the updated cost for the given request
+                assignedRequests.set(i, req);
+            }
+            i++;
+        }
+        assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
     }
 
     /*
@@ -182,26 +198,32 @@ public class RemovalOperator {
      */
     private ArrayList<Req> getMostExpensiveNodesRequests(ArrayList<ArrayList<Integer>> solution) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
-        double[] expensiveRequests = new double[instance.noReq];
-        int[] vehicleRequests = new int[instance.noReq];
         for (int k = 0; k < solution.size(); k++) { // for each vehicle k in vehicles from solution
-            for (int i = 1; i < solution.get(k).size() - 1; i++) { // for each node i from route of vehicle k (ignoring depots)
-                int prev = solution.get(k).get(i - 1); // Get previous node
-                int curr = solution.get(k).get(i); // Get current node
-                int next = solution.get(k).get(i + 1); // get next node
-                int requestId = instance.requests[curr - 1].requestId;
-                double cost = instance.distances[prev][curr] + instance.distances[curr][next]; // Calculate the cost of (prev->curr->next)
-                double newCost = cost - instance.distances[prev][next]; // Calculate the gain in remove the current node (prev->next)
-                expensiveRequests[requestId] = Math.max(expensiveRequests[requestId], newCost); // Store the biggest gains
-                vehicleRequests[requestId] = k;
-            }
-        }
-        for (int i = 0; i < expensiveRequests.length; i++) {
-            if (expensiveRequests[i] != 0) { // Zero values can occur when a given node presents negative gain
-                assignedRequests.add(new Req(vehicleRequests[i], i, expensiveRequests[i] * -1.0)); // Multiply by -1 to execute descending sorting.
+            Map<Integer, RemovalRequest> requestMap = getRequestsCostsByExpensiveNode(solution.get(k));
+            for (RemovalRequest removalRequest : requestMap.values()) {
+                assignedRequests.add(new Req(k, removalRequest.requestId, removalRequest.cost));
             }
         }
         return assignedRequests;
+    }
+
+    private Map<Integer, RemovalRequest> getRequestsCostsByExpensiveNode(ArrayList<Integer> route) {
+        Map<Integer, RemovalRequest> requestsMap = new HashMap<>();
+        for (int i = 1; i < route.size() - 1; i++) { // for each node i from route of vehicle k (ignoring depots)
+            int prev = route.get(i - 1); // Get previous node
+            int curr = route.get(i); // Get current node
+            int next = route.get(i + 1); // get next node
+            int requestId = instance.requests[curr - 1].requestId;
+            double cost = instance.distances[prev][curr] + instance.distances[curr][next]; // Calculate the cost of (prev->curr->next)
+            double deltaCost = cost - instance.distances[prev][next]; // Calculate the gain in remove the current node (prev->next)
+            if (!requestsMap.containsKey(requestId) || deltaCost > requestsMap.get(requestId).cost) {
+                requestsMap.put(requestId, new RemovalRequest(requestId, deltaCost));
+            }
+        }
+        for (RemovalRequest removalRequest : requestsMap.values()) {
+            removalRequest.cost = removalRequest.cost * -1.0;
+        }
+        return requestsMap;
     }
 
     private ArrayList<Req> getAllRequests(ArrayList<ArrayList<Integer>> requests) {
@@ -242,6 +264,26 @@ public class RemovalOperator {
             }
         }
         array.remove(position);
+    }
+
+    public class RemovalRequest {
+
+        private int requestId;
+
+        private double cost;
+
+        public RemovalRequest(int requestId, double cost) {
+            this.requestId = requestId;
+            this.cost = cost;
+        }
+
+        public int getRequestId() {
+            return requestId;
+        }
+
+        public double getCost() {
+            return cost;
+        }
     }
 
 }
