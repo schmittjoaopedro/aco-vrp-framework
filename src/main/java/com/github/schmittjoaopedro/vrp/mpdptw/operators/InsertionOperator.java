@@ -53,6 +53,9 @@ public class InsertionOperator {
      * Regret-m, with noise: similarly, we use a regret-m criterion to which insertion noise is added.
      */
     public void insertRegretRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, int regretLevel, InsertionMethod insertionMethod, PickupMethod pickupMethod) {
+        // Cache already processed routes to evict over processing
+        RouteCache originalRoutesCache = new RouteCache();
+        RouteCache newRoutesCache = new RouteCache();
         // Compute the gain (time difference) for each request insertion
         while (!requestsToInsert.isEmpty()) {
             List<InsertRequest> requestsRegret = new ArrayList<>();
@@ -69,11 +72,24 @@ public class InsertionOperator {
                     solution.get(lastVehicle).add(0);
                 }
                 for (int k = 0; k < solution.size(); k++) {
-                    ArrayList<Integer> newRoute = new ArrayList<>(solution.get(k));
-                    if (insertRequestOnVehicle(requestId, newRoute, pickupMethod, insertionMethod)) {
-                        // Calculate the lost in cost to be inserting request r in vehicle k
-                        double costDiff = instance.costEvaluation(newRoute) - instance.costEvaluation(solution.get(k));
-                        feasibleRoutes.add(new InsertRequest(costDiff, k, requestId, newRoute));
+                    if (!originalRoutesCache.hasCacheCost(k, requestId)) {
+                        originalRoutesCache.setCacheCost(k, requestId, solution.get(k));
+                    }
+                    double originalCost = originalRoutesCache.getCacheCost(k, requestId);
+                    if (!newRoutesCache.hasCacheCost(k, requestId)) {
+                        ArrayList<Integer> newRoute = new ArrayList<>(solution.get(k));
+                        if (insertRequestOnVehicle(requestId, newRoute, pickupMethod, insertionMethod)) {
+                            // Calculate the lost in cost to be inserting request r in vehicle k
+                            newRoutesCache.setCacheCost(k, requestId, newRoute);
+                            double newCost = newRoutesCache.getCacheCost(k, requestId);
+                            double costDiff = newCost - originalCost;
+                            feasibleRoutes.add(new InsertRequest(costDiff, k, requestId, newRoute));
+                        } else {
+                            newRoutesCache.setCacheCost(k, requestId, null);
+                        }
+                    } else if (!newRoutesCache.isNull(k, requestId)) {
+                        double costDiff = newRoutesCache.getCacheCost(k, requestId) - originalCost;
+                        feasibleRoutes.add(new InsertRequest(costDiff, k, requestId, newRoutesCache.getCacheRoute(k, requestId)));
                     }
                 }
                 // Use the optimal solver to execute the insertion heuristic
@@ -97,6 +113,8 @@ public class InsertionOperator {
             InsertRequest reqToInsert = requestsRegret.get(0);
             solution.set(reqToInsert.vehicle, reqToInsert.route);
             requests.get(reqToInsert.vehicle).add(reqToInsert.reqId);
+            originalRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
+            newRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
             // Remove the inserted request from the requests to insert list
             for (int i = 0; i < requestsToInsert.size(); i++) {
                 if (reqToInsert.reqId == requestsToInsert.get(i).requestId) {
@@ -252,7 +270,7 @@ public class InsertionOperator {
         switch (insertionMethod) {
             case Regret3Noise:
             case RegretMNoise:
-                randomNoise = (0.5 - random.nextDouble()) * instance.maxDistance;
+                randomNoise = (2 * random.nextDouble() * instance.maxDistance) - instance.maxDistance;
                 break;
         }
         return randomNoise;
@@ -374,14 +392,6 @@ public class InsertionOperator {
         }
     }
 
-    private double slackNext(int next, double tNext) {
-        if (next == instance.depot.nodeId) {
-            return instance.depot.twEnd - tNext;
-        } else {
-            return instance.requests[next - 1].twEnd - tNext;
-        }
-    }
-
     public class BestPickup {
         public Request pickupNode;
         public BestPosition bestPosition;
@@ -399,6 +409,51 @@ public class InsertionOperator {
         public BestPosition(int position, double cost) {
             this.position = position;
             this.cost = cost;
+        }
+    }
+
+    public class RouteCache {
+
+        // Cache routes based on a given key. In this case the composition of vehicle and request.
+        private Map<String, InsertRequest> cache = new HashMap<>();
+
+        // Used o test if a vehicle with for a given request is infeasible
+        private boolean isNull(int k, int r) {
+            return cache.get(k + "-" + r) == null;
+        }
+
+        private ArrayList<Integer> getCacheRoute(int k, int r) {
+            return cache.get(k + "-" + r).route;
+        }
+
+        private Double getCacheCost(int k, int r) {
+            return cache.get(k + "-" + r).cost;
+        }
+
+        private void setCacheCost(int k, int r, ArrayList<Integer> route) {
+            String key = k + "-" + r;
+            if (!cache.containsKey(key)) {
+                if (route != null) {
+                    cache.put(key, new InsertRequest(instance.costEvaluation(route), k, r, route));
+                } else {
+                    cache.put(key, null);
+                }
+            }
+        }
+
+        private boolean hasCacheCost(int k, int r) {
+            return cache.containsKey(k + "-" + r);
+        }
+
+        // Remove all cache entries associated with the given vehicle
+        private void removeVehicleFromCache(int k) {
+            String key = k + "-";
+            Set<String> keySet = new HashSet<>(cache.keySet());
+            for (String hashKey : keySet) {
+                if (hashKey.startsWith(key)) {
+                    cache.remove(hashKey);
+                }
+            }
         }
     }
 
