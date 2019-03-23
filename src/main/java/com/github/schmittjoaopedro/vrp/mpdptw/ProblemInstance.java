@@ -332,14 +332,39 @@ public class ProblemInstance {
     public double costEvaluation(List<Integer> tour, Integer requestToIgnore) {
         double cost = 0.0;
         int from, to;
-        for (int i = 0; i < tour.size() - 1; i++) {
+        int i = 0;
+        while (i < tour.size()) {
             from = tour.get(i);
-            to = tour.get(i + 1);
-            if (to != depot.nodeId && requests[to - 1].requestId == requestToIgnore) {
+            i++;
+            to = tour.get(i);
+            while (to != depot.nodeId && requests[to - 1].requestId == requestToIgnore) {
                 i++;
-                to = tour.get(i + 1);
+                to = tour.get(i);
             }
             cost += distances[from][to];
+            if (to == depot.nodeId) {
+                break;
+            }
+        }
+        return cost;
+    }
+
+    public double costEvaluation(List<Integer> tour, Integer requestToIgnore, int nodeToConsider) {
+        double cost = 0.0;
+        int from, to;
+        int i = 0;
+        while (i < tour.size()) {
+            from = tour.get(i);
+            i++;
+            to = tour.get(i);
+            while (to != depot.nodeId && requests[to - 1].requestId == requestToIgnore && to != nodeToConsider) {
+                i++;
+                to = tour.get(i);
+            }
+            cost += distances[from][to];
+            if (to == depot.nodeId) {
+                break;
+            }
         }
         return cost;
     }

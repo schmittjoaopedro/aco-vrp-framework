@@ -83,38 +83,7 @@ public class RemovalOperator {
      * Accordingly email from Jean-François Côté I can ignore the step 5 from algorithm 3.
      */
     public List<Req> removeMostExpensiveNodes(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
-        ArrayList<Req> R = new ArrayList<>(); // R <- {r} : set of removed requests
-        Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
-        R.add(r);
-        removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
-        // array of requests with the cost of the most expensive nodes removal (gain of removal)
-        ArrayList<Req> assignedRequests = getMostExpensiveNodesRequests(solution);
-        assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
-        while (R.size() < noReqToRemove) {
-            double y = random.nextDouble(); // y <- a randomly number between 0 and 1
-            int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
-            r = assignedRequests.get(requestD);
-            R.add(r); // R <- R U {L[y^D|L|]}
-            assignedRequests.remove(r); // L <- L \{r}
-            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
-            updateChangedVehicles(solution, r, assignedRequests); // Update vehicle that had their route changed
-        }
-        removeEmptyVehicles(solution, requests); // Remove empty vehicles at the end, to evict update indices during algorithm execution
-        return R;
-    }
-
-    private void updateChangedVehicles(ArrayList<ArrayList<Integer>> solution, Req r, ArrayList<Req> assignedRequests) {
-        int i = 0;
-        Map<Integer, RemovalRequest> requestMap = getRequestsCostsByExpensiveNode(solution.get(r.vehicleId)); // Recalculate the requests costs for the current vehicle
-        while (i < assignedRequests.size()) {
-            if (assignedRequests.get(i).vehicleId == r.vehicleId) { // If still exists requests associated with the given vehicle
-                RemovalRequest removalRequest = requestMap.get(assignedRequests.get(i).requestId);
-                Req req = new Req(r.vehicleId, removalRequest.requestId, removalRequest.cost); // Set the updated cost for the given request
-                assignedRequests.set(i, req);
-            }
-            i++;
-        }
-        assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
+        return removeRequestBasedOnCriteria(solution, requests, noReqToRemove, RemovalMethod.ExpensiveNode);
     }
 
     /*
@@ -125,22 +94,43 @@ public class RemovalOperator {
      * Accordingly email from Jean-François Côté I can ignore the step 5 from algorithm 3.
      */
     public List<Req> removeExpensiveRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
-        ArrayList<Req> R = new ArrayList<>();  // R <- {r} : set of removed requests
+        return removeRequestBasedOnCriteria(solution, requests, noReqToRemove, RemovalMethod.ExpensiveRequest);
+    }
+
+    public List<Req> removeRequestBasedOnCriteria(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove, RemovalMethod removalMethod) {
+        ArrayList<Req> R = new ArrayList<>(); // R <- {r} : set of removed requests
         Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
         R.add(r);
         removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
+        // array of requests with the cost of the most expensive nodes removal (gain of removal)
+        ArrayList<Req> assignedRequests = getRequestsCosts(solution, requests, removalMethod);
+        assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
         while (R.size() < noReqToRemove) {
-            // Array of requests with the cost of the most expensive requests (removal gain)
-            ArrayList<Req> assignedRequests = getMostExpensiveRequests(solution, requests);
-            assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
             double y = random.nextDouble(); // y <- a randomly number between 0 and 1
             int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
             r = assignedRequests.get(requestD);
-            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
             R.add(r); // R <- R U {L[y^D|L|]}
+            assignedRequests.remove(r); // L <- L \{r}
+            removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
+            updateChangedVehicle(solution, requests, r, assignedRequests, removalMethod); // Update vehicle that had their route changed
         }
-        removeEmptyVehicles(solution, requests);
+        removeEmptyVehicles(solution, requests); // Remove empty vehicles at the end, to evict update indices during algorithm execution
         return R;
+    }
+
+    // Update cost of the changed vehicle
+    private void updateChangedVehicle(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, Req r, ArrayList<Req> assignedRequests, RemovalMethod removalMethod) {
+        int i = 0;
+        Map<Integer, RemovalRequest> requestMap = getRequestsCostsByCriteria(solution.get(r.vehicleId), requests.get(r.vehicleId), removalMethod); // Recalculate the requests costs for the current vehicle
+        while (i < assignedRequests.size()) {
+            if (assignedRequests.get(i).vehicleId == r.vehicleId) { // If still exists requests associated with the given vehicle
+                RemovalRequest removalRequest = requestMap.get(assignedRequests.get(i).requestId);
+                Req req = new Req(r.vehicleId, removalRequest.requestId, removalRequest.cost); // Set the updated cost for the given request
+                assignedRequests.set(i, req);
+            }
+            i++;
+        }
+        assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
     }
 
     // Remove vehicles with empty request list
@@ -196,10 +186,10 @@ public class RemovalOperator {
      * Return an array of requests ordered by the relatedness of the most expensive requests by their nodes (cost gain in
      * removing the request with the most expensive node from the route).
      */
-    private ArrayList<Req> getMostExpensiveNodesRequests(ArrayList<ArrayList<Integer>> solution) {
+    private ArrayList<Req> getRequestsCosts(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, RemovalMethod removalMethod) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
         for (int k = 0; k < solution.size(); k++) { // for each vehicle k in vehicles from solution
-            Map<Integer, RemovalRequest> requestMap = getRequestsCostsByExpensiveNode(solution.get(k));
+            Map<Integer, RemovalRequest> requestMap = getRequestsCostsByCriteria(solution.get(k), requests.get(k), removalMethod);
             for (RemovalRequest removalRequest : requestMap.values()) {
                 assignedRequests.add(new Req(k, removalRequest.requestId, removalRequest.cost));
             }
@@ -207,21 +197,36 @@ public class RemovalOperator {
         return assignedRequests;
     }
 
-    private Map<Integer, RemovalRequest> getRequestsCostsByExpensiveNode(ArrayList<Integer> route) {
+    /*
+     * Calculate the costs of te given route for removing each requests based on different criteria.
+     */
+    private Map<Integer, RemovalRequest> getRequestsCostsByCriteria(ArrayList<Integer> route, ArrayList<Integer> requests, RemovalMethod removalMethod) {
         Map<Integer, RemovalRequest> requestsMap = new HashMap<>();
-        for (int i = 1; i < route.size() - 1; i++) { // for each node i from route of vehicle k (ignoring depots)
-            int prev = route.get(i - 1); // Get previous node
-            int curr = route.get(i); // Get current node
-            int next = route.get(i + 1); // get next node
-            int requestId = instance.requests[curr - 1].requestId;
-            double cost = instance.distances[prev][curr] + instance.distances[curr][next]; // Calculate the cost of (prev->curr->next)
-            double deltaCost = cost - instance.distances[prev][next]; // Calculate the gain in remove the current node (prev->next)
-            if (!requestsMap.containsKey(requestId) || deltaCost > requestsMap.get(requestId).cost) {
-                requestsMap.put(requestId, new RemovalRequest(requestId, deltaCost));
+        double gain;
+        double routeCost = instance.costEvaluation(route); // Calculate the cost of the original route
+        for (int requestId : requests) {
+            switch (removalMethod) {
+                case ExpensiveNode:
+                    double cost = instance.costEvaluation(route, requestId, instance.delivery.get(requestId).nodeId); // Route cost without delivery node
+                    for (Request req : instance.pickups.get(requestId)) {
+                        double newCost = instance.costEvaluation(route, requestId, req.nodeId); // Route cost without pickup node
+                        if (newCost < cost) { // Store the lowest cost based on node removal
+                            cost = newCost;
+                        }
+                    }
+                    gain = routeCost - cost; // Calculate the gain on remove this request based on node
+                    requestsMap.put(requestId, new RemovalRequest(requestId, gain));
+                    break;
+                case ExpensiveRequest:
+                    gain = routeCost - instance.costEvaluation(route, requestId); // Calculate the gain on remove fully the current request
+                    requestsMap.put(requestId, new RemovalRequest(requestId, gain));
+                    break;
+                default:
+                    throw new RuntimeException("Error on process request cost criteria");
             }
         }
         for (RemovalRequest removalRequest : requestsMap.values()) {
-            removalRequest.cost = removalRequest.cost * -1.0;
+            removalRequest.cost = removalRequest.cost * -1.0; // Multiply by negative to put best gains in front of the list
         }
         return requestsMap;
     }

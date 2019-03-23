@@ -166,12 +166,12 @@ public class ALNS {
                 resetOperatorsScores();
                 solution = applyImprovement(solution); // Apply improvement to S
                 updateBest(solution);
-                System.out.println("Iter " + iteration +
+                /*System.out.println("Iter " + iteration +
                         " Best = " + format(solution.totalCost) + ", feasible = " + solution.feasible +
                         " BSF = " + format(solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
                         ", T = " + format(T) + ", minT = " + format(minT) +
                         ", ro = " + StringUtils.join(getArray(roWeights), ',') +
-                        ", ri = " + StringUtils.join(getArray(riWeights), ','));
+                        ", ri = " + StringUtils.join(getArray(riWeights), ','));*/
             }
             iteration++;
         }
