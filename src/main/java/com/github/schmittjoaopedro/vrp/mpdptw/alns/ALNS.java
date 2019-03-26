@@ -9,6 +9,11 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**
+ * ALNS applied for the MPDPTW proposed in:
+ * Naccache, S., Côté, J., & Coelho, L. C. (2018). The multi-pickup and delivery problem with time windows.
+ * European Journal of Operational Research, 269(1), 353–362. https://doi.org/10.1016/j.ejor.2018.01.035
+ */
 public class ALNS {
 
     private double initialT;
@@ -35,52 +40,61 @@ public class ALNS {
 
     private double segment = 100.0;
 
+    // Define this values as (sigma1 > sigma2 > sigma3)
     private double sigma1 = 33;
-
     private double sigma2 = 20;
-
     private double sigma3 = 12;
 
     private double d; // initial cost
 
     private double w; // temp control
 
-    private double minWeight = 1.0;
-
-    private double maxWeight = 20.0;
-
     private InsertionOperator insertionOperator;
 
     private RemovalOperator removalOperator;
 
-    private double[] roScores;
-
-    private double[] riScores;
-
+    // Indicates how well an operator has performed in the past
     private double[] roWeights;
-
     private double[] riWeights;
 
-    private int[] roUsages;
+    // These are the accumulated scores (PI_i) of each operator during the executiong of segment (delta).
+    private double[] roScores;
+    private double[] riScores;
 
+    // Number of times that each operator has been used in the last segment j.
+    private int[] roUsages;
     private int[] riUsages;
 
     private Random random;
 
+    // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance.
     private double rho = 0.1; //η
 
     private RelocateRequestOperator relocateRequestOperator;
 
     private ExchangeRequestOperator exchangeRequestOperator;
 
-    public ALNS(String rootDirectory, String fileName, Solution initialSolution, int maxIterations, Random random) {
+    public ALNS(String rootDirectory, String fileName, int maxIterations, Random random) {
         this.rootDirectory = rootDirectory;
         this.fileName = fileName;
         this.maxIterations = maxIterations;
         this.random = random;
 
-        this.solution = initialSolution.copy();
-        this.solutionBest = initialSolution.copy();
+        initProblemInstance();
+        insertionOperator = new InsertionOperator(instance, random);
+        removalOperator = new RemovalOperator(instance, random);
+        relocateRequestOperator = new RelocateRequestOperator(instance, random);
+        exchangeRequestOperator = new ExchangeRequestOperator(instance);
+
+        /*
+         * An initial solution S is generated through a construction heuristic in which requests are progressively
+         * inserted within an available vehicle, at its minimum insertion cost position. After all requests have been
+         * inserted, solution S is improved by our local search operator.
+         */
+        InsertionHeuristic insertionHeuristic = new InsertionHeuristic(instance, random);
+        solution = insertionHeuristic.createInitialSolution();
+        solution = applyImprovement(solution);
+        solutionBest = solution.copy();
 
         d = solution.totalCost;
         w = 0.05;
@@ -92,12 +106,6 @@ public class ALNS {
     }
 
     public void execute() {
-        this.initProblemInstance();
-
-        this.insertionOperator = new InsertionOperator(instance, random);
-        this.removalOperator = new RemovalOperator(instance, random);
-        this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
-        this.exchangeRequestOperator = new ExchangeRequestOperator(instance);
 
         roScores = new double[RemovalMethod.values().length];
         roWeights = new double[RemovalMethod.values().length];
@@ -107,6 +115,9 @@ public class ALNS {
         riWeights = new double[InsertionMethod.values().length];
         riUsages = new int[InsertionMethod.values().length];
 
+        /*
+         * The score of the operators are initially set to 0.
+         */
         for (int i = 0; i < roWeights.length; i++) {
             roWeights[i] = 1.0;
         }
@@ -115,41 +126,68 @@ public class ALNS {
         }
 
         while (!stopCriteriaMeet()) {
-            Solution solutionNew = solution.copy();
-            int q = generateRandomQ();
-            int ro = selectRemovalOperator();
-            int ri = selectInsertionOperator();
-            List<Req> removedRequests = removeRequests(solutionNew, ro, q);
-            insertRequests(solutionNew, ri, removedRequests);
-            instance.restrictionsEvaluation(solutionNew);
-            if (solutionNew.totalCost < solutionBest.totalCost) {
-                solution = applyImprovement(solutionNew);
-                updateBest(solution);
-                updateScores(ro, ri, sigma1);
-            } else if (solutionNew.totalCost < solution.totalCost) {
-                solution = solutionNew;
-                updateScores(ro, ri, sigma2);
-            } else if (accept(solutionNew, solution)) {
-                solution = solutionNew;
-                updateScores(ro, ri, sigma3);
+            Solution solutionNew = solution.copy(); // S' <- S
+            int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
+            /*
+             * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
+             * roulette wheels based on the score of each operator.
+             */
+            int ro = selectRemovalOperator(); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
+            int ri = selectInsertionOperator(); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
+            List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
+            insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
+            instance.restrictionsEvaluation(solutionNew); // Update the solution cost
+            if (solutionNew.totalCost < solutionBest.totalCost) { // If f(S') < f(S_best) then
+                solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
+                updateBest(solution); // S_best <- S <- S'
+                // Increase the scores of io and ro by sigma1
+                updateScores(ro, ri, sigma1); // Increment by sigma1 if the new solution is a new best one
+            } else if (solutionNew.totalCost < solution.totalCost) { // Else if f(S') < f(S) then
+                solution = solutionNew; // S <- S'
+                // Increase the scores of the ro and io by sigma2
+                updateScores(ro, ri, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+            } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
+                solution = solutionNew; // S <- S'
+                // Increase the scores of the ro and io by sigma3
+                updateScores(ro, ri, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
             }
+
+            /*
+             * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
+             * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
+             * allow worse solutions to be more easily accepted and increase the diversity.
+             */
             T = T * c;
             if (T < minT) {
                 T = initialT;
             }
-            if (endOfSegment()) {
-                updateWeights();
+            if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
+                updateWeights(); // Update weights and reset scores of operators
                 resetOperatorsScores();
-                solution = applyImprovement(solution);
+                solution = applyImprovement(solution); // Apply improvement to S
                 updateBest(solution);
-                System.out.println("Iter " + iteration +
-                        " Best = " + String.format("%.2f", solution.totalCost) + ", feasible = " + solution.feasible +
-                        " BSF = " + String.format("%.2f", solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
-                        ", T = " + T + ", minT = " + minT);
+                /*System.out.println("Iter " + iteration +
+                        " Best = " + format(solution.totalCost) + ", feasible = " + solution.feasible +
+                        " BSF = " + format(solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
+                        ", T = " + format(T) + ", minT = " + format(minT) +
+                        ", ro = " + StringUtils.join(getArray(roWeights), ',') +
+                        ", ri = " + StringUtils.join(getArray(riWeights), ','));*/
             }
             iteration++;
         }
         printFinalRoute();
+    }
+
+    private String[] getArray(double[] array) {
+        String data[] = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            data[i] = format(array[i]);
+        }
+        return data;
+    }
+
+    private String format(double value) {
+        return String.format(Locale.US, "%.2f", value);
     }
 
     private void updateBest(Solution solution) {
@@ -159,6 +197,9 @@ public class ALNS {
         }
     }
 
+    /*
+     * The scores are updated to zero at the end of each segment.
+     */
     private void resetOperatorsScores() {
         for (int ri = 0; ri < riWeights.length; ri++) {
             riScores[ri] = 0;
@@ -172,21 +213,13 @@ public class ALNS {
 
     private void updateWeights() {
         for (int ri = 0; ri < riWeights.length; ri++) {
-            riWeights[ri] = (1.0 - rho) * riWeights[ri] + rho * (riUsages[ri] / segment) * riScores[ri];
-            if (riWeights[ri] < minWeight) {
-                riWeights[ri] = minWeight;
-            }
-            if (riWeights[ri] > maxWeight) {
-                riWeights[ri] = maxWeight;
+            if (riUsages[ri] != 0) {
+                riWeights[ri] = (1.0 - rho) * riWeights[ri] + rho * riScores[ri] / riUsages[ri];
             }
         }
         for (int ro = 0; ro < roWeights.length; ro++) {
-            roWeights[ro] = (1.0 - rho) * roWeights[ro] + rho * (roUsages[ro] / segment) * roScores[ro];
-            if (roWeights[ro] < minWeight) {
-                roWeights[ro] = minWeight;
-            }
-            if (roWeights[ro] > maxWeight) {
-                roWeights[ro] = maxWeight;
+            if (roUsages[ro] != 0) {
+                roWeights[ro] = (1.0 - rho) * roWeights[ro] + rho * roScores[ro] / roUsages[ro];
             }
         }
     }
@@ -195,14 +228,17 @@ public class ALNS {
         return iteration % segment == 0;
     }
 
+    /*
+     * The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
+     * with a probability e^-(f(S')-f(S))/T.
+     */
     private boolean accept(Solution newSolution, Solution solution) {
         return random.nextDouble() < Math.pow(Math.E, -(newSolution.totalCost - solution.totalCost) / T);
     }
 
     private void updateScores(int ro, int ri, double sigma) {
-        // The score must be divivid accordingly Ropke (pg 8)
-        roScores[ro] = roScores[ro] + (sigma / 2.0);
-        riScores[ri] = riScores[ri] + (sigma / 2.0);
+        roScores[ro] = roScores[ro] + sigma;
+        riScores[ri] = riScores[ri] + sigma;
     }
 
     private Solution applyImprovement(Solution solution) {
@@ -231,6 +267,7 @@ public class ALNS {
 
     private void insertRequests(Solution solution, int ri, List<Req> removedRequests) {
         InsertionMethod insertionMethod = InsertionMethod.values()[ri];
+        // Use random pickup method
         switch (insertionMethod) {
             case Greedy:
                 insertionOperator.insertGreedyRequests(solution.tours, solution.requests, removedRequests, PickupMethod.Random);
@@ -266,9 +303,12 @@ public class ALNS {
         return removedRequests;
     }
 
+    /*
+     * Based on experiments evaluated by Naccache (2018) (Table 3).
+     */
     private int generateRandomQ() {
         int min = (int) Math.min(6, 0.15 * instance.noReq);
-        int max = (int) Math.min(18, 0.4 * instance.noReq) + 1;
+        int max = (int) Math.min(18, 0.4 * instance.noReq);
         return min + (int) (random.nextDouble() * (max - min));
     }
 
@@ -284,6 +324,9 @@ public class ALNS {
         return ri;
     }
 
+    /*
+     * Given h operators with weights w_i, operator j will be selected with probability w_j / sum_{i=1}_{h} w_i
+     */
     private int getNextRouletteWheelOperator(double[] weights) {
         double sum = 0.0;
         double probs[] = new double[weights.length];
@@ -295,9 +338,11 @@ public class ALNS {
             return (int) (random.nextDouble() * weights.length);
         } else {
             int count = 0;
+            double partialSum = probs[count];
             double rand = random.nextDouble() * sum;
-            while (rand > probs[count]) {
+            while (partialSum <= rand) {
                 count++;
+                partialSum = probs[count];
             }
             return count;
         }
