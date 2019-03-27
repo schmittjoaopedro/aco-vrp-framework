@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
@@ -51,6 +52,8 @@ public class MMAS {
     private Random random;
 
     private double branchFac = 1.00001;
+
+    private Map<String, ArrayList<Integer>> feasibleRoutes = new HashMap<>();
 
     public final double weight1 = 0.3;
 
@@ -265,6 +268,7 @@ public class MMAS {
                 restartBest.totalCost = Double.MAX_VALUE;
                 initPheromoneTrails(trailMax);
                 restartIteration = getCurrentIteration();
+                feasibleRoutes.clear();
             }
         }
     }
@@ -311,14 +315,16 @@ public class MMAS {
         ant.visited[0] = true;
         ant.toVisit--; // Remove depot
         ArrayList<Integer> remainingTour = new ArrayList<>();
+        String hashKey = "0";
         while (ant.toVisit > 0) {
-            int nextNode = selectNextNode(ant, vehicle, currIdx, remainingTour);
+            int nextNode = selectNextNode(ant, vehicle, currIdx, remainingTour, hashKey);
             if (nextNode == -1) {
                 addRemainingTour(ant, vehicle, remainingTour);
                 remainingTour = new ArrayList<>();
                 AntUtils.addEmptyVehicle(ant);
                 vehicle++;
                 currIdx = 0;
+                hashKey = "0";
             } else {
                 ant.tours.get(vehicle).add(ant.tours.get(vehicle).size() - 1, nextNode);
                 ant.visited[nextNode] = true;
@@ -332,6 +338,7 @@ public class MMAS {
                 route.addAll(route.size() - 1, remainingTour);
                 instance.restrictionsEvaluation(route);
                 currIdx++;
+                hashKey += "," + nextNode;
             }
         }
     }
@@ -360,7 +367,7 @@ public class MMAS {
         }
     }
 
-    public int selectNextNode(Ant ant, int vehicle, int currIdx, ArrayList<Integer> remainingTour) {
+    public int selectNextNode(Ant ant, int vehicle, int currIdx, ArrayList<Integer> remainingTour, String hashKey) {
         Map<Integer, ArrayList<Integer>> feasibleRemainingRoutes = new HashMap<>();
         Map<Integer, Double> feasibleCosts = new HashMap<>();
         int curr = ant.tours.get(vehicle).get(currIdx);
@@ -373,13 +380,28 @@ public class MMAS {
                 newCost = Math.max(newCost, req.twStart);
                 if (newCost < req.twEnd) {
                     newCost += req.serviceTime;
-                    ArrayList<Integer> tempRemainingTour = new ArrayList<>(remainingTour);
-                    ArrayList<Integer> tempTour = new ArrayList<>(ant.tours.get(vehicle));
-                    tempTour.add(tempTour.size() - 1, i); // insert before depot
-                    addNextNodesRequests(ant.requests.get(vehicle), tempRemainingTour, i);
-                    removeNode(tempRemainingTour, i);
-                    addRemainingTour(tempTour, tempRemainingTour);
-                    if (!isPrecedenceViolated(tempRemainingTour, i) && optimize(tempTour, currIdx + 2)) { // Start after the next position
+                    ArrayList<Integer> tempTour;
+                    String key = hashKey + "," + i;
+                    boolean feasibleChoice = feasibleRoutes.containsKey(key);
+                    if (feasibleChoice) {
+                        tempTour = feasibleRoutes.get(key);
+                        feasibleChoice = tempTour != null;
+                    } else {
+                        ArrayList<Integer> tempRemainingTour = new ArrayList<>(remainingTour);
+                        tempTour = new ArrayList<>(ant.tours.get(vehicle));
+                        tempTour.add(tempTour.size() - 1, i); // insert before depot
+                        addNextNodesRequests(ant.requests.get(vehicle), tempRemainingTour, i);
+                        removeNode(tempRemainingTour, i);
+                        addRemainingTour(tempTour, tempRemainingTour);
+                        if (!isPrecedenceViolated(tempRemainingTour, i) && optimize(tempTour, currIdx + 2)) {
+                            feasibleRoutes.put(key, tempTour);
+                            feasibleChoice = true;
+                        } else {
+                            feasibleRoutes.put(key, null);
+                            feasibleChoice = false;
+                        }
+                    }
+                    if (feasibleChoice) { // Start after the next position
                         double tau = pheromoneNodes[curr][i];
                         double eta = 1.0 / newCost;
                         double cost = Math.pow(tau, alpha) + Math.pow(eta, beta);
@@ -434,7 +456,7 @@ public class MMAS {
 
     private boolean optimize(ArrayList<Integer> tour, int startAt) {
         RelocateNodeOperator relocateNodeOperator = new RelocateNodeOperator(instance);
-        ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt);
+        ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt, true);
         ProblemInstance.FitnessResult result = instance.restrictionsEvaluation(improved);
         if (result.feasible) {
             tour.clear();

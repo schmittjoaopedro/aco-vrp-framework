@@ -82,7 +82,7 @@ public class Solver implements Runnable {
             mmas.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
-            executeLocalSearch();
+            // executeLocalSearch();
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
                 mmas.setPheromoneBoundsForLS();
@@ -217,6 +217,10 @@ public class Solver implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public GlobalStatistics getGlobalStatistics() {
+        return globalStatistics;
     }
 
     public Ant getBestSolution() {

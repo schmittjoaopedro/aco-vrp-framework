@@ -58,7 +58,7 @@ public class RelocateNodeOperator {
         return AntUtils.getBetterAnt(ant, improvedAnt);
     }
 
-    public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt) {
+    public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt, boolean stopOnFeasible) {
         ArrayList<Integer> tempTour = new ArrayList<>(tour);
         ArrayList<Integer> bestTour = new ArrayList<>(tour);
         boolean improvement = true;
@@ -87,8 +87,16 @@ public class RelocateNodeOperator {
                         improvement = true;
                     }
                     tempTour.remove(n2);
+                    if (bestCost.feasible && stopOnFeasible) {
+                        improvement = false;
+                        break;
+                    }
                 }
                 tempTour.add(bestPos, node1);
+                if (bestCost.feasible && stopOnFeasible) {
+                    improvement = false;
+                    break;
+                }
             }
             bestTour = tempTour;
         }
