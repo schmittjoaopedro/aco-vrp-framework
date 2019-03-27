@@ -108,6 +108,7 @@ public class Solver implements Runnable {
                 iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
                 iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
+                iterationStatistic.setNumPaths((long) mmas.getFeasibleRoutes().size());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);

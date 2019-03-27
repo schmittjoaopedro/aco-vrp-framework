@@ -11,7 +11,7 @@ public class MPDPTW_MMAS_TEST {
 
     private static final String rootDirectory;
 
-    private static int statisticInterval = 100;
+    private static int statisticInterval = 10;
 
     private static int maxIterations = 1000;
 

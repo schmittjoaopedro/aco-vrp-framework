@@ -619,6 +619,11 @@ public class MMAS {
         return antPopulation;
     }
 
+    public Map<String, ArrayList<Integer>> getFeasibleRoutes() {
+        return feasibleRoutes;
+    }
+
+
     private class NextClient {
         int nextClient = 0;
         double heuristic = 0.0;
