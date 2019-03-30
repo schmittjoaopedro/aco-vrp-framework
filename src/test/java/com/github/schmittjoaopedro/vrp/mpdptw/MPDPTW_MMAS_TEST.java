@@ -53,24 +53,27 @@ public class MPDPTW_MMAS_TEST {
     private void executeTest(String problem) {
         ArrayList<Double> costs = new ArrayList<>();
         ArrayList<Double> time = new ArrayList<>();
-        int sampleSize = 5;
-        int feasible = 0;
+        ArrayList<Double> penalty = new ArrayList<>();
+        int sampleSize = 5, feasible = 0;
         for (int i = 0; i < sampleSize; i++) {
             Solver solver = new Solver(rootDirectory, problem, maxIterations, i, 0.02, statisticInterval, true);
             solver.run();
             costs.add(solver.getBestSolution().totalCost);
+            penalty.add(solver.getBestSolution().timeWindowPenalty);
             time.add(solver.getGlobalStatistics().getTimeStatistics().get("Algorithm").doubleValue());
-            if(solver.getBestSolution().feasible) {
+            if (solver.getBestSolution().feasible) {
                 feasible++;
             }
         }
         double meanCosts = Maths.getMean(costs);
         double meanTime = Maths.getMean(time);
+        double meanPenalty = Maths.getMean(penalty);
         System.out.println("---------------------------------------");
         System.out.println("Instance = " + problem);
-        System.out.println("Feasible = " + feasible +  " of " + sampleSize);
         System.out.println("Mean costs = " + meanCosts);
+        System.out.println("Mean penalty = " + meanPenalty);
         System.out.println("Mean time = " + meanTime);
+        System.out.println("Feasible = " + feasible + " of " + sampleSize);
         System.out.println("---------------------------------------");
     }
 
