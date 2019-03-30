@@ -93,7 +93,7 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-            //mmas.checkPheromoneTrailLimits();
+            mmas.checkPheromoneTrailLimits();
             mmas.searchControl(); // TODO: Rever
             iterationStatistic.endTimer("Pheromone");
             // Statistics
@@ -217,6 +217,10 @@ public class Solver implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public GlobalStatistics getGlobalStatistics() {
+        return globalStatistics;
     }
 
     public Ant getBestSolution() {
