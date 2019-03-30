@@ -23,7 +23,22 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_large_4_25_1_test() {
+        executeTest("l_4_25_1.txt");
+        executeTest("l_8_25_1.txt");
+        executeTest("n_4_25_1.txt");
+        executeTest("n_8_25_1.txt");
+        executeTest("w_4_25_1.txt");
+        executeTest("w_8_25_1.txt");
+        executeTest("l_4_50_1.txt");
+        executeTest("l_8_50_1.txt");
+        executeTest("n_4_50_1.txt");
+        executeTest("n_8_50_1.txt");
+        executeTest("w_4_50_1.txt");
         executeTest("w_8_50_1.txt");
+        executeTest("l_4_100_1.txt");
+        executeTest("l_8_100_1.txt");
+        executeTest("n_4_100_1.txt");
+        executeTest("n_8_100_1.txt");
         executeTest("w_4_100_1.txt");
         executeTest("w_8_100_1.txt");
         executeTest("l_4_400_1.txt");
