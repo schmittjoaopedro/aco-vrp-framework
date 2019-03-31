@@ -1,5 +1,8 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionOperator;
+
 import java.util.*;
 
 public class MMAS {
@@ -50,13 +53,7 @@ public class MMAS {
 
     private double branchFac = 1.00001;
 
-    public final double weight1 = 0.3;
-
-    public final double weight2 = 0.3;
-
-    public final double weight3 = 0.3;
-
-    public final double weight4 = 0.1;
+    private InsertionOperator insertionOperator;
 
     public MMAS(ProblemInstance instance) {
         this.instance = instance;
@@ -292,58 +289,12 @@ public class MMAS {
     }
 
     public void constructSolutions() {
-        int vehicle, requestId;
-        double vehicleCapacity;
-        NextClient nextVisit;
-        int currentPosition;
+        if (this.insertionOperator == null) {
+            this.insertionOperator = new InsertionOperator(instance, random);
+        }
         for (Ant ant : antPopulation) {
             AntUtils.antEmptyMemory(ant, instance);
-        }
-        for (int k = 0; k < antPopulation.size(); k++) {// For each ant
-            vehicle = 0;
-            Ant ant = antPopulation.get(k);
-            ant.toVisit--; // The depot is visited
-            ant.tours.add(vehicle, new ArrayList<>());
-            ant.tours.get(vehicle).add(instance.depot.nodeId);
-            ant.requests.add(vehicle, new ArrayList<>());
-            ant.visited[instance.depot.nodeId] = true;
-            ant.capacity.add(vehicle, instance.vehicleCapacity);
-            currentPosition = 0;
-            while (ant.toVisit > 0) {
-                nextVisit = selectNextClient(ant, vehicle, currentPosition);
-                if (nextVisit.nextClient != -1) { // a next visit node was found
-                    currentPosition++;
-                    ant.tours.get(vehicle).add(currentPosition, nextVisit.nextClient);
-                    ant.visited[nextVisit.nextClient] = true;
-                    ant.feasible &= nextVisit.feasible; // If in one move is infeasible, the full solution will be infeasible
-                    ant.departureTime[nextVisit.nextClient] = nextVisit.departureTime;
-                    ant.demands[nextVisit.nextClient] = nextVisit.demand;
-                    ant.toVisit--;
-                    requestId = instance.requests[nextVisit.nextClient - 1].requestId;
-                    if (instance.requests[nextVisit.nextClient - 1].isDeliver) {
-                        vehicleCapacity = ant.capacity.get(vehicle) - instance.delivery.get(requestId).demand; // Delivery demand is negative
-                        ant.capacity.set(vehicle, vehicleCapacity);
-                    }
-                    if (!ant.requests.get(vehicle).contains(requestId)) {
-                        ant.requests.get(vehicle).add(requestId);
-                        vehicleCapacity = ant.capacity.get(vehicle) + instance.delivery.get(requestId).demand; // Delivery demand is negative
-                        ant.capacity.set(vehicle, vehicleCapacity);
-                    }
-                } else {
-                    ant.tours.get(vehicle).add(instance.depot.nodeId); // Finish previous route
-                    // Starts a new route
-                    vehicle++;
-                    currentPosition = 0;
-                    ant.tours.add(vehicle, new ArrayList<>());
-                    ant.tours.get(vehicle).add(instance.depot.nodeId);
-                    ant.requests.add(vehicle, new ArrayList<>());
-                    ant.capacity.add(vehicle, instance.vehicleCapacity);
-                }
-            }
-            ant.tours.get(vehicle).add(instance.depot.nodeId); // Finish last route
-        }
-        // Calculate fitness
-        for (Ant ant : antPopulation) {
+            constructSolution(ant);
             instance.restrictionsEvaluation(ant);
             if (ant.capacityPenalty > 0) {
                 throw new RuntimeException("Invalid capacity penaly!!");
@@ -351,197 +302,162 @@ public class MMAS {
         }
     }
 
-    public NextClient selectNextClient(Ant ant, int vehicle, int currIdx) {
-        int requestId;
-        int currentCity = ant.tours.get(vehicle).get(currIdx);
-        NextClient nextClientHeuristic;
+    public void constructSolution(Ant ant) {
+        int phase = 0;
+        int curr = 0;
+        int reqVehicles[] = new int[instance.noReq];
+        for (int i = 0; i < reqVehicles.length; i++) {
+            reqVehicles[i] = -1;
+        }
+        while (phase < instance.noNodes - 1) { // Ignore depot node
+            int nextNode = chooseNextNode(ant, curr);
+            insertNextNode(ant, reqVehicles, nextNode);
+            ant.visited[nextNode] = true;
+            curr = nextNode;
+            phase++;
+        }
+        AntUtils.removeEmptyVehicles(ant);
+    }
+
+    private int chooseNextNode(Ant ant, int curr) {
+        double probabilities[] = new double[instance.noNodes];
         double sum = 0.0;
-        boolean hasRequest, valid;
-        ArrayList<NextClient> newRequestProbs = new ArrayList<>();
-        ArrayList<NextClient> currRequestProbs = new ArrayList<>();
-        ArrayList<NextClient> probs = new ArrayList<>();
-        for (int i = 0; i < instance.noNodes; i++) {
-            if (!ant.visited[i] && isNextClientSupported(ant, vehicle, currentCity, i)) {
-                // Calculate heuristic value for the next client and its feasibility
-                nextClientHeuristic = HEURISTIC(ant, vehicle, currentCity, i);
-                // If the vehicle has request, validate if the deliver can be executed after all pickups were made
-                requestId = instance.requests[i - 1].requestId;
-                hasRequest = ant.requests.get(vehicle).contains(requestId);
-                valid = instance.requests[i - 1].isPickup; // We assume that all pickups requests are valid a-priori
-                if (hasRequest && instance.requests[i - 1].isDeliver) { // If the request is a delivery request we must to test if all pickups were made previously
-                    valid = true;
-                    for (Request req : instance.pickups.get(requestId)) {
-                        if (!ant.visited[req.nodeId]) {
-                            valid = false;
-                            break;
-                        }
+        for (int next = 1; next < instance.noNodes; next++) { // Start with the first client
+            Request req = instance.requests[next - 1];
+            boolean isPickup = req.isPickup;
+            if (!ant.visited[next] && (isPickup || isDeliveryAvailable(ant, req.requestId))) {
+                sum += pheromoneNodes[curr][next];
+                probabilities[next] = sum;
+            }
+        }
+        int count = 0;
+        double partialSum = probabilities[count];
+        double rand = random.nextDouble() * sum;
+        while (partialSum <= rand) {
+            count++;
+            partialSum = probabilities[count];
+        }
+        return count;
+    }
+
+    private boolean isDeliveryAvailable(Ant ant, int reqId) {
+        boolean available = true;
+        for (Request pickup : instance.pickups.get(reqId)) {
+            available &= ant.visited[pickup.nodeId];
+        }
+        return available;
+    }
+
+    private void insertNextNode(Ant ant, int reqVehicles[], int nextNode) {
+        ArrayList<Integer> tour;
+        InsertionOperator.BestPosition bestPosition;
+        Request nodeReq = instance.requests[nextNode - 1];
+        int vehicle = reqVehicles[nodeReq.requestId];
+        ArrayList<Integer> nodesToInsert = new ArrayList<>();
+
+        if (ant.tours.isEmpty() || ant.tours.get(ant.tours.size() - 1).size() > 2) { // It the last route is not empty (does not contains only depot as origin and destination)
+            AntUtils.addEmptyVehicle(ant); // Add a new vehicle that can be used as option to insert the request.
+        }
+
+        if (vehicle != -1) { // If the current request is already associated with a given vehicle
+            // For the current node, if it is the delivery node, we need to find the last pickup point to manage
+            // the precedence constraint. In case of pickup it is the depot and in case of delivery it is the last pickup point.
+            tour = ant.tours.get(vehicle);
+            int prevPosition = 0;
+            if (nodeReq.isDeliver) {
+                prevPosition = instance.getLastPickupPosition(tour, nodeReq.requestId);
+            }
+            // Try to insert the current node in the associated vehicle
+            bestPosition = insertionOperator.insertAtBestPosition(nextNode, tour, InsertionMethod.Greedy, prevPosition);
+            if (bestPosition != null) {
+                // A feasible insertion was found, return from this method to continue the construction process
+                reqVehicles[nodeReq.requestId] = vehicle;
+                tour.add(bestPosition.position, nodeReq.nodeId);
+                return;
+            } else {
+                // When the current route can't be used, we need to remove all nodes of the current request of the current
+                // vehicle and try the insertion of these nodes in different vehicles
+                int i = 0;
+                while (i < tour.size()) {
+                    int node = tour.get(i);
+                    if (node != instance.depot.nodeId && instance.requests[tour.get(i) - 1].requestId == nodeReq.requestId) {
+                        nodesToInsert.add(tour.get(i));
+                        tour.remove(i);
+                    } else {
+                        i++;
                     }
                 }
-                // If the next client belongs to the current vehicle requests, add to new request probs
-                if (hasRequest && valid) {
-                    // [nextClient, heuristic, departureTime, demand, feasible, cumulativeCost]
-                    currRequestProbs.add(nextClientHeuristic);
-                } else if (nextClientHeuristic.feasible && valid) { // Else add to new request probs, but allow only new feasible requests
-                    newRequestProbs.add(nextClientHeuristic);
+                AntUtils.removeRequest(instance, ant, vehicle, nodeReq.requestId);
+            }
+        }
+        // Here a new vehicle is choose to receive the current node and the already received nodes associated to the same request.
+        // When we try to re-insert nodes for the current request we keep the order from the previous vehicle. Therefore,
+        // the new node to be inserted will hold the last list position.
+        nodesToInsert.add(nodeReq.nodeId);
+        Double bestCost = Double.MAX_VALUE;
+        ArrayList<Integer> route = null;
+        Request delivery = null;
+        int node;
+        int selectedVehicle = -1;
+
+        vehicleFor:
+        for (int k = 0; k < ant.tours.size(); k++) { // For each vehicle
+            if (k != vehicle) { // We ignore the previous vehicle as it was not possible to add the node before.
+                tour = new ArrayList<>(ant.tours.get(k)); // Copy the route to not modify the original
+                for (int i = 0; i < nodesToInsert.size(); i++) {
+                    node = nodesToInsert.get(i);
+                    // If the current node is pickup tyr to insert it on the route
+                    if (instance.requests[node - 1].isPickup) {
+                        bestPosition = insertionOperator.insertAtBestPosition(node, tour, InsertionMethod.Greedy, 0);
+                        if (bestPosition == null) {
+                            continue vehicleFor; // Go to next vehicle
+                        } else {
+                            tour.add(bestPosition.position, node); // Add the node on the route
+                        }
+                    } else {
+                        delivery = instance.requests[node - 1];
+                    }
+                }
+                if (delivery != null) { // Delivery nodes are precessed in last
+                    bestPosition = insertionOperator.insertAtBestPosition(delivery.nodeId, tour, InsertionMethod.Greedy, instance.getLastPickupPosition(tour, nodeReq.requestId));
+                    if (bestPosition == null) {
+                        continue vehicleFor;
+                    } else {
+                        tour.add(bestPosition.position, delivery.nodeId);
+                    }
+                }
+                // Update with the best route
+                double currentCost = instance.costEvaluation(ant.tours.get(k));
+                double newCost = instance.costEvaluation(tour);
+                if (newCost - currentCost < bestCost) {
+                    bestCost = newCost - currentCost;
+                    selectedVehicle = k;
+                    route = tour;
+                }
+            }
+        }
+        // In last case, if the heuristic could not create a new route, then use the exact method for this request
+        if (route == null) {
+            OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(nodeReq.requestId, instance);
+            optimalRequestSolver.optimize();
+            selectedVehicle = ant.tours.size() - 1;
+            route = ant.tours.get(selectedVehicle);
+            route.clear();
+            for (int i = 0; i < optimalRequestSolver.getBestRoute().length; i++) {
+                // The nodes of the optimal solution to be added must consider the nodesToInsert. Remember that the pheromone
+                // will be used to selected the next available nodes in future iterations.
+                node = optimalRequestSolver.getBestRoute()[i];
+                if (node == instance.depot.nodeId || nodesToInsert.contains(node)) {
+                    route.add(node);
                 }
             }
         }
 
-        // Check if there is at least one unfeasible node in the request list
-        boolean currReqFeasible = true;
-        for (NextClient nextClient : currRequestProbs) {
-            if (!nextClient.feasible) { //unfeasible
-                currReqFeasible = false;
-                break;
-            }
-        }
-        // If are all feasible nodes in current request
-        if (currReqFeasible) {
-            // Select only feasible moves
-            for (NextClient nextClient : currRequestProbs) {
-                sum += nextClient.heuristic; //heuristic
-                nextClient.cumulativeCost = sum;
-                probs.add(nextClient);
-            }
-            for (NextClient nextClient : newRequestProbs) {
-                if (nextClient.feasible) {
-                    sum += nextClient.heuristic;
-                    nextClient.cumulativeCost = sum;
-                    probs.add(nextClient);
-                }
-            }
-        } else {
-            for (NextClient nextClient : currRequestProbs) {
-                sum += nextClient.heuristic;
-                nextClient.cumulativeCost = sum;
-                probs.add(nextClient);
-            }
-        }
-        // If this route is done, returns a flag indicating no more clients to add
-        if (probs.isEmpty()) {
-            NextClient nextClient = new NextClient();
-            nextClient.nextClient = -1;
-            return nextClient;
-        }
-        for (NextClient nextClient : probs) {
-            nextClient.cumulativeCost = (nextClient.cumulativeCost / sum) * 100.0;
-        }
-        // Roulette wheel selection
-        double rand = random.nextDouble() * 100.0;
-        int selected = 0;
-        while (selected != probs.size() - 1) {
-            if (rand <= probs.get(selected).cumulativeCost) {
-                break;
-            }
-            selected++;
-        }
-        return probs.get(selected);
+        ant.tours.set(selectedVehicle, route);
+        ant.requests.get(selectedVehicle).add(nodeReq.requestId);
+        reqVehicles[nodeReq.requestId] = selectedVehicle;
     }
 
-    public boolean isNextClientSupported(Ant ant, int vehicle, int currentCity, int nextCity) {
-        boolean supported;
-        int requestId = instance.requests[nextCity - 1].requestId;
-        // Check if the request is already allocated in the vehicle and must be attended
-        if (ant.requests.get(vehicle).contains(requestId) || nextCity == instance.depot.nodeId) {
-            supported = true;
-        } else {
-            // Check if the vehicle supports the demand of the new request
-            supported = ant.capacity.get(vehicle) + instance.delivery.get(requestId).demand > 0;
-            // Check if all requests from the nextCity request are feasbile from the current point
-            for (Request req : instance.pickups.get(requestId)) {
-                supported &= instance.isFeasible(currentCity, req.nodeId);
-            }
-            if (currentCity != 0) { // Depot never will be feasibly with delivery points
-                supported &= instance.isFeasible(currentCity, instance.delivery.get(requestId).nodeId);
-            }
-        }
-        return supported;
-    }
-
-    public NextClient HEURISTIC(Ant ant, int vehicle, int currentCity, int nextCity) {
-        NextClient nextClient = new NextClient();
-        nextClient.nextClient = nextCity;
-        nextClient.feasible = true;
-        int reqNode = nextCity - 1;
-        Request nextReq = instance.requests[reqNode];
-        double demand;
-        double departureTime;
-        double timeCostDelivery;
-        double timeCostDepot;
-        // Calculate cost to next client
-        departureTime = ant.departureTime[currentCity] + instance.distances[currentCity][nextCity];
-        departureTime = Math.max(departureTime, nextReq.twStart);
-        demand = ant.demands[currentCity] + nextReq.demand;
-        if (departureTime > nextReq.twEnd || demand > instance.vehicleCapacity) {
-            nextClient.feasible = false;
-        }
-        departureTime += nextReq.serviceTime;
-        nextClient.departureTime = departureTime;
-        nextClient.demand = demand;
-        // Is fair to calculate the cost to the delivery before to calculate the cost to depot
-        if (nextReq.isPickup) {
-            Request depotReq = instance.delivery.get(nextReq.requestId);
-            timeCostDelivery = departureTime + instance.distances[nextCity][depotReq.nodeId];
-            timeCostDelivery = Math.max(depotReq.twStart, timeCostDelivery);
-            if (timeCostDelivery > depotReq.twEnd) {
-                nextClient.feasible = false;
-            }
-            timeCostDelivery += depotReq.serviceTime;
-            // Calculate cost to depot
-            timeCostDepot = timeCostDelivery + instance.distances[depotReq.nodeId][instance.depot.nodeId];
-            timeCostDepot = Math.max(timeCostDepot, instance.depot.twStart);
-            if (timeCostDepot > instance.depot.twEnd) {
-                nextClient.feasible = false;
-            }
-        } else { // Our current node is the delivery point
-            // Calculate cost to depot
-            timeCostDepot = departureTime + instance.distances[nextCity][instance.depot.nodeId];
-            timeCostDepot = Math.max(timeCostDepot, instance.depot.twStart);
-            if (timeCostDepot > instance.depot.twEnd) {
-                nextClient.feasible = false;
-            }
-        }
-        // Calculate heuristic Racula
-        double deliveryUrgency = nextReq.twEnd - departureTime;
-        double timeDifference = departureTime - ant.departureTime[currentCity];
-        double futureCost = calculateFutureCost(ant, vehicle, currentCity, nextCity);
-        double cost = 1.0 / (weight1 * instance.distances[currentCity][nextCity] + weight2 * timeDifference + weight3 * futureCost + weight4 * deliveryUrgency);
-
-        //double cost = 1.0 / (0.3 * instance.distances[currentCity][nextCity] + 0.3 * futureCost + 0.3 * deliveryUrgency);
-
-        // Original heuristic transition rule from Dorigo
-        nextClient.heuristic = Math.pow(cost, beta) * Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
-
-        // Transition rule proposed by Afshar
-        //nextClient.heuristic = (beta * cost) + (alpha * pheromoneNodes[currentCity][nextCity]);
-
-        // Only pheromone
-        //nextClient.heuristic = Math.pow(pheromoneNodes[currentCity][nextCity], alpha);
-
-        return nextClient;
-    }
-
-    public double calculateFutureCost(Ant ant, int vehicle, int currentCity, int nextCity) {
-        double cost = 0.0;
-        for (int reqId : ant.requests.get(vehicle)) {
-            for (Request req : instance.pickups.get(reqId)) {
-                if (!ant.visited[req.nodeId]) {
-                    cost += instance.distances[currentCity][req.nodeId];
-                }
-            }
-            if (!ant.visited[instance.delivery.get(reqId).nodeId]) {
-                cost += instance.distances[currentCity][instance.delivery.get(reqId).nodeId];
-            }
-        }
-        int reqId = instance.requests[nextCity - 1].requestId;
-        if (!ant.visitedRequests[reqId]) {
-            for (Request req : instance.pickups.get(reqId)) {
-                cost += instance.distances[currentCity][req.nodeId];
-            }
-            cost += instance.distances[currentCity][instance.delivery.get(reqId).nodeId];
-        }
-        return cost;
-    }
 
     public Ant findWorst() {
         Ant ant = antPopulation.get(0);

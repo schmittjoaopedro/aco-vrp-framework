@@ -369,6 +369,18 @@ public class ProblemInstance {
         return cost;
     }
 
+    public int getLastPickupPosition(ArrayList<Integer> route, int requestId) {
+        int lastPosition = 0;
+        Request req;
+        for (int i = 1; i < route.size() - 1; i++) {
+            req = requests[route.get(i) - 1];
+            if (req.isPickup && req.requestId == requestId) {
+                lastPosition = i;
+            }
+        }
+        return lastPosition;
+    }
+
     public class FitnessResult {
 
         public double cost;
