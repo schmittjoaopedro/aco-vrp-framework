@@ -114,6 +114,9 @@ public class ExchangeRequestOperator {
                 tempSol.tours.set(v1, v1RouteOrigin);
                 tempSol.requests.get(v1).add(r1);
             }
+            if (improvement) {
+                tempSol = improvedSol.copy();
+            }
         }
         instance.restrictionsEvaluation(improvedSol);
         return solution.getBestSolution(improvedSol);
