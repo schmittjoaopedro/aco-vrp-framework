@@ -324,6 +324,8 @@ public class ALNS {
     }
 
     private int selectInsertionOperator() {
+        // Ignore K-regret
+        riWeights[InsertionMethod.RegretM.ordinal()] = 0.0; // Accordingly coelho, k-regret is deteriorating the results.
         int ri = getNextRouletteWheelOperator(riWeights);
         riUsages[ri] = riUsages[ri] + 1;
         return ri;
