@@ -7,6 +7,11 @@ import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
 
 import java.util.Random;
 
+/*
+ * Relocate: in relocate improvement, we select a request and try to insert it into every other other route. The accepted
+ * move is teh one leading the greatest decrease in cost among all routes. If no improvement solution ca be found, we test
+ * the next request. This is executed for all requests until no improvements can be found.
+ */
 public class RelocateRequestOperator {
 
     private ProblemInstance instance;
@@ -34,19 +39,17 @@ public class RelocateRequestOperator {
                 AntUtils.removeEmptyVehicles(tempAnt);
                 AntUtils.addEmptyVehicle(tempAnt);
                 for (int k = 0; k < tempAnt.tours.size(); k++) {
-                    if (k != vehicle) {
-                        if (insertionOperator.insertRequestOnVehicle(requestId, tempAnt.tours.get(k), PickupMethod.Random, InsertionMethod.Greedy)) {
-                            tempAnt.requests.get(k).add(requestId);
-                            instance.restrictionsEvaluation(tempAnt);
-                            improvedCost = improvedAnt.totalCost + improvedAnt.timeWindowPenalty;
-                            tempCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
-                            if (tempCost < improvedCost) {
-                                AntUtils.removeEmptyVehicles(tempAnt);
-                                AntUtils.copyFromTo(tempAnt, improvedAnt);
-                                improvement = true;
-                            }
-                            AntUtils.removeRequest(instance, tempAnt, k, requestId);
+                    if (insertionOperator.insertRequestOnVehicle(requestId, tempAnt.tours.get(k), PickupMethod.Random, InsertionMethod.Greedy)) {
+                        tempAnt.requests.get(k).add(requestId);
+                        instance.restrictionsEvaluation(tempAnt);
+                        improvedCost = improvedAnt.totalCost + improvedAnt.timeWindowPenalty;
+                        tempCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
+                        if (tempCost < improvedCost) {
+                            AntUtils.removeEmptyVehicles(tempAnt);
+                            AntUtils.copyFromTo(tempAnt, improvedAnt);
+                            improvement = true;
                         }
+                        AntUtils.removeRequest(instance, tempAnt, k, requestId);
                     }
                 }
             }
@@ -70,19 +73,17 @@ public class RelocateRequestOperator {
                 tempSol.removeEmptyVehicles();
                 tempSol.addEmptyVehicle();
                 for (int k = 0; k < tempSol.tours.size(); k++) {
-                    if (k != vehicle) {
-                        if (insertionOperator.insertRequestOnVehicle(requestId, tempSol.tours.get(k), PickupMethod.Random, InsertionMethod.Greedy)) {
-                            tempSol.requests.get(k).add(requestId);
-                            instance.restrictionsEvaluation(tempSol);
-                            improvedCost = improvedSol.totalCost;
-                            tempCost = tempSol.totalCost;
-                            if (tempCost < improvedCost) {
-                                tempSol.removeEmptyVehicles();
-                                improvedSol = tempSol.copy();
-                                improvement = true;
-                            }
-                            tempSol.removeRequest(instance, k, requestId);
+                    if (insertionOperator.insertRequestOnVehicle(requestId, tempSol.tours.get(k), PickupMethod.Random, InsertionMethod.Greedy)) {
+                        tempSol.requests.get(k).add(requestId);
+                        instance.restrictionsEvaluation(tempSol);
+                        improvedCost = improvedSol.totalCost;
+                        tempCost = tempSol.totalCost;
+                        if (tempCost < improvedCost) {
+                            tempSol.removeEmptyVehicles();
+                            improvedSol = tempSol.copy();
+                            improvement = true;
                         }
+                        tempSol.removeRequest(instance, k, requestId);
                     }
                 }
             }

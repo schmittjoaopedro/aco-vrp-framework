@@ -84,7 +84,7 @@ public class ALNS {
         insertionOperator = new InsertionOperator(instance, random);
         removalOperator = new RemovalOperator(instance, random);
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
-        exchangeRequestOperator = new ExchangeRequestOperator(instance);
+        exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
 
         /*
          * An initial solution S is generated through a construction heuristic in which requests are progressively
@@ -244,10 +244,15 @@ public class ALNS {
     private Solution applyImprovement(Solution solution) {
         boolean improvement = true;
         Solution improved = solution.copy();
+        Solution tempSolution = improved;
         while (improvement) {
             improvement = false;
-            improved = relocateRequestOperator.relocate(improved);
-            improved = exchangeRequestOperator.exchange(improved);
+            tempSolution = relocateRequestOperator.relocate(tempSolution);
+            tempSolution = exchangeRequestOperator.exchange(tempSolution);
+            if (tempSolution.totalCost < improved.totalCost) {
+                improved = tempSolution;
+                improvement = true;
+            }
         }
         return improved;
     }

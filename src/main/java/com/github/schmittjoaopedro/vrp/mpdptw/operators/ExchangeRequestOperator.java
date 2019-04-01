@@ -7,13 +7,22 @@ import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+/*
+ * Exchange: here we select two requests from two different routes, and we try to insert them into each other's routes
+ * at the smallest cost. If a better solution can be found, the exchange is accepted, otherwise we go back to the
+ * previous solution. This is executed for all pairs of requests until no improvements can be found.
+ */
 public class ExchangeRequestOperator {
 
     private ProblemInstance instance;
 
-    public ExchangeRequestOperator(ProblemInstance instance) {
+    private InsertionOperator insertionOperator;
+
+    public ExchangeRequestOperator(ProblemInstance instance, Random random) {
         this.instance = instance;
+        this.insertionOperator = new InsertionOperator(instance, random);
     }
 
     public Ant exchange(Ant ant) {
@@ -37,9 +46,9 @@ public class ExchangeRequestOperator {
                         v2 = AntUtils.findRequestVehicleOwner(tempAnt, r2);
                         v2RouteOrigin = new ArrayList<>(tempAnt.tours.get(v2));
                         AntUtils.removeRequest(instance, tempAnt, v2, r2);
-                        if (insertRequest(tempAnt.tours, v1, r2)) {
+                        if (insertionOperator.insertRequestOnVehicle(r2, tempAnt.tours.get(v1), PickupMethod.Random, InsertionMethod.Greedy)) {
                             tempAnt.requests.get(v1).add(r2);
-                            if (insertRequest(tempAnt.tours, v2, r1)) {
+                            if (insertionOperator.insertRequestOnVehicle(r1, tempAnt.tours.get(v2), PickupMethod.Random, InsertionMethod.Greedy)) {
                                 tempAnt.requests.get(v2).add(r1);
                                 instance.restrictionsEvaluation(tempAnt);
                                 tempCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
@@ -83,9 +92,9 @@ public class ExchangeRequestOperator {
                         v2 = tempSol.findRequestVehicleOwner(r2);
                         v2RouteOrigin = new ArrayList<>(tempSol.tours.get(v2));
                         tempSol.removeRequest(instance, v2, r2);
-                        if (insertRequest(tempSol.tours, v1, r2)) {
+                        if (insertionOperator.insertRequestOnVehicle(r2, tempSol.tours.get(v1), PickupMethod.Random, InsertionMethod.Greedy)) {
                             tempSol.requests.get(v1).add(r2);
-                            if (insertRequest(tempSol.tours, v2, r1)) {
+                            if (insertionOperator.insertRequestOnVehicle(r1, tempSol.tours.get(v2), PickupMethod.Random, InsertionMethod.Greedy)) {
                                 tempSol.requests.get(v2).add(r1);
                                 instance.restrictionsEvaluation(tempSol);
                                 tempCost = tempSol.totalCost;
@@ -110,72 +119,4 @@ public class ExchangeRequestOperator {
         return solution.getBestSolution(improvedSol);
     }
 
-    private boolean insertRequest(ArrayList<ArrayList<Integer>> tours, int vehicle, int reqId) {
-        int lastPickup = 0;
-        for (Request pickup : instance.pickups.get(reqId)) {
-            int bestPosition = getBestPosition(pickup.nodeId, tours.get(vehicle), 0);
-            tours.get(vehicle).add(bestPosition, pickup.nodeId);
-            if (lastPickup >= bestPosition) {
-                lastPickup++;
-            } else {
-                lastPickup = bestPosition;
-            }
-        }
-        int deliveryId = instance.delivery.get(reqId).nodeId;
-        int bestPosition = getBestPosition(deliveryId, tours.get(vehicle), lastPickup);
-        tours.get(vehicle).add(bestPosition, deliveryId);
-        return true;
-    }
-
-    private int getBestPosition(Integer i, ArrayList<Integer> route, int prevPos) {
-        double bestCost = Double.MAX_VALUE;
-        int bestPosition = 0;
-        int prev = route.get(prevPos);
-        prevPos++;
-        int next = route.get(prevPos);
-        int currIdx = prevPos;
-        double[][] dists = instance.distances;
-        double newCost;
-        double travelTime = 0.0;
-        int count = 1;
-        while (count < currIdx) {
-            travelTime = travelTime + dists[route.get(count - 1)][route.get(count)];
-            travelTime = Math.max(travelTime, instance.requests[route.get(count) - 1].twStart);
-            travelTime += instance.requests[route.get(count) - 1].serviceTime;
-            count++;
-        }
-        while (currIdx < route.size()) {
-            newCost = dists[prev][i] + dists[i][next] - dists[prev][next];
-            if (newCost < bestCost) {
-                bestCost = newCost;
-                bestPosition = currIdx;
-            }
-            travelTime = travelTime + dists[prev][next];
-            travelTime = Math.max(travelTime, twStart(next));
-            travelTime += serviceTime(next);
-            prev = next;
-            if (prev == instance.depot.nodeId) {
-                break;
-            }
-            currIdx++;
-            next = route.get(currIdx);
-        }
-        return bestPosition;
-    }
-
-    private double twStart(int next) {
-        if (next == instance.depot.nodeId) {
-            return instance.depot.twStart;
-        } else {
-            return instance.requests[next - 1].twStart;
-        }
-    }
-
-    private double serviceTime(int next) {
-        if (next == instance.depot.nodeId) {
-            return 0.0;
-        } else {
-            return instance.requests[next - 1].serviceTime;
-        }
-    }
 }

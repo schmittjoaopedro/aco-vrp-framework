@@ -29,7 +29,7 @@ public class LocalSearch {
         this.insertionOperator = new InsertionOperator(instance, random);
         this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
-        this.exchangeRequestOperator = new ExchangeRequestOperator(instance);
+        this.exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
     }
 
     public Ant optimize(Ant ant) {
