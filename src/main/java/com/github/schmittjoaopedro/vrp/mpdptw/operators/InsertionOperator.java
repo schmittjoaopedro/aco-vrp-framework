@@ -131,6 +131,11 @@ public class InsertionOperator {
      * yielding the lowest increase in the objective function.
      */
     public void insertGreedyRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, List<Req> requestsToInsert, PickupMethod pickupMethod) {
+        // Pre-calculate the routes cost to speed-up the optimization
+        ArrayList<Double> routesCost = new ArrayList<>();
+        for (int k = 0; k < solution.size(); k++) {
+            routesCost.add(instance.costEvaluation(solution.get(k)));
+        }
         for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
             Req currReq = requestsToInsert.get(r);
             InsertRequest insertRequest = null;
@@ -142,15 +147,16 @@ public class InsertionOperator {
                 lastVehicle++;
                 solution.get(lastVehicle).add(0);
                 solution.get(lastVehicle).add(0);
+                routesCost.add(0.0);
             }
             for (int k = 0; k < solution.size(); k++) { // For each vehicle from solution
-                double vehicleCost = instance.costEvaluation(solution.get(k)); // Evaluate the vehicle route cost
+                double vehicleCost = routesCost.get(k); // Evaluate the vehicle route cost
                 ArrayList<Integer> newRoute = new ArrayList<>(solution.get(k)); // Clone the route from vehicle k to evict update the original one
                 if (insertRequestOnVehicle(currReq.requestId, newRoute, pickupMethod, InsertionMethod.Greedy)) { // If the request insertion is feasible
-                    double lost = (instance.costEvaluation(newRoute) - vehicleCost); // Calculate the lost of insert request r in vehicle k
+                    double costIncrease = (instance.costEvaluation(newRoute) - vehicleCost); // Calculate the lost of insert request r in vehicle k
                     // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
-                    if (insertRequest == null || lost < insertRequest.cost) {
-                        insertRequest = new InsertRequest(lost, k, currReq.requestId, newRoute);
+                    if (insertRequest == null || costIncrease < insertRequest.cost) {
+                        insertRequest = new InsertRequest(costIncrease, k, currReq.requestId, newRoute);
                     }
                 }
             }
@@ -163,27 +169,37 @@ public class InsertionOperator {
                     solution.get(lastVehicle).add(i);
                 }
                 requests.get(lastVehicle).add(currReq.requestId);
+                routesCost.set(lastVehicle, instance.costEvaluation(solution.get(lastVehicle)));
             } else {
                 // Add the inserted request on the vehicle
                 solution.set(insertRequest.vehicle, insertRequest.route);
                 requests.get(insertRequest.vehicle).add(currReq.requestId);
+                routesCost.set(insertRequest.vehicle, instance.costEvaluation(solution.get(insertRequest.vehicle)));
             }
         }
         removeEmptyVehicles(solution, requests);
     }
 
-    public boolean insertRequestOnVehicle(int requestId, ArrayList<Integer> kRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
+    /*
+     * While there are nodes in the pickup set, the algorithm selects a pickup node pi \in Pr using one of th pickups
+     * selection methods described in Section 3.3.1. Then the best position of pi in k is found (BestPosition(pi, l))
+     * i found by applying Algorithm 5, and the it is removed from the pickups set. Once all pickups are inserted, the
+     * delivery node dr is inserted at its best position in route k. If the insertion of node i \in {Pr U {Dr}} is not
+     * possible, the algorithm is interrupted and BestPosition(i, k) returns null.
+     */
+    public boolean insertRequestOnVehicle(int requestToInsert, ArrayList<Integer> currentRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
         BestPosition bestPosition = null;
-        ArrayList<Integer> route = new ArrayList(kRoute);
-        List<Request> pickups = getPickups(requestId, pickupMethod);
-        Request delivery = instance.delivery.get(requestId);
-        while (!pickups.isEmpty()) {
-            BestPickup pickup = selectAPickup(kRoute, pickups, pickupMethod, insertionMethod);
+        ArrayList<Integer> route = new ArrayList(currentRoute);
+        List<Request> pickups = new ArrayList<>(instance.pickups.get(requestToInsert)); // pickups <- Pr
+        Request delivery = instance.delivery.get(requestToInsert);
+        while (!pickups.isEmpty()) { // while pickups <> null do
+            BestPickup pickup = selectAPickup(currentRoute, pickups, pickupMethod, insertionMethod); // pi <- selectAPickup(pickups, method)
             if (pickup == null) return false;
-            pickups.remove(pickup.pickupNode);
+            pickups.remove(pickup.pickupNode); // pickups <- pickups\{p}
             switch (pickupMethod) {
                 case Simple:
                 case Random:
+                    // BestPosition(pi, k) <- Insert pi at its best insertion position in k
                     bestPosition = insertAtBestPosition(pickup.pickupNode.nodeId, route, insertionMethod, 0);
                     break;
                 case Expensive:
@@ -191,21 +207,22 @@ public class InsertionOperator {
                     bestPosition = pickup.bestPosition;
                     break;
             }
-            if (bestPosition == null) {
-                return false;
+            if (bestPosition == null) { // If BestPosition(pi, k) = null then
+                return false; // Return request insertion infeasible
             } else {
                 route.add(bestPosition.position, pickup.pickupNode.nodeId);
             }
         }
-        bestPosition = insertAtBestPosition(delivery.nodeId, route, insertionMethod, getLastPickupIndex(route, requestId));
-        if (bestPosition == null) {
-            return false;
+        // BestPosition(dr, k) <- Insert dr at its best insertion position in k
+        bestPosition = insertAtBestPosition(delivery.nodeId, route, insertionMethod, getLastPickupIndex(route, requestToInsert));
+        if (bestPosition == null) { // If BestPosition(dr, k) = null then
+            return false; // Return request insertion infeasible
         } else {
             route.add(bestPosition.position, delivery.nodeId);
         }
-        kRoute.clear();
-        kRoute.addAll(route);
-        return true;
+        currentRoute.clear();
+        currentRoute.addAll(route);
+        return true; // Request insertion is feasible
     }
 
     /*
@@ -232,12 +249,31 @@ public class InsertionOperator {
         return new InsertRequest(regretValue, r1.vehicle, r1.reqId, r1.route);
     }
 
+    /*
+     * One of the challenges of the MPDPTW is that a single request contains many pickup nodes that ca be performed in
+     * any order. Hence, when inserting a request on a route, we have the choice to change the order in which pickup
+     * nodes are inserted, as long as the delivery node is present after all pickup nodes along the route. Hence, for
+     * each of the tour insertion operators described in Section 3.3, we must determine the order at wich differente nodes
+     * will be inserted.
+     *
+     * Insertion methods:
+     * 1. Simple insertion order: here, the method selects the pickup nodes according to the order in which they are
+     * described in the instance.
+     * 2. Random insertion order: in the random method, the index of a pickup node from pickups is randomly generated
+     * in [1...|pickups|]
+     * 3. Cheapest insertion first: this method inserts first the node with the cheapest insertion cost.
+     * 4. Most expensive first: likewise, this method works similarly to the cheapest one, but inserts first the most
+     * expensive nodes.
+     */
     private BestPickup selectAPickup(ArrayList<Integer> kRoute, List<Request> pickups, PickupMethod method, InsertionMethod insertionMethod) {
         BestPickup bestPickup = null;
         switch (method) {
             case Simple:
-            case Random:
                 bestPickup = new BestPickup(pickups.get(0), null);
+                break;
+            case Random:
+                int pos = (int) (random.nextDouble() * pickups.size());
+                bestPickup = new BestPickup(pickups.get(pos), null);
                 break;
             case Cheapest:
             case Expensive:
@@ -288,26 +324,36 @@ public class InsertionOperator {
         return pos;
     }
 
-    private List<Request> getPickups(int requestId, PickupMethod method) {
-        List<Request> pickups = new ArrayList<>();
-        pickups.addAll(instance.pickups.get(requestId));
-        if (PickupMethod.Random.equals(method)) {
-            Collections.shuffle(pickups, random);
-        }
-        return pickups;
-    }
-
+    /*
+     * In order to determine the best insertion position of node i in route k, Algorithm 5 iterates through all the nodes
+     * already inserted in the route starting from depot node 0 until its last customer location. At each step, the algorithm
+     * temporarily inserts i after a node j from k, computing the increase in routing costs \Delta_{i}^{k}.
+     *
+     * At the first iteration of the algorithm, node i is inserted between the depot node 0 and the first customer of route k.
+     * It then computes the arrival time of k at i, verifying that the vehicle would visit i before bi given the current
+     * insertion. Next, tnext is set to the vehicle arrival time at next assuming that k does not include i. Then, the vehicle
+     * arrival time at next, namely t'next is computed, assuming that i is inserted in k. The added duration is used to verify
+     * that if node i is visited, the vehicle would visit next before the end of it TW bnext. Also, the added duration is
+     * compared with teh slack at next, that indicates to which extent the vehicle's visit to next would be postponed. If one
+     * of these conditions is violated, the algorithm moves to the next iteration, to test the next insertion position.
+     *
+     * If all the conditions are verified, the insert of i in k at the position under evaluation (NewCost) is computed,
+     * possibly adding a random noise. A temporary NewCost is compared against \Delta_{i}^{k*} to determine whether the
+     * insertion of i in k improves the solution. If the condition is verified, the feasibility of the new solution is tested
+     * by first inserting i in k to obtain S'. If S' generates a finite cost, the solution is feasible and the best known
+     * insertion position of i in k is set to prev. Finally, \Delta_{i}^{k*} is set to the value of NewCost in line 23.
+     */
     private BestPosition insertAtBestPosition(Integer i, ArrayList<Integer> route, InsertionMethod insertionMethod, int prevPos) {
-        double deltaBestCost = Double.MAX_VALUE;
+        double deltaBestCost = Double.MAX_VALUE; // \Delta_{i}^{k*} <- Infinity
         double slackTimes[] = instance.slackTimesSavelsbergh(route, true);
-        BestPosition bestPosition = null;
-        int prev = route.get(prevPos);
+        BestPosition bestPosition = null; // BestPosition(i, k) <- null
+        int prev = route.get(prevPos); // prev <- the depot node 0
         prevPos++;
-        int next = route.get(prevPos);
+        int next = route.get(prevPos); // next <- first customer of route k
         int currIdx = prevPos;
         Request reqI = instance.requests[i - 1];
         double[][] dists = instance.distances;
-        double t, tNext, tNewNext, twEndNext, addedDuration, slackNext, newCost;
+        double t, tNext, tNewNext, addedDuration, slackNext, newCost;
         double travelTime = 0.0;
         boolean infeasible;
         int count = 1;
@@ -317,27 +363,26 @@ public class InsertionOperator {
             travelTime += instance.requests[route.get(count) - 1].serviceTime;
             count++;
         }
-        while (currIdx < route.size()) {
+        while (currIdx < route.size()) { // while prev <> p + n + 1
             infeasible = false;
-            t = travelTime + dists[prev][i]; // Vehicle arrival time at(k, i)
-            if (t > reqI.twEnd) { // t > bi
-                break; // Exit algorithm
+            t = travelTime + dists[prev][i]; // t <- vehicleArrivalTimeAt(k, i)
+            if (t > reqI.twEnd) { // if t > bi then
+                break; // Exit algorithm 5
             }
             tNext = travelTime + dists[prev][next]; // Set t_next the actual arrival time at next
             tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next]; // t'_next <- arrival time at next if i is inserted before
             addedDuration = tNewNext - tNext; // addedDuration = t'_next - t_next
-            twEndNext = twEnd(next);
-            slackNext = slackTimes[currIdx];//slackNext(next, tNext); // TODO: Should be the savelsbergh calculation
-            if (tNext > twEndNext || addedDuration > slackNext) { // t_next > b_next  OR addedDuration > slack_next
+            if (tNext > twEnd(next) || addedDuration > slackTimes[currIdx]) { // t_next > b_next  OR addedDuration > slack_next
                 infeasible = true;
             }
             if (!infeasible) {
+                // NewCost <- C_prev,i + C_i,next - C_prev,next + generateRandomNoise()
                 newCost = dists[prev][i] + dists[i][next] - dists[prev][next] + generateRandomNoise(insertionMethod);
                 if (newCost < deltaBestCost) {
-                    route.add(currIdx, i);
-                    if (instance.restrictionsEvaluation(route).feasible) {
-                        deltaBestCost = newCost;
-                        bestPosition = new BestPosition(currIdx, deltaBestCost);
+                    route.add(currIdx, i); // Insert i after prev in the current solution S'
+                    if (instance.restrictionsEvaluation(route).feasible) { // If S' is feasible then
+                        deltaBestCost = newCost; // \Delta_{i}^{k*} <- NewCost
+                        bestPosition = new BestPosition(currIdx, deltaBestCost); // BestPosition(i, k) <- prev
                     }
                     route.remove(currIdx);
                 }
