@@ -230,7 +230,17 @@ public class MMAS {
 
     public void globalPheromoneDeposit(Ant ant) {
         int from, to;
-        double dTau = 1.0 / ant.totalCost;
+
+        double max = 0;
+        for (Ant a : antPopulation) {
+            max = Math.max(max, a.totalCost);
+            max = Math.max(max, a.timeWindowPenalty);
+        }
+        double factTotal = ant.totalCost / max;
+        double factPenalt = ant.timeWindowPenalty / max;
+
+        double dTau = 1.0 / (ant.totalCost * factTotal + ant.timeWindowPenalty * factPenalt);
+        //double dTau = 1.0 / ant.totalCost;
         for (int i = 0; i < ant.tours.size(); i++) {
             for (int j = 0; j < ant.tours.get(i).size() - 1; j++) {
                 from = ant.tours.get(i).get(j);

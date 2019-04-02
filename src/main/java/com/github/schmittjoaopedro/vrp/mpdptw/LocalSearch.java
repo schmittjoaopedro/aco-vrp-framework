@@ -39,7 +39,7 @@ public class LocalSearch {
         double newCost;
         while (improvement) {
             improvement = false;
-            //tempAnt = exchangeRequestOperator.exchange(tempAnt);
+            tempAnt = exchangeRequestOperator.exchange(tempAnt);
             tempAnt = relocateNodeOperator.relocate(tempAnt);
             tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Greedy);
             tempAnt = relocateRequestOperator.relocate(tempAnt);
