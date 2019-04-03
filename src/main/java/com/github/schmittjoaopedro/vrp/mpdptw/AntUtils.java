@@ -35,15 +35,15 @@ public class AntUtils {
         ant.tours = new ArrayList<>();
         ant.requests = new ArrayList<>();
         ant.capacity = new ArrayList<>();
-        ant.visited = new boolean[instance.noNodes];
-        ant.demands = new double[instance.noNodes];
+        ant.visited = new boolean[instance.getNumNodes()];
+        ant.demands = new double[instance.getNumNodes()];
         ant.tourLengths = new ArrayList<>();
         ant.totalCost = Double.MAX_VALUE;
-        ant.departureTime = new double[instance.noNodes];
-        ant.visitedRequests = new boolean[instance.noReq];
+        ant.departureTime = new double[instance.getNumNodes()];
+        ant.visitedRequests = new boolean[instance.getNumReq()];
         ant.capacityPenalty = 0.0;
         ant.timeWindowPenalty = 0.0;
-        ant.toVisit = instance.noNodes;
+        ant.toVisit = instance.getNumNodes();
     }
 
     public static Ant createEmptyAnt(ProblemInstance instance) {
@@ -79,7 +79,7 @@ public class AntUtils {
         int node;
         while (nodeIdx < ant.tours.get(vehicle).size()) {
             node = ant.tours.get(vehicle).get(nodeIdx);
-            if (node != instance.depot.nodeId && instance.requests[node - 1].requestId == requestId) {
+            if (node != instance.getDepot().nodeId && instance.getRequestId(node) == requestId) {
                 ant.tours.get(vehicle).remove(nodeIdx);
             } else {
                 nodeIdx++;

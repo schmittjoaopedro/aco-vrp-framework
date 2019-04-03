@@ -1,8 +1,5 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.*;
 
 public class MMAS {
@@ -71,22 +68,22 @@ public class MMAS {
     }
 
     public void allocateStructures() {
-        pheromoneNodes = new double[instance.noNodes][instance.noNodes];
-        for (int i = 0; i < instance.noNodes; i++) {
-            for (int j = 0; j < instance.noNodes; j++) {
+        pheromoneNodes = new double[instance.getNumNodes()][instance.getNumNodes()];
+        for (int i = 0; i < instance.getNumNodes(); i++) {
+            for (int j = 0; j < instance.getNumNodes(); j++) {
                 pheromoneNodes[i][j] = 0.0;
             }
         }
-        nnList = new int[instance.noNodes][depth];
+        nnList = new int[instance.getNumNodes()][depth];
     }
 
     public void computeNNList() {
-        double[] distanceVector = new double[instance.noNodes];
-        int[] helpVector = new int[instance.noNodes];
-        for (int i = 0; i < instance.noNodes; i++) {
-            for (int j = 0; j < instance.noNodes; j++) {
+        double[] distanceVector = new double[instance.getNumNodes()];
+        int[] helpVector = new int[instance.getNumNodes()];
+        for (int i = 0; i < instance.getNumNodes(); i++) {
+            for (int j = 0; j < instance.getNumNodes(); j++) {
                 if (i != j && instance.isFeasible(i, j)) {
-                    distanceVector[j] = instance.distances[i][j];
+                    distanceVector[j] = instance.dist(i, j);
                 } else {
                     distanceVector[j] = Double.MAX_VALUE;
                 }
@@ -94,7 +91,7 @@ public class MMAS {
                     helpVector[j] = j;
                 }
             }
-            sort(distanceVector, helpVector, 0, instance.noNodes - 1);
+            sort(distanceVector, helpVector, 0, instance.getNumNodes() - 1);
             for (int j = 0; j < depth; j++) {
                 nnList[i][j] = helpVector[j];
             }
@@ -132,13 +129,13 @@ public class MMAS {
         }
         foundBest = 0;
         trailMax = 1.0 / ((rho) * nnTour());
-        trailMin = trailMax / (2.0 * instance.noNodes);
+        trailMin = trailMax / (2.0 * instance.getNumNodes());
         initPheromoneTrails(trailMax);
     }
 
     private void initPheromoneTrails(double initialTrail) {
-        for (int i = 0; i < instance.noNodes; i++) {
-            for (int j = 0; j < instance.noNodes; j++) {
+        for (int i = 0; i < instance.getNumNodes(); i++) {
+            for (int j = 0; j < instance.getNumNodes(); j++) {
                 if (i != j) {
                     pheromoneNodes[i][j] = initialTrail;
                 }
@@ -190,7 +187,7 @@ public class MMAS {
     }
 
     public void setPheromoneBounds() {
-        double p_x = Math.exp(Math.log(0.05) / instance.noNodes);
+        double p_x = Math.exp(Math.log(0.05) / instance.getNumNodes());
         trailMin = 1.0 * (1.0 - p_x) / (p_x * ((depth + 1) / 2));
         trailMax = 1.0 / (rho * bestSoFar.totalCost);
         trailMin = trailMax * trailMin;
@@ -198,7 +195,7 @@ public class MMAS {
 
     public void setPheromoneBoundsForLS() {
         trailMax = 1.0 / (rho * bestSoFar.totalCost);
-        trailMin = trailMax / (2.0 * instance.noNodes);
+        trailMin = trailMax / (2.0 * instance.getNumNodes());
     }
 
     public void updateRestartBest() {
@@ -300,7 +297,7 @@ public class MMAS {
     private double nnTour() {
         OptimalRequestSolver optimalRequestSolver;
         upperBound = 0.0;
-        for (int r = 0; r < instance.noReq; r++) {
+        for (int r = 0; r < instance.getNumReq(); r++) {
             optimalRequestSolver = new OptimalRequestSolver(r, instance);
             optimalRequestSolver.optimize();
             upperBound += optimalRequestSolver.getBestCost();
@@ -338,7 +335,7 @@ public class MMAS {
             }
         }
         double difference = avgDistance / ((double) nAnts * (double) (nAnts - 1) / 2.0);
-        return difference / instance.noNodes;
+        return difference / instance.getNumNodes();
     }
 
     private int distanceBetweenAnts(Ant a1, Ant a2) {
@@ -374,11 +371,11 @@ public class MMAS {
         double max;
         double cutoff;
         double avg = 0.0;
-        double numBranches[] = new double[instance.noNodes];
-        for (int m = 1; m < instance.noNodes; m++) {
+        double numBranches[] = new double[instance.getNumNodes()];
+        for (int m = 1; m < instance.getNumNodes(); m++) {
             min = Double.MAX_VALUE;
             max = Double.MIN_VALUE;
-            for (int i = 0; i < instance.noNodes; i++) {
+            for (int i = 0; i < instance.getNumNodes(); i++) {
                 if (m != i) {
                     max = Math.max(pheromoneNodes[m][i], max);
                     min = Math.min(pheromoneNodes[m][i], min);
@@ -390,10 +387,10 @@ public class MMAS {
                     numBranches[m] += 1.0;
             }
         }
-        for (int m = 0; m < instance.noNodes; m++) {
+        for (int m = 0; m < instance.getNumNodes(); m++) {
             avg += numBranches[m];
         }
-        return (avg / (double) instance.noNodes);
+        return (avg / (double) instance.getNumNodes());
     }
 
     public void setAlpha(double alpha) {

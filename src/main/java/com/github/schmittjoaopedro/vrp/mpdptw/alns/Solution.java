@@ -49,7 +49,7 @@ public class Solution {
         int node;
         while (nodeIdx < tours.get(vehicle).size()) {
             node = tours.get(vehicle).get(nodeIdx);
-            if (node != instance.depot.nodeId && instance.requests[node - 1].requestId == requestId) {
+            if (node != instance.getDepot().nodeId && instance.getRequestId(node) == requestId) {
                 tours.get(vehicle).remove(nodeIdx);
             } else {
                 nodeIdx++;

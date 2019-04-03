@@ -312,8 +312,8 @@ public class ALNS {
      * Based on experiments evaluated by Naccache (2018) (Table 3).
      */
     private int generateRandomQ() {
-        int min = (int) Math.min(6, 0.15 * instance.noReq);
-        int max = (int) Math.min(18, 0.4 * instance.noReq);
+        int min = (int) Math.min(6, 0.15 * instance.getNumReq());
+        int max = (int) Math.min(18, 0.4 * instance.getNumReq());
         return min + (int) (random.nextDouble() * (max - min));
     }
 

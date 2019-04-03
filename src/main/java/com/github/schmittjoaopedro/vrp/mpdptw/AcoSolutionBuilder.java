@@ -86,7 +86,7 @@ public class AcoSolutionBuilder {
             } else {
                 ant.tours.get(vehicle).add(ant.tours.get(vehicle).size() - 1, nextNode);
                 ant.visited[nextNode] = true;
-                int reqId = instance.requests[nextNode - 1].requestId;
+                int reqId = instance.getRequestId(nextNode);
                 boolean containsNodeReq = ant.requests.get(vehicle).contains(reqId);
                 if (!containsNodeReq) {
                     ant.requests.get(vehicle).add(reqId);
@@ -131,10 +131,10 @@ public class AcoSolutionBuilder {
         int curr = ant.tours.get(vehicle).get(currIdx);
         boolean hasProb = false;
         double routeCost = instance.restrictionsEvaluation(ant.tours.get(vehicle)).cost;
-        for (int i = 0; i < instance.noNodes; i++) {
+        for (int i = 0; i < instance.getNumNodes(); i++) {
             if (!ant.visited[i]) {
-                Request req = instance.requests[i - 1];
-                double newCost = routeCost - instance.distances[curr][0] + instance.distances[curr][i];
+                Request req = instance.getRequest(i);
+                double newCost = routeCost - instance.dist(curr, 0) + instance.dist(curr, i);
                 newCost = Math.max(newCost, req.twStart);
                 if (newCost < req.twEnd) {
                     newCost += req.serviceTime;
@@ -171,7 +171,7 @@ public class AcoSolutionBuilder {
         }
         int next = -1;
         if (hasProb) {
-            double[] probs = new double[instance.noNodes];
+            double[] probs = new double[instance.getNumNodes()];
             for (Map.Entry<Integer, Double> costs : feasibleCosts.entrySet()) {
                 probs[costs.getKey()] = costs.getValue();
             }
@@ -199,10 +199,10 @@ public class AcoSolutionBuilder {
     }
 
     private boolean isPrecedenceViolated(ArrayList<Integer> tempRemainingTour, int node) {
-        Request req = instance.requests[node - 1];
+        Request req = instance.getRequest(node);
         if (req.isDeliver) {
             for (int i = 0; i < tempRemainingTour.size(); i++) {
-                Request req2 = instance.requests[tempRemainingTour.get(i) - 1];
+                Request req2 = instance.getRequest(tempRemainingTour.get(i));
                 if (req.requestId == req2.requestId && req2.isPickup) {
                     return true;
                 }
@@ -223,12 +223,12 @@ public class AcoSolutionBuilder {
     }
 
     private void addNextNodesRequests(ArrayList<Integer> requests, ArrayList<Integer> tempRemainingTour, int nextNode) {
-        int reqId = instance.requests[nextNode - 1].requestId;
+        int reqId = instance.getRequestId(nextNode);
         if (!requests.contains(reqId)) {
-            for (Request pickup : instance.pickups.get(reqId)) {
+            for (Request pickup : instance.getPickups(reqId)) {
                 tempRemainingTour.add(pickup.nodeId);
             }
-            tempRemainingTour.add(instance.delivery.get(reqId).nodeId);
+            tempRemainingTour.add(instance.getDelivery(reqId).nodeId);
         }
     }
 

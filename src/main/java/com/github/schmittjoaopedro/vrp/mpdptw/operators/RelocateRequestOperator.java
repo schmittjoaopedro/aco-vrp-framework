@@ -32,7 +32,7 @@ public class RelocateRequestOperator {
         double improvedCost, tempCost;
         while (improvement) {
             improvement = false;
-            for (int requestId = 0; requestId < instance.noReq; requestId++) {
+            for (int requestId = 0; requestId < instance.getNumReq(); requestId++) {
                 AntUtils.copyFromTo(improvedAnt, tempAnt);
                 vehicle = AntUtils.findRequestVehicleOwner(tempAnt, requestId);
                 AntUtils.removeRequest(instance, tempAnt, vehicle, requestId);
@@ -66,7 +66,7 @@ public class RelocateRequestOperator {
         double improvedCost, tempCost;
         while (improvement) {
             improvement = false;
-            for (int requestId = 0; requestId < instance.noReq; requestId++) {
+            for (int requestId = 0; requestId < instance.getNumReq(); requestId++) {
                 tempSol = improvedSol.copy();
                 vehicle = tempSol.findRequestVehicleOwner(requestId);
                 tempSol.removeRequest(instance, vehicle, requestId);

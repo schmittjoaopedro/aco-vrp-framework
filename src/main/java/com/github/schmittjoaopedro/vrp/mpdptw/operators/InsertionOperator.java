@@ -190,8 +190,8 @@ public class InsertionOperator {
     public boolean insertRequestOnVehicle(int requestToInsert, ArrayList<Integer> currentRoute, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
         BestPosition bestPosition = null;
         ArrayList<Integer> route = new ArrayList(currentRoute);
-        List<Request> pickups = new ArrayList<>(instance.pickups.get(requestToInsert)); // pickups <- Pr
-        Request delivery = instance.delivery.get(requestToInsert);
+        List<Request> pickups = new ArrayList<>(instance.getPickups(requestToInsert)); // pickups <- Pr
+        Request delivery = instance.getDelivery(requestToInsert);
         while (!pickups.isEmpty()) { // while pickups <> null do
             BestPickup pickup = selectAPickup(currentRoute, pickups, pickupMethod, insertionMethod); // pi <- selectAPickup(pickups, method)
             if (pickup == null) return false;
@@ -306,7 +306,7 @@ public class InsertionOperator {
         switch (insertionMethod) {
             case Regret3Noise:
             case RegretMNoise:
-                randomNoise = (2 * random.nextDouble() * instance.maxDistance) - instance.maxDistance;
+                randomNoise = (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
                 break;
         }
         return randomNoise;
@@ -316,7 +316,7 @@ public class InsertionOperator {
         int pos = 0;
         Request req;
         for (int i = 1; i < route.size() - 1; i++) {
-            req = instance.requests[route.get(i) - 1];
+            req = instance.getRequest(route.get(i));
             if (req.isPickup && req.requestId == requestId) {
                 pos = i;
             }
@@ -351,33 +351,32 @@ public class InsertionOperator {
         prevPos++;
         int next = route.get(prevPos); // next <- first customer of route k
         int currIdx = prevPos;
-        Request reqI = instance.requests[i - 1];
-        double[][] dists = instance.distances;
+        Request reqI = instance.getRequest(i);
         double t, tNext, tNewNext, addedDuration, slackNext, newCost;
         double travelTime = 0.0;
         boolean infeasible;
         int count = 1;
         while (count < currIdx) {
-            travelTime = travelTime + dists[route.get(count - 1)][route.get(count)];
-            travelTime = Math.max(travelTime, instance.requests[route.get(count) - 1].twStart);
-            travelTime += instance.requests[route.get(count) - 1].serviceTime;
+            travelTime = travelTime + instance.dist(route.get(count - 1), route.get(count));
+            travelTime = Math.max(travelTime, instance.getRequest(route.get(count)).twStart);
+            travelTime += instance.getRequest(route.get(count)).serviceTime;
             count++;
         }
         while (currIdx < route.size()) { // while prev <> p + n + 1
             infeasible = false;
-            t = travelTime + dists[prev][i]; // t <- vehicleArrivalTimeAt(k, i)
+            t = travelTime + instance.dist(prev, i); // t <- vehicleArrivalTimeAt(k, i)
             if (t > reqI.twEnd) { // if t > bi then
                 break; // Exit algorithm 5
             }
-            tNext = travelTime + dists[prev][next]; // Set t_next the actual arrival time at next
-            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + dists[i][next]; // t'_next <- arrival time at next if i is inserted before
+            tNext = travelTime + instance.dist(prev, next); // Set t_next the actual arrival time at next
+            tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + instance.dist(i, next); // t'_next <- arrival time at next if i is inserted before
             addedDuration = tNewNext - tNext; // addedDuration = t'_next - t_next
             if (tNext > twEnd(next) || addedDuration > slackTimes[currIdx]) { // t_next > b_next  OR addedDuration > slack_next
                 infeasible = true;
             }
             if (!infeasible) {
                 // NewCost <- C_prev,i + C_i,next - C_prev,next + generateRandomNoise()
-                newCost = dists[prev][i] + dists[i][next] - dists[prev][next] + generateRandomNoise(insertionMethod);
+                newCost = instance.dist(prev, i) + instance.dist(i, next) - instance.dist(prev, next) + generateRandomNoise(insertionMethod);
                 if (newCost < deltaBestCost) {
                     route.add(currIdx, i); // Insert i after prev in the current solution S'
                     if (instance.restrictionsEvaluation(route).feasible) { // If S' is feasible then
@@ -387,11 +386,11 @@ public class InsertionOperator {
                     route.remove(currIdx);
                 }
             }
-            travelTime = travelTime + dists[prev][next];
+            travelTime = travelTime + instance.dist(prev, next);
             travelTime = Math.max(travelTime, twStart(next));
             travelTime += serviceTime(next);
             prev = next;
-            if (prev == instance.depot.nodeId) {
+            if (prev == instance.getDepot().nodeId) {
                 break;
             }
             currIdx++;
@@ -401,26 +400,26 @@ public class InsertionOperator {
     }
 
     private double twEnd(int next) {
-        if (next == instance.depot.nodeId) {
-            return instance.depot.twEnd;
+        if (next == instance.getDepot().nodeId) {
+            return instance.getDepot().twEnd;
         } else {
-            return instance.requests[next - 1].twEnd;
+            return instance.getRequest(next).twEnd;
         }
     }
 
     private double twStart(int next) {
-        if (next == instance.depot.nodeId) {
-            return instance.depot.twStart;
+        if (next == instance.getDepot().nodeId) {
+            return instance.getDepot().twStart;
         } else {
-            return instance.requests[next - 1].twStart;
+            return instance.getRequest(next).twStart;
         }
     }
 
     private double serviceTime(int next) {
-        if (next == instance.depot.nodeId) {
+        if (next == instance.getDepot().nodeId) {
             return 0.0;
         } else {
-            return instance.requests[next - 1].serviceTime;
+            return instance.getRequest(next).serviceTime;
         }
     }
 

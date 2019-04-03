@@ -104,8 +104,8 @@ public class LocalSearch {
     }
 
     private int generateNoRemovalRequests() {
-        int min = (int) Math.min(6, 0.15 * instance.noReq);
-        int max = (int) Math.min(18, 0.4 * instance.noReq) + 1;
+        int min = (int) Math.min(6, 0.15 * instance.getNumReq());
+        int max = (int) Math.min(18, 0.4 * instance.getNumReq()) + 1;
         return min + (int) (random.nextDouble() * (max - min));
     }
 }

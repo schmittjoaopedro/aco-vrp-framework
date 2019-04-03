@@ -76,7 +76,7 @@ public class FeasibilityOperator {
             tourCloned = new ArrayList<>(tour);
             int n = 1;
             while (n < tourCloned.size() - 1) {
-                if (instance.requests[tourCloned.get(n) - 1].requestId == reqId) {
+                if (instance.getRequestId(tourCloned.get(n)) == reqId) {
                     tourCloned.remove(n);
                 } else {
                     n++;
@@ -97,7 +97,7 @@ public class FeasibilityOperator {
         }
         int n = 1;
         while (n < tour.size() - 1) {
-            if (instance.requests[tour.get(n) - 1].requestId == delRequest) {
+            if (instance.getRequestId(tour.get(n)) == delRequest) {
                 tour.remove(n);
             } else {
                 n++;
@@ -111,15 +111,15 @@ public class FeasibilityOperator {
         int node, prev, curr, bestIdx, lastPickup = 1;
         double lost;
         // Insert pickup points
-        for (Request req : instance.pickups.get(requestId)) {
+        for (Request req : instance.getPickups(requestId)) {
             node = req.nodeId;
             lost = Double.MAX_VALUE;
             bestIdx = 1;
             for (int n = 1; n < tour.size(); n++) {
                 prev = tour.get(n - 1);
                 curr = tour.get(n);
-                if (instance.distances[prev][node] + instance.distances[node][curr] < lost) {
-                    lost = instance.distances[prev][node] + instance.distances[node][curr];
+                if (instance.dist(prev, node) + instance.dist(node, curr) < lost) {
+                    lost = instance.dist(prev, node) + instance.dist(node, curr);
                     bestIdx = n;
                 }
             }
@@ -127,20 +127,20 @@ public class FeasibilityOperator {
         }
         // Insert delivery
         for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
-            if (instance.requests[tour.get(i) - 1].isPickup && // First check if this is a delivery point
-                    requestId == instance.requests[tour.get(i) - 1].requestId) { // Check if this is the same pickup-delivery request
+            if (instance.getRequest(tour.get(i)).isPickup && // First check if this is a delivery point
+                    requestId == instance.getRequest(tour.get(i)).requestId) { // Check if this is the same pickup-delivery request
                 lastPickup = i;
             }
         }
         lastPickup++; // adjust insertion point
         lost = Double.MAX_VALUE;
-        node = instance.delivery.get(requestId).nodeId;
+        node = instance.getDelivery(requestId).nodeId;
         bestIdx = 1;
         for (int n = lastPickup; n < tour.size(); n++) {
             prev = tour.get(n - 1);
             curr = tour.get(n);
-            if (instance.distances[prev][node] + instance.distances[node][curr] < lost) {
-                lost = instance.distances[prev][node] + instance.distances[node][curr];
+            if (instance.dist(prev, node) + instance.dist(node, curr) < lost) {
+                lost = instance.dist(prev, node) + instance.dist(node, curr);
                 bestIdx = n;
             }
         }

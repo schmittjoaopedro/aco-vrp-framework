@@ -157,7 +157,7 @@ public class RemovalOperator {
                 int reqId = requests.get(k).get(r);
                 if (reqId != request.requestId) {
                     // Get the distance between the delivery points between the request parameter and the current request r of vehicle k
-                    double relatedCost = instance.distances[instance.delivery.get(request.requestId).nodeId][instance.delivery.get(reqId).nodeId];
+                    double relatedCost = instance.dist(instance.getDelivery(request.requestId).nodeId, instance.getDelivery(reqId).nodeId);
                     assignedRequests.add(new Req(k, reqId, relatedCost)); // Add the request with the related cost to the list of assigned requests
                 }
             }
@@ -207,8 +207,8 @@ public class RemovalOperator {
         for (int requestId : requests) {
             switch (removalMethod) {
                 case ExpensiveNode:
-                    double cost = instance.costEvaluation(route, requestId, instance.delivery.get(requestId).nodeId); // Route cost without delivery node
-                    for (Request req : instance.pickups.get(requestId)) {
+                    double cost = instance.costEvaluation(route, requestId, instance.getDelivery(requestId).nodeId); // Route cost without delivery node
+                    for (Request req : instance.getPickups(requestId)) {
                         double newCost = instance.costEvaluation(route, requestId, req.nodeId); // Route cost without pickup node
                         if (newCost < cost) { // Store the lowest cost based on node removal
                             cost = newCost;
@@ -251,11 +251,11 @@ public class RemovalOperator {
 
     private void removeRequest(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, Req request) {
         // Remove all pickups node from solution
-        for (Request req : instance.pickups.get(request.requestId)) {
+        for (Request req : instance.getPickups(request.requestId)) {
             removeItem(solution.get(request.vehicleId), req.nodeId);
         }
         // Remove the delivery node from solution
-        removeItem(solution.get(request.vehicleId), instance.delivery.get(request.requestId).nodeId);
+        removeItem(solution.get(request.vehicleId), instance.getDelivery(request.requestId).nodeId);
         // Remove request id from solution
         removeItem(requests.get(request.vehicleId), request.requestId);
     }

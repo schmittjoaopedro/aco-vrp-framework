@@ -24,7 +24,7 @@ public class InsertionHeuristic {
 
     public Solution createInitialSolution() {
         Solution solution = new Solution();
-        for (int r = 0; r < instance.noReq; r++) {
+        for (int r = 0; r < instance.getNumReq(); r++) {
             boolean found = false;
             int kMax = solution.tours.size();
             for (int k = 0; k < kMax; k++) {

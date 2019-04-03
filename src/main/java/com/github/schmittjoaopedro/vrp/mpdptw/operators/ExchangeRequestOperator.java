@@ -37,11 +37,11 @@ public class ExchangeRequestOperator {
         ArrayList<Integer> v1RouteOrigin, v2RouteOrigin;
         while (improvement) {
             improvement = false;
-            for (int r1 = 0; r1 < instance.noReq; r1++) {
+            for (int r1 = 0; r1 < instance.getNumReq(); r1++) {
                 v1 = AntUtils.findRequestVehicleOwner(tempAnt, r1);
                 v1RouteOrigin = new ArrayList<>(tempAnt.tours.get(v1));
                 AntUtils.removeRequest(instance, tempAnt, v1, r1);
-                for (int r2 = 0; r2 < instance.noReq; r2++) {
+                for (int r2 = 0; r2 < instance.getNumReq(); r2++) {
                     if (r1 != r2) {
                         v2 = AntUtils.findRequestVehicleOwner(tempAnt, r2);
                         v2RouteOrigin = new ArrayList<>(tempAnt.tours.get(v2));
@@ -83,11 +83,11 @@ public class ExchangeRequestOperator {
         ArrayList<Integer> v1RouteOrigin, v2RouteOrigin;
         while (improvement) {
             improvement = false;
-            for (int r1 = 0; r1 < instance.noReq; r1++) {
+            for (int r1 = 0; r1 < instance.getNumReq(); r1++) {
                 v1 = tempSol.findRequestVehicleOwner(r1);
                 v1RouteOrigin = new ArrayList<>(tempSol.tours.get(v1));
                 tempSol.removeRequest(instance, v1, r1);
-                for (int r2 = 0; r2 < instance.noReq; r2++) {
+                for (int r2 = 0; r2 < instance.getNumReq(); r2++) {
                     if (r1 != r2) {
                         v2 = tempSol.findRequestVehicleOwner(r2);
                         v2RouteOrigin = new ArrayList<>(tempSol.tours.get(v2));

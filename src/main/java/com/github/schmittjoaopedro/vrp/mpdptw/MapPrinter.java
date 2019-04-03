@@ -11,7 +11,7 @@ public class MapPrinter {
         double margin = 5;
         // Get map bounds
         double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE, minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
-        for (Request request : instance.requests) {
+        for (Request request : instance.getRequests()) {
             double xCoord = request.x;
             double yCoord = request.y;
             maxX = Math.max(maxX, xCoord);
@@ -28,14 +28,14 @@ public class MapPrinter {
             indexHtml.append("\t\t\t<path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n");
             indexHtml.append("\t\t</marker>\n");
             indexHtml.append("\t</defs>");
-            for (Request request : instance.requests) {
+            for (Request request : instance.getRequests()) {
                 if (request.isPickup) {
                     drawNode(width, height, margin, maxX, maxY, indexHtml, request.x, request.y, "red", String.valueOf(request.requestId));
                 } else {
                     drawNode(width, height, margin, maxX, maxY, indexHtml, request.x, request.y, "blue", String.valueOf(request.requestId));
                 }
             }
-            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
+            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.getDepot().x, instance.getDepot().y, "black", "0");
             double xCoordSource, yCoordSource, xCoordTarget, yCoordTarget;
             for (int k = 0; k < bestSoFar.tours.size(); k++) {
                 int r = (int) (Math.random() * 255);
@@ -43,18 +43,18 @@ public class MapPrinter {
                 int b = (int) (Math.random() * 255);
                 for (int i = 0; i < bestSoFar.tours.get(k).size() - 1; i++) {
                     if (i == 0) {
-                        xCoordSource = instance.depot.x;
-                        yCoordSource = instance.depot.y;
+                        xCoordSource = instance.getDepot().x;
+                        yCoordSource = instance.getDepot().y;
                     } else {
-                        xCoordSource = instance.requests[bestSoFar.tours.get(k).get(i) - 1].x;
-                        yCoordSource = instance.requests[bestSoFar.tours.get(k).get(i) - 1].y;
+                        xCoordSource = instance.getRequest(bestSoFar.tours.get(k).get(i)).x;
+                        yCoordSource = instance.getRequest(bestSoFar.tours.get(k).get(i)).y;
                     }
                     if (i == bestSoFar.tours.get(k).size() - 2) {
-                        xCoordTarget = instance.depot.x;
-                        yCoordTarget = instance.depot.y;
+                        xCoordTarget = instance.getDepot().x;
+                        yCoordTarget = instance.getDepot().y;
                     } else {
-                        xCoordTarget = instance.requests[bestSoFar.tours.get(k).get(i + 1) - 1].x;
-                        yCoordTarget = instance.requests[bestSoFar.tours.get(k).get(i + 1) - 1].y;
+                        xCoordTarget = instance.getRequest(bestSoFar.tours.get(k).get(i + 1)).x;
+                        yCoordTarget = instance.getRequest(bestSoFar.tours.get(k).get(i + 1)).y;
                     }
                     indexHtml.append("\n\t<line x1=\"");
                     indexHtml.append(((width / maxX) * xCoordSource) + margin);

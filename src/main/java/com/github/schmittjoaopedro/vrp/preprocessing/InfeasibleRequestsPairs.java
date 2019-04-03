@@ -28,10 +28,10 @@ public class InfeasibleRequestsPairs {
     }
 
     public boolean[][] calculateFeasibilityPairs() {
-        boolean[][] requestsPairs = new boolean[instance.noReq][instance.noReq];
-        for (int i = 0; i < instance.noReq; i++) {
+        boolean[][] requestsPairs = new boolean[instance.getNumReq()][instance.getNumReq()];
+        for (int i = 0; i < instance.getNumReq(); i++) {
             int noF = 0;
-            for (int j = i + 1; j < instance.noReq; j++) {
+            for (int j = i + 1; j < instance.getNumReq(); j++) {
                 requestsPairs[i][j] = isFeasible(i, j);
                 requestsPairs[j][i] = requestsPairs[i][j];
                 if (!requestsPairs[i][j]) {

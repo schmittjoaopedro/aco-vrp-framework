@@ -38,13 +38,13 @@ public class RelocateNodeOperator {
                 for (int nodeIdx = 1; nodeIdx < tour.size() - 1; nodeIdx++) { // Ignore depot at first and last position
                     node = tourCloned.get(nodeIdx);
                     removalIdx = removeNode(tour, node);
-                    if (instance.requests[node - 1].isPickup) {
+                    if (instance.getRequest(node).isPickup) {
                         if (bestPickupInsertion(originalCost, tour, node, removalIdx, 1)) {
                             originalCost = instance.restrictionsEvaluation(tour);
                             AntUtils.copyFromTo(tempAnt, improvedAnt);
                             improvement = true;
                         }
-                    } else if (instance.requests[node - 1].isDeliver) { // Or try best delivery insertion
+                    } else if (instance.getRequest(node).isDeliver) { // Or try best delivery insertion
                         if (bestDeliveryInsertion(originalCost, tour, node, removalIdx, 1)) {
                             originalCost = instance.restrictionsEvaluation(tour);
                             AntUtils.copyFromTo(tempAnt, improvedAnt);
@@ -71,7 +71,7 @@ public class RelocateNodeOperator {
                 int bestPos = removeNode(tempTour, node1); // To insert back we consider plus 1
                 int innerLimit = tempTour.size();
                 int innerStartAt = startAt;
-                Request req = instance.requests[node1 - 1];
+                Request req = instance.getRequest(node1);
                 if (req.isDeliver) {
                     innerStartAt = getLastPickupIdx(tempTour, req) + 1; // To start after the last pickup position
                     innerStartAt = Math.max(innerStartAt, startAt);
@@ -128,8 +128,8 @@ public class RelocateNodeOperator {
         int deliveryIdx = 0;
         boolean improvement = false;
         for (int i = startAt; i < tour.size() - 1; i++) { // Ignore depot at first and last position
-            if (instance.requests[tour.get(i) - 1].isDeliver && // First check if this is a delivery point
-                    instance.requests[pickupNode - 1].requestId == instance.requests[tour.get(i) - 1].requestId) { // Check if this is the same pickup-delivery request
+            if (instance.getRequest(tour.get(i)).isDeliver && // First check if this is a delivery point
+                    instance.getRequestId(pickupNode) == instance.getRequestId(tour.get(i))) { // Check if this is the same pickup-delivery request
                 deliveryIdx = i;
                 break;
             }
@@ -168,7 +168,7 @@ public class RelocateNodeOperator {
         ProblemInstance.FitnessResult insertionCost;
         ProblemInstance.FitnessResult bestInsertionCost = originalCost;
         boolean improvement = false;
-        int lastPickupIdx = getLastPickupIdx(tour, instance.requests[deliveryNode - 1]);
+        int lastPickupIdx = getLastPickupIdx(tour, instance.getRequest(deliveryNode));
         lastPickupIdx = Math.max(lastPickupIdx, startAt);
         for (int i = lastPickupIdx + 1; i < tour.size(); i++) {
             tour.add(i, deliveryNode);
@@ -203,8 +203,8 @@ public class RelocateNodeOperator {
     private int getLastPickupIdx(List<Integer> tour, Request request) {
         int lastPickupIdx = 0;
         for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
-            if (instance.requests[tour.get(i) - 1].isPickup && // First check if this is a pickup point
-                    instance.requests[tour.get(i) - 1].requestId == request.requestId) { // Check if this is the same pickup-delivery request
+            if (instance.getRequest(tour.get(i)).isPickup && // First check if this is a pickup point
+                    instance.getRequestId(tour.get(i)) == request.requestId) { // Check if this is the same pickup-delivery request
                 lastPickupIdx = i;
             }
         }
@@ -214,8 +214,8 @@ public class RelocateNodeOperator {
     private int getLastDeliverIdx(List<Integer> tour, Request request) {
         int lastDeliveryIdx = 0;
         for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
-            if (instance.requests[tour.get(i) - 1].isDeliver && // First check if this is a delivery point
-                    instance.requests[tour.get(i) - 1].requestId == request.requestId) { // Check if this is the same pickup-delivery request
+            if (instance.getRequest(tour.get(i)).isDeliver && // First check if this is a delivery point
+                    instance.getRequestId(tour.get(i)) == request.requestId) { // Check if this is the same pickup-delivery request
                 lastDeliveryIdx = i;
             }
         }

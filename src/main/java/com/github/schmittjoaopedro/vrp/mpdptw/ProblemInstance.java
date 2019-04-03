@@ -1,33 +1,128 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
-import com.github.schmittjoaopedro.vrp.preprocessing.InfeasibleRequestsPairs;
 
 import java.util.*;
 
 public class ProblemInstance {
 
-    public int noNodes;
+    private int numNodes;
 
-    public int noReq;
+    private int numReq;
 
-    public int noMaxVehicles;
+    private int numMaxVehicles;
 
-    public double vehicleCapacity;
+    private double vehicleCapacity;
 
-    public Depot depot;
+    private ArrayList<ArrayList<Integer>> neighbors = new ArrayList<>();
 
-    public double[][] distances;
+    private double[][] distances;
 
-    public double maxDistance;
+    private double maxDistance;
 
-    public boolean requestsFeasibility[][];
+    private Depot depot;
 
-    public Request[] requests;
+    private Request[] requests;
 
-    public Map<Integer, List<Request>> pickups;
+    private List<Request>[] pickups;
 
-    public Map<Integer, Request> delivery;
+    private Request[] delivery;
+
+    /*
+     * GETTERS and SETTERS
+     */
+
+    public int getNumNodes() {
+        return numNodes;
+    }
+
+    public void setNumNodes(int numNodes) {
+        this.numNodes = numNodes;
+    }
+
+    public int getNumReq() {
+        return numReq;
+    }
+
+    public void setNumReq(int numReq) {
+        this.numReq = numReq;
+    }
+
+    public int getNumMaxVehicles() {
+        return numMaxVehicles;
+    }
+
+    public void setNumMaxVehicles(int numMaxVehicles) {
+        this.numMaxVehicles = numMaxVehicles;
+    }
+
+    public double getVehicleCapacity() {
+        return vehicleCapacity;
+    }
+
+    public void setVehicleCapacity(double vehicleCapacity) {
+        this.vehicleCapacity = vehicleCapacity;
+    }
+
+    public ArrayList<ArrayList<Integer>> getNeighbors() {
+        return neighbors;
+    }
+
+    public void setDistances(double[][] distances) {
+        this.distances = distances;
+    }
+
+    public double getMaxDistance() {
+        return maxDistance;
+    }
+
+    public Depot getDepot() {
+        return depot;
+    }
+
+    public void setDepot(Depot depot) {
+        this.depot = depot;
+    }
+
+    public Request[] getRequests() {
+        return requests;
+    }
+
+    public void setRequests(Request[] requests) {
+        this.requests = requests;
+    }
+
+    public void setPickups(List<Request>[] pickups) {
+        this.pickups = pickups;
+    }
+
+    public void setDelivery(Request[] delivery) {
+        this.delivery = delivery;
+    }
+
+    /*
+     * Functional methods
+     */
+
+    public Request getDelivery(int requestId) {
+        return delivery[requestId];
+    }
+
+    public List<Request> getPickups(int requestId) {
+        return pickups[requestId];
+    }
+
+    public double dist(int i, int j) {
+        return distances[i][j];
+    }
+
+    public Integer getRequestId(int node) {
+        return requests[node - 1].requestId;
+    }
+
+    public Request getRequest(int node) {
+        return requests[node - 1];
+    }
 
     public void calculateMaxDistance() {
         for (int i = 0; i < distances.length; i++) {
@@ -102,8 +197,8 @@ public class ProblemInstance {
         for (int i = 0; i < ant.requests.size(); i++) {
             attendedRequests += ant.requests.get(i).size();
         }
-        ant.feasible &= ant.tours.size() < noMaxVehicles;
-        if (attendedRequests != noReq && noReqsRestriction) {
+        ant.feasible &= ant.tours.size() < getNumMaxVehicles();
+        if (attendedRequests != getNumReq() && noReqsRestriction) {
             ant.feasible = false;
         }
         double total = 0.0;
@@ -129,8 +224,8 @@ public class ProblemInstance {
         for (int i = 0; i < solution.requests.size(); i++) {
             attendedRequests += solution.requests.get(i).size();
         }
-        solution.feasible &= solution.tours.size() < noMaxVehicles;
-        if (attendedRequests != noReq) {
+        solution.feasible &= solution.tours.size() < getNumMaxVehicles();
+        if (attendedRequests != getNumReq()) {
             solution.feasible = false;
             throw new RuntimeException("Infeasible number of requests");
         }
@@ -177,7 +272,7 @@ public class ProblemInstance {
             if (!requestsTemp.contains(reqId)) {
                 throw new RuntimeException("Invalid assigned request");
             }
-            if (totalPickups.get(reqId) != pickups.get(reqId).size()) {
+            if (totalPickups.get(reqId) != getPickups(reqId).size()) {
                 throw new RuntimeException("Invalid number of pickups assigned");
             }
             if (deliveryPosition.get(reqId) < lastPickupPosition.get(reqId)) {
@@ -204,16 +299,8 @@ public class ProblemInstance {
             reqI = i - 1;
             reqJ = j - 1;
             feasible = requests[reqI].twStart + requests[reqI].serviceTime + distances[i][j] < requests[reqJ].twEnd; // is time feasible
-            if (requestsFeasibility != null && feasible && requests[reqI].requestId != requests[reqJ].requestId) {
-                feasible = requestsFeasibility[requests[reqI].requestId][requests[reqJ].requestId];
-            }
         }
         return feasible;
-    }
-
-    public void requestPairsFeasibility(Random random) {
-        InfeasibleRequestsPairs infeasibleRequestsPairs = new InfeasibleRequestsPairs(this, random);
-        this.requestsFeasibility = infeasibleRequestsPairs.calculateFeasibilityPairs();
     }
 
     /**
