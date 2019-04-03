@@ -47,6 +47,8 @@ public class MMAS {
 
     private double[][] pheromoneNodes;
 
+    private boolean parallel = Boolean.FALSE;
+
     private int[][] nnList;
 
     private Random random;
@@ -146,7 +148,7 @@ public class MMAS {
 
     public void constructSolutions() {
         if (acoSolutionBuilder == null) {
-            acoSolutionBuilder = new AcoSolutionBuilder(instance, antPopulation, random, pheromoneNodes, alpha, beta);
+            acoSolutionBuilder = new AcoSolutionBuilder(instance, antPopulation, random, pheromoneNodes, alpha, beta, parallel);
         }
         acoSolutionBuilder.constructSolutions();
     }
@@ -454,6 +456,13 @@ public class MMAS {
         return acoSolutionBuilder.getFeasibleRoutes();
     }
 
+    public void setParallel(boolean parallel) {
+        this.parallel = parallel;
+    }
+
+    public boolean isParallel() {
+        return parallel;
+    }
 
     private class NextClient {
         int nextClient = 0;

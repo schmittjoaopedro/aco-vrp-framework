@@ -22,42 +22,48 @@ public class AcoSolutionBuilder {
 
     private Random random;
 
-    public AcoSolutionBuilder(ProblemInstance instance, List<Ant> antPopulation, Random random, double[][] pheromones, double alpha, double beta) {
+    private boolean parallel;
+
+    public AcoSolutionBuilder(ProblemInstance instance, List<Ant> antPopulation, Random random, double[][] pheromones, double alpha, double beta, boolean parallel) {
         this.instance = instance;
         this.antPopulation = antPopulation;
         this.pheromoneNodes = pheromones;
         this.alpha = alpha;
         this.beta = beta;
         this.random = random;
+        this.parallel = parallel;
     }
 
     public void constructSolutions() {
-        /*for (Ant ant : antPopulation) {// For each ant
-            AntUtils.antEmptyMemory(ant, instance);
-            constructAntSolution(instance, ant);
-            instance.restrictionsEvaluation(ant);
-            if (ant.capacityPenalty > 0) {
-                throw new RuntimeException("Invalid capacity penaly!!");
+        if (parallel) {
+            Thread[] antBuilders = new Thread[antPopulation.size()];
+            for (int i = 0; i < antPopulation.size(); i++) {
+                Ant ant = antPopulation.get(i);
+                antBuilders[i] = new Thread(() -> {
+                    AntUtils.antEmptyMemory(ant, instance);
+                    constructAntSolution(instance, ant);
+                    instance.restrictionsEvaluation(ant);
+                    if (ant.capacityPenalty > 0) {
+                        throw new RuntimeException("Invalid capacity penaly!!");
+                    }
+                });
             }
-        }*/
-        Thread[] antBuilders = new Thread[antPopulation.size()];
-        for (int i = 0; i < antPopulation.size(); i++) {
-            Ant ant = antPopulation.get(i);
-            antBuilders[i] = new Thread(() -> {
+            ExecutorService executorService = Executors.newFixedThreadPool(8);
+            for (Thread t : antBuilders) {
+                executorService.submit(t);
+            }
+            executorService.shutdown();
+            while (!executorService.isTerminated()) ;
+        } else {
+            for (Ant ant : antPopulation) {// For each ant
                 AntUtils.antEmptyMemory(ant, instance);
                 constructAntSolution(instance, ant);
                 instance.restrictionsEvaluation(ant);
                 if (ant.capacityPenalty > 0) {
                     throw new RuntimeException("Invalid capacity penaly!!");
                 }
-            });
+            }
         }
-        ExecutorService executorService = Executors.newFixedThreadPool(8);
-        for (Thread t : antBuilders) {
-            executorService.submit(t);
-        }
-        executorService.shutdown();
-        while (!executorService.isTerminated()) ;
     }
 
     public void constructAntSolution(ProblemInstance instance, Ant ant) {

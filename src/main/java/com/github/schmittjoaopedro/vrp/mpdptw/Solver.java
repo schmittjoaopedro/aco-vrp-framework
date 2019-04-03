@@ -224,7 +224,15 @@ public class Solver implements Runnable {
         return globalStatistics;
     }
 
+    public List<IterationStatistic> getIterationStatistics() {
+        return iterationStatistics;
+    }
+
     public Ant getBestSolution() {
         return mmas.getBestSoFar();
+    }
+
+    public void setParallel(boolean parallel) {
+        mmas.setParallel(parallel);
     }
 }
