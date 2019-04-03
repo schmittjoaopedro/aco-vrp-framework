@@ -13,7 +13,7 @@ public class MPDPTW_MMAS_TEST {
 
     private static int statisticInterval = 10;
 
-    private static int maxIterations = 1000;
+    private static int maxIterations = 100;
 
     private static int seed = 1;
 
@@ -22,7 +22,7 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_large_4_25_1_test() {
+    public void mpdptw_main_problems_test() {
         executeTest("l_4_25_1.txt");
         executeTest("l_8_25_1.txt");
         executeTest("n_4_25_1.txt");
@@ -47,25 +47,40 @@ public class MPDPTW_MMAS_TEST {
         executeTest("n_8_400_1.txt");
         executeTest("w_4_400_1.txt");
         executeTest("w_8_400_1.txt");
+
     }
 
     private void executeTest(String problem) {
         ArrayList<Double> costs = new ArrayList<>();
         ArrayList<Double> time = new ArrayList<>();
-        boolean feasible = true;
-        for (int i = 0; i < 5; i++) {
+        ArrayList<Double> penalty = new ArrayList<>();
+        int sampleSize = 1, feasible = 0;
+        for (int i = 0; i < sampleSize; i++) {
             Solver solver = new Solver(rootDirectory, problem, maxIterations, i, 0.02, statisticInterval, true);
             solver.run();
             costs.add(solver.getBestSolution().totalCost);
+            penalty.add(solver.getBestSolution().timeWindowPenalty);
             time.add(solver.getGlobalStatistics().getTimeStatistics().get("Algorithm").doubleValue());
-            feasible &= solver.getBestSolution().feasible;
+            if (solver.getBestSolution().feasible) {
+                feasible++;
+            }
         }
         double meanCosts = Maths.getMean(costs);
         double meanTime = Maths.getMean(time);
+        double meanPenalty = Maths.getMean(penalty);
+        System.out.println("---------------------------------------");
         System.out.println("Instance = " + problem);
-        System.out.println("Feasible = " + feasible);
         System.out.println("Mean costs = " + meanCosts);
+        System.out.println("Mean penalty = " + meanPenalty);
         System.out.println("Mean time = " + meanTime);
+        System.out.println("Feasible = " + feasible + " of " + sampleSize);
+        System.out.println("---------------------------------------");
+    }
+
+    @Test
+    public void mpdptw_large_4_25_1_test() {
+        Solver solver = new Solver(rootDirectory, "w_4_400_1.txt", maxIterations, seed, 0.8, statisticInterval, true);
+        solver.run();
     }
 
     @Test

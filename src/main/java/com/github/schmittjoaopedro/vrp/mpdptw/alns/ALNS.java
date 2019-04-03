@@ -84,7 +84,7 @@ public class ALNS {
         insertionOperator = new InsertionOperator(instance, random);
         removalOperator = new RemovalOperator(instance, random);
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
-        exchangeRequestOperator = new ExchangeRequestOperator(instance);
+        exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
 
         /*
          * An initial solution S is generated through a construction heuristic in which requests are progressively
@@ -166,12 +166,12 @@ public class ALNS {
                 resetOperatorsScores();
                 solution = applyImprovement(solution); // Apply improvement to S
                 updateBest(solution);
-                /*System.out.println("Iter " + iteration +
+                System.out.println("Iter " + iteration +
                         " Best = " + format(solution.totalCost) + ", feasible = " + solution.feasible +
                         " BSF = " + format(solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
                         ", T = " + format(T) + ", minT = " + format(minT) +
                         ", ro = " + StringUtils.join(getArray(roWeights), ',') +
-                        ", ri = " + StringUtils.join(getArray(riWeights), ','));*/
+                        ", ri = " + StringUtils.join(getArray(riWeights), ','));
             }
             iteration++;
         }
@@ -244,10 +244,15 @@ public class ALNS {
     private Solution applyImprovement(Solution solution) {
         boolean improvement = true;
         Solution improved = solution.copy();
+        Solution tempSolution = improved;
         while (improvement) {
             improvement = false;
-            improved = relocateRequestOperator.relocate(improved);
-            improved = exchangeRequestOperator.exchange(improved);
+            tempSolution = relocateRequestOperator.relocate(tempSolution);
+            tempSolution = exchangeRequestOperator.exchange(tempSolution);
+            if (tempSolution.totalCost < improved.totalCost) {
+                improved = tempSolution;
+                improvement = true;
+            }
         }
         return improved;
     }
@@ -319,6 +324,8 @@ public class ALNS {
     }
 
     private int selectInsertionOperator() {
+        // Ignore K-regret
+        riWeights[InsertionMethod.RegretM.ordinal()] = 0.0; // Accordingly coelho, k-regret is deteriorating the results.
         int ri = getNextRouletteWheelOperator(riWeights);
         riUsages[ri] = riUsages[ri] + 1;
         return ri;

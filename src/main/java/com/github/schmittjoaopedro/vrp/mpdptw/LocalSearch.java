@@ -29,7 +29,7 @@ public class LocalSearch {
         this.insertionOperator = new InsertionOperator(instance, random);
         this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
-        this.exchangeRequestOperator = new ExchangeRequestOperator(instance);
+        this.exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
     }
 
     public Ant optimize(Ant ant) {
@@ -39,10 +39,17 @@ public class LocalSearch {
         double newCost;
         while (improvement) {
             improvement = false;
-            //tempAnt = exchangeRequestOperator.exchange(tempAnt);
             tempAnt = relocateNodeOperator.relocate(tempAnt);
             tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Greedy);
+            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveNode, PickupMethod.Random, InsertionMethod.Greedy);
+            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveRequest, PickupMethod.Random, InsertionMethod.Greedy);
+            tempAnt = optimize(tempAnt, RemovalMethod.Shaw, PickupMethod.Random, InsertionMethod.Greedy);
+            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Regret3);
+            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveNode, PickupMethod.Random, InsertionMethod.Regret3);
+            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveRequest, PickupMethod.Random, InsertionMethod.Regret3);
+            tempAnt = optimize(tempAnt, RemovalMethod.Shaw, PickupMethod.Random, InsertionMethod.Regret3);
             tempAnt = relocateRequestOperator.relocate(tempAnt);
+            tempAnt = exchangeRequestOperator.exchange(tempAnt);
             newCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
             if (newCost < oldCost) {
                 oldCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;

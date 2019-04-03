@@ -177,7 +177,7 @@ public class IterationStatistic {
             log.append("FEASIBLE: " + (feasible ? "T" : "F"));
         }
         if (numPaths > 0) {
-            log.append("NO.PATHS: " + numPaths);
+            log.append(" NO.PATHS: " + numPaths);
         }
         return log.toString();
     }
