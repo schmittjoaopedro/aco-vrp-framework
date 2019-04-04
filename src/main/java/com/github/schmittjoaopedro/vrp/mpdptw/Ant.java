@@ -8,19 +8,27 @@ public class Ant {
 
     public ArrayList<ArrayList<Integer>> requests;
 
-    public ArrayList<Double> capacity;
+    public ArrayList<Double> tourCosts;
 
     public boolean[] visited;
+
+    public double[] capacity;
 
     public boolean[] visitedRequests;
 
     public double[] departureTime;
 
-    public double[] demands;
+    public double[] arrivalTime;
+
+    public double[] slackTimes;
+
+    public double[] waitingTimes;
+
+    public double[] slackWaitTimes;
+
+    public double[] delays;
 
     public int toVisit;
-
-    public ArrayList<Double> tourLengths;
 
     public double totalCost;
 

@@ -133,7 +133,7 @@ public class Solver implements Runnable {
         ant.totalCost = 0.0;
         for (int i = 0; i < ant.tours.size(); i++) {
             cost = problemInstance.costEvaluation(ant.tours.get(i));
-            ant.tourLengths.set(i, cost);
+            ant.tourCosts.set(i, cost);
             ant.totalCost += cost;
         }
         msg += "\nInstance = " + fileName;

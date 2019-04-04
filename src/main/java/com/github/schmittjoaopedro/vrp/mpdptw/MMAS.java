@@ -124,8 +124,8 @@ public class MMAS {
     public void initTry() {
         lambda = 0.05;
         restartIteration = 1;
-        for (int i = 0; i < bestSoFar.tourLengths.size(); i++) {
-            bestSoFar.tourLengths.set(i, Double.MAX_VALUE);
+        for (int i = 0; i < bestSoFar.tourCosts.size(); i++) {
+            bestSoFar.tourCosts.set(i, Double.MAX_VALUE);
         }
         foundBest = 0;
         trailMax = 1.0 / ((rho) * nnTour());
