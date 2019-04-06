@@ -8,8 +8,20 @@ public class AntUtils {
         to.tours = new ArrayList<>();
         to.requests = new ArrayList<>();
         to.tourCosts = new ArrayList<>();
+        to.departureTime = new ArrayList<>();
+        to.arrivalTime = new ArrayList<>();
+        to.slackTimes = new ArrayList<>();
+        to.waitingTimes = new ArrayList<>();
+        to.slackWaitTimes = new ArrayList<>();
+        to.delays = new ArrayList<>();
         for (int i = 0; i < from.tours.size(); i++) {
             to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
+            to.departureTime.add(i, (ArrayList<Double>) from.departureTime.get(i).clone());
+            to.arrivalTime.add(i, (ArrayList<Double>) from.arrivalTime.get(i).clone());
+            to.slackTimes.add(i, (ArrayList<Double>) from.slackTimes.get(i).clone());
+            to.waitingTimes.add(i, (ArrayList<Double>) from.waitingTimes.get(i).clone());
+            to.slackWaitTimes.add(i, (ArrayList<Double>) from.slackWaitTimes.get(i).clone());
+            to.delays.add(i, (ArrayList<Double>) from.delays.get(i).clone());
         }
         for (int i = 0; i < from.requests.size(); i++) {
             to.requests.add(i, (ArrayList<Integer>) from.requests.get(i).clone());
@@ -20,9 +32,6 @@ public class AntUtils {
         to.visited = from.visited.clone();
         to.capacity = from.capacity.clone();
         to.visitedRequests = from.visitedRequests.clone();
-        to.departureTime = from.departureTime.clone();
-        to.arrivalTime = from.arrivalTime.clone();
-        to.slackTimes = from.slackTimes.clone();
         to.toVisit = from.toVisit;
         to.totalCost = from.totalCost;
         to.feasible = from.feasible;
@@ -34,12 +43,15 @@ public class AntUtils {
         ant.tours = new ArrayList<>();
         ant.requests = new ArrayList<>();
         ant.tourCosts = new ArrayList<>();
+        ant.departureTime = new ArrayList<>();
+        ant.arrivalTime = new ArrayList<>();
+        ant.slackTimes = new ArrayList<>();
+        ant.waitingTimes = new ArrayList<>();
+        ant.slackWaitTimes = new ArrayList<>();
+        ant.delays = new ArrayList<>();
         ant.visited = new boolean[instance.getNumNodes()];
         ant.capacity = new double[instance.getNumNodes()];
         ant.visitedRequests = new boolean[instance.getNumReq()];
-        ant.departureTime = new double[instance.getNumNodes()];
-        ant.arrivalTime = new double[instance.getNumNodes()];
-        ant.slackTimes= new double[instance.getNumNodes()];
         ant.toVisit = instance.getNumNodes();
         ant.totalCost = Double.MAX_VALUE;
         ant.feasible = true;

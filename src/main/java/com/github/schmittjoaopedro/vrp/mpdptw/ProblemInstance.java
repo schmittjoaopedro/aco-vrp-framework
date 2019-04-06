@@ -179,12 +179,12 @@ public class ProblemInstance {
     public void solutionEvaluation(Ant ant) {
         ant.tourCosts = new ArrayList<>(ant.tours.size());
         ant.capacity = new double[getNumNodes()];
-        ant.departureTime = new double[getNumNodes()];
-        ant.arrivalTime = new double[getNumNodes()];
-        ant.slackTimes = new double[getNumNodes()];
-        ant.slackWaitTimes = new double[getNumNodes()];
-        ant.waitingTimes = new double[getNumNodes()];
-        ant.delays = new double[getNumNodes()];
+        ant.departureTime = new ArrayList<>(ant.tours.size());
+        ant.arrivalTime = new ArrayList<>(ant.tours.size());
+        ant.slackTimes = new ArrayList<>(ant.tours.size());
+        ant.slackWaitTimes = new ArrayList<>(ant.tours.size());
+        ant.waitingTimes = new ArrayList<>(ant.tours.size());
+        ant.delays = new ArrayList<>(ant.tours.size());
         ant.toVisit = getNumNodes();
         ant.totalCost = 0.0;
         ant.feasible = true;
@@ -193,24 +193,33 @@ public class ProblemInstance {
         int[] numNodesByRequest = new int[getNumReq()];
         double[] pickupByRequestTime = new double[getNumReq()];
         double[] deliveryByRequestTime = new double[getNumReq()];
+        ant.toVisit--; // Remove depot from nodes to visit count
         // For each vehicle
         for (int k = 0; k < ant.tours.size(); k++) {
             List<Integer> tour = ant.tours.get(k);
+            ant.arrivalTime.add(new ArrayList<>());
+            ant.departureTime.add(new ArrayList<>());
+            ant.waitingTimes.add(new ArrayList<>());
+            ant.delays.add(new ArrayList<>());
+            ant.slackTimes.add(new ArrayList<>());
+            ant.slackWaitTimes.add(new ArrayList<>());
             double currentTime = 0.0;
             double tourCost = 0.0;
             double capacity = 0.0;
             int curr, next;
             Request request;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
+            ant.arrivalTime.get(k).add(0.0);
+            ant.waitingTimes.get(k).add(0.0);
+            ant.delays.get(k).add(0.0);
+            ant.departureTime.get(k).add(0.0);
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
-                ant.arrivalTime[next] = currentTime;
-                if (i > 0) {
-                    ant.waitingTimes[next] = Math.max(0, twStart(next) - ant.arrivalTime[next]);
-                }
+                ant.arrivalTime.get(k).add(currentTime);
+                ant.waitingTimes.get(k).add(Math.max(0, twStart(next) - ant.arrivalTime.get(k).get(i + 1)));
                 currentTime = Math.max(currentTime, twStart(next));
                 capacity += demand(next);
                 ant.capacity[next] = capacity;
@@ -227,18 +236,20 @@ public class ProblemInstance {
                 }
                 // Check time windows feasibility
                 if (currentTime > twEnd(next)) {
-                    ant.delays[next] = currentTime - twEnd(next);
-                    ant.timeWindowPenalty += ant.delays[next];
+                    ant.delays.get(k).add(currentTime - twEnd(next));
+                    ant.timeWindowPenalty += ant.delays.get(k).get(i);
                     ant.feasible = false;
+                } else {
+                    ant.delays.get(k).add(0.0);
                 }
                 // Check capacity feasibility
                 if (capacity > vehicleCapacity) {
                     ant.capacityPenalty += capacity - vehicleCapacity;
+                    ant.feasible = false;
                 }
                 currentTime += serviceTime(next);
-                ant.departureTime[next] = currentTime;
+                ant.departureTime.get(k).add(currentTime);
             }
-            ant.toVisit--; // Remove depot from nodes to visit count
             for (Integer requestId : attendedRequests) {
                 // Check if all nodes of each request is attended by the same vehicle
                 if (numNodesByRequest[requestId] != getPickups(requestId).size()) {
@@ -252,30 +263,35 @@ public class ProblemInstance {
                     ant.toVisit--;
                 }
             }
-            // Check that all requests were attended
-            if (ant.toVisit != 0) {
-                ant.feasible = false;
-            }
             // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
             // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
             int prev;
-            for (int i = 1; i < tour.size(); i++) {
+            for (int i = 0; i < tour.size(); i++) {
                 double cost = 0.0;
                 curr = tour.get(i);
-                double departureTime = ant.departureTime[curr];
-                ant.slackTimes[curr] = Double.MAX_VALUE;
+                double departureTime = ant.departureTime.get(k).get(i); // Departure time of depot will change for each vehicle
+                ant.slackTimes.get(k).add(Double.MAX_VALUE);
                 for (int j = i; j < tour.size(); j++) {
                     int node = tour.get(j);
                     if (j - i > 0) {
                         prev = tour.get(j - 1);
-                        cost = cost + distances[prev][node] + serviceTime(node);
+                        cost = cost + distances[prev][node];
+                        if (prev != curr) {
+                            // As the current node departure time already considers service time, we only sum the service
+                            // time of the remaining nodes
+                            cost += serviceTime(prev);
+                        }
                     }
-                    ant.slackTimes[curr] = Math.min(ant.slackTimes[curr], twEnd(node) - (departureTime + cost));
+                    ant.slackTimes.get(k).set(i, Math.min(ant.slackTimes.get(k).get(i), twEnd(node) - (departureTime + cost)));
                 }
-                ant.slackWaitTimes[curr] = ant.slackTimes[curr] + ant.waitingTimes[curr];
+                ant.slackWaitTimes.get(k).add(ant.slackTimes.get(k).get(i) + ant.waitingTimes.get(k).get(i));
             }
             ant.tourCosts.add(tourCost);
             ant.totalCost += tourCost;
+        }
+        // Check that all requests were attended
+        if (ant.toVisit != 0) {
+            ant.feasible = false;
         }
     }
 

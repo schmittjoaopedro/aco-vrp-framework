@@ -10,23 +10,23 @@ public class Ant {
 
     public ArrayList<Double> tourCosts;
 
+    public ArrayList<ArrayList<Double>> departureTime;
+
+    public ArrayList<ArrayList<Double>> arrivalTime;
+
+    public ArrayList<ArrayList<Double>> slackTimes;
+
+    public ArrayList<ArrayList<Double>> waitingTimes;
+
+    public ArrayList<ArrayList<Double>> slackWaitTimes;
+
+    public ArrayList<ArrayList<Double>> delays;
+
     public boolean[] visited;
 
     public double[] capacity;
 
     public boolean[] visitedRequests;
-
-    public double[] departureTime;
-
-    public double[] arrivalTime;
-
-    public double[] slackTimes;
-
-    public double[] waitingTimes;
-
-    public double[] slackWaitTimes;
-
-    public double[] delays;
 
     public int toVisit;
 
