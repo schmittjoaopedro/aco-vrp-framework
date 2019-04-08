@@ -265,7 +265,7 @@ public class ProblemInstance {
             }
             // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
             // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
-            int prev;
+            /*int prev; TODO: Remove after validate with Jean.
             for (int i = 0; i < tour.size(); i++) {
                 double cost = 0.0;
                 curr = tour.get(i);
@@ -286,7 +286,17 @@ public class ProblemInstance {
                     cost += serviceTime(node);
                 }
                 ant.arrivalSlackTimes.get(k).add(ant.departureSlackTimes.get(k).get(i) + ant.waitingTimes.get(k).get(i));
+            }*/
+            double slackTime = Double.MAX_VALUE;
+            for (int i = tour.size() - 1; i >= 0; i--) {
+                curr = tour.get(i);
+                slackTime = Math.min(slackTime, twEnd(curr) - ant.departureTime.get(k).get(i) + serviceTime(curr));
+                ant.departureSlackTimes.get(k).add(slackTime);
+                slackTime += ant.waitingTimes.get(k).get(i);
+                ant.arrivalSlackTimes.get(k).add(slackTime);
             }
+            Collections.reverse(ant.departureSlackTimes.get(k));
+            Collections.reverse(ant.arrivalSlackTimes.get(k));
             ant.tourCosts.add(tourCost);
             ant.totalCost += tourCost;
         }
