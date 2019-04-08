@@ -79,8 +79,10 @@ public class MPDPTWSolutionEvaluationTest {
          [5.0, 1.5, 1.5, 4.0, 4.5], here we result [11.0, 1.5, 1.5, 4.0, 4.5] because the start depot departure time
          value is always 0.0.
          */
-        assertThat(ant.slackTimes.get(0)).hasSize(ant.tours.get(0).size());
-        assertThat(ant.slackTimes.get(0)).containsExactly(11.0, 1.5, 1.5, 4.0, 4.5);
+        assertThat(ant.departureSlackTimes.get(0)).hasSize(ant.tours.get(0).size());
+        assertThat(ant.departureSlackTimes.get(0)).containsExactly(5.0, 1.5, 1.5, 4.0, 4.5);
+        assertThat(ant.arrivalSlackTimes.get(0)).containsExactly(5.0, 5.0, 1.5, 6.0, 4.5);
+        assertThat(ant.waitingTimes.get(0)).containsExactly(0.0, 3.5, 0.0, 2.0, 0.0);
         assertThat(ant.totalCost).isEqualTo(2.0);
         assertThat(ant.feasible).isTrue();
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
@@ -189,7 +191,7 @@ public class MPDPTWSolutionEvaluationTest {
         assertThat(ant.delays.get(1)).containsExactly(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         assertThat(ant.delays.get(2)).containsExactly(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-        assertThat(ant.slackTimes.get(0)).containsExactly(
+        assertThat(ant.departureSlackTimes.get(0)).containsExactly(
                 43.4349587826498,
                 43.4349587826498,
                 43.4349587826498,
@@ -197,21 +199,21 @@ public class MPDPTWSolutionEvaluationTest {
                 6.712422515143771,
                 6.712422515143771,
                 6.712422515143771,
-                -3.2875774848562287,
+                6.712422515143771,
                 277.8807506884482,
                 277.8807506884482,
                 277.8807506884482);
-        assertThat(ant.slackTimes.get(1)).containsExactly(
+        assertThat(ant.departureSlackTimes.get(1)).containsExactly(
                 122.04434595530029,
                 122.04434595530029,
-                112.04434595530029,
+                122.04434595530029,
                 128.54224091921856,
                 128.54224091921833,
                 92.69130310338187,
                 92.69130310338187,
-                82.69130310338187,
+                92.69130310338187,
                 367.19472792159263);
-        assertThat(ant.slackTimes.get(2)).containsExactly(
+        assertThat(ant.departureSlackTimes.get(2)).containsExactly(
                 21.748254561205158,
                 21.748254561205158,
                 21.748254561205158,
@@ -222,11 +224,11 @@ public class MPDPTWSolutionEvaluationTest {
                 21.748254561205158,
                 21.748254561205158,
                 21.748254561205158,
-                11.748254561205158,
+                21.748254561205158,
                 83.6018443807086,
                 83.6018443807086);
 
-        assertThat(ant.slackWaitTimes.get(0)).containsExactly(
+        assertThat(ant.arrivalSlackTimes.get(0)).containsExactly(
                 43.4349587826498,
                 43.4349587826498,
                 43.4349587826498,
@@ -234,21 +236,21 @@ public class MPDPTWSolutionEvaluationTest {
                 6.712422515143771,
                 6.712422515143771,
                 6.712422515143771,
-                -3.2875774848562287,
+                6.712422515143771,
                 277.8807506884482,
                 277.8807506884482,
                 277.8807506884482);
-        assertThat(ant.slackWaitTimes.get(1)).containsExactly(
+        assertThat(ant.arrivalSlackTimes.get(1)).containsExactly(
                 122.04434595530029,
                 122.04434595530029,
-                112.04434595530029,
+                122.04434595530029,
                 128.54224091921856,
                 128.54224091921833,
                 128.54224091921856,
                 92.69130310338187,
-                82.69130310338187,
+                92.69130310338187,
                 367.19472792159263);
-        assertThat(ant.slackWaitTimes.get(2)).containsExactly(
+        assertThat(ant.arrivalSlackTimes.get(2)).containsExactly(
                 21.748254561205158,
                 21.748254561205158,
                 21.748254561205158,
@@ -259,7 +261,7 @@ public class MPDPTWSolutionEvaluationTest {
                 21.748254561205158,
                 21.748254561205158,
                 21.748254561205158,
-                11.748254561205158,
+                21.748254561205158,
                 83.6018443807086,
                 83.6018443807086);
 

@@ -181,8 +181,8 @@ public class ProblemInstance {
         ant.capacity = new double[getNumNodes()];
         ant.departureTime = new ArrayList<>(ant.tours.size());
         ant.arrivalTime = new ArrayList<>(ant.tours.size());
-        ant.slackTimes = new ArrayList<>(ant.tours.size());
-        ant.slackWaitTimes = new ArrayList<>(ant.tours.size());
+        ant.departureSlackTimes = new ArrayList<>(ant.tours.size());
+        ant.arrivalSlackTimes = new ArrayList<>(ant.tours.size());
         ant.waitingTimes = new ArrayList<>(ant.tours.size());
         ant.delays = new ArrayList<>(ant.tours.size());
         ant.toVisit = getNumNodes();
@@ -201,18 +201,18 @@ public class ProblemInstance {
             ant.departureTime.add(new ArrayList<>());
             ant.waitingTimes.add(new ArrayList<>());
             ant.delays.add(new ArrayList<>());
-            ant.slackTimes.add(new ArrayList<>());
-            ant.slackWaitTimes.add(new ArrayList<>());
-            double currentTime = 0.0;
+            ant.departureSlackTimes.add(new ArrayList<>());
+            ant.arrivalSlackTimes.add(new ArrayList<>());
+            double currentTime = depot.twStart;
             double tourCost = 0.0;
             double capacity = 0.0;
             int curr, next;
             Request request;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
-            ant.arrivalTime.get(k).add(0.0);
             ant.waitingTimes.get(k).add(0.0);
             ant.delays.get(k).add(0.0);
-            ant.departureTime.get(k).add(0.0);
+            ant.arrivalTime.get(k).add(currentTime);
+            ant.departureTime.get(k).add(currentTime);
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
@@ -269,22 +269,23 @@ public class ProblemInstance {
             for (int i = 0; i < tour.size(); i++) {
                 double cost = 0.0;
                 curr = tour.get(i);
-                double departureTime = ant.departureTime.get(k).get(i); // Departure time of depot will change for each vehicle
-                ant.slackTimes.get(k).add(Double.MAX_VALUE);
+                double startTime = Math.max(ant.arrivalTime.get(k).get(i), twStart(curr)); // Departure time of depot will change for each vehicle
+                ant.departureSlackTimes.get(k).add(Double.MAX_VALUE);
                 for (int j = i; j < tour.size(); j++) {
                     int node = tour.get(j);
                     if (j - i > 0) {
                         prev = tour.get(j - 1);
                         cost = cost + distances[prev][node];
                         if (prev != curr) {
-                            // As the current node departure time already considers service time, we only sum the service
-                            // time of the remaining nodes
-                            cost += serviceTime(prev);
                         }
                     }
-                    ant.slackTimes.get(k).set(i, Math.min(ant.slackTimes.get(k).get(i), twEnd(node) - (departureTime + cost)));
+                    ant.departureSlackTimes.get(k).set(i, Math.min(ant.departureSlackTimes.get(k).get(i), twEnd(node) - (startTime + cost)));
+                    // Service time is aggregated in the cost function after tested the slack time minimization. This is necessary because
+                    // service time is not considered to be attended before the end time window of the current client, but is considered
+                    // in the cost calculation to achieve the next client.
+                    cost += serviceTime(node);
                 }
-                ant.slackWaitTimes.get(k).add(ant.slackTimes.get(k).get(i) + ant.waitingTimes.get(k).get(i));
+                ant.arrivalSlackTimes.get(k).add(ant.departureSlackTimes.get(k).get(i) + ant.waitingTimes.get(k).get(i));
             }
             ant.tourCosts.add(tourCost);
             ant.totalCost += tourCost;

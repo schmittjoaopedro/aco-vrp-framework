@@ -14,11 +14,11 @@ public class Ant {
 
     public ArrayList<ArrayList<Double>> arrivalTime;
 
-    public ArrayList<ArrayList<Double>> slackTimes;
+    public ArrayList<ArrayList<Double>> departureSlackTimes;
+
+    public ArrayList<ArrayList<Double>> arrivalSlackTimes;
 
     public ArrayList<ArrayList<Double>> waitingTimes;
-
-    public ArrayList<ArrayList<Double>> slackWaitTimes;
 
     public ArrayList<ArrayList<Double>> delays;
 

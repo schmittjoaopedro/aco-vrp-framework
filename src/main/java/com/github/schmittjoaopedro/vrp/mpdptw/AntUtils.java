@@ -10,17 +10,17 @@ public class AntUtils {
         to.tourCosts = new ArrayList<>();
         to.departureTime = new ArrayList<>();
         to.arrivalTime = new ArrayList<>();
-        to.slackTimes = new ArrayList<>();
+        to.departureSlackTimes = new ArrayList<>();
         to.waitingTimes = new ArrayList<>();
-        to.slackWaitTimes = new ArrayList<>();
+        to.arrivalSlackTimes = new ArrayList<>();
         to.delays = new ArrayList<>();
         for (int i = 0; i < from.tours.size(); i++) {
             to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
             to.departureTime.add(i, (ArrayList<Double>) from.departureTime.get(i).clone());
             to.arrivalTime.add(i, (ArrayList<Double>) from.arrivalTime.get(i).clone());
-            to.slackTimes.add(i, (ArrayList<Double>) from.slackTimes.get(i).clone());
+            to.departureSlackTimes.add(i, (ArrayList<Double>) from.departureSlackTimes.get(i).clone());
             to.waitingTimes.add(i, (ArrayList<Double>) from.waitingTimes.get(i).clone());
-            to.slackWaitTimes.add(i, (ArrayList<Double>) from.slackWaitTimes.get(i).clone());
+            to.arrivalSlackTimes.add(i, (ArrayList<Double>) from.arrivalSlackTimes.get(i).clone());
             to.delays.add(i, (ArrayList<Double>) from.delays.get(i).clone());
         }
         for (int i = 0; i < from.requests.size(); i++) {
@@ -45,9 +45,9 @@ public class AntUtils {
         ant.tourCosts = new ArrayList<>();
         ant.departureTime = new ArrayList<>();
         ant.arrivalTime = new ArrayList<>();
-        ant.slackTimes = new ArrayList<>();
+        ant.departureSlackTimes = new ArrayList<>();
         ant.waitingTimes = new ArrayList<>();
-        ant.slackWaitTimes = new ArrayList<>();
+        ant.arrivalSlackTimes = new ArrayList<>();
         ant.delays = new ArrayList<>();
         ant.visited = new boolean[instance.getNumNodes()];
         ant.capacity = new double[instance.getNumNodes()];
