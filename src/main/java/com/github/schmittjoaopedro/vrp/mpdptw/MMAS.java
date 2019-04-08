@@ -36,11 +36,11 @@ public class MMAS {
 
     private int uGb = Integer.MAX_VALUE;
 
-    private List<Ant> antPopulation;
+    private List<Solution> antPopulation;
 
-    private Ant bestSoFar;
+    private Solution bestSoFar;
 
-    private Ant restartBest;
+    private Solution restartBest;
 
     private double[][] pheromoneNodes;
 
@@ -61,10 +61,10 @@ public class MMAS {
     public void allocateAnts() {
         antPopulation = new ArrayList<>();
         for (int i = 0; i < getnAnts(); i++) {
-            antPopulation.add(i, AntUtils.createEmptyAnt(instance));
+            antPopulation.add(i, SolutionUtils.createEmptyAnt(instance));
         }
-        bestSoFar = AntUtils.createEmptyAnt(instance);
-        restartBest = AntUtils.createEmptyAnt(instance);
+        bestSoFar = SolutionUtils.createEmptyAnt(instance);
+        restartBest = SolutionUtils.createEmptyAnt(instance);
     }
 
     public void allocateStructures() {
@@ -150,8 +150,8 @@ public class MMAS {
         acoSolutionBuilder.constructSolutions();
     }
 
-    public Ant findBest() {
-        Ant ant = antPopulation.get(0);
+    public Solution findBest() {
+        Solution ant = antPopulation.get(0);
         double min = antPopulation.get(0).totalCost;
         for (int k = 1; k < nAnts; k++) {
             if (ant.feasible) {
@@ -170,15 +170,15 @@ public class MMAS {
     }
 
     public boolean updateBestSoFar() {
-        Ant iterationBest = findBest();
+        Solution iterationBest = findBest();
         boolean found = false;
         boolean isBetterCost = iterationBest.totalCost < bestSoFar.totalCost;
         boolean isCurrentFeasible = bestSoFar.feasible;
         boolean isNewFeasible = iterationBest.feasible;
         if ((!isCurrentFeasible && isBetterCost) || (isNewFeasible && isBetterCost) || (isNewFeasible && !isCurrentFeasible)) {
             found = true;
-            AntUtils.copyFromTo(iterationBest, bestSoFar);
-            AntUtils.copyFromTo(iterationBest, restartBest);
+            SolutionUtils.copyFromTo(iterationBest, bestSoFar);
+            SolutionUtils.copyFromTo(iterationBest, restartBest);
             foundBest = getCurrentIteration();
             restartFoundBest = getCurrentIteration();
             calculatedBranchFact = nodeBranching(lambda); // TODO: Rever
@@ -199,9 +199,9 @@ public class MMAS {
     }
 
     public void updateRestartBest() {
-        Ant iterationBest = findBest();
+        Solution iterationBest = findBest();
         if (iterationBest.totalCost < restartBest.totalCost) {
-            AntUtils.copyFromTo(iterationBest, restartBest);
+            SolutionUtils.copyFromTo(iterationBest, restartBest);
             restartFoundBest = getCurrentIteration();
         }
     }
@@ -217,7 +217,7 @@ public class MMAS {
     }
 
     public void pheromoneUpdate() {
-        Ant iterationBest;
+        Solution iterationBest;
         if (getCurrentIteration() % uGb == 0) {
             iterationBest = findBest();
             globalPheromoneDeposit(iterationBest);
@@ -231,11 +231,11 @@ public class MMAS {
         uGb = 25;
     }
 
-    public void globalPheromoneDeposit(Ant ant) {
+    public void globalPheromoneDeposit(Solution ant) {
         int from, to;
 
         double max = 0;
-        for (Ant a : antPopulation) {
+        for (Solution a : antPopulation) {
             max = Math.max(max, a.totalCost);
             max = Math.max(max, a.timeWindowPenalty);
         }
@@ -305,8 +305,8 @@ public class MMAS {
         return upperBound;
     }
 
-    public Ant findWorst() {
-        Ant ant = antPopulation.get(0);
+    public Solution findWorst() {
+        Solution ant = antPopulation.get(0);
         double max = antPopulation.get(0).totalCost;
         for (int k = 1; k < nAnts; k++) {
             if (antPopulation.get(k).totalCost > max) {
@@ -319,7 +319,7 @@ public class MMAS {
 
     public double getPenaltyRate() {
         double count = 0;
-        for (Ant ant : antPopulation) {
+        for (Solution ant : antPopulation) {
             if (!ant.feasible) {
                 count++;
             }
@@ -338,7 +338,7 @@ public class MMAS {
         return difference / instance.getNumNodes();
     }
 
-    private int distanceBetweenAnts(Ant a1, Ant a2) {
+    private int distanceBetweenAnts(Solution a1, Solution a2) {
         int curr, next, distance = 0;
         Set<String> edgesA1 = new HashSet<>();
 
@@ -429,11 +429,11 @@ public class MMAS {
         this.currentIteration = currentIteration;
     }
 
-    public Ant getBestSoFar() {
+    public Solution getBestSoFar() {
         return bestSoFar;
     }
 
-    public void setBestSoFar(Ant bestSoFar) {
+    public void setBestSoFar(Solution bestSoFar) {
         this.bestSoFar = bestSoFar;
     }
 
@@ -445,7 +445,7 @@ public class MMAS {
         return foundBest;
     }
 
-    public List<Ant> getAntPopulation() {
+    public List<Solution> getAntPopulation() {
         return antPopulation;
     }
 

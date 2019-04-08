@@ -32,8 +32,8 @@ public class LocalSearch {
         this.exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
     }
 
-    public Ant optimize(Ant ant) {
-        Ant tempAnt = ant;
+    public Solution optimize(Solution ant) {
+        Solution tempAnt = ant;
         boolean improvement = true;
         double oldCost = ant.totalCost + ant.timeWindowPenalty;
         double newCost;
@@ -59,20 +59,20 @@ public class LocalSearch {
         return tempAnt;
     }
 
-    public Ant optimize(Ant ant, RemovalMethod removalMethod, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
-        Ant tempAnt = AntUtils.createEmptyAnt(instance);
-        Ant improvedAnt = AntUtils.createEmptyAnt(instance);
-        AntUtils.copyFromTo(ant, tempAnt);
-        AntUtils.copyFromTo(ant, improvedAnt);
+    public Solution optimize(Solution ant, RemovalMethod removalMethod, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
+        Solution tempAnt = SolutionUtils.createEmptyAnt(instance);
+        Solution improvedAnt = SolutionUtils.createEmptyAnt(instance);
+        SolutionUtils.copyFromTo(ant, tempAnt);
+        SolutionUtils.copyFromTo(ant, improvedAnt);
         boolean improvement = true;
         boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
             insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, insertionMethod);
             instance.restrictionsEvaluation(tempAnt);
-            improvement = AntUtils.getBetterAnt(improvedAnt, tempAnt) == tempAnt;
+            improvement = SolutionUtils.getBest(improvedAnt, tempAnt) == tempAnt;
             if (improvement) {
-                AntUtils.copyFromTo(tempAnt, improvedAnt);
+                SolutionUtils.copyFromTo(tempAnt, improvedAnt);
                 improved = true;
             }
         }
@@ -83,7 +83,7 @@ public class LocalSearch {
         }
     }
 
-    private List<Req> removeRequests(Ant tempAnt, RemovalMethod removalType) {
+    private List<Req> removeRequests(Solution tempAnt, RemovalMethod removalType) {
         List<Req> removedRequests = new ArrayList<>();
         switch (removalType) {
             case Random:

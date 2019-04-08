@@ -12,12 +12,12 @@ public class FeasibilityOperator {
         this.instance = instance;
     }
 
-    public Ant feasibility(Ant ant) {
+    public Solution feasibility(Solution ant) {
         int requestId, bestVehicle;
         ArrayList<Integer> tour, bestTour = null, requests, newTour;
         ProblemInstance.FitnessResult fitness, fitnessInsertion;
-        Ant improvedAnt = AntUtils.createEmptyAnt(instance);
-        AntUtils.copyFromTo(ant, improvedAnt);
+        Solution improvedAnt = SolutionUtils.createEmptyAnt(instance);
+        SolutionUtils.copyFromTo(ant, improvedAnt);
         for (int k1 = 0; k1 < improvedAnt.tours.size(); k1++) {
             tour = improvedAnt.tours.get(k1);
             requests = improvedAnt.requests.get(k1);

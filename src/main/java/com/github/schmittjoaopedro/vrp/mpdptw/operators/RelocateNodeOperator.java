@@ -1,10 +1,9 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.operators;
 
-import com.github.schmittjoaopedro.vrp.dvrptwacs.Problem;
-import com.github.schmittjoaopedro.vrp.mpdptw.Ant;
-import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Request;
+import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
+import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,19 +19,19 @@ public class RelocateNodeOperator {
         this.insertionOperator = new InsertionOperator(instance, null);
     }
 
-    public Ant relocate(Ant ant) {
-        Ant improvedAnt = AntUtils.createEmptyAnt(instance);
-        Ant tempAnt = AntUtils.createEmptyAnt(instance);
-        AntUtils.copyFromTo(ant, improvedAnt);
-        AntUtils.copyFromTo(ant, tempAnt);
+    public Solution relocate(Solution ant) {
+        Solution improvedSol = SolutionUtils.createEmptyAnt(instance);
+        Solution tempSol = SolutionUtils.createEmptyAnt(instance);
+        SolutionUtils.copyFromTo(ant, improvedSol);
+        SolutionUtils.copyFromTo(ant, tempSol);
         boolean improvement = true;
         int node, removalIdx;
         List<Integer> tour, tourCloned;
         ProblemInstance.FitnessResult originalCost;
         while (improvement) {
             improvement = false;
-            for (int vehicle = 0; vehicle < tempAnt.tours.size(); vehicle++) {
-                tour = tempAnt.tours.get(vehicle);
+            for (int vehicle = 0; vehicle < tempSol.tours.size(); vehicle++) {
+                tour = tempSol.tours.get(vehicle);
                 tourCloned = new ArrayList<>(tour);
                 originalCost = instance.restrictionsEvaluation(tour);
                 for (int nodeIdx = 1; nodeIdx < tour.size() - 1; nodeIdx++) { // Ignore depot at first and last position
@@ -41,21 +40,21 @@ public class RelocateNodeOperator {
                     if (instance.getRequest(node).isPickup) {
                         if (bestPickupInsertion(originalCost, tour, node, removalIdx, 1)) {
                             originalCost = instance.restrictionsEvaluation(tour);
-                            AntUtils.copyFromTo(tempAnt, improvedAnt);
+                            SolutionUtils.copyFromTo(tempSol, improvedSol);
                             improvement = true;
                         }
                     } else if (instance.getRequest(node).isDeliver) { // Or try best delivery insertion
                         if (bestDeliveryInsertion(originalCost, tour, node, removalIdx, 1)) {
                             originalCost = instance.restrictionsEvaluation(tour);
-                            AntUtils.copyFromTo(tempAnt, improvedAnt);
+                            SolutionUtils.copyFromTo(tempSol, improvedSol);
                             improvement = true;
                         }
                     }
                 }
             }
         }
-        instance.restrictionsEvaluation(improvedAnt);
-        return AntUtils.getBetterAnt(ant, improvedAnt);
+        instance.restrictionsEvaluation(improvedSol);
+        return SolutionUtils.getBest(ant, improvedSol);
     }
 
     public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt, boolean stopOnFeasible) {

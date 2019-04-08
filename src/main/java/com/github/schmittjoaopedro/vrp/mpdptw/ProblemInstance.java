@@ -1,7 +1,5 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.Solution;
-
 import java.util.*;
 
 public class ProblemInstance {
@@ -176,53 +174,53 @@ public class ProblemInstance {
         }
     }
 
-    public void solutionEvaluation(Ant ant) {
-        ant.tourCosts = new ArrayList<>(ant.tours.size());
-        ant.capacity = new double[getNumNodes()];
-        ant.departureTime = new ArrayList<>(ant.tours.size());
-        ant.arrivalTime = new ArrayList<>(ant.tours.size());
-        ant.departureSlackTimes = new ArrayList<>(ant.tours.size());
-        ant.arrivalSlackTimes = new ArrayList<>(ant.tours.size());
-        ant.waitingTimes = new ArrayList<>(ant.tours.size());
-        ant.delays = new ArrayList<>(ant.tours.size());
-        ant.toVisit = getNumNodes();
-        ant.totalCost = 0.0;
-        ant.feasible = true;
-        ant.timeWindowPenalty = 0.0;
-        ant.capacityPenalty = 0.0;
+    public void solutionEvaluation(Solution solution) {
+        solution.tourCosts = new ArrayList<>(solution.tours.size());
+        solution.capacity = new double[getNumNodes()];
+        solution.departureTime = new ArrayList<>(solution.tours.size());
+        solution.arrivalTime = new ArrayList<>(solution.tours.size());
+        solution.departureSlackTimes = new ArrayList<>(solution.tours.size());
+        solution.arrivalSlackTimes = new ArrayList<>(solution.tours.size());
+        solution.waitingTimes = new ArrayList<>(solution.tours.size());
+        solution.delays = new ArrayList<>(solution.tours.size());
+        solution.toVisit = getNumNodes();
+        solution.totalCost = 0.0;
+        solution.feasible = true;
+        solution.timeWindowPenalty = 0.0;
+        solution.capacityPenalty = 0.0;
         int[] numNodesByRequest = new int[getNumReq()];
         double[] pickupByRequestTime = new double[getNumReq()];
         double[] deliveryByRequestTime = new double[getNumReq()];
-        ant.toVisit--; // Remove depot from nodes to visit count
+        solution.toVisit--; // Remove depot from nodes to visit count
         // For each vehicle
-        for (int k = 0; k < ant.tours.size(); k++) {
-            List<Integer> tour = ant.tours.get(k);
-            ant.arrivalTime.add(new ArrayList<>());
-            ant.departureTime.add(new ArrayList<>());
-            ant.waitingTimes.add(new ArrayList<>());
-            ant.delays.add(new ArrayList<>());
-            ant.departureSlackTimes.add(new ArrayList<>());
-            ant.arrivalSlackTimes.add(new ArrayList<>());
+        for (int k = 0; k < solution.tours.size(); k++) {
+            List<Integer> tour = solution.tours.get(k);
+            solution.arrivalTime.add(new ArrayList<>());
+            solution.departureTime.add(new ArrayList<>());
+            solution.waitingTimes.add(new ArrayList<>());
+            solution.delays.add(new ArrayList<>());
+            solution.departureSlackTimes.add(new ArrayList<>());
+            solution.arrivalSlackTimes.add(new ArrayList<>());
             double currentTime = depot.twStart;
             double tourCost = 0.0;
             double capacity = 0.0;
             int curr, next;
             Request request;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
-            ant.waitingTimes.get(k).add(0.0);
-            ant.delays.get(k).add(0.0);
-            ant.arrivalTime.get(k).add(currentTime);
-            ant.departureTime.get(k).add(currentTime);
+            solution.waitingTimes.get(k).add(0.0);
+            solution.delays.get(k).add(0.0);
+            solution.arrivalTime.get(k).add(currentTime);
+            solution.departureTime.get(k).add(currentTime);
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
-                ant.arrivalTime.get(k).add(currentTime);
-                ant.waitingTimes.get(k).add(Math.max(0, twStart(next) - ant.arrivalTime.get(k).get(i + 1)));
+                solution.arrivalTime.get(k).add(currentTime);
+                solution.waitingTimes.get(k).add(Math.max(0, twStart(next) - solution.arrivalTime.get(k).get(i + 1)));
                 currentTime = Math.max(currentTime, twStart(next));
                 capacity += demand(next);
-                ant.capacity[next] = capacity;
+                solution.capacity[next] = capacity;
                 // For precedence and attendance restrictions
                 request = getRequest(next);
                 if (request != null) { // Ignore node depot
@@ -236,31 +234,31 @@ public class ProblemInstance {
                 }
                 // Check time windows feasibility
                 if (currentTime > twEnd(next)) {
-                    ant.delays.get(k).add(currentTime - twEnd(next));
-                    ant.timeWindowPenalty += ant.delays.get(k).get(i);
-                    ant.feasible = false;
+                    solution.delays.get(k).add(currentTime - twEnd(next));
+                    solution.timeWindowPenalty += solution.delays.get(k).get(i);
+                    solution.feasible = false;
                 } else {
-                    ant.delays.get(k).add(0.0);
+                    solution.delays.get(k).add(0.0);
                 }
                 // Check capacity feasibility
                 if (capacity > vehicleCapacity) {
-                    ant.capacityPenalty += capacity - vehicleCapacity;
-                    ant.feasible = false;
+                    solution.capacityPenalty += capacity - vehicleCapacity;
+                    solution.feasible = false;
                 }
                 currentTime += serviceTime(next);
-                ant.departureTime.get(k).add(currentTime);
+                solution.departureTime.get(k).add(currentTime);
             }
             for (Integer requestId : attendedRequests) {
                 // Check if all nodes of each request is attended by the same vehicle
                 if (numNodesByRequest[requestId] != getPickups(requestId).size()) {
-                    ant.feasible = false;
+                    solution.feasible = false;
                 }
-                ant.toVisit -= numNodesByRequest[requestId];
+                solution.toVisit -= numNodesByRequest[requestId];
                 // Check if all pickups are attended before the delivery
                 if (pickupByRequestTime[requestId] >= deliveryByRequestTime[requestId]) {
-                    ant.feasible = false;
+                    solution.feasible = false;
                 } else {
-                    ant.toVisit--;
+                    solution.toVisit--;
                 }
             }
             // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
@@ -290,19 +288,19 @@ public class ProblemInstance {
             double slackTime = Double.MAX_VALUE;
             for (int i = tour.size() - 1; i >= 0; i--) {
                 curr = tour.get(i);
-                slackTime = Math.min(slackTime, twEnd(curr) - ant.departureTime.get(k).get(i) + serviceTime(curr));
-                ant.departureSlackTimes.get(k).add(slackTime);
-                slackTime += ant.waitingTimes.get(k).get(i);
-                ant.arrivalSlackTimes.get(k).add(slackTime);
+                slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k).get(i) + serviceTime(curr));
+                solution.departureSlackTimes.get(k).add(slackTime);
+                slackTime += solution.waitingTimes.get(k).get(i);
+                solution.arrivalSlackTimes.get(k).add(slackTime);
             }
-            Collections.reverse(ant.departureSlackTimes.get(k));
-            Collections.reverse(ant.arrivalSlackTimes.get(k));
-            ant.tourCosts.add(tourCost);
-            ant.totalCost += tourCost;
+            Collections.reverse(solution.departureSlackTimes.get(k));
+            Collections.reverse(solution.arrivalSlackTimes.get(k));
+            solution.tourCosts.add(tourCost);
+            solution.totalCost += tourCost;
         }
         // Check that all requests were attended
-        if (ant.toVisit != 0) {
-            ant.feasible = false;
+        if (solution.toVisit != 0) {
+            solution.feasible = false;
         }
     }
 
@@ -345,65 +343,37 @@ public class ProblemInstance {
         return fitnessResult;
     }
 
-    public void restrictionsEvaluation(Ant ant) {
-        restrictionsEvaluation(ant, true);
-    }
-
-    public void restrictionsEvaluation(Ant ant, boolean noReqsRestriction) {
-        ant.totalCost = 0.0;
-        ant.feasible = true;
-        ant.timeWindowPenalty = 0.0;
-        ant.capacityPenalty = 0.0;
-        ant.tourCosts.clear();
-        for (int k = 0; k < ant.tours.size(); k++) {
-            isPrecedenceValid(ant.tours.get(k), ant.requests.get(k));
-            ProblemInstance.FitnessResult fitnessResult = restrictionsEvaluation(ant.tours.get(k));
-            ant.tourCosts.add(k, fitnessResult.cost);
-            ant.totalCost += fitnessResult.cost;
-            ant.feasible &= fitnessResult.feasible;
-            ant.timeWindowPenalty += fitnessResult.timeWindowPenalty;
-            ant.capacityPenalty += fitnessResult.capacityPenalty;
-        }
-        int attendedRequests = 0;
-        for (int i = 0; i < ant.requests.size(); i++) {
-            attendedRequests += ant.requests.get(i).size();
-        }
-        ant.feasible &= ant.tours.size() < getNumMaxVehicles();
-        if (attendedRequests != getNumReq() && noReqsRestriction) {
-            ant.feasible = false;
-        }
-        double total = 0.0;
-        for (int k = 0; k < ant.tours.size(); k++) {
-            ant.tourCosts.set(k, costEvaluation(ant.tours.get(k)));
-            total += ant.tourCosts.get(k);
-        }
-        ant.totalCost = total;
-    }
-
     public void restrictionsEvaluation(Solution solution) {
+        restrictionsEvaluation(solution, true);
+    }
+
+    public void restrictionsEvaluation(Solution solution, boolean noReqsRestriction) {
         solution.totalCost = 0.0;
         solution.feasible = true;
-        solution.tourLengths.clear();
+        solution.timeWindowPenalty = 0.0;
+        solution.capacityPenalty = 0.0;
+        solution.tourCosts.clear();
         for (int k = 0; k < solution.tours.size(); k++) {
             isPrecedenceValid(solution.tours.get(k), solution.requests.get(k));
             ProblemInstance.FitnessResult fitnessResult = restrictionsEvaluation(solution.tours.get(k));
-            solution.tourLengths.add(k, fitnessResult.cost);
+            solution.tourCosts.add(k, fitnessResult.cost);
             solution.totalCost += fitnessResult.cost;
             solution.feasible &= fitnessResult.feasible;
+            solution.timeWindowPenalty += fitnessResult.timeWindowPenalty;
+            solution.capacityPenalty += fitnessResult.capacityPenalty;
         }
         int attendedRequests = 0;
         for (int i = 0; i < solution.requests.size(); i++) {
             attendedRequests += solution.requests.get(i).size();
         }
         solution.feasible &= solution.tours.size() < getNumMaxVehicles();
-        if (attendedRequests != getNumReq()) {
+        if (attendedRequests != getNumReq() && noReqsRestriction) {
             solution.feasible = false;
-            throw new RuntimeException("Infeasible number of requests");
         }
         double total = 0.0;
         for (int k = 0; k < solution.tours.size(); k++) {
-            solution.tourLengths.set(k, costEvaluation(solution.tours.get(k)));
-            total += solution.tourLengths.get(k);
+            solution.tourCosts.set(k, costEvaluation(solution.tours.get(k)));
+            total += solution.tourCosts.get(k);
         }
         solution.totalCost = total;
     }

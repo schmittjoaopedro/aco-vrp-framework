@@ -2,6 +2,8 @@ package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
+import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -94,7 +96,7 @@ public class ALNS {
         InsertionHeuristic insertionHeuristic = new InsertionHeuristic(instance, random);
         solution = insertionHeuristic.createInitialSolution();
         solution = applyImprovement(solution);
-        solutionBest = solution.copy();
+        solutionBest = SolutionUtils.copy(solution);
 
         d = solution.totalCost;
         w = 0.05;
@@ -126,7 +128,7 @@ public class ALNS {
         }
 
         while (!stopCriteriaMeet()) {
-            Solution solutionNew = solution.copy(); // S' <- S
+            Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
             int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
             /*
              * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
@@ -192,7 +194,7 @@ public class ALNS {
 
     private void updateBest(Solution solution) {
         if (solution.feasible && solution.totalCost < solutionBest.totalCost) {
-            solutionBest = solution.copy();
+            solutionBest = SolutionUtils.copy(solution);
             System.out.println("NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible);
         }
     }
@@ -243,7 +245,7 @@ public class ALNS {
 
     private Solution applyImprovement(Solution solution) {
         boolean improvement = true;
-        Solution improved = solution.copy();
+        Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;
         while (improvement) {
             improvement = false;
@@ -363,7 +365,7 @@ public class ALNS {
         double cost = 0.0;
         for (int i = 0; i < solution.tours.size(); i++) {
             cost = instance.costEvaluation(solution.tours.get(i));
-            solution.tourLengths.set(i, cost);
+            solution.tourCosts.set(i, cost);
             solution.totalCost += cost;
         }
         msg += "\nInstance = " + fileName;

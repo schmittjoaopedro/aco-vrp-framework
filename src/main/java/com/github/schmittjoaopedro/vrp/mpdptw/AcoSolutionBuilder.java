@@ -10,7 +10,7 @@ public class AcoSolutionBuilder {
 
     private ProblemInstance instance;
 
-    private List<Ant> antPopulation;
+    private List<Solution> antPopulation;
 
     private Map<String, ArrayList<Integer>> feasibleRoutes = new HashMap<>();
 
@@ -24,7 +24,7 @@ public class AcoSolutionBuilder {
 
     private boolean parallel;
 
-    public AcoSolutionBuilder(ProblemInstance instance, List<Ant> antPopulation, Random random, double[][] pheromones, double alpha, double beta, boolean parallel) {
+    public AcoSolutionBuilder(ProblemInstance instance, List<Solution> antPopulation, Random random, double[][] pheromones, double alpha, double beta, boolean parallel) {
         this.instance = instance;
         this.antPopulation = antPopulation;
         this.pheromoneNodes = pheromones;
@@ -38,9 +38,9 @@ public class AcoSolutionBuilder {
         if (parallel) {
             Thread[] antBuilders = new Thread[antPopulation.size()];
             for (int i = 0; i < antPopulation.size(); i++) {
-                Ant ant = antPopulation.get(i);
+                Solution ant = antPopulation.get(i);
                 antBuilders[i] = new Thread(() -> {
-                    AntUtils.antEmptyMemory(ant, instance);
+                    SolutionUtils.antEmptyMemory(ant, instance);
                     constructAntSolution(instance, ant);
                     instance.restrictionsEvaluation(ant);
                     if (ant.capacityPenalty > 0) {
@@ -55,8 +55,8 @@ public class AcoSolutionBuilder {
             executorService.shutdown();
             while (!executorService.isTerminated()) ;
         } else {
-            for (Ant ant : antPopulation) {// For each ant
-                AntUtils.antEmptyMemory(ant, instance);
+            for (Solution ant : antPopulation) {// For each ant
+                SolutionUtils.antEmptyMemory(ant, instance);
                 constructAntSolution(instance, ant);
                 instance.restrictionsEvaluation(ant);
                 if (ant.capacityPenalty > 0) {
@@ -66,8 +66,8 @@ public class AcoSolutionBuilder {
         }
     }
 
-    public void constructAntSolution(ProblemInstance instance, Ant ant) {
-        AntUtils.addEmptyVehicle(ant);
+    public void constructAntSolution(ProblemInstance instance, Solution ant) {
+        SolutionUtils.addEmptyVehicle(ant);
         int vehicle = 0;
         int currIdx = 0;
         ant.visited[0] = true;
@@ -79,7 +79,7 @@ public class AcoSolutionBuilder {
             if (nextNode == -1) {
                 addRemainingTour(ant, vehicle, remainingTour);
                 remainingTour = new ArrayList<>();
-                AntUtils.addEmptyVehicle(ant);
+                SolutionUtils.addEmptyVehicle(ant);
                 vehicle++;
                 currIdx = 0;
                 hashKey = "0";
@@ -110,7 +110,7 @@ public class AcoSolutionBuilder {
         }
     }
 
-    private void addRemainingTour(Ant ant, int vehicle, ArrayList<Integer> remainingTour) {
+    private void addRemainingTour(Solution ant, int vehicle, ArrayList<Integer> remainingTour) {
         for (int i = 0; i < remainingTour.size(); i++) {
             int tourLength = ant.tours.get(vehicle).size();
             ant.tours.get(vehicle).add(tourLength - 2, remainingTour.get(i));
@@ -125,7 +125,7 @@ public class AcoSolutionBuilder {
         }
     }
 
-    public int selectNextNode(Ant ant, int vehicle, int currIdx, ArrayList<Integer> remainingTour, String hashKey) {
+    public int selectNextNode(Solution ant, int vehicle, int currIdx, ArrayList<Integer> remainingTour, String hashKey) {
         Map<Integer, ArrayList<Integer>> feasibleRemainingRoutes = new HashMap<>();
         Map<Integer, Double> feasibleCosts = new HashMap<>();
         int curr = ant.tours.get(vehicle).get(currIdx);

@@ -105,8 +105,8 @@ public class Solver implements Runnable {
                 iterationStatistic.setIterationBest(mmas.findBest().totalCost);
                 iterationStatistic.setIterationWorst(mmas.findWorst().totalCost);
                 iterationStatistic.setFeasible(mmas.getBestSoFar().feasible);
-                iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
-                iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
+                iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
+                iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
                 iterationStatistic.setNumPaths((long) mmas.getFeasibleRoutes().size());
                 iterationStatistics.add(iterationStatistic);
@@ -121,7 +121,7 @@ public class Solver implements Runnable {
     }
 
     private void printFinalRoute() {
-        Ant ant = mmas.getBestSoFar();
+        Solution ant = mmas.getBestSoFar();
         String msg = "";
         problemInstance.restrictionsEvaluation(ant);
         boolean feasible = true;
@@ -181,16 +181,16 @@ public class Solver implements Runnable {
         executeLocalSearch(mmas.findBest());
     }
 
-    private void executeLocalSearch(Ant ant) {
+    private void executeLocalSearch(Solution ant) {
         problemInstance.restrictionsEvaluation(ant);
-        Ant improvedAnt = localSearch.optimize(ant);
+        Solution improvedAnt = localSearch.optimize(ant);
         if (ant.feasible) {
             if (improvedAnt.feasible) {
                 updateAnt(improvedAnt, ant);
             }
         } else if (!mmas.getBestSoFar().feasible) {
             FeasibilityOperator feasibilityOperator = new FeasibilityOperator(problemInstance);
-            Ant feasibleAnt = feasibilityOperator.feasibility(improvedAnt);
+            Solution feasibleAnt = feasibilityOperator.feasibility(improvedAnt);
             improvedAnt = localSearch.optimize(feasibleAnt);
             if (improvedAnt.feasible && improvedAnt.totalCost < feasibleAnt.totalCost) {
                 feasibleAnt = improvedAnt;
@@ -203,7 +203,7 @@ public class Solver implements Runnable {
         }
     }
 
-    private void updateAnt(Ant improvedAnt, Ant bestAnt) {
+    private void updateAnt(Solution improvedAnt, Solution bestAnt) {
         if (improvedAnt.totalCost < bestAnt.totalCost ||
                 (improvedAnt.totalCost == bestAnt.totalCost && improvedAnt.timeWindowPenalty < bestAnt.timeWindowPenalty) ||
                 (improvedAnt.feasible && !bestAnt.feasible)) {
@@ -228,7 +228,7 @@ public class Solver implements Runnable {
         return iterationStatistics;
     }
 
-    public Ant getBestSolution() {
+    public Solution getBestSolution() {
         return mmas.getBestSoFar();
     }
 

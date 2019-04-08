@@ -2,6 +2,8 @@ package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
+import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.PickupMethod;
@@ -23,7 +25,7 @@ public class InsertionHeuristic {
     }
 
     public Solution createInitialSolution() {
-        Solution solution = new Solution();
+        Solution solution = SolutionUtils.createEmptyAnt(instance);
         for (int r = 0; r < instance.getNumReq(); r++) {
             boolean found = false;
             int kMax = solution.tours.size();
@@ -35,7 +37,7 @@ public class InsertionHeuristic {
                 }
             }
             if (!found) {
-                solution.addEmptyVehicle();
+                SolutionUtils.addEmptyVehicle(solution);
                 OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(r, instance);
                 optimalRequestSolver.optimize();
                 int lastK = solution.tours.size() - 1;

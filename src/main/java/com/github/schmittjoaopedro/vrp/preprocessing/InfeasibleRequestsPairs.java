@@ -1,9 +1,9 @@
 package com.github.schmittjoaopedro.vrp.preprocessing;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.Ant;
-import com.github.schmittjoaopedro.vrp.mpdptw.AntUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
+import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 
 import java.util.ArrayList;
@@ -57,57 +57,57 @@ public class InfeasibleRequestsPairs {
         routeMerged.addAll(route2.subList(1, route2.size() - 1));
         routeMerged.add(0);
         // Temporary ant
-        Ant ant = AntUtils.createEmptyAnt(instance);
-        ant.tours.add(routeMerged);
-        ant.requests.add(requests);
-        instance.restrictionsEvaluation(ant);
+        Solution solution = SolutionUtils.createEmptyAnt(instance);
+        solution.tours.add(routeMerged);
+        solution.requests.add(requests);
+        instance.restrictionsEvaluation(solution);
         // Try to find feasible route
-        ant = optimize(ant);
-        instance.restrictionsEvaluation(ant, false);
-        return ant.feasible;
+        solution = optimize(solution);
+        instance.restrictionsEvaluation(solution, false);
+        return solution.feasible;
     }
 
-    public Ant optimize(Ant ant) {
-        Ant tempAnt = ant;
+    public Solution optimize(Solution solution) {
+        Solution tempSol = solution;
         boolean improvement = true;
-        double oldCost = ant.totalCost + ant.timeWindowPenalty;
+        double oldCost = solution.totalCost + solution.timeWindowPenalty;
         double newCost;
         while (improvement) {
             improvement = false;
-            tempAnt = relocateNodeOperator.relocate(tempAnt);
-            tempAnt = optimize(tempAnt, InsertionMethod.Greedy);
-            newCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
-            if (tempAnt.feasible) break;
+            tempSol = relocateNodeOperator.relocate(tempSol);
+            tempSol = optimize(tempSol, InsertionMethod.Greedy);
+            newCost = tempSol.totalCost + tempSol.timeWindowPenalty;
+            if (tempSol.feasible) break;
             if (newCost < oldCost) {
-                oldCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
+                oldCost = tempSol.totalCost + tempSol.timeWindowPenalty;
                 improvement = true;
             }
         }
-        return tempAnt;
+        return tempSol;
     }
 
-    public Ant optimize(Ant ant, InsertionMethod insertionMethod) {
-        Ant tempAnt = AntUtils.createEmptyAnt(instance);
-        Ant improvedAnt = AntUtils.createEmptyAnt(instance);
-        AntUtils.copyFromTo(ant, tempAnt);
-        AntUtils.copyFromTo(ant, improvedAnt);
+    public Solution optimize(Solution solution, InsertionMethod insertionMethod) {
+        Solution tempSol = SolutionUtils.createEmptyAnt(instance);
+        Solution improvedSol = SolutionUtils.createEmptyAnt(instance);
+        SolutionUtils.copyFromTo(solution, tempSol);
+        SolutionUtils.copyFromTo(solution, improvedSol);
         boolean improvement = true;
         boolean improved = false;
         while (improvement) {
-            List<Req> removedRequests = removalOperator.removeRandomRequest(tempAnt.tours, tempAnt.requests, 1);
-            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, PickupMethod.Random, insertionMethod);
-            instance.restrictionsEvaluation(tempAnt);
-            improvement = AntUtils.getBetterAnt(improvedAnt, tempAnt) == tempAnt;
+            List<Req> removedRequests = removalOperator.removeRandomRequest(tempSol.tours, tempSol.requests, 1);
+            insertionOperator.insertRequests(tempSol.tours, tempSol.requests, removedRequests, PickupMethod.Random, insertionMethod);
+            instance.restrictionsEvaluation(tempSol);
+            improvement = SolutionUtils.getBest(improvedSol, tempSol) == tempSol;
             if (improvement) {
-                AntUtils.copyFromTo(tempAnt, improvedAnt);
+                SolutionUtils.copyFromTo(tempSol, improvedSol);
                 improved = true;
-                if (tempAnt.feasible) break;
+                if (tempSol.feasible) break;
             }
         }
         if (improved) {
-            return improvedAnt;
+            return improvedSol;
         } else {
-            return ant;
+            return solution;
         }
     }
 

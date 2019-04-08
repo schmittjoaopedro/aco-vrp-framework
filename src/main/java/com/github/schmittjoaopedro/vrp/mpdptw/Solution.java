@@ -2,7 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import java.util.ArrayList;
 
-public class Ant {
+public class Solution {
 
     public ArrayList<ArrayList<Integer>> tours;
 
