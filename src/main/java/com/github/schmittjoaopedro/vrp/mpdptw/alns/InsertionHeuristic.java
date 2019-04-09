@@ -30,7 +30,7 @@ public class InsertionHeuristic {
             boolean found = false;
             int kMax = solution.tours.size();
             for (int k = 0; k < kMax; k++) {
-                if (insertionOperator.insertRequestOnVehicle(r, solution.tours.get(k), PickupMethod.Random, InsertionMethod.Greedy)) {
+                if (insertionOperator.insertRequestOnVehicle(solution, k, r, PickupMethod.Random, InsertionMethod.Greedy)) {
                     solution.requests.get(k).add(r);
                     found = true;
                     break;
@@ -46,9 +46,10 @@ public class InsertionHeuristic {
                     solution.tours.get(lastK).add(optimalRequestSolver.getBestRoute()[i]);
                 }
                 solution.requests.get(lastK).add(r);
+                instance.solutionEvaluation(solution, lastK);
             }
         }
-        instance.restrictionsEvaluation(solution);
+        instance.solutionEvaluation(solution);
         return solution;
     }
 

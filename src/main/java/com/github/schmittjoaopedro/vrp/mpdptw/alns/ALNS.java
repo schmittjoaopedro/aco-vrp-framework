@@ -69,6 +69,10 @@ public class ALNS {
 
     private Random random;
 
+    private Long startTime;
+
+    private Long endTime;
+
     // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance.
     private double rho = 0.1; //η
 
@@ -95,7 +99,9 @@ public class ALNS {
          */
         InsertionHeuristic insertionHeuristic = new InsertionHeuristic(instance, random);
         solution = insertionHeuristic.createInitialSolution();
+        instance.solutionEvaluation(solution);
         solution = applyImprovement(solution);
+        instance.solutionEvaluation(solution);
         solutionBest = SolutionUtils.copy(solution);
 
         d = solution.totalCost;
@@ -108,6 +114,8 @@ public class ALNS {
     }
 
     public void execute() {
+
+        startTime = System.currentTimeMillis();
 
         roScores = new double[RemovalMethod.values().length];
         roWeights = new double[RemovalMethod.values().length];
@@ -138,7 +146,7 @@ public class ALNS {
             int ri = selectInsertionOperator(); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
             List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
             insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
-            instance.restrictionsEvaluation(solutionNew); // Update the solution cost
+            instance.solutionEvaluation(solutionNew); // Update the solution cost
             if (solutionNew.totalCost < solutionBest.totalCost) { // If f(S') < f(S_best) then
                 solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
                 updateBest(solution); // S_best <- S <- S'
@@ -167,17 +175,23 @@ public class ALNS {
                 updateWeights(); // Update weights and reset scores of operators
                 resetOperatorsScores();
                 solution = applyImprovement(solution); // Apply improvement to S
+                //printIterationStatus();
                 updateBest(solution);
-                System.out.println("Iter " + iteration +
-                        " Best = " + format(solution.totalCost) + ", feasible = " + solution.feasible +
-                        " BSF = " + format(solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
-                        ", T = " + format(T) + ", minT = " + format(minT) +
-                        ", ro = " + StringUtils.join(getArray(roWeights), ',') +
-                        ", ri = " + StringUtils.join(getArray(riWeights), ','));
             }
             iteration++;
         }
+
+        endTime = System.currentTimeMillis();
         printFinalRoute();
+    }
+
+    private void printIterationStatus() {
+        System.out.println("Iter " + iteration +
+                " Best = " + format(solution.totalCost) + ", feasible = " + solution.feasible +
+                " BSF = " + format(solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
+                ", T = " + format(T) + ", minT = " + format(minT) +
+                ", ro = " + StringUtils.join(getArray(roWeights), ',') +
+                ", ri = " + StringUtils.join(getArray(riWeights), ','));
     }
 
     private String[] getArray(double[] array) {
@@ -277,15 +291,15 @@ public class ALNS {
         // Use random pickup method
         switch (insertionMethod) {
             case Greedy:
-                insertionOperator.insertGreedyRequests(solution.tours, solution.requests, removedRequests, PickupMethod.Random);
+                insertionOperator.insertGreedyRequests(solution, removedRequests, PickupMethod.Random);
                 break;
             case Regret3Noise:
             case Regret3:
-                insertionOperator.insertRegretRequests(solution.tours, solution.requests, removedRequests, 3, insertionMethod, PickupMethod.Random);
+                insertionOperator.insertRegretRequests(solution, removedRequests, 3, insertionMethod, PickupMethod.Random);
                 break;
             case RegretMNoise:
             case RegretM:
-                insertionOperator.insertRegretRequests(solution.tours, solution.requests, removedRequests, solution.tours.size(), insertionMethod, PickupMethod.Random);
+                insertionOperator.insertRegretRequests(solution, removedRequests, solution.tours.size(), insertionMethod, PickupMethod.Random);
                 break;
         }
     }
@@ -360,7 +374,7 @@ public class ALNS {
     private void printFinalRoute() {
         Solution solution = solutionBest;
         String msg = "";
-        instance.restrictionsEvaluation(solution);
+        instance.solutionEvaluation(solution);
         solution.totalCost = 0.0;
         double cost = 0.0;
         for (int i = 0; i < solution.tours.size(); i++) {
@@ -389,5 +403,6 @@ public class ALNS {
                 }
             }
         }
+        System.out.println("Total time = " + ((endTime - startTime) / 1000.0) + "s");
     }
 }

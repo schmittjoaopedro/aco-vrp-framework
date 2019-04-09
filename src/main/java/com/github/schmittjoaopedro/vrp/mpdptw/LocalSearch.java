@@ -68,7 +68,7 @@ public class LocalSearch {
         boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
-            insertionOperator.insertRequests(tempAnt.tours, tempAnt.requests, removedRequests, pickupMethod, insertionMethod);
+            insertionOperator.insertRequests(tempAnt, removedRequests, pickupMethod, insertionMethod);
             instance.restrictionsEvaluation(tempAnt);
             improvement = SolutionUtils.getBest(improvedAnt, tempAnt) == tempAnt;
             if (improvement) {

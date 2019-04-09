@@ -235,7 +235,7 @@ public class ProblemInstance {
                 // Check time windows feasibility
                 if (currentTime > twEnd(next)) {
                     solution.delays.get(k).add(currentTime - twEnd(next));
-                    solution.timeWindowPenalty += solution.delays.get(k).get(i);
+                    solution.timeWindowPenalty += solution.delays.get(k).get(i + 1);
                     solution.feasible = false;
                 } else {
                     solution.delays.get(k).add(0.0);
@@ -254,8 +254,10 @@ public class ProblemInstance {
                     solution.feasible = false;
                 }
                 solution.toVisit -= numNodesByRequest[requestId];
-                // Check if all pickups are attended before the delivery
-                if (pickupByRequestTime[requestId] >= deliveryByRequestTime[requestId]) {
+                // Check if all pickups are not attended after the delivery
+                // There are case where the same node is delivery and pickup without service time(l_4_100_1.txt). Therefore,
+                // we must to use greater inequality, as the pickup and delivery times will be the same.
+                if (pickupByRequestTime[requestId] > deliveryByRequestTime[requestId]) {
                     solution.feasible = false;
                 } else {
                     solution.toVisit--;
@@ -304,7 +306,58 @@ public class ProblemInstance {
         }
     }
 
+    public void solutionEvaluation(Solution solution, int k) {
+        solution.totalCost -= solution.tourCosts.get(k);
+        solution.toVisit--; // Remove depot from nodes to visit count
+        solution.timeWindowPenalty -= solution.delays.get(k).stream().reduce(0.0, Double::sum);
+        // For each vehicle
+        List<Integer> tour = solution.tours.get(k);
+        solution.arrivalTime.set(k, new ArrayList<>());
+        solution.departureTime.set(k, new ArrayList<>());
+        solution.waitingTimes.set(k, new ArrayList<>());
+        solution.delays.set(k, new ArrayList<>());
+        solution.departureSlackTimes.set(k, new ArrayList<>());
+        solution.arrivalSlackTimes.set(k, new ArrayList<>());
+        double currentTime = depot.twStart;
+        double tourCost = 0.0;
+        double capacity = 0.0;
+        int curr, next;
+        solution.waitingTimes.get(k).add(0.0);
+        solution.delays.get(k).add(0.0);
+        solution.arrivalTime.get(k).add(currentTime);
+        solution.departureTime.get(k).add(currentTime);
+        for (int i = 0; i < tour.size() - 1; i++) {
+            curr = tour.get(i);
+            next = tour.get(i + 1);
+            tourCost += dist(curr, next);
+            currentTime += dist(curr, next);
+            solution.arrivalTime.get(k).add(currentTime);
+            solution.waitingTimes.get(k).add(Math.max(0, twStart(next) - solution.arrivalTime.get(k).get(i + 1)));
+            currentTime = Math.max(currentTime, twStart(next));
+            capacity += demand(next);
+            solution.capacity[next] = capacity;
+            solution.delays.get(k).add(Math.max(0.0, currentTime - twEnd(next)));
+            currentTime += serviceTime(next);
+            solution.departureTime.get(k).add(currentTime);
+        }
+        // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
+        // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
+        double slackTime = Double.MAX_VALUE;
+        for (int i = tour.size() - 1; i >= 0; i--) {
+            curr = tour.get(i);
+            slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k).get(i) + serviceTime(curr));
+            solution.departureSlackTimes.get(k).add(slackTime);
+            slackTime += solution.waitingTimes.get(k).get(i);
+            solution.arrivalSlackTimes.get(k).add(slackTime);
+        }
+        Collections.reverse(solution.departureSlackTimes.get(k));
+        Collections.reverse(solution.arrivalSlackTimes.get(k));
+        solution.tourCosts.set(k, tourCost);
+        solution.totalCost += tourCost;
+        solution.timeWindowPenalty += solution.delays.get(k).stream().reduce(0.0, Double::sum);
+    }
 
+    @Deprecated
     public FitnessResult restrictionsEvaluation(List<Integer> tour) {
         FitnessResult fitnessResult = new FitnessResult();
         double currentTime = 0.0;
@@ -343,10 +396,12 @@ public class ProblemInstance {
         return fitnessResult;
     }
 
+    @Deprecated
     public void restrictionsEvaluation(Solution solution) {
         restrictionsEvaluation(solution, true);
     }
 
+    @Deprecated
     public void restrictionsEvaluation(Solution solution, boolean noReqsRestriction) {
         solution.totalCost = 0.0;
         solution.feasible = true;

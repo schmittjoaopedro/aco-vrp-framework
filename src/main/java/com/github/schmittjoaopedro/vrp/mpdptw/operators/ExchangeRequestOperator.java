@@ -42,11 +42,11 @@ public class ExchangeRequestOperator {
                         v2 = SolutionUtils.findRequestVehicleOwner(tempSol, r2);
                         v2RouteOrigin = new ArrayList<>(tempSol.tours.get(v2));
                         SolutionUtils.removeRequest(instance, tempSol, v2, r2);
-                        if (insertionOperator.insertRequestOnVehicle(r2, tempSol.tours.get(v1), PickupMethod.Random, InsertionMethod.Greedy)) {
+                        if (insertionOperator.insertRequestOnVehicle(tempSol, v1, r2, PickupMethod.Random, InsertionMethod.Greedy)) {
                             tempSol.requests.get(v1).add(r2);
-                            if (insertionOperator.insertRequestOnVehicle(r1, tempSol.tours.get(v2), PickupMethod.Random, InsertionMethod.Greedy)) {
+                            if (insertionOperator.insertRequestOnVehicle(tempSol, v2, r1, PickupMethod.Random, InsertionMethod.Greedy)) {
                                 tempSol.requests.get(v2).add(r1);
-                                instance.restrictionsEvaluation(tempSol);
+                                instance.solutionEvaluation(tempSol);
                                 tempCost = tempSol.totalCost + tempSol.timeWindowPenalty;
                                 if (tempCost < improvedCost) {
                                     improvedSol = SolutionUtils.copy(tempSol);
@@ -68,7 +68,7 @@ public class ExchangeRequestOperator {
                 tempSol = SolutionUtils.copy(improvedSol);
             }
         }
-        instance.restrictionsEvaluation(improvedSol);
+        instance.solutionEvaluation(improvedSol);
         return SolutionUtils.getBest(solution, improvedSol);
     }
 

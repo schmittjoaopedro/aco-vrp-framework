@@ -24,7 +24,7 @@ public class SolutionUtils {
             to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
             to.requests.add(i, (ArrayList<Integer>) from.requests.get(i).clone());
             to.tourCosts.add(i, from.tourCosts.get(i));
-            if (to.departureTime.size() > 0) { // TODO: Remove after refactored
+            if (from.departureTime.size() > 0) { // TODO: Remove after refactored
                 to.departureTime.add(i, (ArrayList<Double>) from.departureTime.get(i).clone());
                 to.arrivalTime.add(i, (ArrayList<Double>) from.arrivalTime.get(i).clone());
                 to.departureSlackTimes.add(i, (ArrayList<Double>) from.departureSlackTimes.get(i).clone());
@@ -76,6 +76,12 @@ public class SolutionUtils {
         solution.tours.add(tour);
         solution.requests.add(new ArrayList<>());
         solution.tourCosts.add(0.0);
+        solution.departureTime.add(new ArrayList<>());
+        solution.arrivalTime.add(new ArrayList<>());
+        solution.departureSlackTimes.add(new ArrayList<>());
+        solution.waitingTimes.add(new ArrayList<>());
+        solution.arrivalSlackTimes.add(new ArrayList<>());
+        solution.delays.add(new ArrayList<>());
     }
 
     public static void removeEmptyVehicles(Solution solution) {
@@ -85,6 +91,12 @@ public class SolutionUtils {
                 solution.tours.remove(position);
                 solution.requests.remove(position);
                 solution.tourCosts.remove(position);
+                solution.departureTime.remove(position);
+                solution.arrivalTime.remove(position);
+                solution.departureSlackTimes.remove(position);
+                solution.waitingTimes.remove(position);
+                solution.arrivalSlackTimes.remove(position);
+                solution.delays.remove(position);
             } else {
                 position++;
             }

@@ -95,7 +95,7 @@ public class InfeasibleRequestsPairs {
         boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removalOperator.removeRandomRequest(tempSol.tours, tempSol.requests, 1);
-            insertionOperator.insertRequests(tempSol.tours, tempSol.requests, removedRequests, PickupMethod.Random, insertionMethod);
+            insertionOperator.insertRequests(tempSol, removedRequests, PickupMethod.Random, insertionMethod);
             instance.restrictionsEvaluation(tempSol);
             improvement = SolutionUtils.getBest(improvedSol, tempSol) == tempSol;
             if (improvement) {

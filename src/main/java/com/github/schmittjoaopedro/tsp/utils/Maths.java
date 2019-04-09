@@ -119,6 +119,10 @@ public class Maths {
         return (double) tmp / factor;
     }
 
+    public static double round(double value) {
+        return round(value, 6); // Use same number of decimal places as Coelho
+    }
+
     public static int getValueByInequality(int[][] matrix, FunctionWithTwoArgs<Integer, Integer, Integer> function) {
         int min = 0;
         for (int i = 0; i < matrix.length; i++) {
