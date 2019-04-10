@@ -1081,7 +1081,7 @@ public class MPDPTW_UtilsTest {
         ExchangeRequestOperator exchangeRequestOperator = new ExchangeRequestOperator(problemInstance, new Random(1));
         ant = exchangeRequestOperator.exchange(ant);
 
-        assertThat(ant.totalCost).isEqualTo(4713.749202925907);
+        assertThat(ant.totalCost).isEqualTo(4744.995443563417);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
         assertThat(ant.feasible).isTrue();
         assertThat(ant.tours).hasSize(3);
@@ -1089,13 +1089,13 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tourCosts).hasSize(3);
         assertThat(ant.tours.get(0)).containsExactly(0, 3, 1, 26, 25, 5, 2, 4, 27, 6, 0);
         assertThat(ant.tours.get(1)).containsExactly(0, 12, 23, 13, 22, 24, 11, 14, 0);
-        assertThat(ant.tours.get(2)).containsExactly(0, 19, 9, 16, 7, 15, 8, 18, 10, 20, 17, 21, 0);
-        assertThat(ant.requests.get(0)).containsExactly(7, 0, 1);
+        assertThat(ant.tours.get(2)).containsExactly(0, 19, 9, 16, 7, 15, 8, 18, 10, 17, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 7, 0);
         assertThat(ant.requests.get(1)).containsExactly(6, 3);
-        assertThat(ant.requests.get(2)).containsExactly(5, 4, 2);
+        assertThat(ant.requests.get(2)).containsExactly(4, 2, 5);
         assertThat(ant.tourCosts.get(0)).isEqualTo(1530.3967130440456);
         assertThat(ant.tourCosts.get(1)).isEqualTo(1451.9543342625707);
-        assertThat(ant.tourCosts.get(2)).isEqualTo(1731.3981556192914);
+        assertThat(ant.tourCosts.get(2)).isEqualTo(1762.644396256801);
     }
 
     @Test

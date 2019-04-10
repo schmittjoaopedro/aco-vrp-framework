@@ -14,9 +14,9 @@ public class Solution {
 
     public ArrayList<ArrayList<Double>> arrivalTime;
 
-    public ArrayList<ArrayList<Double>> departureSlackTimes;
+    public ArrayList<Double[]> departureSlackTimes;
 
-    public ArrayList<ArrayList<Double>> arrivalSlackTimes;
+    public ArrayList<Double[]> arrivalSlackTimes;
 
     public ArrayList<ArrayList<Double>> waitingTimes;
 

@@ -366,7 +366,7 @@ public class InsertionOperator {
             tNext = solution.departureTime.get(vehicle).get(currIdx - 1) + instance.dist(prev, next); // Set t_next the actual arrival time at next
             tNewNext = Math.max(t, reqI.twStart) + reqI.serviceTime + instance.dist(node, next); // t'_next <- arrival time at next if i is inserted before
             addedDuration = tNewNext - tNext; // addedDuration = t'_next - t_next
-            if (tNext > twEnd(next) || addedDuration > solution.arrivalSlackTimes.get(vehicle).get(currIdx)) { // t_next > b_next  OR addedDuration > slack_next
+            if (tNext > twEnd(next) || addedDuration > solution.arrivalSlackTimes.get(vehicle)[currIdx]) { // t_next > b_next  OR addedDuration > slack_next
                 feasible = false;
             }
             if (feasible) {

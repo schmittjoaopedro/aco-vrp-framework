@@ -27,8 +27,8 @@ public class SolutionUtils {
             if (from.departureTime.size() > 0) { // TODO: Remove after refactored
                 to.departureTime.add(i, (ArrayList<Double>) from.departureTime.get(i).clone());
                 to.arrivalTime.add(i, (ArrayList<Double>) from.arrivalTime.get(i).clone());
-                to.departureSlackTimes.add(i, (ArrayList<Double>) from.departureSlackTimes.get(i).clone());
-                to.arrivalSlackTimes.add(i, (ArrayList<Double>) from.arrivalSlackTimes.get(i).clone());
+                to.departureSlackTimes.add(i, from.departureSlackTimes.get(i).clone());
+                to.arrivalSlackTimes.add(i, from.arrivalSlackTimes.get(i).clone());
                 to.waitingTimes.add(i, (ArrayList<Double>) from.waitingTimes.get(i).clone());
                 to.delays.add(i, (ArrayList<Double>) from.delays.get(i).clone());
             }
@@ -78,9 +78,9 @@ public class SolutionUtils {
         solution.tourCosts.add(0.0);
         solution.departureTime.add(new ArrayList<>());
         solution.arrivalTime.add(new ArrayList<>());
-        solution.departureSlackTimes.add(new ArrayList<>());
+        solution.departureSlackTimes.add(new Double[0]);
         solution.waitingTimes.add(new ArrayList<>());
-        solution.arrivalSlackTimes.add(new ArrayList<>());
+        solution.arrivalSlackTimes.add(new Double[0]);
         solution.delays.add(new ArrayList<>());
     }
 

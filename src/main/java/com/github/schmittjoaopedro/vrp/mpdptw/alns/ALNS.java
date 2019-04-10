@@ -175,7 +175,7 @@ public class ALNS {
                 updateWeights(); // Update weights and reset scores of operators
                 resetOperatorsScores();
                 solution = applyImprovement(solution); // Apply improvement to S
-                printIterationStatus();
+                //printIterationStatus();
                 updateBest(solution);
             }
             iteration++;

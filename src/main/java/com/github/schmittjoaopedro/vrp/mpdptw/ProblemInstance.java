@@ -189,8 +189,8 @@ public class ProblemInstance {
         solution.timeWindowPenalty = 0.0;
         solution.capacityPenalty = 0.0;
         int[] numNodesByRequest = new int[getNumReq()];
-        double[] pickupByRequestTime = new double[getNumReq()];
-        double[] deliveryByRequestTime = new double[getNumReq()];
+        Double[] pickupByRequestTime = new Double[getNumReq()];
+        Double[] deliveryByRequestTime = new Double[getNumReq()];
         solution.toVisit--; // Remove depot from nodes to visit count
         // For each vehicle
         for (int k = 0; k < solution.tours.size(); k++) {
@@ -199,11 +199,9 @@ public class ProblemInstance {
             solution.departureTime.add(new ArrayList<>());
             solution.waitingTimes.add(new ArrayList<>());
             solution.delays.add(new ArrayList<>());
-            solution.departureSlackTimes.add(new ArrayList<>());
-            solution.arrivalSlackTimes.add(new ArrayList<>());
-            double currentTime = depot.twStart;
-            double tourCost = 0.0;
-            double capacity = 0.0;
+            Double currentTime = depot.twStart;
+            Double tourCost = 0.0;
+            Double capacity = 0.0;
             int curr, next;
             Request request;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
@@ -265,38 +263,16 @@ public class ProblemInstance {
             }
             // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
             // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
-            /*int prev; TODO: Remove after validate with Jean.
-            for (int i = 0; i < tour.size(); i++) {
-                double cost = 0.0;
-                curr = tour.get(i);
-                double startTime = Math.max(ant.arrivalTime.get(k).get(i), twStart(curr)); // Departure time of depot will change for each vehicle
-                ant.departureSlackTimes.get(k).add(Double.MAX_VALUE);
-                for (int j = i; j < tour.size(); j++) {
-                    int node = tour.get(j);
-                    if (j - i > 0) {
-                        prev = tour.get(j - 1);
-                        cost = cost + distances[prev][node];
-                        if (prev != curr) {
-                        }
-                    }
-                    ant.departureSlackTimes.get(k).set(i, Math.min(ant.departureSlackTimes.get(k).get(i), twEnd(node) - (startTime + cost)));
-                    // Service time is aggregated in the cost function after tested the slack time minimization. This is necessary because
-                    // service time is not considered to be attended before the end time window of the current client, but is considered
-                    // in the cost calculation to achieve the next client.
-                    cost += serviceTime(node);
-                }
-                ant.arrivalSlackTimes.get(k).add(ant.departureSlackTimes.get(k).get(i) + ant.waitingTimes.get(k).get(i));
-            }*/
-            double slackTime = Double.MAX_VALUE;
+            Double slackTime = Double.MAX_VALUE;
+            solution.departureSlackTimes.add(new Double[tour.size()]);
+            solution.arrivalSlackTimes.add(new Double[tour.size()]);
             for (int i = tour.size() - 1; i >= 0; i--) {
                 curr = tour.get(i);
                 slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k).get(i) + serviceTime(curr));
-                solution.departureSlackTimes.get(k).add(slackTime);
+                solution.departureSlackTimes.get(k)[i] = slackTime;
                 slackTime += solution.waitingTimes.get(k).get(i);
-                solution.arrivalSlackTimes.get(k).add(slackTime);
+                solution.arrivalSlackTimes.get(k)[i] = slackTime;
             }
-            Collections.reverse(solution.departureSlackTimes.get(k));
-            Collections.reverse(solution.arrivalSlackTimes.get(k));
             solution.tourCosts.add(tourCost);
             solution.totalCost += tourCost;
         }
@@ -309,24 +285,29 @@ public class ProblemInstance {
     public void solutionEvaluation(Solution solution, int k) {
         solution.totalCost -= solution.tourCosts.get(k);
         solution.toVisit--; // Remove depot from nodes to visit count
-        solution.timeWindowPenalty -= solution.delays.get(k).stream().reduce(0.0, Double::sum);
+        if (solution.timeWindowPenalty > 0) {
+            solution.timeWindowPenalty -= solution.delays.get(k).stream().reduce(0.0, Double::sum);
+        }
         // For each vehicle
+        int tourSize = solution.tours.get(k).size();
         List<Integer> tour = solution.tours.get(k);
-        solution.arrivalTime.set(k, new ArrayList<>());
-        solution.departureTime.set(k, new ArrayList<>());
-        solution.waitingTimes.set(k, new ArrayList<>());
-        solution.delays.set(k, new ArrayList<>());
-        solution.departureSlackTimes.set(k, new ArrayList<>());
-        solution.arrivalSlackTimes.set(k, new ArrayList<>());
-        double currentTime = depot.twStart;
-        double tourCost = 0.0;
-        double capacity = 0.0;
+        solution.arrivalTime.set(k, new ArrayList<>(tourSize));
+        solution.departureTime.set(k, new ArrayList<>(tourSize));
+        solution.waitingTimes.set(k, new ArrayList<>(tourSize));
+        solution.delays.set(k, new ArrayList<>(tourSize));
+        //solution.departureSlackTimes.set(k, new ArrayList<>(tourSize));
+        //solution.arrivalSlackTimes.set(k, new ArrayList<>(tourSize));
+        Double currentTime = depot.twStart;
+        Double tourCost = 0.0;
+        Double capacity = 0.0;
+        Double routePenalty = 0.0;
+        Double penalty;
         int curr, next;
         solution.waitingTimes.get(k).add(0.0);
         solution.delays.get(k).add(0.0);
         solution.arrivalTime.get(k).add(currentTime);
         solution.departureTime.get(k).add(currentTime);
-        for (int i = 0; i < tour.size() - 1; i++) {
+        for (int i = 0; i < tourSize - 1; i++) {
             curr = tour.get(i);
             next = tour.get(i + 1);
             tourCost += dist(curr, next);
@@ -336,25 +317,29 @@ public class ProblemInstance {
             currentTime = Math.max(currentTime, twStart(next));
             capacity += demand(next);
             solution.capacity[next] = capacity;
-            solution.delays.get(k).add(Math.max(0.0, currentTime - twEnd(next)));
+            penalty = Math.max(0.0, currentTime - twEnd(next));
+            solution.delays.get(k).add(penalty);
+            routePenalty += penalty;
             currentTime += serviceTime(next);
             solution.departureTime.get(k).add(currentTime);
         }
         // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
         // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
-        double slackTime = Double.MAX_VALUE;
+        Double slackTime = Double.MAX_VALUE;
+        solution.departureSlackTimes.set(k, new Double[tour.size()]);
+        solution.arrivalSlackTimes.set(k, new Double[tour.size()]);
         for (int i = tour.size() - 1; i >= 0; i--) {
             curr = tour.get(i);
             slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k).get(i) + serviceTime(curr));
-            solution.departureSlackTimes.get(k).add(slackTime);
+            solution.departureSlackTimes.get(k)[i] = slackTime;
             slackTime += solution.waitingTimes.get(k).get(i);
-            solution.arrivalSlackTimes.get(k).add(slackTime);
+            solution.arrivalSlackTimes.get(k)[i] = slackTime;
         }
-        Collections.reverse(solution.departureSlackTimes.get(k));
-        Collections.reverse(solution.arrivalSlackTimes.get(k));
         solution.tourCosts.set(k, tourCost);
         solution.totalCost += tourCost;
-        solution.timeWindowPenalty += solution.delays.get(k).stream().reduce(0.0, Double::sum);
+        if (routePenalty > 0) {
+            solution.timeWindowPenalty += routePenalty;
+        }
     }
 
     @Deprecated
