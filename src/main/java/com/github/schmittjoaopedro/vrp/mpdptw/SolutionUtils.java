@@ -25,12 +25,12 @@ public class SolutionUtils {
             to.requests.add(i, (ArrayList<Integer>) from.requests.get(i).clone());
             to.tourCosts.add(i, from.tourCosts.get(i));
             if (from.departureTime.size() > 0) { // TODO: Remove after refactored
-                to.departureTime.add(i, (ArrayList<Double>) from.departureTime.get(i).clone());
-                to.arrivalTime.add(i, (ArrayList<Double>) from.arrivalTime.get(i).clone());
+                to.departureTime.add(i, from.departureTime.get(i).clone());
+                to.arrivalTime.add(i, from.arrivalTime.get(i).clone());
                 to.departureSlackTimes.add(i, from.departureSlackTimes.get(i).clone());
                 to.arrivalSlackTimes.add(i, from.arrivalSlackTimes.get(i).clone());
-                to.waitingTimes.add(i, (ArrayList<Double>) from.waitingTimes.get(i).clone());
-                to.delays.add(i, (ArrayList<Double>) from.delays.get(i).clone());
+                to.waitingTimes.add(i, from.waitingTimes.get(i).clone());
+                to.delays.add(i, from.delays.get(i).clone());
             }
         }
         to.visited = from.visited.clone();
@@ -76,12 +76,12 @@ public class SolutionUtils {
         solution.tours.add(tour);
         solution.requests.add(new ArrayList<>());
         solution.tourCosts.add(0.0);
-        solution.departureTime.add(new ArrayList<>());
-        solution.arrivalTime.add(new ArrayList<>());
-        solution.departureSlackTimes.add(new Double[0]);
-        solution.waitingTimes.add(new ArrayList<>());
-        solution.arrivalSlackTimes.add(new Double[0]);
-        solution.delays.add(new ArrayList<>());
+        solution.departureTime.add(new double[0]);
+        solution.arrivalTime.add(new double[0]);
+        solution.departureSlackTimes.add(new double[0]);
+        solution.waitingTimes.add(new double[0]);
+        solution.arrivalSlackTimes.add(new double[0]);
+        solution.delays.add(new double[0]);
     }
 
     public static void removeEmptyVehicles(Solution solution) {

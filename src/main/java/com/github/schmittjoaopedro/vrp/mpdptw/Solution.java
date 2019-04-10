@@ -10,17 +10,17 @@ public class Solution {
 
     public ArrayList<Double> tourCosts;
 
-    public ArrayList<ArrayList<Double>> departureTime;
+    public ArrayList<double[]> departureTime;
 
-    public ArrayList<ArrayList<Double>> arrivalTime;
+    public ArrayList<double[]> arrivalTime;
 
-    public ArrayList<Double[]> departureSlackTimes;
+    public ArrayList<double[]> departureSlackTimes;
 
-    public ArrayList<Double[]> arrivalSlackTimes;
+    public ArrayList<double[]> arrivalSlackTimes;
 
-    public ArrayList<ArrayList<Double>> waitingTimes;
+    public ArrayList<double[]> waitingTimes;
 
-    public ArrayList<ArrayList<Double>> delays;
+    public ArrayList<double[]> delays;
 
     public boolean[] visited;
 

@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ProblemInstance {
 
@@ -195,27 +196,27 @@ public class ProblemInstance {
         // For each vehicle
         for (int k = 0; k < solution.tours.size(); k++) {
             List<Integer> tour = solution.tours.get(k);
-            solution.arrivalTime.add(new ArrayList<>());
-            solution.departureTime.add(new ArrayList<>());
-            solution.waitingTimes.add(new ArrayList<>());
-            solution.delays.add(new ArrayList<>());
+            solution.arrivalTime.add(new double[tour.size()]);
+            solution.departureTime.add(new double[tour.size()]);
+            solution.waitingTimes.add(new double[tour.size()]);
+            solution.delays.add(new double[tour.size()]);
             Double currentTime = depot.twStart;
             Double tourCost = 0.0;
             Double capacity = 0.0;
             int curr, next;
             Request request;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
-            solution.waitingTimes.get(k).add(0.0);
-            solution.delays.get(k).add(0.0);
-            solution.arrivalTime.get(k).add(currentTime);
-            solution.departureTime.get(k).add(currentTime);
+            solution.waitingTimes.get(k)[0] = 0.0;
+            solution.delays.get(k)[0] = 0.0;
+            solution.arrivalTime.get(k)[0] = currentTime;
+            solution.departureTime.get(k)[0] = currentTime;
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
-                solution.arrivalTime.get(k).add(currentTime);
-                solution.waitingTimes.get(k).add(Math.max(0, twStart(next) - solution.arrivalTime.get(k).get(i + 1)));
+                solution.arrivalTime.get(k)[i + 1] = currentTime;
+                solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
                 currentTime = Math.max(currentTime, twStart(next));
                 capacity += demand(next);
                 solution.capacity[next] = capacity;
@@ -232,11 +233,11 @@ public class ProblemInstance {
                 }
                 // Check time windows feasibility
                 if (currentTime > twEnd(next)) {
-                    solution.delays.get(k).add(currentTime - twEnd(next));
-                    solution.timeWindowPenalty += solution.delays.get(k).get(i + 1);
+                    solution.delays.get(k)[i + 1] = currentTime - twEnd(next);
+                    solution.timeWindowPenalty += solution.delays.get(k)[i + 1];
                     solution.feasible = false;
                 } else {
-                    solution.delays.get(k).add(0.0);
+                    solution.delays.get(k)[i + 1] = 0.0;
                 }
                 // Check capacity feasibility
                 if (capacity > vehicleCapacity) {
@@ -244,7 +245,7 @@ public class ProblemInstance {
                     solution.feasible = false;
                 }
                 currentTime += serviceTime(next);
-                solution.departureTime.get(k).add(currentTime);
+                solution.departureTime.get(k)[i + 1] = currentTime;
             }
             for (Integer requestId : attendedRequests) {
                 // Check if all nodes of each request is attended by the same vehicle
@@ -264,13 +265,13 @@ public class ProblemInstance {
             // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
             // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
             Double slackTime = Double.MAX_VALUE;
-            solution.departureSlackTimes.add(new Double[tour.size()]);
-            solution.arrivalSlackTimes.add(new Double[tour.size()]);
+            solution.departureSlackTimes.add(new double[tour.size()]);
+            solution.arrivalSlackTimes.add(new double[tour.size()]);
             for (int i = tour.size() - 1; i >= 0; i--) {
                 curr = tour.get(i);
-                slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k).get(i) + serviceTime(curr));
+                slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k)[i] + serviceTime(curr));
                 solution.departureSlackTimes.get(k)[i] = slackTime;
-                slackTime += solution.waitingTimes.get(k).get(i);
+                slackTime += solution.waitingTimes.get(k)[i];
                 solution.arrivalSlackTimes.get(k)[i] = slackTime;
             }
             solution.tourCosts.add(tourCost);
@@ -286,53 +287,55 @@ public class ProblemInstance {
         solution.totalCost -= solution.tourCosts.get(k);
         solution.toVisit--; // Remove depot from nodes to visit count
         if (solution.timeWindowPenalty > 0) {
-            solution.timeWindowPenalty -= solution.delays.get(k).stream().reduce(0.0, Double::sum);
+            double sum = 0.0;
+            for (int i = 0; i < solution.delays.get(k).length; i++) {
+                sum += solution.delays.get(k)[i];
+            }
+            solution.timeWindowPenalty -= sum;
         }
         // For each vehicle
         int tourSize = solution.tours.get(k).size();
         List<Integer> tour = solution.tours.get(k);
-        solution.arrivalTime.set(k, new ArrayList<>(tourSize));
-        solution.departureTime.set(k, new ArrayList<>(tourSize));
-        solution.waitingTimes.set(k, new ArrayList<>(tourSize));
-        solution.delays.set(k, new ArrayList<>(tourSize));
-        //solution.departureSlackTimes.set(k, new ArrayList<>(tourSize));
-        //solution.arrivalSlackTimes.set(k, new ArrayList<>(tourSize));
+        solution.arrivalTime.set(k, new double[tourSize]);
+        solution.departureTime.set(k, new double[tourSize]);
+        solution.waitingTimes.set(k, new double[tourSize]);
+        solution.delays.set(k, new double[tourSize]);
         Double currentTime = depot.twStart;
         Double tourCost = 0.0;
         Double capacity = 0.0;
         Double routePenalty = 0.0;
         Double penalty;
         int curr, next;
-        solution.waitingTimes.get(k).add(0.0);
-        solution.delays.get(k).add(0.0);
-        solution.arrivalTime.get(k).add(currentTime);
-        solution.departureTime.get(k).add(currentTime);
+        solution.waitingTimes.get(k)[0] = 0.0;
+        solution.delays.get(k)[0] = 0.0;
+        solution.arrivalTime.get(k)[0] = currentTime;
+        solution.departureTime.get(k)[0] = currentTime;
         for (int i = 0; i < tourSize - 1; i++) {
             curr = tour.get(i);
             next = tour.get(i + 1);
             tourCost += dist(curr, next);
             currentTime += dist(curr, next);
-            solution.arrivalTime.get(k).add(currentTime);
-            solution.waitingTimes.get(k).add(Math.max(0, twStart(next) - solution.arrivalTime.get(k).get(i + 1)));
+            solution.arrivalTime.get(k)[i + 1] = currentTime;
+            solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
             currentTime = Math.max(currentTime, twStart(next));
             capacity += demand(next);
             solution.capacity[next] = capacity;
             penalty = Math.max(0.0, currentTime - twEnd(next));
-            solution.delays.get(k).add(penalty);
+            solution.delays.get(k)[i + 1] = penalty;
             routePenalty += penalty;
             currentTime += serviceTime(next);
-            solution.departureTime.get(k).add(currentTime);
+            solution.departureTime.get(k)[i + 1] = currentTime;
         }
         // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
         // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
         Double slackTime = Double.MAX_VALUE;
-        solution.departureSlackTimes.set(k, new Double[tour.size()]);
-        solution.arrivalSlackTimes.set(k, new Double[tour.size()]);
+        solution.departureSlackTimes.set(k, new double[tour.size()]);
+        solution.arrivalSlackTimes.set(k, new double[tour.size()]);
         for (int i = tour.size() - 1; i >= 0; i--) {
             curr = tour.get(i);
-            slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k).get(i) + serviceTime(curr));
+            slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k)[i] + serviceTime(curr));
             solution.departureSlackTimes.get(k)[i] = slackTime;
-            slackTime += solution.waitingTimes.get(k).get(i);
+            slackTime += solution.waitingTimes.get(k)[i];
             solution.arrivalSlackTimes.get(k)[i] = slackTime;
         }
         solution.tourCosts.set(k, tourCost);
