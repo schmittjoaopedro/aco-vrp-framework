@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class ProblemInstance {
 
@@ -622,6 +621,8 @@ public class ProblemInstance {
 
         public double cost;
 
+        public double capacity;
+
         public double timeWindowPenalty;
 
         public double capacityPenalty;
@@ -633,6 +634,7 @@ public class ProblemInstance {
             timeWindowPenalty = 0.0;
             capacityPenalty = 0.0;
             cost = 0.0;
+            capacity = 0.0;
         }
     }
 

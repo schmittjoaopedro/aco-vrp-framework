@@ -12,11 +12,8 @@ public class RelocateNodeOperator {
 
     private ProblemInstance instance;
 
-    private InsertionOperator insertionOperator;
-
     public RelocateNodeOperator(ProblemInstance instance) {
         this.instance = instance;
-        this.insertionOperator = new InsertionOperator(instance, null);
     }
 
     public Solution relocate(Solution ant) {
@@ -60,28 +57,23 @@ public class RelocateNodeOperator {
     public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt, boolean stopOnFeasible) {
         ArrayList<Integer> tempTour = new ArrayList<>(tour);
         ArrayList<Integer> bestTour = new ArrayList<>(tour);
+        ProblemInstance.FitnessResult newCost, bestCost;
+        bestCost = instance.restrictionsEvaluation(tempTour);
+        if (bestCost.feasible) { // The current tour already is feasible
+            return new ArrayList<>(tour);
+        }
         boolean improvement = true;
         while (improvement) {
             improvement = false;
-            ProblemInstance.FitnessResult newCost, bestCost;
             for (int n1 = startAt; n1 < tempTour.size() - 1; n1++) { // Ignore depot at first and last position
                 int node1 = bestTour.get(n1);
-                bestCost = instance.restrictionsEvaluation(tempTour);
-                int bestPos = removeNode(tempTour, node1); // To insert back we consider plus 1
-                int innerLimit = tempTour.size();
-                int innerStartAt = startAt;
                 Request req = instance.getRequest(node1);
-                if (req.isDeliver) {
-                    innerStartAt = getLastPickupIdx(tempTour, req) + 1; // To start after the last pickup position
-                    innerStartAt = Math.max(innerStartAt, startAt);
-                } else {
-                    innerLimit = getLastDeliverIdx(tempTour, req) + 1; // Until before delivery point
-                }
-                for (int n2 = innerStartAt; n2 < innerLimit; n2++) {
+                Node processingNode = processNode(tempTour, node1, req, startAt); // To insert back we consider plus 1
+                for (int n2 = processingNode.startAt; n2 < processingNode.endAt; n2++) {
                     tempTour.add(n2, node1);
                     newCost = instance.restrictionsEvaluation(tempTour);
                     if (isBetter(bestCost, newCost)) {
-                        bestPos = n2;
+                        processingNode.position = n2;
                         bestCost = newCost;
                         improvement = true;
                     }
@@ -91,7 +83,7 @@ public class RelocateNodeOperator {
                         break;
                     }
                 }
-                tempTour.add(bestPos, node1);
+                tempTour.add(processingNode.position, node1);
                 if (bestCost.feasible && stopOnFeasible) {
                     improvement = false;
                     break;
@@ -100,6 +92,37 @@ public class RelocateNodeOperator {
             bestTour = tempTour;
         }
         return bestTour;
+    }
+
+    private Node processNode(List<Integer> tour, int node, Request req, int startAt) {
+        Node nodeObj = new Node();
+        nodeObj.startAt = startAt;
+        nodeObj.endAt = tour.size() - 1; // As we now that one node will be removed, we decrement one value
+        int i = startAt;
+        while (i < tour.size() - 1) {
+            if (req.requestId == instance.getRequest(tour.get(i)).requestId) {
+                if (req.isPickup) {
+                    if (instance.getRequest(tour.get(i)).isDeliver) {
+                        nodeObj.endAt = i + 1;
+                        break; // We already removed the pickup to achieve the delivery point, therefore, we can stop processing
+                    }
+                } else if (req.isDeliver) {
+                    if (instance.getRequest(tour.get(i)).isPickup) {
+                        nodeObj.startAt = Math.max(startAt, i + 1);
+                    }
+                }
+            }
+            if (tour.get(i) == node) {
+                tour.remove(i);
+                nodeObj.position = i;
+                if (req.isDeliver) {
+                    break; // For delivery, we known that all pickups were evaluated, therefore, we can stop processing
+                }
+            } else {
+                i++;
+            }
+        }
+        return nodeObj;
     }
 
     private boolean isBetter(ProblemInstance.FitnessResult original, ProblemInstance.FitnessResult testing) {
@@ -210,15 +233,9 @@ public class RelocateNodeOperator {
         return lastPickupIdx;
     }
 
-    private int getLastDeliverIdx(List<Integer> tour, Request request) {
-        int lastDeliveryIdx = 0;
-        for (int i = 1; i < tour.size() - 1; i++) { // Ignore depot at first and last position
-            if (instance.getRequest(tour.get(i)).isDeliver && // First check if this is a delivery point
-                    instance.getRequestId(tour.get(i)) == request.requestId) { // Check if this is the same pickup-delivery request
-                lastDeliveryIdx = i;
-            }
-        }
-        return lastDeliveryIdx;
+    class Node {
+        int startAt;
+        int endAt;
+        int position;
     }
-
 }
