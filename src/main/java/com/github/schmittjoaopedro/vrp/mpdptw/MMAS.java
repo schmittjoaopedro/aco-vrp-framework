@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;
+
 import java.util.*;
 
 public class MMAS {
@@ -50,7 +52,7 @@ public class MMAS {
 
     private Random random;
 
-    private AcoSolutionBuilder acoSolutionBuilder;
+    private SolutionBuilder solutionBuilder;
 
     private double branchFac = 1.00001;
 
@@ -144,10 +146,7 @@ public class MMAS {
     }
 
     public void constructSolutions() {
-        if (acoSolutionBuilder == null) {
-            acoSolutionBuilder = new AcoSolutionBuilder(instance, antPopulation, random, pheromoneNodes, alpha, beta, parallel);
-        }
-        acoSolutionBuilder.constructSolutions();
+        solutionBuilder.constructSolutions();
     }
 
     public Solution findBest() {
@@ -276,7 +275,7 @@ public class MMAS {
                 restartBest.totalCost = Double.MAX_VALUE;
                 initPheromoneTrails(trailMax);
                 restartIteration = getCurrentIteration();
-                acoSolutionBuilder.clearFeasibleRoutes();
+                solutionBuilder.onSearchControlExecute();
             }
         }
     }
@@ -449,16 +448,40 @@ public class MMAS {
         return antPopulation;
     }
 
-    public Map<String, ArrayList<Integer>> getFeasibleRoutes() {
-        return acoSolutionBuilder.getFeasibleRoutes();
-    }
-
     public void setParallel(boolean parallel) {
         this.parallel = parallel;
     }
 
     public boolean isParallel() {
         return parallel;
+    }
+
+    public double[][] getPheromoneNodes() {
+        return pheromoneNodes;
+    }
+
+    public double getAlpha() {
+        return alpha;
+    }
+
+    public double getBeta() {
+        return beta;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
+
+    public void setSolutionBuilder(Class<? extends SolutionBuilder> solutionBuilderClass) {
+        if (instance == null || random == null) {
+            throw new RuntimeException("Random and Instance must be defined firstly.");
+        }
+        try {
+            solutionBuilder = solutionBuilderClass.getConstructor().newInstance();
+            solutionBuilder.init(instance, random, this);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private class NextClient {

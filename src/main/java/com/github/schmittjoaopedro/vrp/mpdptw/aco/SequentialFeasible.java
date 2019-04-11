@@ -1,12 +1,13 @@
-package com.github.schmittjoaopedro.vrp.mpdptw;
+package com.github.schmittjoaopedro.vrp.mpdptw.aco;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class AcoSolutionBuilder {
+public class SequentialFeasible implements SolutionBuilder {
 
     private ProblemInstance instance;
 
@@ -22,18 +23,23 @@ public class AcoSolutionBuilder {
 
     private Random random;
 
+    private MMAS mmas;
+
     private boolean parallel;
 
-    public AcoSolutionBuilder(ProblemInstance instance, List<Solution> antPopulation, Random random, double[][] pheromones, double alpha, double beta, boolean parallel) {
+    @Override
+    public void init(ProblemInstance instance, Random random, MMAS mmas) {
         this.instance = instance;
-        this.antPopulation = antPopulation;
-        this.pheromoneNodes = pheromones;
-        this.alpha = alpha;
-        this.beta = beta;
-        this.random = random;
-        this.parallel = parallel;
+        this.mmas = mmas;
+        updateParameters();
     }
 
+    @Override
+    public void onSearchControlExecute() {
+        feasibleRoutes.clear();
+    }
+
+    @Override
     public void constructSolutions() {
         if (parallel) {
             Thread[] antBuilders = new Thread[antPopulation.size()];
@@ -232,11 +238,12 @@ public class AcoSolutionBuilder {
         }
     }
 
-    public void clearFeasibleRoutes() {
-        feasibleRoutes.clear();
-    }
-
-    public Map<String, ArrayList<Integer>> getFeasibleRoutes() {
-        return feasibleRoutes;
+    private void updateParameters() {
+        this.antPopulation = mmas.getAntPopulation();
+        this.pheromoneNodes = mmas.getPheromoneNodes();
+        this.alpha = mmas.getAlpha();
+        this.beta = mmas.getBeta();
+        this.random = mmas.getRandom();
+        this.parallel = mmas.isParallel();
     }
 }

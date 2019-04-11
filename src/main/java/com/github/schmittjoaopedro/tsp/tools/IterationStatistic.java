@@ -38,8 +38,6 @@ public class IterationStatistic {
 
     private boolean feasible;
 
-    private Long numPaths;
-
     public void startTimer() {
         currentTime = System.currentTimeMillis();
     }
@@ -152,14 +150,6 @@ public class IterationStatistic {
         this.feasible = feasible;
     }
 
-    public Long getNumPaths() {
-        return numPaths;
-    }
-
-    public void setNumPaths(Long numPaths) {
-        this.numPaths = numPaths;
-    }
-
     @Override
     public String toString() {
         StringBuilder log = new StringBuilder();
@@ -175,9 +165,6 @@ public class IterationStatistic {
         if (getPenaltyRate() > 0) {
             log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
             log.append("FEASIBLE: " + (feasible ? "T" : "F"));
-        }
-        if (numPaths > 0) {
-            log.append(" NO.PATHS: " + numPaths);
         }
         return log.toString();
     }

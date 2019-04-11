@@ -3,6 +3,8 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
+import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialFeasible;
+import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.FeasibilityOperator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +43,8 @@ public class Solver implements Runnable {
 
     private LocalSearch localSearch;
 
+    private Class<? extends SolutionBuilder> solutionBuilderClass = SequentialFeasible.class;
+
     public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.fileName = fileName;
         this.rootDirectory = rootDirectory;
@@ -64,6 +68,7 @@ public class Solver implements Runnable {
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));
+        mmas.setSolutionBuilder(solutionBuilderClass);
         mmas.computeNNList();
         mmas.initTry();
         globalStatistics.endTimer("MMAS Initialization");
@@ -108,7 +113,6 @@ public class Solver implements Runnable {
                 iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
                 iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
-                iterationStatistic.setNumPaths((long) mmas.getFeasibleRoutes().size());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
@@ -218,6 +222,10 @@ public class Solver implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setSolutionBuilderClass(Class<? extends SolutionBuilder> solutionBuilderClass) {
+        this.solutionBuilderClass = solutionBuilderClass;
     }
 
     public GlobalStatistics getGlobalStatistics() {
