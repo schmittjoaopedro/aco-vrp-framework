@@ -4,8 +4,11 @@ import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialInfeasible;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +30,15 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_main_problems_test() {
+    public void mpdptw_main_problems_test() throws IOException {
 
         executeTest("n_4_25_1.txt");
+        executeTest("n_8_25_1.txt");
+
         executeTest("n_4_50_1.txt");
         executeTest("n_4_100_1.txt");
         executeTest("n_4_400_1.txt");
 
-        executeTest("n_8_25_1.txt");
         executeTest("n_8_50_1.txt");
         executeTest("n_8_100_1.txt");
         executeTest("n_8_400_1.txt");
@@ -61,14 +65,15 @@ public class MPDPTW_MMAS_TEST {
 
     }
 
-    private void executeTest(String problem) {
+    private void executeTest(String problem) throws IOException {
         ArrayList<Double> costs = new ArrayList<>();
         ArrayList<Double> time = new ArrayList<>();
         ArrayList<Double> penalty = new ArrayList<>();
-        int sampleSize = 1, feasible = 0;
+        int sampleSize = 5, feasible = 0;
         for (int i = 0; i < sampleSize; i++) {
-            Solver solver = new Solver(rootDirectory, problem, maxIterations, i, 0.02, statisticInterval, true);
-            solver.setParallel(false);
+            Solver solver = new Solver(rootDirectory, problem, maxIterations, i, 0.2, statisticInterval, true);
+            solver.setParallel(true);
+            solver.setLsActive(true);
             solver.run();
             costs.add(solver.getBestSolution().totalCost);
             penalty.add(solver.getBestSolution().timeWindowPenalty);
@@ -80,39 +85,41 @@ public class MPDPTW_MMAS_TEST {
         double meanCosts = Maths.getMean(costs);
         double meanTime = Maths.getMean(time);
         double meanPenalty = Maths.getMean(penalty);
-        System.out.println("---------------------------------------");
-        System.out.println("Instance = " + problem);
-        System.out.println("Mean costs = " + meanCosts);
-        System.out.println("Mean penalty = " + meanPenalty);
-        System.out.println("Mean time = " + meanTime);
-        System.out.println("Feasible = " + feasible + " of " + sampleSize);
-        System.out.println("---------------------------------------");
+        StringBuilder resume = new StringBuilder();
+        resume.append("\n---------------------------------------");
+        resume.append("\nInstance = " + problem);
+        resume.append("\nMean costs = " + meanCosts);
+        resume.append("\nMean penalty = " + meanPenalty);
+        resume.append("\nMean time = " + meanTime);
+        resume.append("\nFeasible = " + feasible + " of " + sampleSize);
+        resume.append("\n---------------------------------------");
+        FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\_resume.txt"), resume.toString(), "UTF-8", true);
     }
 
     @Test
     public void mpdptw_sequential_feasible_test() {
         Solver solver = new Solver(rootDirectory, "w_4_100_1.txt", 10, seed, 0.8, 1, true);
-        solver.run();
         solver.setParallel(false);
+        solver.run();
         List<IterationStatistic> iterationStatistics = solver.getIterationStatistics();
-        assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 14979.95   BSF. SD: 0.00    IT. WORST: 19694.78    IT. BEST: 14979.95    IT. MEAN: 17263.21    IT. SD: 1090.61   BRANCH FACTOR: 0.990     DIV: 0.96      ");
-        assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 14198.53   BSF. SD: 0.00    IT. WORST: 18107.68    IT. BEST: 14198.53    IT. MEAN: 16247.09    IT. SD: 830.32    BRANCH FACTOR: 1.913     DIV: 0.94      ");
-        assertThat(iterationStatistics.get(2).toString()).isEqualTo("IT. 3       BSF: 14198.53   BSF. SD: 0.00    IT. WORST: 18658.59    IT. BEST: 14226.96    IT. MEAN: 15865.47    IT. SD: 869.83    BRANCH FACTOR: 0.990     DIV: 0.93      ");
-        assertThat(iterationStatistics.get(3).toString()).isEqualTo("IT. 4       BSF: 13251.72   BSF. SD: 0.00    IT. WORST: 17559.01    IT. BEST: 13251.72    IT. MEAN: 15710.61    IT. SD: 999.75    BRANCH FACTOR: 1.827     DIV: 0.92      ");
-        assertThat(iterationStatistics.get(4).toString()).isEqualTo("IT. 5       BSF: 13251.72   BSF. SD: 0.00    IT. WORST: 17901.25    IT. BEST: 13418.77    IT. MEAN: 15495.15    IT. SD: 976.63    BRANCH FACTOR: 0.990     DIV: 0.93      ");
-        assertThat(iterationStatistics.get(5).toString()).isEqualTo("IT. 6       BSF: 12857.78   BSF. SD: 0.00    IT. WORST: 17906.21    IT. BEST: 12857.78    IT. MEAN: 15590.89    IT. SD: 1068.59   BRANCH FACTOR: 1.865     DIV: 0.93      ");
-        assertThat(iterationStatistics.get(6).toString()).isEqualTo("IT. 7       BSF: 12857.78   BSF. SD: 0.00    IT. WORST: 17477.87    IT. BEST: 13553.52    IT. MEAN: 15582.11    IT. SD: 915.55    BRANCH FACTOR: 0.990     DIV: 0.93      ");
-        assertThat(iterationStatistics.get(7).toString()).isEqualTo("IT. 8       BSF: 12857.78   BSF. SD: 0.00    IT. WORST: 17856.55    IT. BEST: 13555.68    IT. MEAN: 15559.84    IT. SD: 852.88    BRANCH FACTOR: 0.990     DIV: 0.94      ");
-        assertThat(iterationStatistics.get(8).toString()).isEqualTo("IT. 9       BSF: 12857.78   BSF. SD: 0.00    IT. WORST: 18114.25    IT. BEST: 13054.80    IT. MEAN: 15710.70    IT. SD: 1013.36   BRANCH FACTOR: 0.990     DIV: 0.93      ");
-        assertThat(iterationStatistics.get(9).toString()).isEqualTo("IT. 10      BSF: 12857.78   BSF. SD: 0.00    IT. WORST: 17777.99    IT. BEST: 13552.35    IT. MEAN: 15530.32    IT. SD: 987.92    BRANCH FACTOR: 0.990     DIV: 0.93      ");
+        assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 17460.87   BSF. SD: 0.00    IT. WORST: 23359.93    IT. BEST: 17460.87    IT. MEAN: 19959.42    IT. SD: 1217.60   BRANCH FACTOR: 0.990     DIV: 0.97      ");
+        assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 17354.99   BSF. SD: 0.00    IT. WORST: 22970.90    IT. BEST: 17354.99    IT. MEAN: 19619.54    IT. SD: 1182.33   BRANCH FACTOR: 1.837     DIV: 0.94      ");
+        assertThat(iterationStatistics.get(2).toString()).isEqualTo("IT. 3       BSF: 16846.60   BSF. SD: 0.00    IT. WORST: 21511.25    IT. BEST: 16846.60    IT. MEAN: 19547.10    IT. SD: 962.80    BRANCH FACTOR: 1.635     DIV: 0.87      ");
+        assertThat(iterationStatistics.get(3).toString()).isEqualTo("IT. 4       BSF: 16515.06   BSF. SD: 0.00    IT. WORST: 20998.53    IT. BEST: 16515.06    IT. MEAN: 18774.43    IT. SD: 959.16    BRANCH FACTOR: 1.452     DIV: 0.77      ");
+        assertThat(iterationStatistics.get(4).toString()).isEqualTo("IT. 5       BSF: 16511.38   BSF. SD: 0.00    IT. WORST: 19731.72    IT. BEST: 16511.38    IT. MEAN: 17980.18    IT. SD: 981.14    BRANCH FACTOR: 1.317     DIV: 0.60      ");
+        assertThat(iterationStatistics.get(5).toString()).isEqualTo("IT. 6       BSF: 16461.90   BSF. SD: 0.00    IT. WORST: 19624.02    IT. BEST: 16461.90    IT. MEAN: 17437.59    IT. SD: 688.96    BRANCH FACTOR: 1.173     DIV: 0.45      ");
+        assertThat(iterationStatistics.get(6).toString()).isEqualTo("IT. 7       BSF: 16401.46   BSF. SD: 0.00    IT. WORST: 20411.37    IT. BEST: 16401.46    IT. MEAN: 17513.25    IT. SD: 810.24    BRANCH FACTOR: 1.346     DIV: 0.48      ");
+        assertThat(iterationStatistics.get(7).toString()).isEqualTo("IT. 8       BSF: 16298.99   BSF. SD: 0.00    IT. WORST: 20119.52    IT. BEST: 16298.99    IT. MEAN: 17565.44    IT. SD: 773.48    BRANCH FACTOR: 1.404     DIV: 0.47      ");
+        assertThat(iterationStatistics.get(8).toString()).isEqualTo("IT. 9       BSF: 15332.83   BSF. SD: 0.00    IT. WORST: 19405.02    IT. BEST: 15332.83    IT. MEAN: 17267.04    IT. SD: 998.98    BRANCH FACTOR: 1.260     DIV: 0.47      ");
+        assertThat(iterationStatistics.get(9).toString()).isEqualTo("IT. 10      BSF: 15145.51   BSF. SD: 0.00    IT. WORST: 18615.64    IT. BEST: 15145.51    IT. MEAN: 16465.97    IT. SD: 919.15    BRANCH FACTOR: 1.106     DIV: 0.33      ");
     }
 
     @Test
     public void mpdptw_sequential_infeasible_test() {
         Solver solver = new Solver(rootDirectory, "w_4_100_1.txt", 10, seed, 0.8, 1, true);
         solver.setSolutionBuilderClass(SequentialInfeasible.class);
-        solver.run();
         solver.setParallel(false);
+        solver.run();
         List<IterationStatistic> iterationStatistics = solver.getIterationStatistics();
         assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 22477.53   BSF. SD: 0.00    IT. WORST: 26579.34    IT. BEST: 22477.53    IT. MEAN: 24359.21    IT. SD: 977.59    BRANCH FACTOR: 0.990     DIV: 0.99      PEN. RATE: 1.00    FEASIBLE: F");
         assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 21308.95   BSF. SD: 0.00    IT. WORST: 26133.12    IT. BEST: 21308.95    IT. MEAN: 24064.62    IT. SD: 969.63    BRANCH FACTOR: 1.875     DIV: 0.98      PEN. RATE: 1.00    FEASIBLE: F");
@@ -146,7 +153,9 @@ public class MPDPTW_MMAS_TEST {
 
     @Test
     public void mpdptw_without_8_100_5_test() {
-        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", maxIterations, seed, 0.02, statisticInterval, true);
+        Solver solver = new Solver(rootDirectory, "w_8_400_1.txt", 1000, seed, 0.2, 1, true);
+        solver.setLsActive(true);
+        solver.setParallel(true);
         solver.run();
     }
 

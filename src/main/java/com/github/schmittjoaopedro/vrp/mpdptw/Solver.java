@@ -254,4 +254,8 @@ public class Solver implements Runnable {
     public void setParallel(boolean parallel) {
         this.parallel = parallel;
     }
+
+    public void setLsActive(boolean lsActive) {
+        this.lsActive = lsActive;
+    }
 }

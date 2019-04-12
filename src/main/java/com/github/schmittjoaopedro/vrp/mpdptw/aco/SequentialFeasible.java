@@ -174,8 +174,8 @@ public class SequentialFeasible implements SolutionBuilder {
                     }
                     if (feasibleChoice) { // Start after the next position
                         double tau = pheromoneNodes[curr][next];
-                        double eta = 1.0 / (instance.dist(curr, next) + 0.00000001);
-                        double cost = Math.pow(tau, alpha) + Math.pow(eta, beta);
+                        //double eta = 1.0 / (instance.dist(curr, next) + 0.00000001);
+                        double cost = Math.pow(tau, alpha);// + Math.pow(eta, beta);
                         feasibleCosts.put(next, cost);
                         pendingTours.put(next, new ArrayList<>(tempTour.subList(currIdx + 2, tempTour.size() - 1))); // Ignore current and next nodes
                         hasProb = true;
@@ -227,7 +227,7 @@ public class SequentialFeasible implements SolutionBuilder {
 
     private ProblemInstance.FitnessResult optimize(ArrayList<Integer> tour, int startAt) {
         RelocateNodeOperator relocateNodeOperator = new RelocateNodeOperator(instance);
-        ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt);
+        ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt, true);
         ProblemInstance.FitnessResult result = instance.restrictionsEvaluation(improved);
         if (result.feasible) {
             tour.clear();
