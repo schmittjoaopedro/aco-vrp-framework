@@ -54,6 +54,10 @@ public class RelocateNodeOperator {
         return SolutionUtils.getBest(ant, improvedSol);
     }
 
+    public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt) {
+        return relocate(tour, startAt, false);
+    }
+
     public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt, boolean stopOnFeasible) {
         ArrayList<Integer> tempTour = new ArrayList<>(tour);
         ArrayList<Integer> bestTour = new ArrayList<>(tour);

@@ -43,7 +43,11 @@ public class Solver implements Runnable {
 
     private LocalSearch localSearch;
 
+    private boolean lsActive;
+
     private Class<? extends SolutionBuilder> solutionBuilderClass = SequentialFeasible.class;
+
+    private boolean parallel;
 
     public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.fileName = fileName;
@@ -68,6 +72,7 @@ public class Solver implements Runnable {
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));
+        mmas.setParallel(parallel);
         mmas.setSolutionBuilder(solutionBuilderClass);
         mmas.computeNNList();
         mmas.initTry();
@@ -87,10 +92,16 @@ public class Solver implements Runnable {
             mmas.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
-            //executeLocalSearch();
+            if (lsActive) {
+                executeLocalSearch();
+            }
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
-                mmas.setPheromoneBoundsForLS();
+                if (lsActive) {
+                    mmas.setPheromoneBoundsForLS();
+                } else {
+                    mmas.setPheromoneBounds();
+                }
             }
             mmas.updateRestartBest();
             iterationStatistic.endTimer("Daemon");
@@ -98,8 +109,8 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-            //mmas.checkPheromoneTrailLimits();
-            mmas.searchControl(); // TODO: Rever
+            mmas.checkPheromoneTrailLimits();
+            mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
             // Statistics
             if (i % statisticInterval == 0) {
@@ -241,6 +252,6 @@ public class Solver implements Runnable {
     }
 
     public void setParallel(boolean parallel) {
-        mmas.setParallel(parallel);
+        this.parallel = parallel;
     }
 }

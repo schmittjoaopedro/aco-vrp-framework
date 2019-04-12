@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialInfeasible;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;
 
 import java.util.*;
@@ -126,9 +127,6 @@ public class MMAS {
     public void initTry() {
         lambda = 0.05;
         restartIteration = 1;
-        for (int i = 0; i < bestSoFar.tourCosts.size(); i++) {
-            bestSoFar.tourCosts.set(i, Double.MAX_VALUE);
-        }
         foundBest = 0;
         trailMax = 1.0 / ((rho) * nnTour());
         trailMin = trailMax / (2.0 * instance.getNumNodes());
@@ -171,16 +169,13 @@ public class MMAS {
     public boolean updateBestSoFar() {
         Solution iterationBest = findBest();
         boolean found = false;
-        boolean isBetterCost = iterationBest.totalCost < bestSoFar.totalCost;
-        boolean isCurrentFeasible = bestSoFar.feasible;
-        boolean isNewFeasible = iterationBest.feasible;
-        if ((!isCurrentFeasible && isBetterCost) || (isNewFeasible && isBetterCost) || (isNewFeasible && !isCurrentFeasible)) {
+        if (SolutionUtils.getBest(bestSoFar, iterationBest) != bestSoFar) {
             found = true;
             SolutionUtils.copyFromTo(iterationBest, bestSoFar);
             SolutionUtils.copyFromTo(iterationBest, restartBest);
             foundBest = getCurrentIteration();
             restartFoundBest = getCurrentIteration();
-            calculatedBranchFact = nodeBranching(lambda); // TODO: Rever
+            calculatedBranchFact = nodeBranching(lambda);
         }
         return found;
     }
@@ -199,7 +194,7 @@ public class MMAS {
 
     public void updateRestartBest() {
         Solution iterationBest = findBest();
-        if (iterationBest.totalCost < restartBest.totalCost) {
+        if (SolutionUtils.getBest(restartBest, iterationBest) != restartBest) {
             SolutionUtils.copyFromTo(iterationBest, restartBest);
             restartFoundBest = getCurrentIteration();
         }
@@ -232,17 +227,19 @@ public class MMAS {
 
     public void globalPheromoneDeposit(Solution ant) {
         int from, to;
-
-        double max = 0;
-        for (Solution a : antPopulation) {
-            max = Math.max(max, a.totalCost);
-            max = Math.max(max, a.timeWindowPenalty);
+        double dTau;
+        if (SequentialInfeasible.class.equals(solutionBuilder)) {
+            double max = 0;
+            for (Solution a : antPopulation) {
+                max = Math.max(max, a.totalCost);
+                max = Math.max(max, a.timeWindowPenalty);
+            }
+            double factTotal = ant.totalCost / max;
+            double factPenalt = ant.timeWindowPenalty / max;
+            dTau = 1.0 / (ant.totalCost * factTotal + ant.timeWindowPenalty * factPenalt);
+        } else {
+            dTau = 1.0 / ant.totalCost;
         }
-        double factTotal = ant.totalCost / max;
-        double factPenalt = ant.timeWindowPenalty / max;
-
-        double dTau = 1.0 / (ant.totalCost * factTotal + ant.timeWindowPenalty * factPenalt);
-        //double dTau = 1.0 / ant.totalCost;
         for (int i = 0; i < ant.tours.size(); i++) {
             for (int j = 0; j < ant.tours.get(i).size() - 1; j++) {
                 from = ant.tours.get(i).get(j);
@@ -482,15 +479,6 @@ public class MMAS {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    private class NextClient {
-        int nextClient = 0;
-        double heuristic = 0.0;
-        double departureTime = 0.0;
-        double demand = 0.0;
-        boolean feasible = false;
-        double cumulativeCost = 0.0;
     }
 
 }

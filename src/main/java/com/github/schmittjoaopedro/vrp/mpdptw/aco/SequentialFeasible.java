@@ -13,7 +13,9 @@ public class SequentialFeasible implements SolutionBuilder {
 
     private List<Solution> antPopulation;
 
-    private Map<String, ArrayList<Integer>> feasibleRoutes = new HashMap<>();
+    private Map<String, ArrayList<Integer>> routesCache = new HashMap<>();
+
+    private Map<String, Double> routesCostCache = new HashMap<>();
 
     private double[][] pheromoneNodes;
 
@@ -36,7 +38,8 @@ public class SequentialFeasible implements SolutionBuilder {
 
     @Override
     public void onSearchControlExecute() {
-        feasibleRoutes.clear();
+        routesCache.clear();
+        routesCostCache.clear();
     }
 
     @Override
@@ -48,7 +51,7 @@ public class SequentialFeasible implements SolutionBuilder {
                 antBuilders[i] = new Thread(() -> {
                     SolutionUtils.antEmptyMemory(ant, instance);
                     constructAntSolution(instance, ant);
-                    instance.restrictionsEvaluation(ant);
+                    instance.solutionEvaluation(ant);
                     if (ant.capacityPenalty > 0) {
                         throw new RuntimeException("Invalid capacity penaly!!");
                     }
@@ -64,7 +67,7 @@ public class SequentialFeasible implements SolutionBuilder {
             for (Solution ant : antPopulation) {// For each ant
                 SolutionUtils.antEmptyMemory(ant, instance);
                 constructAntSolution(instance, ant);
-                instance.restrictionsEvaluation(ant);
+                instance.solutionEvaluation(ant);
                 if (ant.capacityPenalty > 0) {
                     throw new RuntimeException("Invalid capacity penaly!!");
                 }
@@ -80,8 +83,9 @@ public class SequentialFeasible implements SolutionBuilder {
         ant.toVisit--; // Remove depot
         ArrayList<Integer> remainingTour = new ArrayList<>();
         String hashKey = "0";
+        double routeCost = 0.0;
         while (ant.toVisit > 0) {
-            int nextNode = selectNextNode(ant, vehicle, currIdx, remainingTour, hashKey);
+            int nextNode = selectNextNode(ant, vehicle, currIdx, routeCost, remainingTour, hashKey);
             if (nextNode == -1) {
                 addRemainingTour(ant, vehicle, remainingTour);
                 remainingTour = new ArrayList<>();
@@ -89,7 +93,11 @@ public class SequentialFeasible implements SolutionBuilder {
                 vehicle++;
                 currIdx = 0;
                 hashKey = "0";
+                routeCost = 0.0;
             } else {
+                routeCost += instance.dist(ant.tours.get(vehicle).get(currIdx), nextNode);
+                routeCost = Math.max(instance.twStart(nextNode), routeCost);
+                routeCost += instance.serviceTime(nextNode);
                 ant.tours.get(vehicle).add(ant.tours.get(vehicle).size() - 1, nextNode);
                 ant.visited[nextNode] = true;
                 int reqId = instance.getRequestId(nextNode);
@@ -98,9 +106,6 @@ public class SequentialFeasible implements SolutionBuilder {
                     ant.requests.get(vehicle).add(reqId);
                 }
                 ant.toVisit--;
-                ArrayList<Integer> route = new ArrayList<>(ant.tours.get(vehicle));
-                route.addAll(route.size() - 1, remainingTour);
-                instance.restrictionsEvaluation(route);
                 currIdx++;
                 hashKey += "," + nextNode;
             }
@@ -131,45 +136,48 @@ public class SequentialFeasible implements SolutionBuilder {
         }
     }
 
-    public int selectNextNode(Solution ant, int vehicle, int currIdx, ArrayList<Integer> remainingTour, String hashKey) {
-        Map<Integer, ArrayList<Integer>> feasibleRemainingRoutes = new HashMap<>();
+    public int selectNextNode(Solution ant, int vehicle, int currIdx, double routeCost, ArrayList<Integer> pendingTour, String currKey) {
+        Map<Integer, ArrayList<Integer>> pendingTours = new HashMap<>();
         Map<Integer, Double> feasibleCosts = new HashMap<>();
         int curr = ant.tours.get(vehicle).get(currIdx);
         boolean hasProb = false;
-        double routeCost = instance.restrictionsEvaluation(ant.tours.get(vehicle)).cost;
-        for (int i = 0; i < instance.getNumNodes(); i++) {
-            if (!ant.visited[i]) {
-                Request req = instance.getRequest(i);
-                double newCost = routeCost - instance.dist(curr, 0) + instance.dist(curr, i);
-                newCost = Math.max(newCost, req.twStart);
+        for (int next = 0; next < instance.getNumNodes(); next++) {
+            if (!ant.visited[next]) {
+                Request req = instance.getRequest(next);
+                double newCost = Math.max(routeCost + instance.dist(curr, next), req.twStart);
                 if (newCost < req.twEnd) {
-                    newCost += req.serviceTime;
                     ArrayList<Integer> tempTour;
-                    String key = hashKey + "," + i;
-                    boolean feasibleChoice = feasibleRoutes.containsKey(key);
+                    String nextKey = currKey + "," + next;
+                    boolean feasibleChoice = routesCache.containsKey(nextKey);
                     if (feasibleChoice) {
-                        tempTour = feasibleRoutes.get(key);
+                        tempTour = routesCache.get(nextKey);
                         feasibleChoice = tempTour != null;
                     } else {
-                        ArrayList<Integer> tempRemainingTour = new ArrayList<>(remainingTour);
+                        ArrayList<Integer> tempPendingTour = new ArrayList<>(pendingTour);
                         tempTour = new ArrayList<>(ant.tours.get(vehicle));
-                        tempTour.add(tempTour.size() - 1, i); // insert before depot
-                        addNextNodesRequests(ant.requests.get(vehicle), tempRemainingTour, i);
-                        removeNode(tempRemainingTour, i);
-                        addRemainingTour(tempTour, tempRemainingTour);
-                        if (!isPrecedenceViolated(tempRemainingTour, i) && optimize(tempTour, currIdx + 2)) {
-                            feasibleRoutes.put(key, tempTour);
-                            feasibleChoice = true;
+                        tempTour.add(tempTour.size() - 1, next); // insert before depot
+                        addNextNodesRequests(ant.requests.get(vehicle), tempPendingTour, next);
+                        removeNode(tempPendingTour, next);
+                        addRemainingTour(tempTour, tempPendingTour);
+                        if (!isPrecedenceViolated(tempPendingTour, next)) {
+                            ProblemInstance.FitnessResult result = optimize(tempTour, currIdx + 2);
+                            if (result.feasible) {
+                                routesCache.put(nextKey, tempTour);
+                                routesCostCache.put(nextKey, result.cost);
+                                feasibleChoice = true;
+                            } else {
+                                feasibleChoice = false;
+                            }
                         } else {
                             feasibleChoice = false;
                         }
                     }
                     if (feasibleChoice) { // Start after the next position
-                        double tau = pheromoneNodes[curr][i];
-                        double eta = 1.0 / newCost;
+                        double tau = pheromoneNodes[curr][next];
+                        double eta = 1.0 / (instance.dist(curr, next) + 0.00000001);
                         double cost = Math.pow(tau, alpha) + Math.pow(eta, beta);
-                        feasibleCosts.put(i, cost);
-                        feasibleRemainingRoutes.put(i, new ArrayList<>(tempTour.subList(currIdx + 2, tempTour.size() - 1))); // Ignore current and next nodes
+                        feasibleCosts.put(next, cost);
+                        pendingTours.put(next, new ArrayList<>(tempTour.subList(currIdx + 2, tempTour.size() - 1))); // Ignore current and next nodes
                         hasProb = true;
                     }
                 }
@@ -187,8 +195,8 @@ public class SequentialFeasible implements SolutionBuilder {
                 probs[i] = sum;
             }
             next = getNextRouletteSelection(probs, sum);
-            remainingTour.clear();
-            remainingTour.addAll(feasibleRemainingRoutes.get(next));
+            pendingTour.clear();
+            pendingTour.addAll(pendingTours.get(next));
         }
         return next;
     }
@@ -217,15 +225,15 @@ public class SequentialFeasible implements SolutionBuilder {
         return false;
     }
 
-    private boolean optimize(ArrayList<Integer> tour, int startAt) {
+    private ProblemInstance.FitnessResult optimize(ArrayList<Integer> tour, int startAt) {
         RelocateNodeOperator relocateNodeOperator = new RelocateNodeOperator(instance);
-        ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt, true);
+        ArrayList<Integer> improved = relocateNodeOperator.relocate(tour, startAt);
         ProblemInstance.FitnessResult result = instance.restrictionsEvaluation(improved);
         if (result.feasible) {
             tour.clear();
             tour.addAll(improved);
         }
-        return result.feasible;
+        return result;
     }
 
     private void addNextNodesRequests(ArrayList<Integer> requests, ArrayList<Integer> tempRemainingTour, int nextNode) {
