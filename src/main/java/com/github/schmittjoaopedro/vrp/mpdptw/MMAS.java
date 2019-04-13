@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialInfeasible;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.InsertionHeuristic;
 
 import java.util.*;
 
@@ -291,14 +292,17 @@ public class MMAS {
     }
 
     private double nnTour() {
-        OptimalRequestSolver optimalRequestSolver;
+        InsertionHeuristic insertionHeuristic = new InsertionHeuristic(instance, random);
+        Solution solution = insertionHeuristic.createInitialSolution();
+        return solution.totalCost;
+        /*OptimalRequestSolver optimalRequestSolver;
         upperBound = 0.0;
         for (int r = 0; r < instance.getNumReq(); r++) {
             optimalRequestSolver = new OptimalRequestSolver(r, instance);
             optimalRequestSolver.optimize();
             upperBound += optimalRequestSolver.getBestCost();
         }
-        return upperBound;
+        return upperBound;*/
     }
 
     public Solution findWorst() {

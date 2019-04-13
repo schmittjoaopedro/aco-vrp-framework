@@ -50,9 +50,9 @@ public class OptimalRequestSolver {
                 allPickupsProcessed = false;
                 nextTime = currentTime + instance.dist(request.nodeId, child.nodeId);
                 nextTime = Math.max(nextTime, child.twStart);
-                nextTime += child.serviceTime;
                 nextCapacity = currentCapacity + child.demand;
                 if (nextTime < child.twEnd && nextCapacity < instance.getVehicleCapacity()) { // Is feasible route then add to the request
+                    nextTime += child.serviceTime;
                     visitedPickups.add(child);
                     currSequence[phase] = child.nodeId;
                     optimizedBranch(child, nextTime, nextCapacity, visitedPickups, currSequence, phase + 1);
@@ -63,9 +63,9 @@ public class OptimalRequestSolver {
         if (allPickupsProcessed) {
             nextTime = currentTime + instance.dist(request.nodeId, deliveryRequest.nodeId);
             nextTime = Math.max(nextTime, deliveryRequest.twStart);
-            nextTime += deliveryRequest.serviceTime;
             nextCapacity = currentCapacity + deliveryRequest.demand;
             if (nextTime < deliveryRequest.twEnd && nextCapacity < instance.getVehicleCapacity() && nextTime < bestCost) {
+                nextTime += deliveryRequest.serviceTime;
                 nextTime += instance.dist(deliveryRequest.nodeId, instance.getDepot().nodeId);
                 currSequence[phase] = deliveryRequest.nodeId;
                 currSequence[phase + 1] = instance.getDepot().nodeId;

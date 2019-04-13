@@ -138,4 +138,15 @@ public class SolutionUtils {
         }
     }
 
+
+
+    public static boolean containsEmptyVehicle(Solution solution) {
+        for (ArrayList<Integer> reqs : solution.requests) {
+            if (reqs.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

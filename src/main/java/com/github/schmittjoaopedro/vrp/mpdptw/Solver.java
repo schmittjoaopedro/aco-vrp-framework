@@ -103,7 +103,7 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-            mmas.checkPheromoneTrailLimits();
+            //mmas.checkPheromoneTrailLimits();
             mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
             // Statistics
@@ -154,6 +154,7 @@ public class Solver implements Runnable {
         for (ArrayList requests : ant.requests) {
             msg += "\n" + StringUtils.join(requests, "-");
         }
+        msg += "\nNum. Vehicles = " + ant.tours.size();
         msg += "\nCost = " + ant.totalCost;
         msg += "\nPenalty = " + ant.timeWindowPenalty;
         msg += "\nTotal time (ms) = " + globalStatistics.getTimeStatistics().get("Algorithm");

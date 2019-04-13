@@ -124,7 +124,7 @@ public class SequentialFeasible implements SolutionBuilder {
     private void addRemainingTour(Solution ant, int vehicle, ArrayList<Integer> remainingTour) {
         for (int i = 0; i < remainingTour.size(); i++) {
             int tourLength = ant.tours.get(vehicle).size();
-            ant.tours.get(vehicle).add(tourLength - 2, remainingTour.get(i));
+            ant.tours.get(vehicle).add(tourLength - 1, remainingTour.get(i));
             ant.visited[remainingTour.get(i)] = true;
         }
         ant.toVisit = ant.toVisit - remainingTour.size();
@@ -145,7 +145,7 @@ public class SequentialFeasible implements SolutionBuilder {
             if (!ant.visited[next]) {
                 Request req = instance.getRequest(next);
                 double newCost = Math.max(routeCost + instance.dist(curr, next), req.twStart);
-                if (newCost < req.twEnd) {
+                if (newCost <= req.twEnd) {
                     ArrayList<Integer> tempTour;
                     String nextKey = currKey + "," + next;
                     boolean feasibleChoice = routesCache.containsKey(nextKey);
@@ -162,8 +162,8 @@ public class SequentialFeasible implements SolutionBuilder {
                         if (!isPrecedenceViolated(tempPendingTour, next)) {
                             ProblemInstance.FitnessResult result = optimize(tempTour, currIdx + 2);
                             if (result.feasible) {
-                                routesCache.put(nextKey, tempTour);
-                                routesCostCache.put(nextKey, result.cost);
+                                //routesCache.put(nextKey, tempTour);
+                                //routesCostCache.put(nextKey, result.cost);
                                 feasibleChoice = true;
                             } else {
                                 feasibleChoice = false;
