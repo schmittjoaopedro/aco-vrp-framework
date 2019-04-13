@@ -5,21 +5,17 @@ import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialFeasible;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.FeasibilityOperator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Solver implements Runnable {
 
-    private String rootDirectory;
-
-    private String fileName;
+    private String problemName;
 
     private ProblemInstance problemInstance;
 
@@ -35,8 +31,6 @@ public class Solver implements Runnable {
 
     private double rho;
 
-    private String filePath;
-
     private int statisticInterval;
 
     private boolean showLog;
@@ -49,9 +43,9 @@ public class Solver implements Runnable {
 
     private boolean parallel;
 
-    public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
-        this.fileName = fileName;
-        this.rootDirectory = rootDirectory;
+    public Solver(String problemName, ProblemInstance problemInstance, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
+        this.problemName = problemName;
+        this.problemInstance = problemInstance;
         this.maxIterations = maxIterations;
         this.seed = seed;
         this.rho = rho;
@@ -151,7 +145,7 @@ public class Solver implements Runnable {
             ant.tourCosts.set(i, cost);
             ant.totalCost += cost;
         }
-        msg += "\nInstance = " + fileName;
+        msg += "\nInstance = " + problemName;
         msg += "\nBest solution feasibility = " + ant.feasible + "\nRoutes";
         for (ArrayList route : ant.tours) {
             msg += "\n" + StringUtils.join(route, "-");
@@ -175,13 +169,11 @@ public class Solver implements Runnable {
                 }
             }
         }
-        MapPrinter.printResult(ant, problemInstance, 1200, 1000, fileName);
+        MapPrinter.printResult(ant, problemInstance, 1200, 1000, problemName);
     }
 
     private void initProblemInstance() {
         try {
-            filePath = Paths.get(rootDirectory, fileName).toString();
-            problemInstance = DataReader.getProblemInstance(new File(filePath));
             mmas = new MMAS(problemInstance);
             iterationStatistics = new ArrayList<>(maxIterations);
         } catch (Exception ex) {
@@ -190,38 +182,10 @@ public class Solver implements Runnable {
     }
 
     private void executeLocalSearch() {
-        //for (Ant ant : mmas.getAntPopulation()) {
-        //    executeLocalSearch(ant);
-        //}
-        executeLocalSearch(mmas.findBest());
-    }
-
-    private void executeLocalSearch(Solution ant) {
-        problemInstance.restrictionsEvaluation(ant);
-        Solution improvedAnt = localSearch.optimize(ant);
-        if (ant.feasible) {
-            if (improvedAnt.feasible) {
-                updateAnt(improvedAnt, ant);
-            }
-        } else if (!mmas.getBestSoFar().feasible) {
-            FeasibilityOperator feasibilityOperator = new FeasibilityOperator(problemInstance);
-            Solution feasibleAnt = feasibilityOperator.feasibility(improvedAnt);
-            improvedAnt = localSearch.optimize(feasibleAnt);
-            if (improvedAnt.feasible && improvedAnt.totalCost < feasibleAnt.totalCost) {
-                feasibleAnt = improvedAnt;
-            }
-            if (feasibleAnt.feasible) {
-                updateAnt(feasibleAnt, ant);
-            }
-        } else {
-            updateAnt(improvedAnt, ant);
-        }
-    }
-
-    private void updateAnt(Solution improvedAnt, Solution bestAnt) {
-        if (improvedAnt.totalCost < bestAnt.totalCost ||
-                (improvedAnt.totalCost == bestAnt.totalCost && improvedAnt.timeWindowPenalty < bestAnt.timeWindowPenalty) ||
-                (improvedAnt.feasible && !bestAnt.feasible)) {
+        Solution bestAnt = mmas.findBest();
+        problemInstance.solutionEvaluation(bestAnt);
+        Solution improvedAnt = localSearch.optimize(bestAnt);
+        if (SolutionUtils.getBest(bestAnt, improvedAnt) != bestAnt) {
             int antIndex = mmas.getAntPopulation().indexOf(bestAnt);
             mmas.getAntPopulation().set(antIndex, improvedAnt);
         }
@@ -229,7 +193,7 @@ public class Solver implements Runnable {
 
     private void logInFile(String text) {
         try {
-            FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + fileName), text + "\n", "UTF-8", true);
+            FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + problemName), text + "\n", "UTF-8", true);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -280,7 +280,7 @@ public class ALNS {
     private void initProblemInstance() {
         try {
             String filePath = Paths.get(rootDirectory, fileName).toString();
-            instance = DataReader.getProblemInstance(new File(filePath));
+            instance = DataReader.getMpdptwInstance(new File(filePath));
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

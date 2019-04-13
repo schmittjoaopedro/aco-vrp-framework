@@ -93,7 +93,7 @@ public class MPDPTWSolutionEvaluationTest {
     public void timeWindowsWithServiceTimeFeasibilityTest() throws IOException {
         // Check if the service time of the target point is not considered in the
         // end time windows summation
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 3, 1, 26, 25, 5, 2, 4, 27, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 12, 23, 13, 22, 24, 11, 14, 0)));

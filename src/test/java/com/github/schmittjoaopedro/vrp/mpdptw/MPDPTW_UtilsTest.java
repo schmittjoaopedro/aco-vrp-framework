@@ -23,7 +23,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void mpdptw_large_4_25_1_test() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
         assertThat(problemInstance.getNumNodes()).isEqualTo(26);
         assertThat(problemInstance.getNumReq()).isEqualTo(8);
         assertThat(problemInstance.getNumMaxVehicles()).isEqualTo(15);
@@ -333,7 +333,7 @@ public class MPDPTW_UtilsTest {
     @Test
     public void requestPathTreeTest() throws IOException {
         // Biggest problem
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "w_8_100_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_8_100_1.txt").toFile());
         OptimalRequestSolver optimalRequestSolver[] = new OptimalRequestSolver[problemInstance.getNumReq()];
         for (int i = 0; i < problemInstance.getNumReq(); i++) {
             optimalRequestSolver[i] = new OptimalRequestSolver(i, problemInstance);
@@ -409,7 +409,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void relocateSimpleLocalSearchTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 24, 22, 23, 3, 4, 6, 25, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 7, 15, 8, 13, 14, 1, 2, 16, 17, 0)));
@@ -434,7 +434,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void relocateLoopLocalSearchTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 24, 22, 16, 23, 17, 25, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 7, 8, 4, 3, 1, 6, 2, 0)));
@@ -459,7 +459,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void feasibilityLocalSearch() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
@@ -481,7 +481,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void expensiveRequestsRemovalOperatorFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
@@ -552,7 +552,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void randomRequestsRemovalOperatorFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
@@ -623,7 +623,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void shawRequestsRemovalOperatorFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
@@ -690,7 +690,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void mostExpensiveNodesRequestsRemovalOperatorFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
@@ -760,7 +760,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void greedyInsertionOrderFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
@@ -796,7 +796,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void simpleInsertionOrderFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
@@ -832,7 +832,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void cheapestInsertionOrderFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
@@ -868,7 +868,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void greedyInsertionMethodFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
@@ -904,7 +904,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void regret3NoNoiseInsertionMethodFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
@@ -940,7 +940,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void expensiveInsertionOrderFromCoelhoTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
@@ -976,7 +976,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void feasibilitySearchDuplicationOfRequestsTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_4.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_4.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 17, 8, 5, 1, 3, 2, 7, 16, 9, 18, 4, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 20, 24, 12, 21, 19, 23, 25, 22, 13, 0)));
@@ -1027,7 +1027,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void relocateRequestOperatorTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
@@ -1065,7 +1065,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void exchangeRequestOperatorTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 3, 19, 26, 18, 25, 5, 4, 27, 20, 6, 21, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 12, 23, 13, 22, 24, 11, 14, 0)));
@@ -1102,7 +1102,7 @@ public class MPDPTW_UtilsTest {
     public void timeWindowsWithServiceTimeFeasibilityTest() throws IOException {
         // Check if the service time of the target point is not considered in the
         // end time windows summation
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 3, 1, 26, 25, 5, 2, 4, 27, 6, 0)));
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 12, 23, 13, 22, 24, 11, 14, 0)));
@@ -1117,7 +1117,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void slackTimeLuCalculationTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         ArrayList<Integer> route = new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 6, 0));
         double[] slackTimes = problemInstance.calculateSlackTimesLu(route);
         assertThat(slackTimes).hasSize(route.size());
@@ -1164,7 +1164,7 @@ public class MPDPTW_UtilsTest {
 
     @Test
     public void evaluateCostWithoutNodes() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_3.txt").toFile());
         ArrayList<Integer> route = new ArrayList<>(Arrays.asList(0, 3, 4, 1, 2, 5, 6, 0));
         assertThat(problemInstance.costEvaluation(route)).isEqualTo(1786.408235901457);
         //Without requests

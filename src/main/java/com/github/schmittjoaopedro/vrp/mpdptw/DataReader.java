@@ -15,7 +15,7 @@ import java.util.*;
 
 public class DataReader {
 
-    public static ProblemInstance getProblemInstance(File file) throws IOException {
+    public static ProblemInstance getMpdptwInstance(File file) throws IOException {
         ProblemInstance instance = new ProblemInstance();
         String[] lineData;
         // Load distances
@@ -130,6 +130,99 @@ public class DataReader {
                 instance.getNeighbors().get(i).add(j);
             }
         }
+        return instance;
+    }
+
+    public static ProblemInstance getPdptwInstance(File file) throws IOException {
+        ProblemInstance instance = new ProblemInstance();
+        String[] lineData;
+        FileInputStream fisTargetFile = new FileInputStream(file);
+        String fileContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\r\n");
+        int noNode = fileContent.length - 1; // Ignore header
+        int noReq = noNode - 1; // Ignore depot
+        Request[] requests = new Request[noReq];
+        int noPickups = 0, noDeliveries = 0;
+
+        // Header information
+        lineData = fileContent[0].split("\t");
+        instance.setNumMaxVehicles(Integer.valueOf(lineData[0]));
+        instance.setVehicleCapacity(Double.valueOf(lineData[1]));
+        instance.setNumNodes(noNode);
+
+        // Read pickup information
+        double[] xCoords = new double[noNode];
+        double[] yCoords = new double[noNode];
+        for (int i = 1; i < fileContent.length; i++) {
+            lineData = fileContent[i].split("\t");
+            if (i == 1) {
+                Depot depot = new Depot();
+                depot.nodeId = Integer.valueOf(lineData[0]);
+                depot.x = Double.valueOf(lineData[1]);
+                depot.y = Double.valueOf(lineData[2]);
+                depot.twStart = Double.valueOf(lineData[4]);
+                depot.twEnd = Double.valueOf(lineData[5]);
+                instance.setDepot(depot);
+                xCoords[i - 1] = depot.x;
+                yCoords[i - 1] = depot.y;
+            } else {
+                Request request = new Request();
+                request.nodeId = Integer.valueOf(lineData[0]);
+                request.x = Double.valueOf(lineData[1]);
+                request.y = Double.valueOf(lineData[2]);
+                request.demand = Double.valueOf(lineData[3]);
+                request.twStart = Double.valueOf(lineData[4]);
+                request.twEnd = Double.valueOf(lineData[5]);
+                request.serviceTime = Double.valueOf(lineData[6]);
+                requests[request.nodeId - 1] = request;
+                xCoords[i - 1] = request.x;
+                yCoords[i - 1] = request.y;
+            }
+        }
+        int reqId = 0;
+        for (int i = 2; i < fileContent.length; i++) {
+            lineData = fileContent[i].split("\t");
+            int nodeId = Integer.valueOf(lineData[0]);
+            int deliveryIndex = Integer.valueOf(lineData[8]);
+            if (deliveryIndex > 0) {
+                noPickups++;
+                requests[nodeId - 1].requestId = reqId;
+                requests[nodeId - 1].isPickup = true;
+                requests[deliveryIndex - 1].requestId = reqId;
+                requests[deliveryIndex - 1].isDeliver = true;
+                reqId++;
+                if (Integer.valueOf(fileContent[deliveryIndex + 1].split("\t")[7]) != nodeId) {
+                    throw new RuntimeException("Pickup " + deliveryIndex + " does not delivery to " + nodeId);
+                }
+            } else {
+                noDeliveries++;
+            }
+        }
+        if (noPickups != noDeliveries) {
+            throw new RuntimeException("Number of pickups and deliveries are different");
+        }
+        List<Request>[] pickups = new ArrayList[noPickups];
+        Request[] deliveries = new Request[noDeliveries];
+        for (int i = 0; i < requests.length; i++) {
+            Request request = requests[i];
+            if (request.isPickup) {
+                pickups[request.requestId] = new ArrayList<>();
+                pickups[request.requestId].add(request);
+            } else {
+                deliveries[request.requestId] = request;
+            }
+        }
+        instance.setNumReq(pickups.length);
+        instance.setRequests(requests);
+        instance.setPickups(pickups);
+        instance.setDelivery(deliveries);
+        double[][] distances = new double[noNode][noNode];
+        for (int i = 0; i < distances.length; i++) {
+            for (int j = 0; j < distances.length; j++) {
+                distances[i][j] = Maths.getEuclideanDistance(xCoords[i], xCoords[j], yCoords[i], yCoords[j]);
+            }
+        }
+        instance.setDistances(distances);
+
         return instance;
     }
 

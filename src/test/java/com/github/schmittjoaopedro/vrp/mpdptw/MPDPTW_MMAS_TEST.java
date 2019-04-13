@@ -33,12 +33,11 @@ public class MPDPTW_MMAS_TEST {
     public void mpdptw_main_problems_test() throws IOException {
 
         executeTest("n_4_25_1.txt");
-        executeTest("n_8_25_1.txt");
-
         executeTest("n_4_50_1.txt");
         executeTest("n_4_100_1.txt");
         executeTest("n_4_400_1.txt");
 
+        executeTest("n_8_25_1.txt");
         executeTest("n_8_50_1.txt");
         executeTest("n_8_100_1.txt");
         executeTest("n_8_400_1.txt");
@@ -71,7 +70,8 @@ public class MPDPTW_MMAS_TEST {
         ArrayList<Double> penalty = new ArrayList<>();
         int sampleSize = 5, feasible = 0;
         for (int i = 0; i < sampleSize; i++) {
-            Solver solver = new Solver(rootDirectory, problem, maxIterations, i, 0.2, statisticInterval, true);
+            ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+            Solver solver = new Solver(problem, instance, maxIterations, i, 0.2, statisticInterval, true);
             solver.setParallel(true);
             solver.setLsActive(true);
             solver.run();
@@ -97,8 +97,10 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_sequential_feasible_test() {
-        Solver solver = new Solver(rootDirectory, "w_4_100_1.txt", 10, seed, 0.8, 1, true);
+    public void mpdptw_sequential_feasible_test() throws IOException {
+        String problem = "w_4_100_1.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, 10, seed, 0.8, 1, true);
         solver.setParallel(false);
         solver.run();
         List<IterationStatistic> iterationStatistics = solver.getIterationStatistics();
@@ -115,8 +117,10 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_sequential_infeasible_test() {
-        Solver solver = new Solver(rootDirectory, "w_4_100_1.txt", 10, seed, 0.8, 1, true);
+    public void mpdptw_sequential_infeasible_test() throws IOException {
+        String problem = "w_4_100_1.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, 10, seed, 0.8, 1, true);
         solver.setSolutionBuilderClass(SequentialInfeasible.class);
         solver.setParallel(false);
         solver.run();
@@ -134,45 +138,57 @@ public class MPDPTW_MMAS_TEST {
     }
 
     @Test
-    public void mpdptw_large_4_25_4_test() {
-        Solver solver = new Solver(rootDirectory, "n_8_25_3.txt", maxIterations, seed, 0.02, statisticInterval, true);
+    public void mpdptw_large_4_25_4_test() throws IOException {
+        String problem = "n_8_25_3.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
-    public void mpdptw_normal_4_25_1_test() {
-        Solver solver = new Solver(rootDirectory, "w_8_400_1.txt", maxIterations, seed, 0.8, statisticInterval, true);
+    public void mpdptw_normal_4_25_1_test() throws IOException {
+        String problem = "w_8_400_1.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, maxIterations, seed, 0.8, statisticInterval, true);
         solver.run();
     }
 
     @Test
-    public void mpdptw_large_8_100_5_test() {
-        Solver solver = new Solver(rootDirectory, "w_8_100_1.txt", maxIterations, seed, 0.02, statisticInterval, true);
+    public void mpdptw_large_8_100_5_test() throws IOException {
+        String problem = "w_8_100_1.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
-    public void mpdptw_without_8_100_5_test() {
-        Solver solver = new Solver(rootDirectory, "w_8_400_1.txt", 1000, seed, 0.2, 1, true);
+    public void mpdptw_without_8_100_5_test() throws IOException {
+        String problem = "n_4_400_1.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, 1000, seed, 0.2, 1, true);
         solver.setLsActive(true);
         solver.setParallel(true);
         solver.run();
     }
 
     @Test
-    public void mpdptw_normal_8_100_5_test() {
-        Solver solver = new Solver(rootDirectory, "n_8_100_5.txt", maxIterations, seed, 0.02, statisticInterval, true);
+    public void mpdptw_normal_8_100_5_test() throws IOException {
+        String problem = "n_8_100_5.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
-    public void mpdptw_normal_8_400_1_test() {
-        Solver solver = new Solver(rootDirectory, "w_8_400_1.txt", maxIterations, seed, 0.02, statisticInterval, true);
+    public void mpdptw_normal_8_400_1_test() throws IOException {
+        String problem = "w_8_400_1.txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 
     @Test
-    public void mpdptw_test() {
+    public void mpdptw_test() throws IOException {
         //for (String noVert : new String[]{"400", "100", "50", "25"}) {
         for (String noVert : new String[]{"25", "50", "100", "400"}) {
             for (String typ : new String[]{"l", "n", "w"}) {
@@ -185,8 +201,10 @@ public class MPDPTW_MMAS_TEST {
         }
     }
 
-    private void execute(String file) {
-        Solver solver = new Solver(rootDirectory, file + ".txt", maxIterations, seed, 0.02, statisticInterval, true);
+    private void execute(String file) throws IOException {
+        String problem = file + ".txt";
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem).toFile());
+        Solver solver = new Solver(problem, instance, maxIterations, seed, 0.02, statisticInterval, true);
         solver.run();
     }
 

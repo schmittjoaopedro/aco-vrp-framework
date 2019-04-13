@@ -20,7 +20,7 @@ public class MPDPTW_PRE_PROCESSING_TEST {
 
     @Test
     public void preProcessingLocalSearchTest() throws IOException {
-        ProblemInstance problemInstance = DataReader.getProblemInstance(Paths.get(rootDirectory, "l_4_400_1.txt").toFile());
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_400_1.txt").toFile());
         InfeasibleRequestsPairs infeasibleRequestsPairs = new InfeasibleRequestsPairs(problemInstance, new Random(1));
         boolean[][] feasibilityPairs = infeasibleRequestsPairs.calculateFeasibilityPairs();
         assertThat(feasibilityPairs).isNotNull();
