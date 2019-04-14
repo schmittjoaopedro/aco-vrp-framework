@@ -137,7 +137,18 @@ public class DataReader {
         ProblemInstance instance = new ProblemInstance();
         String[] lineData;
         FileInputStream fisTargetFile = new FileInputStream(file);
-        String fileContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\r\n");
+        String rawContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\r\n");
+        // Remove invalid last line (normalization step for PDPTW with 200 tasks
+        int lastLine = 0;
+        while (lastLine < rawContent.length) {
+            if ("-1".equals(rawContent[lastLine])) {
+                break;
+            }
+            lastLine++;
+        }
+        String fileContent[] = new String[lastLine];
+        System.arraycopy(rawContent, 0, fileContent, 0, lastLine);
+        // Dimensional information
         int noNode = fileContent.length - 1; // Ignore header
         int noReq = noNode - 1; // Ignore depot
         Request[] requests = new Request[noReq];
