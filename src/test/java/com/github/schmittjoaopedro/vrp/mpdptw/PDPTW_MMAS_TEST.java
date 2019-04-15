@@ -10,6 +10,8 @@ public class PDPTW_MMAS_TEST {
 
     private static final String pdptw100Directory;
 
+    private static final String dpdptw100Directory;
+
     private static final String pdptw200Directory;
 
     private static int statisticInterval = 1;
@@ -19,6 +21,7 @@ public class PDPTW_MMAS_TEST {
     private static int seed = 1;
 
     static {
+        dpdptw100Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dpdptw_100").getFile().substring(1)).toString();
         pdptw100Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
         pdptw200Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
     }
@@ -159,7 +162,7 @@ public class PDPTW_MMAS_TEST {
     // TODO: Evaluate this route because one different vehicle route was found with the same cost
     @Test
     public void pdptw_lr104_test() throws IOException {
-        String problem = "lr104.txt";
+        String problem = "lc101.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
         Solver solver = new Solver(problem, instance, maxIterations, seed, 0.2, statisticInterval, true);
         solver.setLsActive(true);

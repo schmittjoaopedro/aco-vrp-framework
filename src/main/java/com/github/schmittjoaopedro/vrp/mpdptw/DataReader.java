@@ -17,6 +17,7 @@ public class DataReader {
 
     public static ProblemInstance getMpdptwInstance(File file) throws IOException {
         ProblemInstance instance = new ProblemInstance();
+        instance.setFileName(file.getName());
         String[] lineData;
         // Load distances
         Graph graph = new Graph();
@@ -135,6 +136,7 @@ public class DataReader {
 
     public static ProblemInstance getPdptwInstance(File file) throws IOException {
         ProblemInstance instance = new ProblemInstance();
+        instance.setFileName(file.getName());
         String[] lineData;
         FileInputStream fisTargetFile = new FileInputStream(file);
         String rawContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\r\n");
@@ -187,6 +189,9 @@ public class DataReader {
                 requests[request.nodeId - 1] = request;
                 xCoords[i - 1] = request.x;
                 yCoords[i - 1] = request.y;
+                if (lineData.length == 10) {
+                    request.announceTime = Double.valueOf(lineData[9]);
+                }
             }
         }
         int reqId = 0;

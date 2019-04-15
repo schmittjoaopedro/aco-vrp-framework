@@ -4,6 +4,8 @@ import java.util.*;
 
 public class ProblemInstance {
 
+    private String fileName;
+
     private int numNodes;
 
     private int numReq;
@@ -29,6 +31,14 @@ public class ProblemInstance {
     /*
      * GETTERS and SETTERS
      */
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public int getNumNodes() {
         return numNodes;

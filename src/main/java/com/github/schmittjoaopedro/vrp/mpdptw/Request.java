@@ -25,6 +25,8 @@ public class Request {
 
     public double serviceTime;
 
+    public double announceTime;
+
     public List<Request> feasibleRequests = new ArrayList<>();
 
 }
