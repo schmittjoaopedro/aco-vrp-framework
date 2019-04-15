@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class PDPTW_MMAS_TEST {
 
     private static final String pdptw100Directory;
@@ -167,6 +169,7 @@ public class PDPTW_MMAS_TEST {
         Solver solver = new Solver(problem, instance, maxIterations, seed, 0.2, statisticInterval, true);
         solver.setLsActive(true);
         solver.run();
+        assertThat(solver.getBestSolution().totalCost).isEqualTo(828.9368669428337);
     }
 
     @Test

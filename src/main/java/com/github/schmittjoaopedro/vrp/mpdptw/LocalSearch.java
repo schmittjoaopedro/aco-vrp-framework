@@ -40,14 +40,7 @@ public class LocalSearch {
         while (improvement) {
             improvement = false;
             tempAnt = relocateNodeOperator.relocate(tempAnt);
-            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Greedy);
-            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveNode, PickupMethod.Random, InsertionMethod.Greedy);
             tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveRequest, PickupMethod.Random, InsertionMethod.Greedy);
-            tempAnt = optimize(tempAnt, RemovalMethod.Shaw, PickupMethod.Random, InsertionMethod.Greedy);
-            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Regret3);
-            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveNode, PickupMethod.Random, InsertionMethod.Regret3);
-            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveRequest, PickupMethod.Random, InsertionMethod.Regret3);
-            tempAnt = optimize(tempAnt, RemovalMethod.Shaw, PickupMethod.Random, InsertionMethod.Regret3);
             tempAnt = relocateRequestOperator.relocate(tempAnt);
             tempAnt = exchangeRequestOperator.exchange(tempAnt);
             newCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;

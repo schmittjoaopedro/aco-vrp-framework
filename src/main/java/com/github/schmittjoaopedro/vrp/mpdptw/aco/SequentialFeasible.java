@@ -85,7 +85,7 @@ public class SequentialFeasible implements SolutionBuilder {
         String hashKey = "0";
         double routeCost = 0.0;
         while (ant.toVisit > 0) {
-            int nextNode = selectNextNode(ant, vehicle, currIdx, routeCost, remainingTour, hashKey);
+            int nextNode = addNextNode(ant, vehicle, currIdx, routeCost, remainingTour, hashKey);
             if (nextNode == -1) {
                 addRemainingTour(ant, vehicle, remainingTour);
                 remainingTour = new ArrayList<>();
@@ -101,9 +101,9 @@ public class SequentialFeasible implements SolutionBuilder {
                 ant.tours.get(vehicle).add(ant.tours.get(vehicle).size() - 1, nextNode);
                 ant.visited[nextNode] = true;
                 int reqId = instance.getRequestId(nextNode);
-                boolean containsNodeReq = ant.requests.get(vehicle).contains(reqId);
-                if (!containsNodeReq) {
+                if (!ant.visitedRequests[reqId]) {
                     ant.requests.get(vehicle).add(reqId);
+                    ant.visitedRequests[reqId] = true;
                 }
                 ant.toVisit--;
                 currIdx++;
@@ -136,7 +136,7 @@ public class SequentialFeasible implements SolutionBuilder {
         }
     }
 
-    public int selectNextNode(Solution ant, int vehicle, int currIdx, double routeCost, ArrayList<Integer> pendingTour, String currKey) {
+    public int addNextNode(Solution ant, int vehicle, int currIdx, double routeCost, ArrayList<Integer> pendingTour, String currKey) {
         Map<Integer, ArrayList<Integer>> pendingTours = new HashMap<>();
         Map<Integer, Double> feasibleCosts = new HashMap<>();
         int curr = ant.tours.get(vehicle).get(currIdx);
