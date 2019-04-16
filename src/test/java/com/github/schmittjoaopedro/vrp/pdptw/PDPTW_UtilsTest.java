@@ -1,6 +1,10 @@
-package com.github.schmittjoaopedro.vrp.mpdptw;
+package com.github.schmittjoaopedro.vrp.pdptw;
 
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
+import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
+import com.github.schmittjoaopedro.vrp.mpdptw.DynamicInstancesGenerator;
+import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 import org.junit.Ignore;
 import org.junit.Test;
 

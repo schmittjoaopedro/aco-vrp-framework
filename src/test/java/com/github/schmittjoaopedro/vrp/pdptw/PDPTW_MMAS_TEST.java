@@ -1,6 +1,9 @@
-package com.github.schmittjoaopedro.vrp.mpdptw;
+package com.github.schmittjoaopedro.vrp.pdptw;
 
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
+import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
+import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Solver;
 import org.junit.Test;
 
 import java.io.IOException;
