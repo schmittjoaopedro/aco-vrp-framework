@@ -25,6 +25,7 @@ public class MPDPTWSolutionEvaluationTest {
         ProblemInstance problemInstance = new ProblemInstance();
         problemInstance.setDepot(new Depot());
 
+        problemInstance.setNumMaxVehicles(2);
         problemInstance.getDepot().nodeId = 0;
         problemInstance.getDepot().twStart = 6.0;
         problemInstance.getDepot().twEnd = 18.0;

@@ -33,6 +33,7 @@ public class PDPTW_MMAS_TEST {
 
     @Test
     public void pdptw_100_tasks_test() throws IOException {
+        executeProblemSolver(pdptw100Directory, "lc101");
         executeProblemSolver(pdptw100Directory, "lc102");
         executeProblemSolver(pdptw100Directory, "lc103");
         executeProblemSolver(pdptw100Directory, "lc101");
