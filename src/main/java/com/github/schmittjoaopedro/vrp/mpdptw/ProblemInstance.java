@@ -290,11 +290,14 @@ public class ProblemInstance {
         if (solution.toVisit != 0) {
             solution.feasible = false;
         }
+        // Check if number of vehicles is not extrapolated
+        if (solution.tours.size() > numMaxVehicles) {
+            solution.feasible = false;
+        }
     }
 
     public void solutionEvaluation(Solution solution, int k) {
         solution.totalCost -= solution.tourCosts.get(k);
-        solution.toVisit--; // Remove depot from nodes to visit count
         if (solution.timeWindowPenalty > 0) {
             double sum = 0.0;
             for (int i = 0; i < solution.delays.get(k).length; i++) {

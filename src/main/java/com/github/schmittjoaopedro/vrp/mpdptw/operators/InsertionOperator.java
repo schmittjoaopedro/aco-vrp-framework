@@ -346,7 +346,7 @@ public class InsertionOperator {
      * by first inserting i in k to obtain S'. If S' generates a finite cost, the solution is feasible and the best known
      * insertion position of i in k is set to prev. Finally, \Delta_{i}^{k*} is set to the value of NewCost in line 23.
      */
-    private BestPosition insertAtBestPosition(Solution solution, int vehicle, Integer node, InsertionMethod insertionMethod, int prevPos) {
+    public BestPosition insertAtBestPosition(Solution solution, int vehicle, Integer node, InsertionMethod insertionMethod, int prevPos) {
         double deltaBestCost = Double.MAX_VALUE; // \Delta_{i}^{k*} <- Infinity
         BestPosition bestPosition = null; // BestPosition(i, k) <- null
         ArrayList<Integer> route = solution.tours.get(vehicle);

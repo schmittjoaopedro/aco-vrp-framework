@@ -1,6 +1,8 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.aco;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
 
 import java.util.*;
@@ -12,10 +14,6 @@ public class SequentialFeasible implements SolutionBuilder {
     private ProblemInstance instance;
 
     private List<Solution> antPopulation;
-
-    private Map<String, ArrayList<Integer>> routesCache = new HashMap<>();
-
-    private Map<String, Double> routesCostCache = new HashMap<>();
 
     private double[][] pheromoneNodes;
 
@@ -29,17 +27,18 @@ public class SequentialFeasible implements SolutionBuilder {
 
     private boolean parallel;
 
+    private InsertionOperator insertionOperator;
+
     @Override
     public void init(ProblemInstance instance, Random random, MMAS mmas) {
         this.instance = instance;
         this.mmas = mmas;
+        this.insertionOperator = new InsertionOperator(instance, random);
         updateParameters();
     }
 
     @Override
     public void onSearchControlExecute() {
-        routesCache.clear();
-        routesCostCache.clear();
     }
 
     @Override
@@ -81,103 +80,72 @@ public class SequentialFeasible implements SolutionBuilder {
         int currIdx = 0;
         ant.visited[0] = true;
         ant.toVisit--; // Remove depot
-        ArrayList<Integer> remainingTour = new ArrayList<>();
-        String hashKey = "0";
         double routeCost = 0.0;
         while (ant.toVisit > 0) {
-            int nextNode = addNextNode(ant, vehicle, currIdx, routeCost, remainingTour, hashKey);
+            int nextNode = addNextNode(ant, vehicle, currIdx, routeCost);
             if (nextNode == -1) {
-                addRemainingTour(ant, vehicle, remainingTour);
-                remainingTour = new ArrayList<>();
+                ant.toVisit -= ant.tours.get(vehicle).size() - 2; // Ignore depot at start and end
+                if (ant.toVisit == 0) {
+                    break;
+                }
                 SolutionUtils.addEmptyVehicle(ant);
                 vehicle++;
                 currIdx = 0;
-                hashKey = "0";
                 routeCost = 0.0;
             } else {
                 routeCost += instance.dist(ant.tours.get(vehicle).get(currIdx), nextNode);
                 routeCost = Math.max(instance.twStart(nextNode), routeCost);
                 routeCost += instance.serviceTime(nextNode);
-                ant.tours.get(vehicle).add(ant.tours.get(vehicle).size() - 1, nextNode);
                 ant.visited[nextNode] = true;
                 int reqId = instance.getRequestId(nextNode);
                 if (!ant.visitedRequests[reqId]) {
                     ant.requests.get(vehicle).add(reqId);
                     ant.visitedRequests[reqId] = true;
                 }
-                ant.toVisit--;
                 currIdx++;
-                hashKey += "," + nextNode;
             }
         }
     }
 
-    private void removeNode(ArrayList<Integer> route, int node) {
-        for (int i = 0; i < route.size(); i++) {
-            if (route.get(i) == node) {
-                route.remove(i);
-                break;
-            }
-        }
-    }
-
-    private void addRemainingTour(Solution ant, int vehicle, ArrayList<Integer> remainingTour) {
-        for (int i = 0; i < remainingTour.size(); i++) {
-            int tourLength = ant.tours.get(vehicle).size();
-            ant.tours.get(vehicle).add(tourLength - 1, remainingTour.get(i));
-            ant.visited[remainingTour.get(i)] = true;
-        }
-        ant.toVisit = ant.toVisit - remainingTour.size();
-    }
-
-    private void addRemainingTour(ArrayList<Integer> tour, ArrayList<Integer> remainingTour) {
-        for (int i = 0; i < remainingTour.size(); i++) {
-            tour.add(tour.size() - 1, remainingTour.get(i)); // Add before depot
-        }
-    }
-
-    public int addNextNode(Solution ant, int vehicle, int currIdx, double routeCost, ArrayList<Integer> pendingTour, String currKey) {
-        Map<Integer, ArrayList<Integer>> pendingTours = new HashMap<>();
+    public int addNextNode(Solution ant, int vehicle, int currIdx, double routeCost) {
+        Map<Integer, ArrayList<Integer>> feasibleTours = new HashMap<>();
         Map<Integer, Double> feasibleCosts = new HashMap<>();
-        int curr = ant.tours.get(vehicle).get(currIdx);
+        ArrayList<Integer> originalRoute = ant.tours.get(vehicle);
+        int curr = originalRoute.get(currIdx);
         boolean hasProb = false;
-        for (int next = 0; next < instance.getNumNodes(); next++) {
-            if (!ant.visited[next]) {
+        for (Integer next = 0; next < instance.getNumNodes(); next++) {
+            if (!ant.visited[next] && isPrecedenceValid(ant, next)) {
                 Request req = instance.getRequest(next);
                 double newCost = Math.max(routeCost + instance.dist(curr, next), req.twStart);
                 if (newCost <= req.twEnd) {
-                    ArrayList<Integer> tempTour;
-                    String nextKey = currKey + "," + next;
-                    boolean feasibleChoice = routesCache.containsKey(nextKey);
-                    if (feasibleChoice) {
-                        tempTour = routesCache.get(nextKey);
-                        feasibleChoice = tempTour != null;
-                    } else {
-                        ArrayList<Integer> tempPendingTour = new ArrayList<>(pendingTour);
-                        tempTour = new ArrayList<>(ant.tours.get(vehicle));
-                        tempTour.add(tempTour.size() - 1, next); // insert before depot
-                        addNextNodesRequests(ant.requests.get(vehicle), tempPendingTour, next);
-                        removeNode(tempPendingTour, next);
-                        addRemainingTour(tempTour, tempPendingTour);
-                        if (!isPrecedenceViolated(tempPendingTour, next)) {
-                            ProblemInstance.FitnessResult result = optimize(tempTour, currIdx + 2);
-                            if (result.feasible) {
-                                //routesCache.put(nextKey, tempTour);
-                                //routesCostCache.put(nextKey, result.cost);
-                                feasibleChoice = true;
-                            } else {
-                                feasibleChoice = false;
-                            }
+                    ArrayList<Integer> tempTour = new ArrayList<>(originalRoute);
+                    ant.tours.set(vehicle, tempTour);
+                    boolean feasible = false;
+                    // This is a new node. First, try to add the delivery node in the best position
+                    if (req.isPickup) {
+                        tempTour.add(currIdx + 1, next); // insert new node after next
+                        instance.solutionEvaluation(ant, vehicle);
+                        int deliveryNode = instance.getDelivery(req.requestId).nodeId;
+                        InsertionOperator.BestPosition bestPosition = insertionOperator.insertAtBestPosition(ant, vehicle, deliveryNode, InsertionMethod.Greedy, currIdx + 1);
+                        if (bestPosition != null) { // If a best position was found
+                            tempTour.add(bestPosition.position, deliveryNode);
+                            feasible = true;
                         } else {
-                            feasibleChoice = false;
+                            tempTour.add(currIdx + 2, deliveryNode);
                         }
+                    } else {
+                        tempTour.remove(next);
+                        tempTour.add(currIdx + 1, next);
                     }
-                    if (feasibleChoice) { // Start after the next position
+                    if (!feasible) {
+                        feasible = optimize(tempTour, currIdx + 2).feasible;
+                    }
+                    if (feasible) {
                         double tau = pheromoneNodes[curr][next];
                         //double eta = 1.0 / (instance.dist(curr, next) + 0.00000001);
                         double cost = Math.pow(tau, alpha);// + Math.pow(eta, beta);
                         feasibleCosts.put(next, cost);
-                        pendingTours.put(next, new ArrayList<>(tempTour.subList(currIdx + 2, tempTour.size() - 1))); // Ignore current and next nodes
+                        feasibleTours.put(next, tempTour); // Ignore current and next nodes
                         hasProb = true;
                     }
                 }
@@ -195,10 +163,23 @@ public class SequentialFeasible implements SolutionBuilder {
                 probs[i] = sum;
             }
             next = getNextRouletteSelection(probs, sum);
-            pendingTour.clear();
-            pendingTour.addAll(pendingTours.get(next));
+        }
+        if (next != -1) {
+            ant.tours.set(vehicle, feasibleTours.get(next));
+        } else {
+            ant.tours.set(vehicle, originalRoute);
         }
         return next;
+    }
+
+    // If next node is delivery, then pickup must be already visited. If next node is pickup, then precedence is valid.
+    private boolean isPrecedenceValid(Solution ant, int next) {
+        Request req = instance.getRequest(next);
+        if (req.isDeliver) {
+            return ant.visited[instance.getPickups(req.requestId).get(0).nodeId];
+        } else {
+            return true;
+        }
     }
 
     private int getNextRouletteSelection(double[] probs, double sum) {
