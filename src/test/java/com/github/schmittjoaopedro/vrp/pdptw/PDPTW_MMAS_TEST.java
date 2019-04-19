@@ -168,7 +168,7 @@ public class PDPTW_MMAS_TEST {
     // TODO: Evaluate this route because one different vehicle route was found with the same cost
     @Test
     public void pdptw_lr104_test() throws IOException {
-        String problem = "lc101.txt";
+        String problem = "lc103.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
         Solver solver = new Solver(problem, instance, maxIterations, seed, 0.2, statisticInterval, true);
         solver.setLsActive(true);

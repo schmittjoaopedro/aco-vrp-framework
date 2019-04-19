@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
+
 import java.util.ArrayList;
 
 public class Solution {
@@ -42,4 +44,8 @@ public class Solution {
         return totalCost;
     }
 
+    @Override
+    public String toString() {
+        return "[Num. vehicles = " + tours.size() + ", Feasible = " + feasible + ", Total cost = " + Maths.round(totalCost, 2) + "]";
+    }
 }

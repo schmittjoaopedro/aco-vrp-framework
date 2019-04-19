@@ -1,14 +1,14 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -31,10 +31,6 @@ public class ALNS {
     private int iteration = 1;
 
     private int maxIterations;
-
-    private String rootDirectory;
-
-    private String fileName;
 
     private ProblemInstance instance;
 
@@ -80,13 +76,11 @@ public class ALNS {
 
     private ExchangeRequestOperator exchangeRequestOperator;
 
-    public ALNS(String rootDirectory, String fileName, int maxIterations, Random random) {
-        this.rootDirectory = rootDirectory;
-        this.fileName = fileName;
+    public ALNS(ProblemInstance instance, int maxIterations, Random random) {
+        this.instance = instance;
         this.maxIterations = maxIterations;
         this.random = random;
 
-        initProblemInstance();
         insertionOperator = new InsertionOperator(instance, random);
         removalOperator = new RemovalOperator(instance, random);
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
@@ -147,12 +141,12 @@ public class ALNS {
             List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
             insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
             instance.solutionEvaluation(solutionNew); // Update the solution cost
-            if (solutionNew.totalCost < solutionBest.totalCost) { // If f(S') < f(S_best) then
+            if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
                 solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
                 updateBest(solution); // S_best <- S <- S'
                 // Increase the scores of io and ro by sigma1
                 updateScores(ro, ri, sigma1); // Increment by sigma1 if the new solution is a new best one
-            } else if (solutionNew.totalCost < solution.totalCost) { // Else if f(S') < f(S) then
+            } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
                 solution = solutionNew; // S <- S'
                 // Increase the scores of the ro and io by sigma2
                 updateScores(ro, ri, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
@@ -175,7 +169,7 @@ public class ALNS {
                 updateWeights(); // Update weights and reset scores of operators
                 resetOperatorsScores();
                 solution = applyImprovement(solution); // Apply improvement to S
-                //printIterationStatus();
+                printIterationStatus();
                 updateBest(solution);
             }
             iteration++;
@@ -186,12 +180,14 @@ public class ALNS {
     }
 
     private void printIterationStatus() {
-        System.out.println("Iter " + iteration +
-                " Best = " + format(solution.totalCost) + ", feasible = " + solution.feasible +
-                " BSF = " + format(solutionBest.totalCost) + ", feasible = " + solutionBest.feasible +
+        String msg = "Iter " + iteration +
+                " Best = " + solution.toString() +
+                " BSF = " + solutionBest.toString() +
                 ", T = " + format(T) + ", minT = " + format(minT) +
                 ", ro = " + StringUtils.join(getArray(roWeights), ',') +
-                ", ri = " + StringUtils.join(getArray(riWeights), ','));
+                ", ri = " + StringUtils.join(getArray(riWeights), ',');
+        System.out.println(msg);
+        //logInFile(msg);
     }
 
     private String[] getArray(double[] array) {
@@ -209,7 +205,9 @@ public class ALNS {
     private void updateBest(Solution solution) {
         if (solution.feasible && solution.totalCost < solutionBest.totalCost) {
             solutionBest = SolutionUtils.copy(solution);
-            System.out.println("NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible);
+            String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
+            System.out.println(msg);
+            logInFile(msg);
         }
     }
 
@@ -265,8 +263,8 @@ public class ALNS {
             improvement = false;
             tempSolution = relocateRequestOperator.relocate(tempSolution);
             tempSolution = exchangeRequestOperator.exchange(tempSolution);
-            if (tempSolution.totalCost < improved.totalCost) {
-                improved = tempSolution;
+            if (SolutionUtils.getBest(improved, tempSolution) == tempSolution) {
+                improved = SolutionUtils.copy(tempSolution);
                 improvement = true;
             }
         }
@@ -275,15 +273,6 @@ public class ALNS {
 
     private boolean stopCriteriaMeet() {
         return iteration > maxIterations;
-    }
-
-    private void initProblemInstance() {
-        try {
-            String filePath = Paths.get(rootDirectory, fileName).toString();
-            instance = DataReader.getMpdptwInstance(new File(filePath));
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
     }
 
     private void insertRequests(Solution solution, int ri, List<Req> removedRequests) {
@@ -382,7 +371,7 @@ public class ALNS {
             solution.tourCosts.set(i, cost);
             solution.totalCost += cost;
         }
-        msg += "\nInstance = " + fileName;
+        msg += "\nInstance = " + instance.getFileName();
         msg += "\nBest solution feasibility = " + solution.feasible + "\nRoutes";
         for (ArrayList route : solution.tours) {
             msg += "\n" + StringUtils.join(route, "-");
@@ -392,7 +381,7 @@ public class ALNS {
             msg += "\n" + StringUtils.join(requests, "-");
         }
         msg += "\nCost = " + solution.totalCost;
-        System.out.println(msg);
+        msg += "\nNum. vehicles = " + solution.tours.size();
         Set<Integer> processedNodes = new HashSet<>();
         for (int k = 0; k < solutionBest.tours.size(); k++) {
             for (int i = 1; i < solutionBest.tours.get(k).size() - 1; i++) {
@@ -403,6 +392,16 @@ public class ALNS {
                 }
             }
         }
-        System.out.println("Total time = " + ((endTime - startTime) / 1000.0) + "s");
+        msg += "\nTotal time (s) = " + ((endTime - startTime) / 1000.0);
+        System.out.println(msg);
+        logInFile(msg);
+    }
+
+    private void logInFile(String text) {
+        try {
+            FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

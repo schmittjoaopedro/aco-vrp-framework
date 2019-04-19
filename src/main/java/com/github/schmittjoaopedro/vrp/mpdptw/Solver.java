@@ -17,7 +17,7 @@ public class Solver implements Runnable {
 
     private String problemName;
 
-    private ProblemInstance problemInstance;
+    private ProblemInstance instance;
 
     private List<IterationStatistic> iterationStatistics;
 
@@ -43,9 +43,9 @@ public class Solver implements Runnable {
 
     private boolean parallel;
 
-    public Solver(String problemName, ProblemInstance problemInstance, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
+    public Solver(String problemName, ProblemInstance instance, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
         this.problemName = problemName;
-        this.problemInstance = problemInstance;
+        this.instance = instance;
         this.maxIterations = maxIterations;
         this.seed = seed;
         this.rho = rho;
@@ -62,7 +62,7 @@ public class Solver implements Runnable {
         mmas.setAlpha(1.0);
         mmas.setBeta(2.0);
         mmas.setnAnts(50);
-        mmas.setDepth(problemInstance.getNumNodes());
+        mmas.setDepth(instance.getNumNodes());
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));
@@ -73,7 +73,7 @@ public class Solver implements Runnable {
         globalStatistics.endTimer("MMAS Initialization");
 
         // Init local search
-        this.localSearch = new LocalSearch(problemInstance, new Random(seed));
+        this.localSearch = new LocalSearch(instance, new Random(seed));
 
         // Execute MMAS
         globalStatistics.startTimer();
@@ -132,16 +132,16 @@ public class Solver implements Runnable {
     private void printFinalRoute() {
         Solution ant = mmas.getBestSoFar();
         String msg = "";
-        problemInstance.restrictionsEvaluation(ant);
+        instance.restrictionsEvaluation(ant);
         boolean feasible = true;
         double cost;
         for (ArrayList route : ant.tours) {
-            feasible &= problemInstance.restrictionsEvaluation(route).feasible;
+            feasible &= instance.restrictionsEvaluation(route).feasible;
         }
         ant.feasible &= feasible;
         ant.totalCost = 0.0;
         for (int i = 0; i < ant.tours.size(); i++) {
-            cost = problemInstance.costEvaluation(ant.tours.get(i));
+            cost = instance.costEvaluation(ant.tours.get(i));
             ant.tourCosts.set(i, cost);
             ant.totalCost += cost;
         }
@@ -170,12 +170,12 @@ public class Solver implements Runnable {
                 }
             }
         }
-        MapPrinter.printResult(ant, problemInstance, 1200, 1000, problemName);
+        MapPrinter.printResult(ant, instance, 1200, 1000, problemName);
     }
 
     private void initProblemInstance() {
         try {
-            mmas = new MMAS(problemInstance);
+            mmas = new MMAS(instance);
             iterationStatistics = new ArrayList<>(maxIterations);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -184,7 +184,7 @@ public class Solver implements Runnable {
 
     private void executeLocalSearch() {
         Solution bestAnt = mmas.findBest();
-        problemInstance.solutionEvaluation(bestAnt);
+        instance.solutionEvaluation(bestAnt);
         Solution improvedAnt = localSearch.optimize(bestAnt);
         if (SolutionUtils.getBest(bestAnt, improvedAnt) != bestAnt) {
             int antIndex = mmas.getAntPopulation().indexOf(bestAnt);

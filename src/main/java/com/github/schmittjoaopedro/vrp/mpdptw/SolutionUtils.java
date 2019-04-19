@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
+
 import java.util.ArrayList;
 
 public class SolutionUtils {
@@ -84,8 +86,9 @@ public class SolutionUtils {
         solution.delays.add(new double[0]);
     }
 
-    public static void removeEmptyVehicles(Solution solution) {
+    public static boolean removeEmptyVehicles(Solution solution) {
         int position = 0;
+        boolean removed = false;
         while (solution.tours.size() > position) {
             if (solution.requests.get(position).isEmpty()) {
                 solution.tours.remove(position);
@@ -97,10 +100,12 @@ public class SolutionUtils {
                 solution.waitingTimes.remove(position);
                 solution.arrivalSlackTimes.remove(position);
                 solution.delays.remove(position);
+                removed = true;
             } else {
                 position++;
             }
         }
+        return removed;
     }
 
     public static void removeRequest(ProblemInstance instance, Solution solution, int vehicle, Integer requestId) {
@@ -129,15 +134,14 @@ public class SolutionUtils {
     }
 
     public static Solution getBest(Solution oldSol, Solution newSol) {
-        double oldCost = oldSol.totalCost + oldSol.timeWindowPenalty;
-        double newCost = newSol.totalCost + newSol.timeWindowPenalty;
+        boolean isBetterCost = Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
         if (oldSol.feasible) {
-            return newSol.feasible && newCost < oldCost ? newSol : oldSol;
+            return newSol.feasible && isBetterCost ? newSol : oldSol;
         } else {
-            return newCost < oldCost ? newSol : oldSol;
+            return isBetterCost ? newSol : oldSol;
         }
-    }
 
+    }
 
 
     public static boolean containsEmptyVehicle(Solution solution) {
