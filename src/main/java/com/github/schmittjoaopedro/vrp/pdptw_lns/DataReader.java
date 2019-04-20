@@ -43,7 +43,7 @@ public class DataReader {
                 for (int j = 0; j < instance.requestNumber; j++) {
                     instance.distances[i][j] = Math.sqrt((instance.requestList[i].xPos - instance.requestList[j].xPos) * (instance.requestList[i].xPos - instance.requestList[j].xPos) +
                             (instance.requestList[i].yPos - instance.requestList[j].yPos) * (instance.requestList[i].yPos - instance.requestList[j].yPos));
-                    instance.maxDist = Math.max(instance.maxAmount, instance.distances[i][j]);
+                    instance.maxDist = Math.max(instance.maxDist, instance.distances[i][j]);
                 }
             }
         } catch (Exception ex) {

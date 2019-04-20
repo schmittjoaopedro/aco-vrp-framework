@@ -14,6 +14,7 @@ public class Instance {
     Request[] requestList;
     double[][] distances;
     Double[] objWeight = {1.0, 0.0, 100000.0};
+    double[] relateWeight = {9, 3, 2, 5};
 
     // Calculate cost of 1 route
     double calcRouteCost(ArrayList<Integer> route) {
