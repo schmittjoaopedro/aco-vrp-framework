@@ -21,7 +21,7 @@ public class DataReader {
             ArrayList<Request> requestList = new ArrayList<>();
             for (int i = 1; i < fileLines.size(); i++) {
                 lineData = getLineData(fileLines, i);
-                if (lineData.length > 0) {
+                if (lineData.length > 5) {
                     Request request = new Request();
                     request.id = Integer.parseInt(lineData[0]);
                     request.xPos = Double.parseDouble(lineData[1]);

@@ -41,7 +41,10 @@ public class Solver {
     int[] noiseCount;
     Set<BigInteger> visitedList = new HashSet<>();
 
+    String problem;
+
     public Solver(String directory, String file, int seed) {
+        problem = file;
         random = new Random(seed);
         instance = DataReader.getInput(directory, file);
     }
@@ -50,6 +53,8 @@ public class Solver {
         start = System.currentTimeMillis();
         Pair<Integer, Double> minSol = Pair.of(1000, Double.MAX_VALUE);
         Pair<Integer, Double> sumSol = Pair.of(0, 0.0);
+        System.out.println("--------------------");
+        System.out.println("Executing " + problem);
         for (int i = 0; i < 1; i++) {
             System.out.println("Test run #" + i);
             System.out.println("Stage 1 : Minimize number of vehicles used");
@@ -85,7 +90,7 @@ public class Solver {
             minVehicle = s.usedVehicle(instance);
             double bestSol = s.objFunction(instance);
             System.out.println("Min Vehicle User : " + minVehicle + " Best Solution: " + bestSol);
-            System.out.println("Time " + ((System.currentTimeMillis() - _start) / 60.0));
+            System.out.println("Time " + ((System.currentTimeMillis() - _start) / 1000.0));
             if (minSol.compareTo(Pair.of(minVehicle, bestSol)) > 0) {
                 minSol = Pair.of(minVehicle, bestSol);
             }
@@ -99,6 +104,7 @@ public class Solver {
                 System.out.println();
             }
         }
+        System.out.println("--------------------\n\n");
     }
 
     // Large neighborhood search with initial solution s;
