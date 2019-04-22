@@ -76,6 +76,10 @@ public class ALNS {
 
     private ExchangeRequestOperator exchangeRequestOperator;
 
+    private boolean generateFile = Boolean.FALSE;
+
+    private List<String> log = new ArrayList<>();
+
     public ALNS(ProblemInstance instance, int maxIterations, Random random) {
         this.instance = instance;
         this.maxIterations = maxIterations;
@@ -186,8 +190,7 @@ public class ALNS {
                 ", T = " + format(T) + ", minT = " + format(minT) +
                 ", ro = " + StringUtils.join(getArray(roWeights), ',') +
                 ", ri = " + StringUtils.join(getArray(riWeights), ',');
-        System.out.println(msg);
-        //logInFile(msg);
+        //System.out.println(msg);
     }
 
     private String[] getArray(double[] array) {
@@ -208,6 +211,7 @@ public class ALNS {
             String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
             System.out.println(msg);
             logInFile(msg);
+            log.add(msg);
         }
     }
 
@@ -395,13 +399,24 @@ public class ALNS {
         msg += "\nTotal time (s) = " + ((endTime - startTime) / 1000.0);
         System.out.println(msg);
         logInFile(msg);
+        log.add(msg);
     }
 
     private void logInFile(String text) {
-        try {
-            FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (generateFile) {
+            try {
+                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public void setGenerateFile(boolean generateFile) {
+        this.generateFile = generateFile;
+    }
+
+    public List<String> getLog() {
+        return log;
     }
 }

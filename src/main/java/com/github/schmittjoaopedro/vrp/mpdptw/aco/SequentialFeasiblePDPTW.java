@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SequentialFeasible implements SolutionBuilder {
+public class SequentialFeasiblePDPTW implements SolutionBuilder {
 
     private ProblemInstance instance;
 

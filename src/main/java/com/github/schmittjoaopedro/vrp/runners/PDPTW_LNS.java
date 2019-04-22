@@ -1,13 +1,11 @@
-package com.github.schmittjoaopedro.vrp.pdptw_lns;
+package com.github.schmittjoaopedro.vrp.runners;
 
-import org.junit.Test;
+import com.github.schmittjoaopedro.vrp.pdptw_lns.Solver;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public class PDPTW_LNS_Test {
-
-    int maxIterations = 100000;
+public class PDPTW_LNS {
 
     private static final String pdptw100Directory;
 
@@ -15,16 +13,12 @@ public class PDPTW_LNS_Test {
 
     private static final String pdptw400Directory;
 
-    private static final String pdptw600Directory;
-
     static {
-        pdptw100Directory = Paths.get(PDPTW_LNS_Test.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
-        pdptw200Directory = Paths.get(PDPTW_LNS_Test.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
-        pdptw400Directory = Paths.get(PDPTW_LNS_Test.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
-        pdptw600Directory = Paths.get(PDPTW_LNS_Test.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
+        pdptw100Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
+        pdptw200Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+        pdptw400Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
     }
 
-    @Test
     public void pdptw_100_tasks_test() throws IOException {
         executeProblemSolver(pdptw100Directory, "lc101");
         executeProblemSolver(pdptw100Directory, "lc102");
@@ -85,7 +79,6 @@ public class PDPTW_LNS_Test {
         executeProblemSolver(pdptw100Directory, "lrc208");
     }
 
-    @Test
     public void pdptw_200_tasks_test() throws Exception {
         executeProblemSolver(pdptw200Directory, "LC1_2_1");
         executeProblemSolver(pdptw200Directory, "LC1_2_2");
@@ -149,7 +142,6 @@ public class PDPTW_LNS_Test {
         executeProblemSolver(pdptw200Directory, "LRC2_2_10");
     }
 
-    @Test
     public void pdptw_400_tasks_test() {
         executeProblemSolver(pdptw400Directory, "LC1_4_1");
         executeProblemSolver(pdptw400Directory, "LC1_4_2");
@@ -213,15 +205,8 @@ public class PDPTW_LNS_Test {
         executeProblemSolver(pdptw400Directory, "LRC2_4_10");
     }
 
-    private  void executeProblemSolver(String directory, String problem) {
+    private void executeProblemSolver(String directory, String problem) {
         Solver solver = new Solver(directory, problem + ".txt", 1);
-        solver.run();
-    }
-
-    @Test
-    public void pdptw_lr104_test() {
-        String problem = "lc204.txt";
-        Solver solver = new Solver(pdptw100Directory, problem, 1);
         solver.run();
     }
 }

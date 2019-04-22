@@ -42,6 +42,7 @@ public class Solver {
     Set<BigInteger> visitedList = new HashSet<>();
 
     String problem;
+    List<String> logs = new ArrayList<>();
 
     public Solver(String directory, String file, int seed) {
         problem = file;
@@ -53,11 +54,10 @@ public class Solver {
         start = System.currentTimeMillis();
         Pair<Integer, Double> minSol = Pair.of(1000, Double.MAX_VALUE);
         Pair<Integer, Double> sumSol = Pair.of(0, 0.0);
-        System.out.println("--------------------");
-        System.out.println("Executing " + problem);
+        log("Executing " + problem);
         for (int i = 0; i < 1; i++) {
-            System.out.println("Test run #" + i);
-            System.out.println("Stage 1 : Minimize number of vehicles used");
+            log("Test run #" + i);
+            log("Stage 1 : Minimize number of vehicles used");
             tempControl = 0.35;
             coolingRate = 0.9999;
             long _start = System.currentTimeMillis();
@@ -75,36 +75,43 @@ public class Solver {
             Solution sTemp = s.copy(instance);
             while (s.requestBankSize(instance) == 0) {
                 minVehicle = s.usedVehicle(instance);
-                System.out.println("Min Vehicle User : " + minVehicle + " Best Solution: " + s.objFunction(instance));
+                log("Min Vehicle User : " + minVehicle + " Best Solution: " + s.objFunction(instance));
                 instance.vehicleNumber = minVehicle - 1;
                 s.resize(instance.vehicleNumber);
                 s = LNS(s, 1);
                 if (s.requestBankSize(instance) == 0) sTemp = s.copy(instance);
             }
             instance.vehicleNumber = minVehicle;
-            System.out.println("Stage 2 : Minimize the cost");
+            log("Stage 2 : Minimize the cost");
             tempControl = 0.05;
             coolingRate = 0.99975;
             resetAdaptiveWeight();
             s = LNS(sTemp, 2);
             minVehicle = s.usedVehicle(instance);
             double bestSol = s.objFunction(instance);
-            System.out.println("Min Vehicle User : " + minVehicle + " Best Solution: " + bestSol);
-            System.out.println("Time " + ((System.currentTimeMillis() - _start) / 1000.0));
+            log("Min Vehicle User : " + minVehicle + " Best Solution: " + bestSol);
+            log("Time " + ((System.currentTimeMillis() - _start) / 1000.0));
             if (minSol.compareTo(Pair.of(minVehicle, bestSol)) > 0) {
                 minSol = Pair.of(minVehicle, bestSol);
             }
             sumSol = Pair.of(sumSol.getLeft() + minVehicle, sumSol.getRight() + bestSol);
             int v = 1;
+            String finalRoute = "";
             for (ArrayList<Integer> route : s.vehicleRoute) {
-                System.out.print("Vehicle " + v++ + ": ");
+                finalRoute += "Vehicle " + v++ + ": ";
                 for (int node : route) {
-                    System.out.print(node + " ");
+                    finalRoute += node + " ";
                 }
-                System.out.println();
+                finalRoute += "\n";
             }
+            log(finalRoute);
         }
         System.out.println("--------------------\n\n");
+    }
+
+    private void log(String msg) {
+        System.out.println(msg);
+        logs.add(msg);
     }
 
     // Large neighborhood search with initial solution s;
@@ -437,7 +444,7 @@ public class Solver {
 
     // Add noise factor
     double generateNoise() {
-        return (Math.random() - 0.5) * (noiseControl * instance.maxDist) * 2;
+        return (random.nextDouble() - 0.5) * (noiseControl * instance.maxDist) * 2;
     }
 
     // Calculate max delay for 1 route
@@ -550,4 +557,7 @@ public class Solver {
 
     }
 
+    public List<String> getLogs() {
+        return logs;
+    }
 }
