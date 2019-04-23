@@ -3,22 +3,21 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
 import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
+import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialFeasiblePDPTW;
+import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Solver implements Runnable {
 
-    private String rootDirectory;
+    private String problemName;
 
-    private String fileName;
-
-    private ProblemInstance problemInstance;
+    private ProblemInstance instance;
 
     private List<IterationStatistic> iterationStatistics;
 
@@ -32,15 +31,25 @@ public class Solver implements Runnable {
 
     private double rho;
 
-    private String filePath;
-
     private int statisticInterval;
 
     private boolean showLog;
 
-    public Solver(String rootDirectory, String fileName, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
-        this.fileName = fileName;
-        this.rootDirectory = rootDirectory;
+    private LocalSearch localSearch;
+
+    private boolean lsActive;
+
+    private Class<? extends SolutionBuilder> solutionBuilderClass = SequentialFeasiblePDPTW.class;
+
+    private boolean parallel;
+
+    private String finalSolution;
+
+    private boolean generateFile = Boolean.FALSE;
+
+    public Solver(String problemName, ProblemInstance instance, int maxIterations, int seed, double rho, int statisticInterval, boolean showLog) {
+        this.problemName = problemName;
+        this.instance = instance;
         this.maxIterations = maxIterations;
         this.seed = seed;
         this.rho = rho;
@@ -55,17 +64,20 @@ public class Solver implements Runnable {
         initProblemInstance();
         mmas.setRho(rho);
         mmas.setAlpha(1.0);
-        mmas.setBeta(5.0);
-        mmas.setQ_0(0.0);
-        mmas.setnAnts(problemInstance.noNodes);
-        mmas.setDepth(20);
+        mmas.setBeta(2.0);
+        mmas.setnAnts(50);
+        mmas.setDepth(instance.getNumNodes());
         mmas.allocateAnts();
         mmas.allocateStructures();
         mmas.setRandom(new Random(seed));
-        mmas.setSymmetric(false);
+        mmas.setParallel(parallel);
+        mmas.setSolutionBuilder(solutionBuilderClass);
         mmas.computeNNList();
         mmas.initTry();
         globalStatistics.endTimer("MMAS Initialization");
+
+        // Init local search
+        this.localSearch = new LocalSearch(instance, new Random(seed));
 
         // Execute MMAS
         globalStatistics.startTimer();
@@ -78,9 +90,16 @@ public class Solver implements Runnable {
             mmas.constructSolutions();
             iterationStatistic.endTimer("Construction");
             // Daemon
+            if (lsActive) {
+                executeLocalSearch();
+            }
             boolean hasBest = mmas.updateBestSoFar();
             if (hasBest) {
-                mmas.setPheromoneBounds();
+                if (lsActive) {
+                    mmas.setPheromoneBoundsForLS();
+                } else {
+                    mmas.setPheromoneBounds();
+                }
             }
             mmas.updateRestartBest();
             iterationStatistic.endTimer("Daemon");
@@ -88,8 +107,8 @@ public class Solver implements Runnable {
             iterationStatistic.startTimer();
             mmas.evaporation();
             mmas.pheromoneUpdate();
-//            mmas.checkPheromoneTrailLimits();
-            mmas.searchControl(); // TODO: Rever
+            //mmas.checkPheromoneTrailLimits();
+            mmas.searchControl();
             iterationStatistic.endTimer("Pheromone");
             // Statistics
             if (i % statisticInterval == 0) {
@@ -100,8 +119,8 @@ public class Solver implements Runnable {
                 iterationStatistic.setIterationBest(mmas.findBest().totalCost);
                 iterationStatistic.setIterationWorst(mmas.findWorst().totalCost);
                 iterationStatistic.setFeasible(mmas.getBestSoFar().feasible);
-                iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
-                iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Ant::getCost).collect(Collectors.toList())));
+                iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
+                iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
@@ -110,38 +129,113 @@ public class Solver implements Runnable {
                 }
             }
         }
+        globalStatistics.endTimer("Algorithm");
+        printFinalRoute();
+    }
+
+    private void printFinalRoute() {
+        Solution ant = mmas.getBestSoFar();
+        String msg = "";
+        instance.restrictionsEvaluation(ant);
         boolean feasible = true;
-        for (ArrayList route : mmas.getBestSoFar().tours) {
-            feasible &= mmas.isRouteFeasible(route);
+        double cost;
+        for (ArrayList route : ant.tours) {
+            feasible &= instance.restrictionsEvaluation(route).feasible;
         }
-        mmas.getBestSoFar().feasible = feasible;
-        mmas.fitnessEvaluation(mmas.getBestSoFar());
-        System.out.println("Best solution feasibility = " + mmas.getBestSoFar().feasible);
-        logInFile("Best solution feasibility = " + mmas.getBestSoFar().feasible);
-        for (ArrayList route : mmas.getBestSoFar().tours) {
-            System.out.println(StringUtils.join(route, "-"));
-            logInFile(StringUtils.join(route, "-"));
+        ant.feasible &= feasible;
+        ant.totalCost = 0.0;
+        for (int i = 0; i < ant.tours.size(); i++) {
+            cost = instance.costEvaluation(ant.tours.get(i));
+            ant.tourCosts.set(i, cost);
+            ant.totalCost += cost;
         }
-        System.out.println("Cost = " + mmas.getBestSoFar().totalCost);
-        logInFile("Cost = " + mmas.getBestSoFar().totalCost);
+        msg += "\nInstance = " + problemName;
+        msg += "\nBest solution feasibility = " + ant.feasible + "\nRoutes";
+        for (ArrayList route : ant.tours) {
+            msg += "\n" + StringUtils.join(route, "-");
+        }
+        msg += "\nRequests";
+        for (ArrayList requests : ant.requests) {
+            msg += "\n" + StringUtils.join(requests, "-");
+        }
+        msg += "\nNum. Vehicles = " + ant.tours.size();
+        msg += "\nCost = " + ant.totalCost;
+        msg += "\nPenalty = " + ant.timeWindowPenalty;
+        msg += "\nTotal time (ms) = " + globalStatistics.getTimeStatistics().get("Algorithm");
+        finalSolution = msg;
+        System.out.println(msg);
+        logInFile(msg);
+        Set<Integer> processedNodes = new HashSet<>();
+        for (int k = 0; k < mmas.getBestSoFar().tours.size(); k++) {
+            for (int i = 1; i < mmas.getBestSoFar().tours.get(k).size() - 1; i++) {
+                if (processedNodes.contains(mmas.getBestSoFar().tours.get(k).get(i))) {
+                    throw new RuntimeException("Invalid route, duplicated nodes");
+                } else {
+                    processedNodes.add(mmas.getBestSoFar().tours.get(k).get(i));
+                }
+            }
+        }
+        MapPrinter.printResult(ant, instance, 1200, 1000, problemName);
     }
 
     private void initProblemInstance() {
         try {
-            filePath = Paths.get(rootDirectory, fileName).toString();
-            problemInstance = DataReader.getProblemInstance(new File(filePath));
-            mmas = new MMAS(problemInstance);
+            mmas = new MMAS(instance);
             iterationStatistics = new ArrayList<>(maxIterations);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
+    private void executeLocalSearch() {
+        Solution bestAnt = mmas.findBest();
+        instance.solutionEvaluation(bestAnt);
+        Solution improvedAnt = localSearch.optimize(bestAnt);
+        if (SolutionUtils.getBest(bestAnt, improvedAnt) != bestAnt) {
+            int antIndex = mmas.getAntPopulation().indexOf(bestAnt);
+            mmas.getAntPopulation().set(antIndex, improvedAnt);
+        }
+    }
+
     private void logInFile(String text) {
-        /*try {
-            FileUtils.writeStringToFile(new File("C:\\Temp\\result-" + fileName), text + "\n", "UTF-8", true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        if (generateFile) {
+            try {
+                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + problemName), text + "\n", "UTF-8", true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void setSolutionBuilderClass(Class<? extends SolutionBuilder> solutionBuilderClass) {
+        this.solutionBuilderClass = solutionBuilderClass;
+    }
+
+    public GlobalStatistics getGlobalStatistics() {
+        return globalStatistics;
+    }
+
+    public List<IterationStatistic> getIterationStatistics() {
+        return iterationStatistics;
+    }
+
+    public Solution getBestSolution() {
+        return mmas.getBestSoFar();
+    }
+
+    public void setParallel(boolean parallel) {
+        this.parallel = parallel;
+    }
+
+    public void setLsActive(boolean lsActive) {
+        this.lsActive = lsActive;
+    }
+
+    public String getFinalSolution() {
+        return finalSolution;
+    }
+
+    public void setGenerateFile(boolean generateFile) {
+        this.generateFile = generateFile;
     }
 }

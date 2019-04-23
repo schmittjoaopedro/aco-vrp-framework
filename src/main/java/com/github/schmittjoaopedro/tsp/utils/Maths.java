@@ -42,6 +42,12 @@ public class Maths {
         return Math.sqrt(x1 * x1 + y1 * y1);
     }
 
+    public static double getEuclideanDistance(double x1, double x2, double y1, double y2) {
+        double x = x1 - x2;
+        double y = y1 - y2;
+        return Math.sqrt(x * x + y * y);
+    }
+
     public static double getTSPEuclideanDistance(Vertex n1, Vertex n2) {
         double x1 = n1.getX() - n2.getX();
         double y1 = n1.getY() - n2.getY();
@@ -117,6 +123,10 @@ public class Maths {
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
+    }
+
+    public static double round(double value) {
+        return round(value, 6); // Use same number of decimal places as Coelho
     }
 
     public static int getValueByInequality(int[][] matrix, FunctionWithTwoArgs<Integer, Integer, Integer> function) {

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("Duplicates")
 public class OptimalRequestSolver {
 
     private List<Request> pickupRequests;
@@ -18,8 +19,8 @@ public class OptimalRequestSolver {
 
     public OptimalRequestSolver(int requestId, ProblemInstance instance) {
         this.instance = instance;
-        this.pickupRequests = instance.pickups.get(requestId);
-        this.deliveryRequest = instance.delivery.get(requestId);
+        this.pickupRequests = instance.getPickups(requestId);
+        this.deliveryRequest = instance.getDelivery(requestId);
     }
 
     public void optimize() {
@@ -29,12 +30,12 @@ public class OptimalRequestSolver {
         bestCost = Double.MAX_VALUE;
         int[] currentRoute = bestRoute.clone();
         for (Request request : pickupRequests) {
-            currentTime = instance.distances[instance.depot.nodeId][request.nodeId];
+            currentTime = instance.dist(instance.getDepot().nodeId, request.nodeId);
             currentTime = Math.max(currentTime, request.twStart);
             currentTime += request.serviceTime;
             currentCapacity = request.demand;
             visitedPickups.add(request);
-            currentRoute[0] = instance.depot.nodeId;
+            currentRoute[0] = instance.getDepot().nodeId;
             currentRoute[1] = request.nodeId;
             optimizedBranch(request, currentTime, currentCapacity, visitedPickups, currentRoute, 2);
             visitedPickups.remove(request);
@@ -47,11 +48,11 @@ public class OptimalRequestSolver {
         for (Request child : pickupRequests) {
             if (!visitedPickups.contains(child)) {
                 allPickupsProcessed = false;
-                nextTime = currentTime + instance.distances[request.nodeId][child.nodeId];
+                nextTime = currentTime + instance.dist(request.nodeId, child.nodeId);
                 nextTime = Math.max(nextTime, child.twStart);
-                nextTime += child.serviceTime;
                 nextCapacity = currentCapacity + child.demand;
-                if (nextTime < child.twEnd && nextCapacity < instance.vehicleCapacity) { // Is feasible route then add to the request
+                if (nextTime < child.twEnd && nextCapacity < instance.getVehicleCapacity()) { // Is feasible route then add to the request
+                    nextTime += child.serviceTime;
                     visitedPickups.add(child);
                     currSequence[phase] = child.nodeId;
                     optimizedBranch(child, nextTime, nextCapacity, visitedPickups, currSequence, phase + 1);
@@ -60,16 +61,18 @@ public class OptimalRequestSolver {
             }
         }
         if (allPickupsProcessed) {
-            nextTime = currentTime + instance.distances[request.nodeId][deliveryRequest.nodeId];
+            nextTime = currentTime + instance.dist(request.nodeId, deliveryRequest.nodeId);
             nextTime = Math.max(nextTime, deliveryRequest.twStart);
-            nextTime += deliveryRequest.serviceTime;
-            nextTime += instance.distances[deliveryRequest.nodeId][instance.depot.nodeId];
             nextCapacity = currentCapacity + deliveryRequest.demand;
-            currSequence[phase] = deliveryRequest.nodeId;
-            currSequence[phase + 1] = instance.depot.nodeId;
-            if (nextTime < deliveryRequest.twEnd && nextCapacity < instance.vehicleCapacity && nextTime < bestCost) {
-                bestCost = nextTime;
-                bestRoute = currSequence.clone();
+            if (nextTime < deliveryRequest.twEnd && nextCapacity < instance.getVehicleCapacity() && nextTime < bestCost) {
+                nextTime += deliveryRequest.serviceTime;
+                nextTime += instance.dist(deliveryRequest.nodeId, instance.getDepot().nodeId);
+                currSequence[phase] = deliveryRequest.nodeId;
+                currSequence[phase + 1] = instance.getDepot().nodeId;
+                if (nextTime < instance.getDepot().twEnd && nextTime < bestCost) {
+                    bestCost = nextTime;
+                    bestRoute = currSequence.clone();
+                }
             }
         }
     }

@@ -1,0 +1,1429 @@
+"C:\Program Files\Java\jdk-10.0.1\bin\java.exe" -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.4\lib\idea_rt.jar=52862:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.4\bin" -Dfile.encoding=UTF-8 -classpath "C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.4\lib\idea_rt.jar;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.4\plugins\junit\lib\junit-rt.jar;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2018.2.4\plugins\junit\lib\junit5-rt.jar;C:\projects\aco-vrp-framework\target\test-classes;C:\projects\aco-vrp-framework\target\classes;C:\Users\1513 MX5-7\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\1513 MX5-7\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\1513 MX5-7\.m2\repository\org\assertj\assertj-core\3.10.0\assertj-core-3.10.0.jar;C:\Users\1513 MX5-7\.m2\repository\commons-io\commons-io\2.5\commons-io-2.5.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\commons\commons-lang3\3.7\commons-lang3-3.7.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-scenario-util\4.4.6\rinsim-scenario-util-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-pdptw\4.4.6\rinsim-pdptw-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-core\4.4.6\rinsim-core-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\net\openhft\affinity\3.0.1\affinity-3.0.1.jar;C:\Users\1513 MX5-7\.m2\repository\net\java\dev\jna\jna\4.1.0\jna-4.1.0.jar;C:\Users\1513 MX5-7\.m2\repository\net\java\dev\jna\jna-platform\4.1.0\jna-platform-4.1.0.jar;C:\Users\1513 MX5-7\.m2\repository\org\kohsuke\jetbrains\annotations\9.0\annotations-9.0.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\guava\guava\24.1-android\guava-24.1-android.jar;C:\Users\1513 MX5-7\.m2\repository\org\checkerframework\checker-compat-qual\2.0.0\checker-compat-qual-2.0.0.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\errorprone\error_prone_annotations\2.1.3\error_prone_annotations-2.1.3.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\j2objc\j2objc-annotations\1.1\j2objc-annotations-1.1.jar;C:\Users\1513 MX5-7\.m2\repository\org\codehaus\mojo\animal-sniffer-annotations\1.14\animal-sniffer-annotations-1.14.jar;C:\Users\1513 MX5-7\.m2\repository\org\slf4j\slf4j-api\1.7.21\slf4j-api-1.7.21.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;C:\Users\1513 MX5-7\.m2\repository\joda-time\joda-time\2.10.1\joda-time-2.10.1.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\code\gson\gson\2.8.0\gson-2.8.0.jar;C:\Users\1513 MX5-7\.m2\repository\org\jscience\jscience\4.3.1\jscience-4.3.1.jar;C:\Users\1513 MX5-7\.m2\repository\org\javolution\javolution\5.2.3\javolution-5.2.3.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-event\4.4.6\rinsim-event-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\guava\guava-testlib\24.1-android\guava-testlib-24.1-android.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-ui\4.4.6\rinsim-ui-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\org\eclipse\swt\org.eclipse.swt.win32.win32.x86_64\4.5.2\org.eclipse.swt.win32.win32.x86_64-4.5.2.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-test-util\4.4.6\rinsim-test-util-4.4.6-tests.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-fsm\4.4.6\rinsim-fsm-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-geom\4.4.6\rinsim-geom-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-event\4.4.6\rinsim-event-4.4.6-tests.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-cli\4.4.6\rinsim-cli-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-io\4.4.6\rinsim-io-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-scenario\4.4.6\rinsim-scenario-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar" com.intellij.rt.execution.junit.JUnitStarter -ideVersion5 -junit4 com.github.schmittjoaopedro.vrp.pdptw_lns.PDPTW_LNS_Test,pdptw_200_tasks_test
+--------------------
+Executing LC1_2_1.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 3034.527420075382
+Stage 2 : Minimize the cost
+Min Vehicle User : 20 Best Solution: 2704.5677663304728
+Time 57.215
+Vehicle 1: 0 164 210 66 147 160 47 91 70 0 
+Vehicle 2: 0 73 116 12 129 11 6 122 139 0 
+Vehicle 3: 0 62 131 44 102 146 208 68 76 0 
+Vehicle 4: 0 148 103 197 203 124 141 69 200 0 
+Vehicle 5: 0 32 171 65 86 115 94 51 174 136 189 0 
+Vehicle 6: 0 161 104 18 54 185 132 7 181 117 49 0 
+Vehicle 7: 0 21 23 182 75 163 194 145 195 52 92 0 
+Vehicle 8: 0 93 55 135 58 202 184 199 37 81 138 0 
+Vehicle 9: 0 177 3 88 8 186 127 98 157 137 183 0 
+Vehicle 10: 0 20 41 85 80 31 25 172 77 110 162 0 
+Vehicle 11: 0 60 211 82 180 84 191 125 4 72 17 0 
+Vehicle 12: 0 190 5 10 193 46 128 106 167 207 34 95 158 0 
+Vehicle 13: 0 45 178 27 173 154 209 24 61 100 64 179 109 0 
+Vehicle 14: 0 113 155 78 175 13 43 2 90 67 39 107 212 0 
+Vehicle 15: 0 57 118 83 143 176 36 206 33 121 165 188 108 0 
+Vehicle 16: 0 101 144 119 166 35 126 71 9 1 99 53 201 0 
+Vehicle 17: 0 170 134 50 156 112 168 79 205 29 87 42 123 0 
+Vehicle 18: 0 30 120 19 192 196 97 14 96 130 28 74 149 0 
+Vehicle 19: 0 133 48 26 152 40 153 169 89 105 15 59 198 0 
+Vehicle 20: 0 114 159 38 150 22 151 16 140 204 187 142 111 63 56 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_2.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 3568.734543954152
+Min Vehicle User : 19 Best Solution: 2984.3190464047057
+Stage 2 : Minimize the cost
+Min Vehicle User : 19 Best Solution: 2764.5551657791907
+Time 67.325
+Vehicle 1: 0 164 66 147 160 47 70 0 
+Vehicle 2: 0 93 55 58 184 199 37 81 138 0 
+Vehicle 3: 0 148 103 197 124 141 69 200 203 0 
+Vehicle 4: 0 73 116 12 129 11 6 122 139 0 
+Vehicle 5: 0 177 3 88 8 186 127 98 157 135 183 0 
+Vehicle 6: 0 20 41 85 80 31 25 172 77 110 162 0 
+Vehicle 7: 0 113 155 78 175 13 43 204 2 90 67 39 107 0 
+Vehicle 8: 0 57 118 83 193 46 128 106 167 34 95 158 17 0 
+Vehicle 9: 0 32 171 65 86 115 94 51 174 136 189 91 201 0 
+Vehicle 10: 0 62 131 44 35 126 71 9 1 205 99 144 53 0 
+Vehicle 11: 0 21 23 182 75 163 194 145 195 52 92 198 196 0 
+Vehicle 12: 0 101 166 119 143 208 176 36 33 121 165 188 108 0 
+Vehicle 13: 0 161 104 18 54 185 132 202 7 181 117 49 137 0 
+Vehicle 14: 0 45 178 27 173 154 24 61 100 207 64 179 109 0 
+Vehicle 15: 0 190 5 180 84 191 125 209 4 82 60 72 10 0 
+Vehicle 16: 0 170 134 50 156 112 168 79 29 87 42 123 133 0 
+Vehicle 17: 0 48 26 152 40 153 169 89 105 15 59 102 76 0 
+Vehicle 18: 0 30 120 19 192 146 97 14 96 130 28 74 149 68 206 0 
+Vehicle 19: 0 114 159 38 150 22 151 16 140 187 210 142 111 63 56 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_3.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 4385.168440542946
+Min Vehicle User : 19 Best Solution: 4124.1485029646465
+Min Vehicle User : 18 Best Solution: 4061.1866601513766
+Min Vehicle User : 17 Best Solution: 3311.1506780537193
+Stage 2 : Minimize the cost
+Min Vehicle User : 17 Best Solution: 3128.614783449405
+Time 69.891
+Vehicle 1: 0 93 55 135 58 184 37 138 146 102 131 0 
+Vehicle 2: 0 10 5 106 167 43 13 2 175 203 155 39 107 0 
+Vehicle 3: 0 177 3 88 8 186 127 98 157 199 183 119 71 0 
+Vehicle 4: 0 120 44 101 35 126 144 9 1 99 53 166 17 0 
+Vehicle 5: 0 32 65 160 47 205 66 70 174 171 94 147 91 0 
+Vehicle 6: 0 148 103 206 173 154 24 61 100 64 162 149 76 0 
+Vehicle 7: 0 124 200 197 69 141 115 51 86 136 189 12 109 0 
+Vehicle 8: 0 45 178 27 192 196 97 14 96 130 19 30 68 0 
+Vehicle 9: 0 21 23 182 75 163 194 145 195 52 92 198 74 0 
+Vehicle 10: 0 170 134 50 156 112 168 79 29 87 42 123 133 0 
+Vehicle 11: 0 161 104 18 54 185 132 7 181 117 49 81 137 0 
+Vehicle 12: 0 20 41 85 80 31 25 172 77 110 116 164 179 0 
+Vehicle 13: 0 62 48 26 152 40 153 169 89 105 15 59 28 0 
+Vehicle 14: 0 113 73 129 11 6 122 139 34 95 158 190 67 0 
+Vehicle 15: 0 60 82 180 84 191 125 4 72 193 46 128 90 0 
+Vehicle 16: 0 114 159 38 204 150 22 151 16 140 187 142 111 63 56 0 
+Vehicle 17: 0 57 118 83 143 176 36 33 121 165 188 202 108 78 201 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_4.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 4342.944021932155
+Min Vehicle User : 19 Best Solution: 4241.779396070247
+Min Vehicle User : 18 Best Solution: 4027.873632754864
+Min Vehicle User : 17 Best Solution: 3820.021814628739
+Stage 2 : Minimize the cost
+Min Vehicle User : 17 Best Solution: 2693.4087574243986
+Time 98.839
+Vehicle 1: 0 70 47 160 147 43 13 2 175 155 107 0 
+Vehicle 2: 0 39 57 143 176 36 121 202 165 188 108 67 78 0 
+Vehicle 3: 0 101 144 119 166 35 126 71 9 1 99 53 204 0 
+Vehicle 4: 0 33 82 180 84 191 125 4 209 72 60 83 118 0 
+Vehicle 5: 0 21 23 182 75 163 194 145 195 52 92 169 89 0 
+Vehicle 6: 0 93 55 135 184 199 138 19 192 28 120 44 131 0 
+Vehicle 7: 0 81 37 58 7 132 54 18 185 117 181 49 183 0 
+Vehicle 8: 0 62 102 146 97 96 153 40 152 14 59 198 74 0 
+Vehicle 9: 0 32 171 65 86 115 94 51 174 136 189 124 200 0 
+Vehicle 10: 0 170 134 50 156 112 168 79 29 87 42 123 48 0 
+Vehicle 11: 0 178 27 154 24 61 100 64 173 149 30 68 76 0 
+Vehicle 12: 0 177 3 88 8 206 186 127 98 157 104 161 137 0 
+Vehicle 13: 0 45 41 85 31 25 77 133 26 105 15 196 130 0 
+Vehicle 14: 0 148 103 203 197 141 69 80 172 110 162 20 179 208 109 0 
+Vehicle 15: 0 113 139 11 129 6 122 66 210 164 91 201 12 116 73 0 
+Vehicle 16: 0 114 159 38 150 22 151 16 140 187 142 111 207 63 56 0 
+Vehicle 17: 0 190 5 10 193 46 128 106 167 34 205 95 158 90 17 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_5.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 3156.8509305847406
+Stage 2 : Minimize the cost
+Min Vehicle User : 20 Best Solution: 2702.048765541619
+Time 64.091
+Vehicle 1: 0 62 131 44 102 146 68 76 201 0 
+Vehicle 2: 0 148 103 197 124 213 141 69 200 0 
+Vehicle 3: 0 73 116 12 129 11 6 122 139 0 
+Vehicle 4: 0 164 66 147 160 47 212 91 70 0 
+Vehicle 5: 0 32 171 65 86 115 94 51 174 136 189 0 
+Vehicle 6: 0 93 211 55 135 58 184 199 37 81 137 0 
+Vehicle 7: 0 20 41 85 80 31 25 172 77 110 162 0 
+Vehicle 8: 0 21 23 182 75 163 194 145 195 52 92 0 
+Vehicle 9: 0 177 3 206 88 8 186 127 98 157 138 0 
+Vehicle 10: 0 60 82 180 84 191 125 4 203 72 17 0 
+Vehicle 11: 0 190 5 10 193 46 128 106 167 207 34 95 158 0 
+Vehicle 12: 0 113 155 78 175 13 43 2 90 67 39 204 107 0 
+Vehicle 13: 0 101 144 119 166 35 126 71 9 1 99 53 208 0 
+Vehicle 14: 0 45 178 27 173 154 24 61 100 64 179 210 109 0 
+Vehicle 15: 0 57 118 83 143 176 36 214 33 121 165 188 108 0 
+Vehicle 16: 0 170 134 50 156 112 168 79 29 87 42 205 123 0 
+Vehicle 17: 0 133 48 26 152 40 153 169 89 105 15 59 198 0 
+Vehicle 18: 0 30 120 19 192 196 97 14 96 130 28 74 149 0 
+Vehicle 19: 0 161 104 18 54 185 132 7 209 181 117 49 183 0 
+Vehicle 20: 0 114 159 38 150 22 151 16 140 187 142 111 202 63 56 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_6.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 22 Best Solution: 3770.8756122550617
+Min Vehicle User : 21 Best Solution: 3281.3289694468585
+Min Vehicle User : 20 Best Solution: 2702.2049443317574
+Stage 2 : Minimize the cost
+Min Vehicle User : 20 Best Solution: 2701.0353881583824
+Time 62.267
+Vehicle 1: 0 164 66 147 160 47 213 91 70 0 
+Vehicle 2: 0 73 116 12 129 11 6 122 139 0 
+Vehicle 3: 0 62 131 44 102 146 208 68 76 0 
+Vehicle 4: 0 148 103 197 124 212 141 69 200 0 
+Vehicle 5: 0 32 171 65 86 115 94 51 174 136 189 0 
+Vehicle 6: 0 21 23 182 75 163 194 145 195 52 92 0 
+Vehicle 7: 0 177 3 88 8 202 186 127 98 157 138 0 
+Vehicle 8: 0 57 214 118 83 143 176 36 33 121 17 0 
+Vehicle 9: 0 93 55 135 58 184 199 37 206 81 137 0 
+Vehicle 10: 0 20 41 85 80 31 25 172 77 110 162 0 
+Vehicle 11: 0 45 178 27 173 154 24 61 100 64 210 179 109 0 
+Vehicle 12: 0 101 144 119 166 35 126 71 9 1 211 99 53 0 
+Vehicle 13: 0 113 155 78 175 13 43 2 90 207 67 39 107 0 
+Vehicle 14: 0 190 5 10 193 46 128 106 205 167 34 95 158 0 
+Vehicle 15: 0 161 104 18 54 185 132 7 181 117 49 209 183 0 
+Vehicle 16: 0 170 134 50 156 112 168 204 79 29 87 42 123 0 
+Vehicle 17: 0 133 48 26 152 40 153 169 89 105 15 59 198 0 
+Vehicle 18: 0 30 120 19 192 196 97 14 96 130 28 74 149 0 
+Vehicle 19: 0 60 82 180 84 191 125 4 72 165 188 108 201 0 
+Vehicle 20: 0 114 159 38 150 22 151 16 140 203 187 142 111 63 56 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_7.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 21 Best Solution: 3711.960633930809
+Min Vehicle User : 20 Best Solution: 2792.439275163615
+Stage 2 : Minimize the cost
+Min Vehicle User : 20 Best Solution: 2701.0353881583824
+Time 69.73
+Vehicle 1: 0 73 116 12 129 11 6 122 139 0 
+Vehicle 2: 0 164 66 147 160 47 213 91 70 0 
+Vehicle 3: 0 148 103 197 124 141 69 200 201 0 
+Vehicle 4: 0 62 131 44 102 146 68 76 203 0 
+Vehicle 5: 0 32 171 65 86 115 94 51 174 136 189 0 
+Vehicle 6: 0 20 41 85 80 31 25 172 77 110 162 0 
+Vehicle 7: 0 93 55 135 58 210 184 199 37 81 137 0 
+Vehicle 8: 0 57 212 118 83 143 176 36 33 121 17 0 
+Vehicle 9: 0 177 3 88 8 186 127 98 157 138 202 0 
+Vehicle 10: 0 21 23 182 75 163 194 145 195 52 92 0 
+Vehicle 11: 0 45 178 27 173 154 24 61 100 64 179 109 209 0 
+Vehicle 12: 0 170 134 50 156 208 112 168 79 29 87 42 123 0 
+Vehicle 13: 0 190 5 10 193 46 128 106 206 167 34 95 158 0 
+Vehicle 14: 0 113 155 78 175 13 43 2 214 90 67 39 107 0 
+Vehicle 15: 0 101 144 119 166 35 126 207 71 9 1 99 53 0 
+Vehicle 16: 0 60 82 180 84 191 125 4 72 165 188 205 108 0 
+Vehicle 17: 0 30 120 19 192 196 97 14 96 130 28 74 149 0 
+Vehicle 18: 0 133 48 26 152 40 153 169 89 105 15 59 198 0 
+Vehicle 19: 0 161 104 18 54 185 132 7 204 181 117 49 183 0 
+Vehicle 20: 0 114 159 38 150 22 151 16 140 187 142 111 211 63 56 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_8.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 3414.147945851619
+Stage 2 : Minimize the cost
+Min Vehicle User : 20 Best Solution: 2689.8330608342285
+Time 69.421
+Vehicle 1: 0 113 73 129 11 6 122 206 139 0 
+Vehicle 2: 0 164 148 103 197 124 141 69 200 0 
+Vehicle 3: 0 116 12 66 147 160 47 91 70 0 
+Vehicle 4: 0 62 131 44 102 146 205 68 76 0 
+Vehicle 5: 0 118 83 143 176 36 33 121 165 188 17 0 
+Vehicle 6: 0 78 155 175 13 43 2 90 67 39 107 0 
+Vehicle 7: 0 32 171 65 86 115 94 51 174 136 189 0 
+Vehicle 8: 0 57 60 82 180 84 191 125 4 72 108 0 
+Vehicle 9: 0 21 23 182 75 163 194 145 195 52 92 0 
+Vehicle 10: 0 178 27 173 154 24 61 100 64 179 109 0 
+Vehicle 11: 0 177 3 88 8 186 127 98 157 138 203 0 
+Vehicle 12: 0 93 55 135 58 184 199 37 81 201 137 0 
+Vehicle 13: 0 161 104 18 54 185 132 7 181 117 49 183 210 0 
+Vehicle 14: 0 133 26 40 152 14 153 169 89 105 15 59 198 0 
+Vehicle 15: 0 30 120 19 192 196 97 96 209 130 28 74 149 0 
+Vehicle 16: 0 45 20 41 85 80 31 25 172 77 110 162 207 0 
+Vehicle 17: 0 48 170 134 50 156 112 168 79 29 87 42 123 0 
+Vehicle 18: 0 190 5 10 193 46 128 106 167 34 95 204 158 0 
+Vehicle 19: 0 101 144 119 166 35 208 126 71 9 1 99 53 0 
+Vehicle 20: 0 114 159 38 150 22 151 16 140 187 142 111 202 63 56 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_9.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 21 Best Solution: 4356.895696157539
+Min Vehicle User : 20 Best Solution: 4602.662369350051
+Min Vehicle User : 19 Best Solution: 3565.323391644186
+Min Vehicle User : 18 Best Solution: 3179.025360304277
+Stage 2 : Minimize the cost
+Min Vehicle User : 18 Best Solution: 2724.2352747165705
+Time 79.685
+Vehicle 1: 0 164 66 160 47 91 70 6 139 0 
+Vehicle 2: 0 12 148 103 197 124 141 69 200 162 179 0 
+Vehicle 3: 0 45 20 41 85 80 31 25 172 77 110 0 
+Vehicle 4: 0 93 55 104 18 54 185 132 7 181 53 0 
+Vehicle 5: 0 30 120 19 192 196 97 68 76 96 130 74 149 0 
+Vehicle 6: 0 161 177 3 88 8 186 127 98 157 117 210 49 0 
+Vehicle 7: 0 73 116 129 11 122 13 43 2 90 67 202 39 0 
+Vehicle 8: 0 62 131 178 27 173 154 24 61 207 100 64 109 0 
+Vehicle 9: 0 78 101 144 119 166 35 126 71 9 1 99 209 0 
+Vehicle 10: 0 113 190 5 10 193 46 128 106 167 34 95 158 0 
+Vehicle 11: 0 48 170 134 50 156 112 168 79 29 87 42 123 0 
+Vehicle 12: 0 44 102 146 135 58 184 199 37 81 138 137 183 0 
+Vehicle 13: 0 155 175 118 83 143 176 36 204 33 121 108 17 0 
+Vehicle 14: 0 133 21 23 182 75 163 194 145 195 52 92 198 0 
+Vehicle 15: 0 57 60 82 180 84 191 125 4 72 165 188 107 0 
+Vehicle 16: 0 147 32 171 65 86 115 94 51 174 136 189 203 0 
+Vehicle 17: 0 114 159 38 150 22 151 208 16 140 187 142 111 63 56 0 
+Vehicle 18: 0 26 152 40 206 153 169 89 205 105 14 59 15 28 201 0 
+--------------------
+
+
+--------------------
+Executing LC1_2_10.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 21 Best Solution: 4356.790091457013
+Min Vehicle User : 20 Best Solution: 4767.942748289155
+Min Vehicle User : 19 Best Solution: 3838.950000178048
+Min Vehicle User : 18 Best Solution: 3736.698954322742
+Min Vehicle User : 17 Best Solution: 3283.8503155621524
+Stage 2 : Minimize the cost
+Min Vehicle User : 17 Best Solution: 2946.997678068366
+Time 45.786
+Vehicle 1: 0 73 116 12 91 164 66 47 70 122 139 0 
+Vehicle 2: 0 27 173 62 68 76 120 97 61 100 64 109 74 0 
+Vehicle 3: 0 148 103 197 141 124 174 69 200 77 110 162 207 0 
+Vehicle 4: 0 131 44 144 119 166 35 126 71 9 1 53 183 0 
+Vehicle 5: 0 30 196 21 23 75 163 182 194 145 195 52 92 0 
+Vehicle 6: 0 93 55 184 114 151 150 22 16 140 187 142 111 0 
+Vehicle 7: 0 113 190 5 10 193 46 128 106 167 34 95 158 0 
+Vehicle 8: 0 101 58 177 3 88 8 186 127 98 157 137 99 0 
+Vehicle 9: 0 57 83 60 82 180 84 191 125 4 72 188 108 0 
+Vehicle 10: 0 78 155 175 204 118 143 176 36 121 33 165 17 0 
+Vehicle 11: 0 48 170 134 50 156 112 168 79 29 87 42 123 0 
+Vehicle 12: 0 20 31 129 11 6 13 43 2 90 67 39 107 0 
+Vehicle 13: 0 133 26 152 14 40 153 169 89 105 15 59 198 0 
+Vehicle 14: 0 19 192 102 146 38 159 56 199 37 81 138 208 0 
+Vehicle 15: 0 147 160 32 171 65 86 115 94 205 51 136 189 179 206 0 
+Vehicle 16: 0 135 161 202 104 18 54 185 132 7 181 117 49 63 203 0 
+Vehicle 17: 0 45 178 154 24 41 201 80 85 25 172 96 130 28 149 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_1.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 2171.8158072181986
+Min Vehicle User : 6 Best Solution: 1931.4425029392019
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1931.4425029392019
+Time 31.815
+Vehicle 1: 0 178 167 40 39 119 38 166 102 98 76 8 78 177 134 22 191 150 43 151 69 97 31 181 172 87 163 75 168 154 21 51 201 0 
+Vehicle 2: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 204 95 129 0 
+Vehicle 3: 0 28 136 171 63 173 94 99 70 162 46 187 60 30 108 133 16 61 72 62 122 24 92 49 160 117 82 17 7 170 165 58 66 52 105 0 
+Vehicle 4: 0 188 196 142 107 200 41 183 65 35 116 15 3 199 189 47 175 155 89 179 9 19 146 202 186 161 54 147 195 156 79 4 11 23 36 0 
+Vehicle 5: 0 144 42 110 6 203 184 148 29 2 138 143 126 128 48 145 25 90 193 20 71 127 5 194 190 80 158 101 91 197 44 106 159 83 14 0 
+Vehicle 6: 0 104 64 137 198 164 174 115 140 26 18 57 113 131 169 192 84 27 53 56 185 180 37 123 121 124 55 85 88 135 1 111 157 34 176 114 68 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_2.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 2769.0747935307154
+Min Vehicle User : 7 Best Solution: 3049.0752395418976
+Min Vehicle User : 6 Best Solution: 2066.1280987865457
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1881.4023058569062
+Time 59.918
+Vehicle 1: 0 171 63 99 94 70 162 60 30 173 108 133 16 61 72 24 92 160 117 201 82 17 7 170 165 58 66 52 105 0 
+Vehicle 2: 0 178 167 40 39 119 38 166 102 98 76 8 78 177 134 22 191 150 43 69 151 97 31 181 172 87 163 75 168 154 21 51 41 200 202 0 
+Vehicle 3: 0 28 196 142 107 183 65 35 116 15 3 199 189 47 175 155 89 179 62 19 186 146 161 54 147 9 195 156 79 4 11 23 36 203 122 0 
+Vehicle 4: 0 136 42 110 184 6 148 29 2 138 143 126 128 48 145 25 90 193 20 71 127 5 194 190 204 80 158 101 91 197 44 106 159 83 14 144 188 0 
+Vehicle 5: 0 104 64 137 198 164 174 26 140 115 18 57 113 131 169 192 84 27 53 56 185 180 37 123 121 124 55 85 88 135 1 111 157 34 176 114 46 0 
+Vehicle 6: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 187 68 49 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_3.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 9 Best Solution: 3594.416249874755
+Min Vehicle User : 8 Best Solution: 3687.2004300914855
+Min Vehicle User : 7 Best Solution: 3881.4255580260265
+Min Vehicle User : 6 Best Solution: 2809.2153984948936
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1844.3280821258263
+Time 87.814
+Vehicle 1: 0 171 63 99 70 46 162 94 60 30 173 108 133 16 132 72 61 24 92 49 160 117 82 39 88 7 170 165 58 66 201 52 105 0 
+Vehicle 2: 0 136 196 107 35 65 183 116 15 3 199 189 47 195 155 179 89 9 19 14 186 161 197 54 147 175 156 79 4 23 11 142 28 0 
+Vehicle 3: 0 42 6 110 148 29 128 2 138 143 126 90 25 48 145 127 193 20 71 5 194 190 80 158 101 91 106 44 146 159 83 184 144 62 188 0 
+Vehicle 4: 0 67 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 36 122 0 
+Vehicle 5: 0 178 17 167 40 119 38 166 102 98 76 8 78 22 134 177 191 150 43 69 151 97 31 181 202 172 75 163 87 168 154 21 51 41 200 0 
+Vehicle 6: 0 187 104 64 198 164 26 140 115 18 57 113 131 169 192 84 27 53 56 185 180 37 123 121 124 1 135 85 55 111 174 137 157 34 176 114 68 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_4.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 2919.518361947465
+Min Vehicle User : 6 Best Solution: 3106.5574451738394
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1767.118300107187
+Time 133.177
+Vehicle 1: 0 200 51 41 21 65 183 35 107 116 15 4 179 89 9 155 175 47 147 54 197 161 44 146 186 83 23 11 142 196 28 0 
+Vehicle 2: 0 171 63 70 162 114 34 157 137 64 104 187 60 30 173 108 133 16 61 72 24 92 49 117 82 7 170 165 58 178 66 52 201 0 
+Vehicle 3: 0 105 160 176 174 198 164 26 140 115 18 57 113 131 169 192 84 27 53 56 185 180 37 123 121 111 124 55 85 88 135 1 46 202 68 0 
+Vehicle 4: 0 188 19 14 110 184 148 29 2 138 143 128 126 90 25 48 145 127 5 71 193 20 194 190 80 158 101 91 106 159 6 42 144 62 36 122 136 0 
+Vehicle 5: 0 17 39 167 40 119 38 166 102 98 76 8 78 134 22 191 150 43 151 97 31 69 181 172 75 199 189 195 156 79 3 154 168 163 87 204 177 0 
+Vehicle 6: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 203 81 130 112 120 125 109 149 152 95 129 94 99 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_5.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 3005.15130992376
+Min Vehicle User : 7 Best Solution: 4007.2271454911506
+Min Vehicle User : 6 Best Solution: 1908.5249111290686
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1891.208994847746
+Time 50.037
+Vehicle 1: 0 188 196 142 107 200 41 65 183 35 116 15 3 199 189 47 175 155 179 89 9 19 186 146 161 54 147 195 156 79 4 23 11 0 
+Vehicle 2: 0 178 167 40 39 119 38 166 102 98 76 8 78 134 177 22 191 202 150 43 69 151 97 31 181 172 75 87 163 168 154 21 51 0 
+Vehicle 3: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 68 0 
+Vehicle 4: 0 144 42 6 110 184 148 29 2 143 138 126 128 48 145 25 90 193 20 71 127 5 194 190 80 158 101 91 44 197 106 159 83 14 36 0 
+Vehicle 5: 0 28 136 171 63 173 94 162 99 70 46 187 60 30 108 133 16 61 72 62 122 24 92 49 160 117 82 17 7 170 165 58 66 52 105 0 
+Vehicle 6: 0 104 64 137 174 198 164 115 26 140 18 57 131 113 169 192 84 27 53 56 185 180 37 123 121 124 55 85 88 201 135 1 111 157 34 176 114 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_6.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 2733.0859722362234
+Min Vehicle User : 7 Best Solution: 2801.3392941898155
+Min Vehicle User : 6 Best Solution: 2225.323968491374
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1857.7772034628354
+Time 63.551
+Vehicle 1: 0 171 63 173 94 162 99 70 46 187 60 30 108 133 16 61 72 62 122 24 92 49 160 117 82 17 7 170 165 58 66 0 
+Vehicle 2: 0 178 167 40 39 119 38 166 102 98 76 8 78 22 134 177 43 191 150 151 97 31 69 181 172 75 163 87 168 154 201 21 51 0 
+Vehicle 3: 0 144 42 6 110 184 148 29 2 138 143 128 126 25 90 48 145 193 20 71 127 5 194 190 80 158 101 91 106 159 197 44 83 14 36 0 
+Vehicle 4: 0 28 188 196 142 107 200 41 65 183 35 116 15 3 199 189 47 175 202 155 179 89 9 19 186 146 161 54 147 195 156 79 4 23 11 0 
+Vehicle 5: 0 104 64 198 164 137 174 26 140 115 18 57 131 113 169 192 84 27 53 56 185 180 37 123 121 124 55 85 88 135 1 111 157 34 176 114 68 0 
+Vehicle 6: 0 136 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 52 105 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_7.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 2919.0229859253095
+Min Vehicle User : 7 Best Solution: 3029.3539194084906
+Min Vehicle User : 6 Best Solution: 1898.0619391043272
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1850.1342688373795
+Time 64.431
+Vehicle 1: 0 178 167 40 39 119 38 166 102 98 76 8 78 22 134 177 43 202 191 150 151 97 31 69 181 172 75 163 87 168 154 21 51 0 
+Vehicle 2: 0 144 42 6 110 184 148 29 2 138 143 128 126 90 25 48 145 71 5 127 193 20 194 190 80 158 101 91 106 159 83 14 36 0 
+Vehicle 3: 0 28 136 171 63 173 94 162 99 70 46 187 60 30 108 133 16 61 72 62 122 24 92 49 160 117 82 17 7 170 165 58 66 0 
+Vehicle 4: 0 188 196 142 107 200 41 35 116 15 183 65 3 199 189 47 175 155 179 89 9 19 186 146 147 54 197 161 44 195 156 79 4 23 11 0 
+Vehicle 5: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 52 105 201 0 
+Vehicle 6: 0 104 64 198 164 137 174 26 140 115 18 57 131 113 169 192 84 27 53 56 185 180 37 123 121 124 55 85 88 135 1 111 157 34 176 114 68 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_8.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 2669.4721387099084
+Min Vehicle User : 7 Best Solution: 2573.6007033942788
+Min Vehicle User : 6 Best Solution: 2444.4498723340203
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1824.3360225623735
+Time 87.711
+Vehicle 1: 0 171 63 173 94 162 99 70 46 187 60 30 108 133 16 61 72 62 122 24 92 49 160 117 82 17 7 170 165 58 66 0 
+Vehicle 2: 0 178 167 40 39 119 38 166 102 98 76 8 78 22 134 177 43 191 150 151 204 97 31 69 181 172 75 163 87 168 154 21 51 0 
+Vehicle 3: 0 136 144 42 6 110 184 148 29 2 138 143 128 126 90 25 48 203 145 127 71 193 20 5 194 190 80 158 101 91 106 159 83 14 36 0 
+Vehicle 4: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 52 202 105 0 
+Vehicle 5: 0 28 188 196 142 107 200 41 65 183 35 116 15 3 199 189 47 175 155 179 89 9 19 186 146 197 161 44 54 147 201 195 156 79 4 11 23 0 
+Vehicle 6: 0 104 64 198 164 137 174 26 140 115 18 57 131 113 169 192 84 27 53 56 185 180 37 55 123 121 124 135 85 88 1 111 157 34 176 114 68 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_9.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 3262.4677701502687
+Min Vehicle User : 7 Best Solution: 3055.8623983075126
+Min Vehicle User : 6 Best Solution: 2666.828821160931
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1854.2103671283508
+Time 80.737
+Vehicle 1: 0 144 42 6 110 184 148 29 2 138 143 128 126 90 25 48 145 127 5 71 193 20 194 190 80 158 101 91 106 159 83 14 36 0 
+Vehicle 2: 0 178 167 40 39 119 38 166 78 102 98 76 8 150 191 22 134 177 43 151 201 97 31 69 181 172 75 163 87 168 154 21 51 0 
+Vehicle 3: 0 171 63 173 94 162 99 70 46 104 187 60 30 108 133 16 61 72 62 89 179 122 24 92 49 160 117 82 17 7 170 165 58 66 105 0 
+Vehicle 4: 0 28 136 188 196 142 107 200 41 65 183 35 116 15 3 199 189 47 175 155 9 19 186 146 197 161 44 54 147 79 156 195 4 23 11 0 
+Vehicle 5: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 73 32 50 96 139 103 141 74 100 81 130 112 202 120 125 109 149 152 95 129 0 
+Vehicle 6: 0 137 64 198 164 174 26 140 115 18 57 131 113 169 192 84 27 53 56 185 180 37 55 123 121 1 88 85 135 124 111 157 34 176 114 68 52 0 
+--------------------
+
+
+--------------------
+Executing LC2_2_10.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 2943.1933863697977
+Min Vehicle User : 7 Best Solution: 2672.890094811173
+Min Vehicle User : 6 Best Solution: 2059.1011252776198
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 1817.4532624145713
+Time 108.906
+Vehicle 1: 0 171 63 99 70 46 162 94 173 30 60 187 73 32 16 133 108 61 72 62 122 24 92 49 160 117 82 17 7 170 165 58 66 0 
+Vehicle 2: 0 28 196 142 107 116 15 35 65 183 3 199 189 47 175 155 179 89 9 147 54 19 186 146 197 161 44 195 156 79 4 23 11 0 
+Vehicle 3: 0 136 188 144 42 6 110 184 148 29 2 138 143 128 126 90 25 48 145 127 5 71 193 20 194 190 80 158 101 91 106 159 83 14 36 0 
+Vehicle 4: 0 178 200 41 167 40 39 119 38 166 102 98 76 8 78 22 134 177 43 191 150 151 97 31 69 181 172 75 163 87 168 154 202 21 51 0 
+Vehicle 5: 0 67 132 10 153 59 86 93 118 182 45 77 33 13 12 50 96 139 103 141 74 100 81 130 112 120 125 109 149 152 95 129 68 52 105 0 
+Vehicle 6: 0 104 64 198 164 137 174 26 140 115 18 57 131 113 169 192 84 27 53 56 185 180 37 55 123 121 111 124 135 85 88 1 176 157 34 201 114 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_1.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 26 Best Solution: 6688.2128805127995
+Min Vehicle User : 25 Best Solution: 6127.528973197889
+Min Vehicle User : 24 Best Solution: 5545.605326696767
+Min Vehicle User : 23 Best Solution: 5422.804063839435
+Min Vehicle User : 22 Best Solution: 5322.672006222758
+Min Vehicle User : 21 Best Solution: 5126.843527626771
+Min Vehicle User : 20 Best Solution: 4971.471025594596
+Stage 2 : Minimize the cost
+Min Vehicle User : 20 Best Solution: 4819.124122812914
+Time 48.178
+Vehicle 1: 0 158 51 143 113 21 126 148 197 0 
+Vehicle 2: 0 1 115 16 162 171 122 170 78 119 201 0 
+Vehicle 3: 0 112 152 99 62 194 118 183 40 128 52 0 
+Vehicle 4: 0 87 145 35 60 38 84 90 88 111 59 0 
+Vehicle 5: 0 149 81 161 2 8 76 17 200 209 105 0 
+Vehicle 6: 0 73 30 208 34 98 6 189 177 127 77 0 
+Vehicle 7: 0 7 41 36 86 131 130 79 156 172 91 0 
+Vehicle 8: 0 155 18 14 176 31 185 169 53 192 42 0 
+Vehicle 9: 0 117 3 5 133 207 195 160 180 28 75 0 
+Vehicle 10: 0 46 184 206 71 193 151 129 141 191 110 0 
+Vehicle 11: 0 132 120 26 123 139 187 124 181 101 154 0 
+Vehicle 12: 0 140 57 173 104 95 58 29 96 174 97 0 
+Vehicle 13: 0 168 92 48 146 121 32 138 83 45 24 0 
+Vehicle 14: 0 63 44 50 66 165 69 134 204 103 9 0 
+Vehicle 15: 0 106 85 94 12 19 178 23 22 47 82 74 108 0 
+Vehicle 16: 0 4 188 15 54 89 125 114 39 37 164 65 43 0 
+Vehicle 17: 0 157 93 199 135 80 64 109 182 202 167 70 107 0 
+Vehicle 18: 0 196 13 20 163 100 136 142 159 102 10 205 198 0 
+Vehicle 19: 0 72 147 153 166 175 56 33 144 186 179 203 190 0 
+Vehicle 20: 0 55 67 150 137 68 25 116 210 11 49 27 61 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_2.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 22 Best Solution: 6256.284818945369
+Min Vehicle User : 21 Best Solution: 6079.487047416188
+Min Vehicle User : 20 Best Solution: 5624.053958896506
+Min Vehicle User : 19 Best Solution: 4883.462661378501
+Min Vehicle User : 18 Best Solution: 4873.41997632709
+Min Vehicle User : 17 Best Solution: 5283.605807531024
+Stage 2 : Minimize the cost
+Min Vehicle User : 17 Best Solution: 4621.2058468227615
+Time 50.903
+Vehicle 1: 0 158 51 50 66 11 160 126 148 113 119 0 
+Vehicle 2: 0 168 92 210 48 169 187 78 139 185 81 0 
+Vehicle 3: 0 63 44 3 86 131 79 156 172 14 197 0 
+Vehicle 4: 0 132 18 143 176 69 31 134 103 101 154 0 
+Vehicle 5: 0 46 15 71 186 166 151 180 167 56 61 0 
+Vehicle 6: 0 145 192 53 2 8 76 17 40 121 60 208 105 0 
+Vehicle 7: 0 157 93 199 135 193 175 39 37 179 190 206 72 0 
+Vehicle 8: 0 196 194 20 163 104 100 136 142 159 13 10 198 0 
+Vehicle 9: 0 87 161 115 16 162 171 170 122 42 209 146 149 0 
+Vehicle 10: 0 35 32 90 95 173 138 29 96 43 191 141 110 0 
+Vehicle 11: 0 155 67 150 137 68 64 109 28 182 147 9 174 203 97 0 
+Vehicle 12: 0 73 30 128 34 98 6 189 177 102 205 77 127 58 114 0 
+Vehicle 13: 0 4 188 184 153 54 164 89 125 129 33 144 70 107 7 0 
+Vehicle 14: 0 106 85 65 94 12 19 178 23 22 47 82 207 74 108 0 
+Vehicle 15: 0 1 120 26 123 21 165 124 181 111 59 83 204 52 24 0 
+Vehicle 16: 0 140 57 152 38 62 84 118 99 88 183 200 201 112 45 0 
+Vehicle 17: 0 55 41 36 5 117 133 27 195 49 202 25 116 130 80 91 75 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_3.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 19 Best Solution: 5436.06046483824
+Min Vehicle User : 17 Best Solution: 4952.969914871173
+Min Vehicle User : 16 Best Solution: 5378.270269030522
+Min Vehicle User : 15 Best Solution: 4765.221067291029
+Stage 2 : Minimize the cost
+Min Vehicle User : 15 Best Solution: 3612.639044272317
+Time 60.374
+Vehicle 1: 0 157 93 199 109 28 182 41 75 0 
+Vehicle 2: 0 132 103 92 48 169 185 148 149 202 119 0 
+Vehicle 3: 0 155 120 160 130 11 176 165 69 134 101 0 
+Vehicle 4: 0 140 62 20 163 104 100 136 159 10 83 0 
+Vehicle 5: 0 175 72 184 71 191 151 125 110 37 39 207 9 0 
+Vehicle 6: 0 73 45 57 198 19 13 38 84 32 138 111 52 0 
+Vehicle 7: 0 63 44 3 117 86 131 66 50 158 79 172 18 14 197 0 
+Vehicle 8: 0 196 30 35 99 183 34 194 98 142 128 200 192 154 81 0 
+Vehicle 9: 0 146 16 115 162 171 170 187 78 139 168 126 113 31 1 0 
+Vehicle 10: 0 156 51 206 26 143 204 21 123 124 181 161 42 53 60 0 
+Vehicle 11: 0 106 43 85 65 94 82 47 58 77 6 189 177 102 173 90 24 0 
+Vehicle 12: 0 87 145 121 17 2 8 122 205 76 118 152 88 40 112 59 105 0 
+Vehicle 13: 0 4 56 188 153 167 166 33 193 186 144 203 179 190 135 147 107 0 
+Vehicle 14: 0 55 67 150 36 137 68 25 116 5 61 49 180 195 27 133 64 80 91 201 7 0 
+Vehicle 15: 0 46 15 70 208 129 141 164 54 89 12 22 95 127 178 23 29 96 114 74 174 108 97 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_4.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 14 Best Solution: 4286.852547020517
+Min Vehicle User : 13 Best Solution: 4116.344951970172
+Min Vehicle User : 12 Best Solution: 4156.101523070313
+Min Vehicle User : 11 Best Solution: 4398.260825952475
+Min Vehicle User : 10 Best Solution: 3593.482341679044
+Stage 2 : Minimize the cost
+Min Vehicle User : 10 Best Solution: 3068.6671918884963
+Time 71.358
+Vehicle 1: 0 196 105 152 183 128 34 62 136 118 111 113 119 0 
+Vehicle 2: 0 154 16 115 162 171 8 181 2 17 40 121 35 210 60 101 87 0 
+Vehicle 3: 0 140 145 185 92 48 169 192 53 76 200 112 99 88 38 32 205 59 24 0 
+Vehicle 4: 0 73 30 194 142 98 20 163 102 208 6 189 177 77 127 58 22 19 198 57 201 0 
+Vehicle 5: 0 56 188 15 70 54 164 45 83 90 84 10 173 100 159 104 13 138 52 97 108 0 
+Vehicle 6: 0 106 89 65 43 85 191 94 12 82 47 203 95 178 23 29 96 114 74 174 110 37 39 0 
+Vehicle 7: 0 175 72 184 71 166 4 204 46 125 151 141 129 33 193 186 206 144 179 153 190 167 147 107 9 0 
+Vehicle 8: 0 155 135 199 93 133 27 180 64 109 28 182 80 25 36 44 79 172 120 156 18 14 197 91 157 0 
+Vehicle 9: 0 63 67 150 137 3 68 5 160 117 49 195 61 116 130 11 86 209 131 66 207 50 158 55 7 41 75 0 
+Vehicle 10: 0 132 149 69 134 103 31 148 176 51 126 26 202 21 123 168 139 78 187 170 122 42 161 146 124 165 143 1 81 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_5.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 5667.166247584407
+Min Vehicle User : 19 Best Solution: 5041.707703832739
+Min Vehicle User : 18 Best Solution: 5153.10927849287
+Min Vehicle User : 17 Best Solution: 4885.696591637419
+Min Vehicle User : 16 Best Solution: 5038.0783397626365
+Stage 2 : Minimize the cost
+Min Vehicle User : 16 Best Solution: 4884.974280454405
+Time 45.351
+Vehicle 1: 0 51 26 104 100 136 6 204 189 177 77 0 
+Vehicle 2: 0 73 30 2 48 176 69 124 181 101 154 0 
+Vehicle 3: 0 87 161 115 16 8 76 17 200 40 128 0 
+Vehicle 4: 0 132 155 67 36 137 14 80 185 169 103 9 119 0 
+Vehicle 5: 0 63 44 117 3 5 86 130 25 205 79 172 197 0 
+Vehicle 6: 0 4 188 15 54 89 125 164 141 43 191 203 110 0 
+Vehicle 7: 0 168 92 139 187 162 171 122 170 201 53 192 42 0 
+Vehicle 8: 0 7 55 41 150 68 133 64 109 160 182 167 70 107 91 0 
+Vehicle 9: 0 157 147 93 199 135 212 166 33 129 144 186 179 190 75 0 
+Vehicle 10: 0 1 120 123 143 113 21 165 31 134 156 126 211 78 148 0 
+Vehicle 11: 0 149 57 35 152 34 99 38 62 194 142 159 102 10 59 0 
+Vehicle 12: 0 140 196 13 173 163 98 95 178 58 23 22 65 74 198 0 
+Vehicle 13: 0 72 184 153 71 193 207 151 175 56 39 37 96 29 174 83 45 0 
+Vehicle 14: 0 46 106 85 206 94 12 19 114 138 210 90 127 47 82 52 108 0 
+Vehicle 15: 0 145 112 20 60 146 121 32 84 118 183 88 111 208 97 105 24 0 
+Vehicle 16: 0 81 18 158 50 66 131 195 180 116 202 11 49 28 209 27 61 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_6.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 19 Best Solution: 5396.868953449236
+Min Vehicle User : 18 Best Solution: 4565.892799834484
+Min Vehicle User : 17 Best Solution: 4637.1553267053205
+Min Vehicle User : 16 Best Solution: 4445.015130775432
+Min Vehicle User : 15 Best Solution: 4467.638013175692
+Min Vehicle User : 14 Best Solution: 4753.261102217186
+Stage 2 : Minimize the cost
+Min Vehicle User : 14 Best Solution: 4184.800537953022
+Time 54.28
+Vehicle 1: 0 120 51 26 123 21 126 156 172 210 1 0 
+Vehicle 2: 0 122 115 16 162 171 170 187 78 148 119 0 
+Vehicle 3: 0 132 63 44 36 3 5 86 165 31 169 154 81 0 
+Vehicle 4: 0 106 85 191 94 12 213 19 95 178 23 22 47 82 174 0 
+Vehicle 5: 0 149 87 145 35 161 8 76 192 181 53 17 204 42 112 60 105 0 
+Vehicle 6: 0 185 168 139 92 48 146 176 69 124 212 113 134 103 101 111 97 0 
+Vehicle 7: 0 46 184 153 71 166 193 56 175 39 167 179 190 147 209 75 7 0 
+Vehicle 8: 0 14 18 158 143 207 50 66 131 206 11 130 160 117 25 180 61 0 
+Vehicle 9: 0 155 55 67 41 150 137 68 133 27 64 80 79 116 9 91 197 0 
+Vehicle 10: 0 157 199 93 135 49 195 109 28 182 186 144 129 70 107 72 211 0 
+Vehicle 11: 0 73 59 194 20 163 136 6 100 159 177 102 189 77 127 58 114 0 
+Vehicle 12: 0 140 152 30 2 121 34 98 62 142 128 214 183 200 40 13 10 198 108 0 
+Vehicle 13: 0 4 188 15 54 202 89 151 125 33 29 96 65 208 43 141 164 110 37 0 
+Vehicle 14: 0 196 90 57 173 104 203 38 84 138 118 88 99 32 74 83 52 201 45 24 205 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_7.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 15 Best Solution: 4732.999056137829
+Min Vehicle User : 14 Best Solution: 4384.560170944752
+Min Vehicle User : 13 Best Solution: 4091.5688619588077
+Min Vehicle User : 12 Best Solution: 4218.427454258726
+Stage 2 : Minimize the cost
+Min Vehicle User : 12 Best Solution: 3555.463911375021
+Time 58.795
+Vehicle 1: 0 87 161 16 206 115 162 171 170 122 8 42 146 0 
+Vehicle 2: 0 149 132 155 185 92 48 76 17 183 142 40 200 121 192 0 
+Vehicle 3: 0 157 184 153 71 33 166 70 151 193 186 144 179 190 167 72 107 0 
+Vehicle 4: 0 46 4 15 141 94 82 12 47 127 77 22 39 174 96 29 89 0 
+Vehicle 5: 0 97 73 60 202 35 103 1 31 165 69 124 134 154 101 111 119 0 
+Vehicle 6: 0 106 57 58 173 203 34 100 84 90 138 118 152 88 99 59 205 52 105 0 
+Vehicle 7: 0 24 196 145 53 2 112 32 38 104 95 178 23 19 198 114 74 108 201 0 
+Vehicle 8: 0 120 51 126 26 143 156 176 21 123 168 139 169 181 187 78 148 113 81 0 
+Vehicle 9: 0 63 44 150 3 49 86 130 11 131 66 50 79 158 172 18 14 204 197 0 
+Vehicle 10: 0 147 135 93 199 54 164 125 110 37 9 175 56 188 129 191 85 43 65 0 
+Vehicle 11: 0 140 30 20 62 194 128 98 163 136 6 159 177 189 102 13 10 83 45 0 
+Vehicle 12: 0 41 55 67 36 5 68 137 28 109 25 182 116 160 117 61 180 195 27 133 64 80 75 91 7 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_8.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 14 Best Solution: 4216.3301130791515
+Min Vehicle User : 13 Best Solution: 3504.89755510702
+Min Vehicle User : 11 Best Solution: 3211.816686657303
+Min Vehicle User : 10 Best Solution: 3611.359073082215
+Min Vehicle User : 9 Best Solution: 3296.496887036103
+Stage 2 : Minimize the cost
+Min Vehicle User : 9 Best Solution: 2799.650219525926
+Time 66.739
+Vehicle 1: 0 101 202 145 121 192 92 168 78 162 16 171 170 2 17 200 40 35 119 0 
+Vehicle 2: 0 105 53 115 76 181 169 185 48 161 42 8 122 187 139 123 148 124 87 0 
+Vehicle 3: 0 147 135 93 199 109 28 80 182 166 33 186 144 179 193 153 190 167 72 107 157 0 
+Vehicle 4: 0 196 152 30 128 142 98 20 163 136 6 102 189 159 100 104 173 10 57 83 52 97 24 0 
+Vehicle 5: 0 108 106 89 37 174 22 12 82 47 58 127 77 95 23 205 177 178 19 198 114 74 39 0 
+Vehicle 6: 0 175 56 15 184 71 129 54 164 125 43 85 204 191 94 65 96 29 110 141 151 70 188 4 46 0 
+Vehicle 7: 0 91 63 44 68 5 206 61 180 64 133 27 195 49 116 130 131 86 160 117 25 36 137 55 7 75 41 0 
+Vehicle 8: 0 132 155 67 150 3 11 66 50 69 134 143 176 21 26 126 51 156 172 120 158 79 18 201 14 197 9 0 
+Vehicle 9: 0 140 45 73 203 60 59 138 99 88 183 34 194 62 13 38 84 90 32 118 112 111 146 1 165 31 113 103 154 81 149 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_9.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 18 Best Solution: 5617.405984886787
+Min Vehicle User : 17 Best Solution: 4892.346637155937
+Min Vehicle User : 16 Best Solution: 4925.134911121911
+Min Vehicle User : 15 Best Solution: 5139.053172100755
+Min Vehicle User : 14 Best Solution: 5034.189800681446
+Stage 2 : Minimize the cost
+Min Vehicle User : 14 Best Solution: 4394.211809022337
+Time 43.306
+Vehicle 1: 0 72 184 153 135 166 33 167 191 43 110 0 
+Vehicle 2: 0 149 112 99 121 118 194 142 159 83 52 59 105 0 
+Vehicle 3: 0 157 147 93 199 80 64 133 195 160 180 182 9 0 
+Vehicle 4: 0 168 161 48 187 113 165 69 134 124 103 101 78 119 203 0 
+Vehicle 5: 0 145 2 115 16 8 162 171 76 122 170 17 40 42 148 0 
+Vehicle 6: 0 4 106 85 54 89 94 12 23 58 127 96 29 65 97 0 
+Vehicle 7: 0 63 18 120 158 50 66 131 130 11 49 61 205 27 75 0 
+Vehicle 8: 0 46 188 15 71 193 151 125 175 56 129 144 186 201 179 190 107 0 
+Vehicle 9: 0 155 7 44 3 5 117 86 209 109 25 116 79 172 28 91 197 0 
+Vehicle 10: 0 1 51 26 123 143 139 146 31 185 169 181 53 192 111 200 210 0 
+Vehicle 11: 0 132 41 55 67 150 137 36 68 208 14 176 207 21 126 156 154 0 
+Vehicle 12: 0 140 196 57 13 173 163 95 178 19 114 39 37 164 141 70 45 24 206 0 
+Vehicle 13: 0 73 20 30 34 104 100 136 6 189 202 177 22 47 82 174 74 10 108 0 
+Vehicle 14: 0 87 81 92 35 60 152 98 62 38 84 90 32 138 88 204 183 128 102 77 198 0 
+--------------------
+
+
+--------------------
+Executing LR1_2_10.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 16 Best Solution: 5070.736543598931
+Min Vehicle User : 15 Best Solution: 5012.241609338221
+Min Vehicle User : 14 Best Solution: 4501.942573414623
+Min Vehicle User : 13 Best Solution: 4832.500300095977
+Min Vehicle User : 12 Best Solution: 4124.4854880674575
+Min Vehicle User : 11 Best Solution: 4099.492727779957
+Stage 2 : Minimize the cost
+Min Vehicle User : 11 Best Solution: 4056.63289320478
+Time 26.728
+Vehicle 1: 0 87 196 35 112 48 146 161 8 2 99 121 183 118 111 101 105 0 
+Vehicle 2: 0 73 30 20 13 173 152 34 98 163 136 6 189 177 23 88 83 0 
+Vehicle 3: 0 72 135 93 199 133 64 69 31 103 154 138 90 204 22 174 108 97 45 0 
+Vehicle 4: 0 147 188 15 184 166 153 71 193 109 167 33 179 202 144 186 107 28 75 0 
+Vehicle 5: 0 140 57 46 54 85 94 12 114 19 178 95 82 47 58 127 102 77 10 0 
+Vehicle 6: 0 55 41 157 4 89 106 125 151 56 141 129 191 43 65 29 164 70 190 0 
+Vehicle 7: 0 145 1 143 26 176 51 21 113 165 134 203 124 181 169 185 126 156 172 197 24 0 
+Vehicle 8: 0 92 123 168 139 187 162 115 16 171 170 122 76 205 17 192 53 42 78 148 119 0 
+Vehicle 9: 0 18 150 68 158 50 66 131 86 195 180 160 130 11 79 116 61 49 206 27 91 0 
+Vehicle 10: 0 7 67 63 137 36 44 5 3 117 25 201 80 182 175 9 39 208 37 110 96 198 74 0 
+Vehicle 11: 0 149 132 155 120 14 81 60 32 38 84 104 207 100 159 62 194 142 128 40 200 59 52 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_1.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 5623.554268454894
+Min Vehicle User : 6 Best Solution: 6363.739538413631
+Min Vehicle User : 5 Best Solution: 5666.021291165085
+Stage 2 : Minimize the cost
+Min Vehicle User : 5 Best Solution: 4073.0979604745307
+Time 37.015
+Vehicle 1: 0 18 168 67 60 61 77 152 143 119 31 71 48 167 184 200 178 191 102 38 124 144 158 149 106 28 108 76 188 97 52 39 115 0 
+Vehicle 2: 0 164 183 181 26 8 45 95 197 194 21 6 40 32 128 44 146 193 27 68 13 145 196 75 69 122 107 138 186 159 187 7 156 136 24 114 127 112 80 0 
+Vehicle 3: 0 74 34 4 100 73 79 91 161 151 150 78 57 90 11 141 133 66 142 123 166 157 84 64 189 93 98 83 20 30 121 10 50 126 85 46 87 201 163 0 
+Vehicle 4: 0 23 41 116 56 199 47 65 139 88 118 19 103 43 92 132 195 15 51 120 172 81 59 29 147 9 49 37 129 125 160 101 185 42 155 175 1 140 72 0 
+Vehicle 5: 0 131 62 192 36 33 179 137 117 177 35 162 94 134 63 135 170 165 3 104 14 105 130 198 176 180 17 89 58 174 70 113 16 173 5 22 55 96 111 82 2 12 109 110 182 54 190 25 153 169 148 53 154 86 99 171 202 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_2.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 5 Best Solution: 5060.205338335094
+Min Vehicle User : 4 Best Solution: 4877.977760581297
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 3814.5148505054017
+Time 70.797
+Vehicle 1: 0 164 171 181 8 26 161 91 126 151 45 150 78 57 90 157 141 64 142 66 79 133 124 58 166 84 93 105 98 83 189 121 30 110 2 12 109 20 182 54 87 113 25 153 169 53 148 163 201 0 
+Vehicle 2: 0 144 74 34 4 104 100 36 192 33 137 117 35 177 162 94 149 134 63 135 170 165 3 180 14 176 123 198 130 17 16 89 174 154 70 82 106 190 28 108 76 188 59 155 175 39 52 97 1 51 72 0 
+Vehicle 3: 0 23 41 116 56 131 62 179 199 47 65 139 118 31 71 48 167 184 88 103 129 19 43 195 15 120 172 81 140 29 9 158 49 37 147 160 132 101 185 42 92 111 18 96 186 38 127 112 60 75 67 168 80 0 
+Vehicle 4: 0 115 61 77 152 125 143 119 197 128 95 194 114 21 6 40 32 44 200 191 178 146 68 13 145 102 196 69 122 107 138 159 193 27 187 7 173 5 22 55 156 24 136 50 202 11 10 46 85 73 86 183 99 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_3.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 5552.937436513752
+Min Vehicle User : 6 Best Solution: 5124.263478016519
+Min Vehicle User : 5 Best Solution: 4602.049860999696
+Min Vehicle User : 4 Best Solution: 4432.568838103204
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 3098.3584913645045
+Time 226.849
+Vehicle 1: 0 23 41 116 199 47 65 201 19 139 88 129 118 43 103 172 140 29 9 158 120 37 147 160 71 101 48 178 55 22 5 173 154 169 148 53 183 86 99 0 
+Vehicle 2: 0 164 171 181 8 57 126 91 26 50 136 21 6 40 27 193 159 32 13 197 44 127 146 128 107 38 124 174 73 14 176 198 130 93 98 83 109 12 2 110 20 121 10 123 105 46 85 180 153 70 163 0 
+Vehicle 3: 0 80 18 115 61 92 77 152 125 143 42 119 122 95 194 167 184 151 45 150 78 168 96 67 75 191 200 145 102 60 69 186 196 138 7 187 156 24 68 114 112 185 31 132 195 15 155 59 1 51 175 81 49 72 56 0 
+Vehicle 4: 0 111 144 131 62 74 34 63 100 36 192 179 137 117 177 35 162 94 149 134 182 135 170 30 189 142 64 161 90 141 11 66 79 202 133 17 89 58 157 84 166 16 25 113 87 165 4 3 82 106 28 108 76 188 54 104 190 33 97 52 39 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_4.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 4 Best Solution: 4258.186825821124
+Min Vehicle User : 3 Best Solution: 3930.985283356712
+Stage 2 : Minimize the cost
+Min Vehicle User : 3 Best Solution: 2490.091495371268
+Time 219.243
+Vehicle 1: 0 168 55 151 45 8 138 38 107 122 194 128 95 114 21 24 136 50 84 26 90 157 166 150 57 124 78 181 154 169 70 25 113 87 34 158 56 65 160 139 37 33 106 104 82 63 2 202 76 108 149 94 52 199 39 0 
+Vehicle 2: 0 111 144 131 62 74 192 179 137 117 97 35 177 188 134 28 162 36 190 54 100 182 135 170 83 85 91 66 142 64 161 141 11 123 10 130 198 93 105 176 126 79 17 133 16 174 73 153 180 14 98 46 121 189 20 30 109 12 110 165 4 3 163 148 53 86 164 0 
+Vehicle 3: 0 80 18 41 115 61 119 42 143 152 43 118 129 103 88 185 184 167 197 44 201 127 146 159 193 6 40 27 32 13 200 145 125 9 19 77 92 75 69 60 112 178 48 71 101 7 68 187 156 22 5 173 58 89 183 171 99 67 96 196 186 102 191 31 132 195 15 147 29 140 155 59 1 51 172 175 81 120 49 72 116 47 23 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_5.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 6400.160772959403
+Min Vehicle User : 6 Best Solution: 6279.693443123566
+Min Vehicle User : 5 Best Solution: 5924.742276609658
+Min Vehicle User : 4 Best Solution: 4389.832925984133
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 3438.3917469333114
+Time 66.794
+Vehicle 1: 0 131 74 34 4 100 36 192 204 33 62 179 137 117 162 35 177 134 94 63 104 135 170 165 3 158 144 180 113 70 174 89 16 58 173 5 187 7 156 22 55 96 111 175 155 140 1 72 115 0 
+Vehicle 2: 0 18 67 60 119 71 48 167 197 194 95 21 6 40 32 128 200 191 132 195 15 59 51 172 81 120 9 37 29 147 160 129 49 28 149 106 82 2 182 54 76 108 188 97 190 52 39 202 80 0 
+Vehicle 3: 0 168 164 183 181 45 8 26 161 79 91 73 151 203 78 150 57 90 141 11 142 66 105 176 14 17 133 166 157 84 123 130 198 93 64 98 189 121 83 20 30 109 110 12 25 153 169 154 86 53 148 171 99 0 
+Vehicle 4: 0 23 41 47 56 199 116 65 77 61 143 31 152 139 88 103 43 118 19 92 184 178 44 146 193 27 68 124 38 196 75 102 145 122 107 13 159 138 186 69 125 42 185 101 112 127 114 24 136 50 126 10 46 201 85 87 163 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_6.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 5 Best Solution: 5217.627202553201
+Min Vehicle User : 4 Best Solution: 5196.68242096062
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 3201.543146556638
+Time 199.212
+Vehicle 1: 0 23 41 47 56 199 116 65 152 129 139 15 88 103 43 92 115 67 168 78 124 90 133 79 66 142 64 141 84 123 130 198 93 98 121 189 20 182 54 110 109 12 153 169 53 148 163 0 
+Vehicle 2: 0 131 74 34 4 100 36 192 33 62 179 137 117 177 35 162 19 118 31 184 200 146 44 178 191 132 195 147 120 81 172 9 29 160 140 37 49 144 111 82 2 104 106 76 108 188 28 97 52 0 
+Vehicle 3: 0 18 61 77 125 143 119 71 48 167 197 194 128 95 32 6 40 21 68 13 122 145 102 60 75 69 186 196 138 38 107 185 101 159 193 27 114 7 156 187 24 136 50 11 10 105 46 85 73 154 86 183 99 0 
+Vehicle 4: 0 164 171 181 8 45 151 26 157 161 166 150 126 91 30 135 134 149 94 190 63 3 165 170 83 176 14 180 25 113 87 158 70 174 89 16 17 58 173 5 57 22 55 96 127 112 42 155 59 1 51 175 72 39 80 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_7.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 5 Best Solution: 4954.748107677741
+Min Vehicle User : 4 Best Solution: 4124.84660703128
+Min Vehicle User : 3 Best Solution: 4757.091701193796
+Stage 2 : Minimize the cost
+Min Vehicle User : 3 Best Solution: 3173.4460103748893
+Time 157.421
+Vehicle 1: 0 80 23 41 92 143 185 119 61 47 116 56 199 81 137 117 162 35 177 134 182 135 170 83 176 161 141 84 11 123 130 198 93 105 98 180 153 25 113 87 4 165 12 109 110 54 30 20 189 121 10 46 14 85 73 70 53 171 164 0 
+Vehicle 2: 0 99 181 174 166 157 50 26 8 168 18 115 65 152 118 129 139 88 103 71 48 167 184 186 45 150 78 196 200 122 128 107 124 90 64 142 66 126 79 133 17 16 89 58 138 69 67 55 156 7 187 24 136 173 5 57 22 112 145 102 60 75 120 175 39 201 148 169 154 202 86 0 
+Vehicle 3: 0 111 144 74 131 62 33 192 36 190 100 3 34 91 183 151 38 95 194 159 193 27 6 40 21 68 114 32 13 146 127 44 197 178 191 42 125 77 19 51 172 49 158 72 9 37 140 29 160 132 31 101 96 163 82 63 2 104 106 76 108 188 28 97 149 94 52 179 1 59 155 15 195 147 43 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_8.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 4 Best Solution: 3667.6500986876167
+Min Vehicle User : 3 Best Solution: 3491.0508025754493
+Min Vehicle User : 2 Best Solution: 2844.4216359708507
+Stage 2 : Minimize the cost
+Min Vehicle User : 2 Best Solution: 2604.1211217830214
+Time 325.948
+Vehicle 1: 0 18 41 131 62 74 192 36 190 134 188 177 97 35 28 162 117 137 81 175 172 37 140 139 29 88 103 43 143 42 71 178 167 112 197 44 27 32 114 138 196 186 69 96 67 158 9 147 160 101 102 60 75 82 63 2 104 106 54 100 182 76 108 149 94 33 52 179 1 19 65 116 39 199 99 171 183 154 169 180 46 189 30 170 135 110 34 144 111 0 
+Vehicle 2: 0 80 164 53 8 151 55 168 115 61 92 77 129 118 152 125 119 191 184 145 200 122 107 38 194 128 95 68 21 136 5 150 58 166 157 161 64 142 91 66 11 141 84 50 26 90 124 89 133 17 79 126 123 10 130 198 93 105 176 98 14 85 73 16 173 24 187 7 156 22 57 174 153 83 121 20 109 12 165 4 3 87 113 25 70 163 148 86 181 78 45 13 40 6 193 159 146 127 48 185 31 132 195 15 155 59 51 120 49 72 56 47 23 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_9.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 4 Best Solution: 4625.842267991024
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 3198.4368311334156
+Time 150.077
+Vehicle 1: 0 18 61 92 75 200 184 191 178 146 193 27 13 68 124 196 145 102 69 186 122 107 173 5 22 55 96 111 190 54 182 110 109 12 87 25 163 0 
+Vehicle 2: 0 164 183 181 73 91 79 161 26 8 45 95 128 194 197 167 71 48 44 6 40 21 32 38 151 78 57 150 90 133 17 66 142 11 123 198 130 10 93 98 83 30 20 189 121 46 85 153 169 53 148 0 
+Vehicle 3: 0 168 67 60 119 143 77 65 139 88 103 118 19 43 152 31 132 195 15 59 51 81 158 144 49 120 172 37 29 160 147 9 129 125 185 101 159 187 7 156 138 42 112 127 114 24 136 50 126 154 86 99 171 0 
+Vehicle 4: 0 23 41 47 116 56 199 131 74 34 4 100 36 192 33 62 179 162 137 117 35 177 134 94 104 63 3 165 135 170 180 14 176 105 64 141 84 157 166 58 89 16 174 70 113 82 2 106 149 108 76 188 28 97 52 1 155 140 175 72 39 115 80 0 
+--------------------
+
+
+--------------------
+Executing LR2_2_10.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 5 Best Solution: 5024.131832757808
+Min Vehicle User : 4 Best Solution: 5632.432804041233
+Min Vehicle User : 3 Best Solution: 4321.60989205163
+Stage 2 : Minimize the cost
+Min Vehicle User : 3 Best Solution: 3367.9594279394355
+Time 112.404
+Vehicle 1: 0 18 23 41 47 116 56 199 131 74 4 100 36 33 179 162 117 137 19 43 103 139 15 195 132 31 191 178 167 44 146 124 78 144 158 70 180 14 11 84 13 159 187 24 136 5 98 83 113 111 190 52 175 1 155 140 72 39 115 99 86 171 80 0 
+Vehicle 2: 0 164 34 73 91 79 161 26 150 151 45 8 181 183 62 192 94 35 177 134 104 63 3 165 135 170 176 142 141 157 166 90 57 58 89 174 202 16 133 17 66 64 123 130 198 93 105 121 189 20 30 109 12 82 2 106 149 201 188 97 28 108 76 182 54 110 87 25 163 148 53 0 
+Vehicle 3: 0 168 67 60 184 119 61 77 65 118 88 152 143 71 48 197 194 128 95 32 40 6 193 27 21 68 38 200 102 92 9 37 59 51 172 81 120 49 129 29 147 160 125 75 69 186 196 138 107 122 145 42 185 101 112 127 114 7 156 55 96 22 173 50 126 10 46 85 153 169 154 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_1.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 24 Best Solution: 5688.28878735471
+Min Vehicle User : 23 Best Solution: 4963.022092650515
+Min Vehicle User : 22 Best Solution: 4700.8787609526635
+Min Vehicle User : 21 Best Solution: 4156.126656002694
+Min Vehicle User : 20 Best Solution: 4260.405990880978
+Min Vehicle User : 19 Best Solution: 3794.6267486617967
+Stage 2 : Minimize the cost
+Min Vehicle User : 19 Best Solution: 3606.062627090201
+Time 47.85
+Vehicle 1: 0 92 195 31 52 74 101 192 50 33 157 0 
+Vehicle 2: 0 172 197 5 170 73 135 2 76 97 64 0 
+Vehicle 3: 0 4 182 57 133 147 40 16 22 106 70 0 
+Vehicle 4: 0 128 168 53 151 160 109 189 212 125 17 0 
+Vehicle 5: 0 153 47 200 103 90 79 204 96 34 175 0 
+Vehicle 6: 0 169 98 119 161 72 129 41 194 210 158 0 
+Vehicle 7: 0 140 54 89 87 121 208 115 11 30 67 0 
+Vehicle 8: 0 142 152 167 61 198 91 202 145 116 148 0 
+Vehicle 9: 0 48 15 179 7 68 18 184 27 51 80 126 206 0 
+Vehicle 10: 0 37 177 65 99 94 112 114 86 81 107 66 207 0 
+Vehicle 11: 0 131 156 102 196 183 190 111 44 95 83 201 36 0 
+Vehicle 12: 0 163 28 205 6 49 14 132 78 171 130 187 150 0 
+Vehicle 13: 0 88 155 144 71 137 123 209 13 8 1 60 75 0 
+Vehicle 14: 0 42 181 35 164 104 25 10 211 77 122 141 185 0 
+Vehicle 15: 0 24 124 43 180 136 3 110 178 93 193 19 146 0 
+Vehicle 16: 0 162 63 149 26 62 159 20 46 138 186 120 39 0 
+Vehicle 17: 0 84 199 127 118 105 69 176 113 191 58 134 174 0 
+Vehicle 18: 0 100 9 12 59 143 173 188 29 139 21 166 82 0 
+Vehicle 19: 0 165 85 45 56 108 38 32 203 23 117 55 154 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_2.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 19 Best Solution: 5011.028659930193
+Min Vehicle User : 18 Best Solution: 3727.020801449791
+Min Vehicle User : 17 Best Solution: 3792.826466993136
+Min Vehicle User : 16 Best Solution: 3859.2106642566605
+Min Vehicle User : 15 Best Solution: 4022.4949497170455
+Stage 2 : Minimize the cost
+Min Vehicle User : 15 Best Solution: 3683.2386488202487
+Time 50.684
+Vehicle 1: 0 140 54 205 88 89 166 87 17 30 64 0 
+Vehicle 2: 0 31 53 151 109 86 108 157 81 107 194 0 
+Vehicle 3: 0 177 128 168 94 65 125 189 50 33 66 0 
+Vehicle 4: 0 155 99 85 112 192 160 115 121 11 71 105 67 0 
+Vehicle 5: 0 100 37 9 12 59 143 173 188 29 139 21 82 0 
+Vehicle 6: 0 172 181 35 164 104 25 193 10 122 141 203 185 0 
+Vehicle 7: 0 153 47 200 103 90 110 178 83 201 95 148 48 0 
+Vehicle 8: 0 152 183 7 68 18 190 198 22 167 80 126 70 0 
+Vehicle 9: 0 142 169 61 51 111 91 145 116 15 184 27 106 195 92 0 
+Vehicle 10: 0 182 57 133 147 40 16 98 119 161 72 129 204 41 158 0 
+Vehicle 11: 0 4 165 45 56 38 32 23 114 52 101 74 117 55 154 0 
+Vehicle 12: 0 162 42 197 5 159 20 46 135 186 138 2 73 93 120 149 63 206 39 0 
+Vehicle 13: 0 24 131 156 196 43 180 3 136 102 179 44 36 124 79 96 34 76 175 0 
+Vehicle 14: 0 163 202 28 6 49 14 132 78 171 130 150 187 26 62 77 19 170 146 0 
+Vehicle 15: 0 84 199 118 176 69 191 58 134 144 137 123 13 8 60 1 97 75 127 113 174 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_3.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 17 Best Solution: 4663.766708527398
+Min Vehicle User : 16 Best Solution: 4283.166501126235
+Min Vehicle User : 15 Best Solution: 3998.483293986827
+Min Vehicle User : 14 Best Solution: 3517.417237268691
+Min Vehicle User : 13 Best Solution: 3644.138138654301
+Stage 2 : Minimize the cost
+Min Vehicle User : 13 Best Solution: 3162.3803823050634
+Time 73.07
+Vehicle 1: 0 152 169 167 27 190 198 22 126 0 
+Vehicle 2: 0 88 155 87 69 176 113 191 58 134 17 30 201 0 
+Vehicle 3: 0 172 197 35 164 104 25 10 77 122 181 141 120 0 
+Vehicle 4: 0 174 84 199 127 118 137 123 13 8 75 60 202 1 34 0 
+Vehicle 5: 0 131 156 7 18 206 91 51 111 95 145 80 184 196 24 0 
+Vehicle 6: 0 54 168 53 151 99 125 189 101 192 56 33 66 89 143 139 210 0 
+Vehicle 7: 0 49 163 96 5 62 159 46 138 135 186 20 26 76 185 2 175 0 
+Vehicle 8: 0 82 166 128 65 94 109 112 157 177 121 115 144 11 71 105 97 64 67 0 
+Vehicle 9: 0 28 6 14 132 171 130 79 73 93 146 170 19 193 42 149 63 162 78 0 
+Vehicle 10: 0 140 100 208 37 12 204 59 9 188 29 21 107 129 81 194 158 150 187 0 
+Vehicle 11: 0 92 182 57 133 147 40 16 98 119 161 72 102 183 15 179 68 61 70 41 195 0 
+Vehicle 12: 0 4 173 165 45 108 38 32 23 52 86 117 114 207 85 50 160 74 31 106 55 154 209 0 
+Vehicle 13: 0 142 153 47 48 43 180 3 136 203 124 36 178 110 44 90 116 205 148 83 103 200 39 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_4.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 13 Best Solution: 3815.5923063046835
+Min Vehicle User : 12 Best Solution: 3511.251909868031
+Min Vehicle User : 11 Best Solution: 3548.224145134008
+Min Vehicle User : 10 Best Solution: 3803.757180499287
+Stage 2 : Minimize the cost
+Min Vehicle User : 10 Best Solution: 2673.7158005373144
+Time 98.278
+Vehicle 1: 0 54 100 9 12 59 143 188 29 139 21 66 37 89 203 0 
+Vehicle 2: 0 64 87 88 155 115 11 71 127 84 8 76 34 175 140 0 
+Vehicle 3: 0 67 174 199 118 105 69 207 176 113 58 191 17 13 75 137 123 144 121 0 
+Vehicle 4: 0 4 169 98 40 119 161 72 61 198 91 51 27 126 167 190 80 184 152 24 212 0 
+Vehicle 5: 0 142 131 156 196 183 18 111 145 148 116 95 83 202 110 178 205 36 180 48 136 0 
+Vehicle 6: 0 28 96 172 197 42 97 134 60 1 2 141 210 181 185 5 26 159 186 120 78 132 153 0 
+Vehicle 7: 0 150 187 163 6 43 3 124 102 15 179 7 68 44 90 103 200 39 47 171 130 201 30 0 
+Vehicle 8: 0 162 122 35 20 135 138 46 62 77 164 104 25 10 193 19 170 146 93 73 149 63 79 14 49 0 
+Vehicle 9: 0 195 57 133 147 117 208 32 23 52 31 129 55 81 194 158 41 182 204 16 22 70 106 74 38 114 154 0 
+Vehicle 10: 0 82 166 165 108 211 94 151 99 128 125 189 109 209 160 112 50 85 173 33 157 177 206 65 168 53 192 101 56 45 86 107 92 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_5.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 21 Best Solution: 5443.030482234989
+Min Vehicle User : 20 Best Solution: 4850.204462348131
+Min Vehicle User : 19 Best Solution: 4965.68305826278
+Min Vehicle User : 18 Best Solution: 4607.380131068709
+Min Vehicle User : 17 Best Solution: 4344.45707075579
+Min Vehicle User : 16 Best Solution: 4333.815424253966
+Stage 2 : Minimize the cost
+Min Vehicle User : 16 Best Solution: 3715.8094181181464
+Time 48.968
+Vehicle 1: 0 165 85 53 94 168 99 151 189 125 157 0 
+Vehicle 2: 0 28 47 200 103 136 41 121 115 11 75 0 
+Vehicle 3: 0 102 156 43 180 3 196 183 184 22 106 70 158 0 
+Vehicle 4: 0 153 24 206 152 167 27 190 51 111 95 44 178 0 
+Vehicle 5: 0 172 5 104 170 90 73 93 203 193 19 146 36 0 
+Vehicle 6: 0 182 57 98 169 72 161 129 86 114 204 194 55 0 
+Vehicle 7: 0 42 197 181 35 164 25 10 77 122 141 185 120 0 
+Vehicle 8: 0 48 131 124 7 179 15 18 68 208 80 201 126 0 
+Vehicle 9: 0 140 88 155 71 144 123 137 13 8 34 2 175 0 
+Vehicle 10: 0 84 199 127 207 118 105 69 176 113 191 58 134 174 82 0 
+Vehicle 11: 0 92 142 163 49 14 78 132 171 130 187 150 110 79 39 0 
+Vehicle 12: 0 195 133 147 40 16 119 61 198 91 145 116 83 148 211 0 
+Vehicle 13: 0 54 100 37 89 143 173 188 29 139 210 21 166 87 17 30 214 0 
+Vehicle 14: 0 45 56 108 38 32 23 117 31 52 74 101 209 192 81 107 154 0 
+Vehicle 15: 0 4 9 12 59 177 65 128 205 109 160 112 50 33 66 213 67 0 
+Vehicle 16: 0 6 162 63 149 26 62 159 20 46 138 186 135 212 96 76 1 60 202 97 64 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_6.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 20 Best Solution: 4671.239344681634
+Min Vehicle User : 19 Best Solution: 4075.6714880886284
+Min Vehicle User : 18 Best Solution: 3810.097796541967
+Min Vehicle User : 17 Best Solution: 3683.2416217500586
+Stage 2 : Minimize the cost
+Min Vehicle User : 17 Best Solution: 3368.656510657694
+Time 49.685
+Vehicle 1: 0 172 5 62 26 170 19 193 146 0 
+Vehicle 2: 0 92 169 152 167 61 198 207 22 41 194 0 
+Vehicle 3: 0 195 31 53 202 74 52 106 70 158 154 0 
+Vehicle 4: 0 182 57 133 147 40 16 98 119 161 72 0 
+Vehicle 5: 0 156 102 15 179 7 68 18 183 110 178 0 
+Vehicle 6: 0 163 28 201 6 49 14 132 78 171 130 187 150 0 
+Vehicle 7: 0 153 209 47 200 103 90 44 95 116 148 83 36 0 
+Vehicle 8: 0 42 197 181 35 164 104 25 10 77 122 141 185 0 
+Vehicle 9: 0 37 165 85 99 168 94 151 160 112 33 66 203 0 
+Vehicle 10: 0 100 59 177 65 128 125 189 109 192 101 50 157 0 
+Vehicle 11: 0 142 43 196 184 190 27 51 111 91 145 80 126 0 
+Vehicle 12: 0 140 155 88 176 113 134 58 191 87 17 174 97 30 64 0 
+Vehicle 13: 0 4 24 131 48 180 124 3 136 79 96 2 76 34 175 0 
+Vehicle 14: 0 45 56 108 38 32 23 117 204 114 86 129 55 81 107 0 
+Vehicle 15: 0 162 63 149 20 159 46 138 186 135 73 93 120 39 208 0 
+Vehicle 16: 0 84 199 127 118 105 69 71 210 144 137 123 13 8 1 60 75 0 
+Vehicle 17: 0 54 205 9 12 89 143 173 188 29 139 21 166 121 206 115 11 82 67 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_7.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 17 Best Solution: 4521.32201677599
+Min Vehicle User : 16 Best Solution: 4097.17176067273
+Min Vehicle User : 15 Best Solution: 4100.905524121245
+Min Vehicle User : 14 Best Solution: 3824.9511917125933
+Stage 2 : Minimize the cost
+Min Vehicle User : 14 Best Solution: 3666.3393572236596
+Time 49.386
+Vehicle 1: 0 6 47 200 103 170 116 83 148 0 
+Vehicle 2: 0 182 152 190 203 167 61 111 91 145 95 80 126 0 
+Vehicle 3: 0 48 24 169 72 119 16 161 198 22 129 41 70 0 
+Vehicle 4: 0 195 133 147 40 98 57 29 188 139 21 166 106 81 82 0 
+Vehicle 5: 0 59 177 65 168 94 99 128 109 53 101 192 50 33 157 0 
+Vehicle 6: 0 163 49 14 132 130 78 171 187 150 202 86 107 174 97 0 
+Vehicle 7: 0 92 142 3 180 43 124 156 183 136 110 90 79 73 120 210 39 0 
+Vehicle 8: 0 131 102 15 18 68 7 179 196 184 27 51 44 178 205 36 211 0 
+Vehicle 9: 0 165 85 45 56 108 38 32 117 23 31 52 74 55 194 158 154 0 
+Vehicle 10: 0 4 100 37 89 143 173 114 112 160 151 201 189 125 115 121 66 0 
+Vehicle 11: 0 162 42 172 197 5 20 104 164 208 35 122 77 181 141 185 2 96 212 0 
+Vehicle 12: 0 84 199 127 118 88 155 144 137 123 13 206 8 1 34 76 60 75 175 0 
+Vehicle 13: 0 153 28 63 149 159 62 26 204 25 10 46 138 186 135 93 193 19 146 0 
+Vehicle 14: 0 140 54 9 12 191 69 105 176 58 113 134 87 71 11 17 207 30 64 67 209 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_8.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 17 Best Solution: 4595.306622241036
+Min Vehicle User : 16 Best Solution: 3766.854841646412
+Min Vehicle User : 15 Best Solution: 3882.4459943364645
+Min Vehicle User : 14 Best Solution: 3449.1972863845062
+Min Vehicle User : 13 Best Solution: 3435.313044168683
+Stage 2 : Minimize the cost
+Min Vehicle User : 13 Best Solution: 3275.735228568335
+Time 47.159
+Vehicle 1: 0 142 180 132 150 78 63 149 200 79 96 0 
+Vehicle 2: 0 4 92 182 72 119 98 195 29 188 21 115 17 0 
+Vehicle 3: 0 57 133 147 40 16 152 169 161 129 166 82 154 0 
+Vehicle 4: 0 172 122 35 204 164 104 77 10 25 170 146 19 193 120 0 
+Vehicle 5: 0 14 47 3 48 136 124 190 27 51 145 111 126 80 178 0 
+Vehicle 6: 0 45 56 108 38 32 74 52 31 23 117 114 86 55 203 81 194 0 
+Vehicle 7: 0 24 131 156 207 102 196 184 167 198 61 22 208 106 70 41 158 0 
+Vehicle 8: 0 140 89 100 37 12 139 173 165 85 50 112 160 53 202 192 107 0 
+Vehicle 9: 0 43 183 179 7 68 15 18 110 103 90 44 95 91 116 148 205 83 36 0 
+Vehicle 10: 0 9 143 59 177 65 168 94 99 151 125 189 128 109 101 157 33 201 66 0 
+Vehicle 11: 0 162 42 197 159 26 181 5 62 20 46 138 186 135 93 73 141 185 39 0 
+Vehicle 12: 0 163 28 153 49 6 171 187 130 134 191 69 155 121 144 11 174 34 76 2 175 0 
+Vehicle 13: 0 54 88 105 118 199 127 113 84 176 206 58 87 71 123 137 13 8 1 60 75 97 30 64 67 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_9.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 18 Best Solution: 4635.518600614758
+Min Vehicle User : 17 Best Solution: 4447.318356849293
+Min Vehicle User : 16 Best Solution: 3567.521278056932
+Min Vehicle User : 15 Best Solution: 3719.618998248377
+Min Vehicle User : 14 Best Solution: 3481.5926938738558
+Min Vehicle User : 13 Best Solution: 3392.6348968586576
+Stage 2 : Minimize the cost
+Min Vehicle User : 13 Best Solution: 3223.9542815708273
+Time 48.422
+Vehicle 1: 0 28 6 132 49 200 63 202 26 170 19 146 93 0 
+Vehicle 2: 0 48 131 156 15 179 68 7 124 43 180 3 136 80 158 0 
+Vehicle 3: 0 47 14 130 187 150 171 103 90 44 110 79 34 76 1 8 175 0 
+Vehicle 4: 0 172 62 46 181 77 35 207 164 104 25 10 122 193 73 120 96 0 
+Vehicle 5: 0 45 56 108 38 32 23 74 52 31 117 114 106 70 107 154 204 0 
+Vehicle 6: 0 100 37 9 143 29 188 173 177 65 189 109 112 86 55 81 126 0 
+Vehicle 7: 0 165 85 160 151 94 99 128 125 168 53 101 192 50 157 33 66 0 
+Vehicle 8: 0 153 152 169 72 161 206 16 22 61 198 201 91 145 148 83 39 0 
+Vehicle 9: 0 4 92 182 119 98 40 147 133 57 195 129 208 41 194 166 82 0 
+Vehicle 10: 0 142 24 102 196 183 18 184 190 167 27 51 111 95 116 178 36 0 
+Vehicle 11: 0 163 78 162 149 42 197 138 5 159 20 186 135 141 185 2 60 0 
+Vehicle 12: 0 140 54 89 12 59 139 21 155 113 58 87 121 115 17 174 205 64 67 0 
+Vehicle 13: 0 84 199 127 118 105 88 69 176 134 191 71 144 11 137 123 13 75 97 30 203 0 
+--------------------
+
+
+--------------------
+Executing LRC1_2_10.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 17 Best Solution: 4555.280731490284
+Min Vehicle User : 16 Best Solution: 4163.173292358051
+Min Vehicle User : 15 Best Solution: 3845.8388689402295
+Min Vehicle User : 14 Best Solution: 3711.9262153227032
+Min Vehicle User : 13 Best Solution: 3639.462603458221
+Min Vehicle User : 12 Best Solution: 3293.3318053546664
+Stage 2 : Minimize the cost
+Min Vehicle User : 12 Best Solution: 2959.3404778763943
+Time 54.293
+Vehicle 1: 0 132 14 3 43 180 152 167 27 190 51 145 111 90 79 0 
+Vehicle 2: 0 171 63 149 138 46 5 62 159 26 122 181 141 185 2 76 96 0 
+Vehicle 3: 0 54 89 100 58 176 88 87 155 121 115 144 11 71 17 30 203 0 
+Vehicle 4: 0 9 12 188 177 65 128 125 205 99 168 94 151 53 192 101 70 0 
+Vehicle 5: 0 92 195 31 52 74 32 38 108 56 45 23 117 114 86 81 41 0 
+Vehicle 6: 0 49 47 200 10 77 35 164 104 25 170 19 193 73 146 93 120 206 39 0 
+Vehicle 7: 0 4 182 161 119 98 16 57 133 147 40 22 61 198 106 91 126 210 154 0 
+Vehicle 8: 0 163 78 187 150 130 162 42 172 197 20 186 135 34 208 8 174 64 67 0 
+Vehicle 9: 0 142 24 48 131 156 102 183 196 184 207 169 72 129 55 158 194 107 66 0 
+Vehicle 10: 0 37 59 143 139 21 166 29 173 165 85 112 160 109 189 50 157 204 33 82 201 0 
+Vehicle 11: 0 28 6 153 136 124 15 179 18 68 7 103 178 110 44 95 116 80 148 83 36 0 
+Vehicle 12: 0 140 113 69 191 134 84 199 127 105 118 137 123 75 209 13 60 1 202 97 175 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_1.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 4833.429521657688
+Min Vehicle User : 7 Best Solution: 4457.238992592177
+Min Vehicle User : 6 Best Solution: 4143.195824304932
+Stage 2 : Minimize the cost
+Min Vehicle User : 6 Best Solution: 3722.150467917544
+Time 36.552
+Vehicle 1: 0 28 6 49 200 14 132 59 89 78 171 130 187 150 79 73 93 193 19 146 39 0 
+Vehicle 2: 0 54 140 84 88 155 127 199 118 143 173 188 105 69 176 113 191 134 58 144 71 87 137 123 115 121 17 174 1 97 30 64 67 0 
+Vehicle 3: 0 163 162 63 149 42 172 197 5 181 35 26 62 164 104 25 170 20 159 10 77 122 46 138 186 135 96 34 76 2 141 185 120 75 175 0 
+Vehicle 4: 0 142 24 102 15 179 7 68 196 18 124 180 43 103 202 190 183 3 136 184 27 51 198 111 110 90 44 95 145 91 80 126 178 116 83 148 36 0 
+Vehicle 5: 0 182 195 57 100 37 9 12 201 165 45 85 177 128 168 53 38 56 108 65 99 94 151 160 32 23 117 139 166 86 74 101 125 192 50 33 11 13 8 60 157 0 
+Vehicle 6: 0 4 92 153 47 48 131 156 167 152 169 133 147 31 40 16 98 119 61 161 72 29 21 189 109 112 114 52 129 106 22 41 194 107 81 55 70 158 66 82 154 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_2.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 8 Best Solution: 4286.547347978451
+Min Vehicle User : 7 Best Solution: 3682.1214395061943
+Min Vehicle User : 6 Best Solution: 3595.139628018475
+Min Vehicle User : 5 Best Solution: 4165.816100817833
+Stage 2 : Minimize the cost
+Min Vehicle User : 5 Best Solution: 3583.1016308009043
+Time 66.945
+Vehicle 1: 0 150 163 182 16 24 156 15 7 68 196 124 43 14 78 132 3 180 190 136 130 27 116 111 91 198 106 22 41 194 55 81 107 139 66 89 82 0 
+Vehicle 2: 0 4 142 48 131 152 167 169 161 119 40 147 31 108 56 45 98 61 184 72 173 29 204 21 166 90 44 95 148 145 51 80 18 179 183 79 178 102 126 70 195 158 154 0 
+Vehicle 3: 0 140 54 100 37 92 57 133 85 165 59 12 143 177 65 128 168 99 94 151 53 38 188 23 112 160 109 189 125 86 114 52 129 117 32 101 192 50 157 33 9 67 202 0 
+Vehicle 4: 0 162 120 42 97 84 199 127 155 118 105 171 187 174 176 113 191 134 58 144 71 88 87 137 123 115 121 11 13 8 96 2 34 76 1 60 75 69 17 30 175 64 74 0 
+Vehicle 5: 0 28 153 47 49 6 203 63 149 172 197 181 35 5 62 26 164 104 25 170 19 20 159 46 138 135 186 122 77 10 73 193 141 185 146 93 39 201 200 103 83 110 36 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_3.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 4445.330143722082
+Min Vehicle User : 6 Best Solution: 3945.0667938259558
+Min Vehicle User : 5 Best Solution: 4405.274725318071
+Min Vehicle User : 4 Best Solution: 3289.5079971268487
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 2986.4257276047665
+Time 94.676
+Vehicle 1: 0 54 140 84 199 155 12 59 143 139 150 171 132 78 174 105 176 113 17 21 112 109 189 125 117 129 22 70 106 147 41 195 194 55 81 173 107 158 202 82 154 0 
+Vehicle 2: 0 66 89 100 37 9 165 45 31 56 85 177 65 128 168 99 94 50 108 188 38 32 23 72 187 166 86 114 52 74 101 53 192 151 160 157 33 29 153 6 28 0 
+Vehicle 3: 0 130 163 48 156 110 24 180 14 63 149 138 46 197 5 62 35 164 104 25 170 19 10 77 26 159 20 186 135 172 42 34 175 97 134 58 69 144 71 88 87 137 123 115 121 11 118 13 8 1 60 75 127 191 30 64 67 0 
+Vehicle 4: 0 4 92 142 152 161 182 57 133 119 169 167 68 7 43 131 98 40 16 61 190 184 196 124 3 136 102 183 27 91 198 111 95 83 44 116 148 145 51 80 18 179 36 79 126 15 178 90 103 93 73 120 162 96 76 2 185 141 181 122 193 146 200 39 47 49 201 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_4.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 5 Best Solution: 4055.785551409606
+Min Vehicle User : 4 Best Solution: 3843.7457071515546
+Min Vehicle User : 3 Best Solution: 3355.0739090626275
+Stage 2 : Minimize the cost
+Min Vehicle User : 3 Best Solution: 2858.931760685189
+Time 209.076
+Vehicle 1: 0 180 136 130 174 97 134 84 199 127 155 59 85 189 128 168 188 105 69 191 176 141 77 122 197 175 64 140 9 12 121 144 11 71 137 75 118 17 30 54 67 0 
+Vehicle 2: 0 4 92 82 100 89 66 37 139 173 133 147 16 119 169 24 43 161 98 61 108 38 32 23 117 56 45 165 157 125 109 112 50 74 52 31 106 22 70 198 91 145 148 116 95 83 68 18 196 110 90 103 200 39 47 79 14 49 153 158 194 166 21 29 33 177 65 99 94 151 160 192 53 101 114 86 154 0 
+Vehicle 3: 0 142 131 48 3 124 156 102 152 167 7 63 132 135 186 26 35 19 170 187 72 57 40 126 111 51 27 190 80 44 178 36 179 15 183 184 182 195 41 129 55 81 107 201 143 115 88 87 58 113 123 13 8 60 1 34 76 96 120 149 73 93 146 202 193 10 25 104 164 181 62 5 159 20 46 138 172 42 185 2 162 78 171 6 28 163 150 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_5.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 4999.471275641745
+Min Vehicle User : 6 Best Solution: 4674.171932722854
+Min Vehicle User : 5 Best Solution: 4050.92741116936
+Stage 2 : Minimize the cost
+Min Vehicle User : 5 Best Solution: 2776.926166405946
+Time 102.608
+Vehicle 1: 0 163 28 6 49 14 132 78 171 130 113 176 105 69 191 187 150 0 
+Vehicle 2: 0 4 92 182 195 57 16 169 40 147 133 31 56 85 165 177 65 128 99 168 94 151 53 160 109 189 125 112 192 101 50 33 157 82 154 66 30 64 67 0 
+Vehicle 3: 0 100 54 140 84 199 127 118 88 155 9 12 59 143 89 37 139 188 173 29 21 166 45 108 38 32 114 86 117 23 74 52 106 22 129 41 158 194 107 81 55 70 126 148 202 83 36 0 
+Vehicle 4: 0 153 47 103 200 63 149 162 42 172 197 5 62 26 159 181 35 104 164 25 170 10 77 122 20 46 138 186 134 58 87 144 123 137 71 11 115 121 17 174 13 8 1 60 75 97 175 0 
+Vehicle 5: 0 142 24 48 131 152 167 68 7 179 15 196 102 156 180 43 124 183 18 190 201 72 119 98 161 61 198 111 51 27 184 136 3 110 90 44 95 116 145 91 80 178 79 73 93 19 193 135 96 34 76 2 141 185 120 146 39 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_6.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 6 Best Solution: 4440.027355690148
+Min Vehicle User : 5 Best Solution: 4145.696904453074
+Stage 2 : Minimize the cost
+Min Vehicle User : 5 Best Solution: 2707.959214933518
+Time 113.329
+Vehicle 1: 0 153 49 47 103 200 14 132 78 171 130 72 16 98 119 202 161 41 22 106 70 126 148 83 36 0 
+Vehicle 2: 0 163 28 6 162 63 149 42 172 197 5 62 181 35 164 104 25 170 10 77 122 26 159 20 46 138 186 187 150 166 21 129 55 81 107 194 158 82 154 0 
+Vehicle 3: 0 4 92 182 195 57 133 40 147 31 108 56 45 85 165 177 65 128 168 99 94 151 160 53 32 38 114 86 117 23 52 74 112 125 189 109 192 101 50 33 157 66 30 64 67 0 
+Vehicle 4: 0 142 48 131 24 169 152 167 68 7 179 18 15 102 156 43 3 136 180 124 183 196 184 190 27 61 198 111 51 110 90 44 95 116 145 91 80 178 79 93 73 135 185 141 193 19 146 120 39 0 
+Vehicle 5: 0 100 37 9 54 140 84 199 127 118 88 155 12 59 143 173 188 29 139 89 69 105 176 113 134 58 191 201 87 71 144 123 137 115 121 11 13 17 174 96 2 34 76 1 60 8 75 97 175 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_7.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 7 Best Solution: 4724.13051798382
+Min Vehicle User : 6 Best Solution: 4430.631650475488
+Min Vehicle User : 5 Best Solution: 4871.289543714693
+Min Vehicle User : 4 Best Solution: 4347.092814368313
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 3126.8021142247517
+Time 67.823
+Vehicle 1: 0 142 133 169 152 24 48 131 156 183 15 7 179 18 68 190 167 184 196 102 124 43 180 3 103 200 47 136 72 61 198 111 51 27 44 90 110 178 80 116 95 145 91 201 126 79 39 0 
+Vehicle 2: 0 163 153 49 14 162 132 6 78 63 149 42 172 197 5 62 181 122 77 35 164 104 25 10 170 26 159 20 46 138 186 135 93 73 141 185 2 76 34 96 120 193 19 146 83 148 36 0 
+Vehicle 3: 0 140 182 57 195 31 85 165 177 147 40 16 98 119 161 150 28 171 187 130 134 58 191 113 176 69 105 88 21 125 189 192 101 86 166 87 71 144 123 137 11 17 70 174 97 75 1 60 175 64 30 202 67 0 
+Vehicle 4: 0 4 92 54 84 199 127 118 155 9 12 59 143 29 100 89 37 139 188 173 45 56 38 160 94 99 128 65 168 53 151 109 112 108 32 23 117 114 50 74 52 106 22 129 41 158 194 55 81 107 66 8 13 121 115 33 157 82 154 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_8.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 6 Best Solution: 4305.059643892109
+Min Vehicle User : 5 Best Solution: 3740.6896963084137
+Min Vehicle User : 4 Best Solution: 3263.9197261001345
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 2399.992505531336
+Time 94.262
+Vehicle 1: 0 54 140 84 199 127 118 105 88 155 9 37 89 100 166 21 139 29 188 173 143 59 12 134 58 191 113 176 69 71 144 115 121 87 17 11 123 137 13 8 174 201 30 64 67 0 
+Vehicle 2: 0 142 169 152 24 131 48 47 200 103 110 7 68 18 179 15 183 190 27 167 184 196 102 156 124 43 180 3 136 72 161 119 98 16 22 106 61 198 51 91 111 145 44 90 178 80 116 95 83 148 36 202 39 0 
+Vehicle 3: 0 4 92 182 195 57 133 40 147 31 32 38 108 56 45 85 165 177 65 128 189 125 109 160 151 94 99 168 53 192 101 74 52 23 117 112 50 114 86 129 194 158 41 126 70 55 81 157 33 107 66 82 154 0 
+Vehicle 4: 0 153 28 163 6 49 14 132 78 162 63 149 42 172 197 5 62 26 181 35 164 104 10 77 122 25 170 171 187 150 130 20 159 46 138 186 135 79 73 193 19 146 93 120 96 141 185 2 34 76 1 60 75 97 175 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_9.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 5 Best Solution: 4397.963605544926
+Min Vehicle User : 4 Best Solution: 4307.098640175821
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 2208.4949206321944
+Time 175.05
+Vehicle 1: 0 4 92 182 195 57 133 147 31 32 38 108 56 45 85 165 177 65 128 125 189 109 160 151 94 99 168 53 192 101 74 52 23 117 114 86 50 112 157 33 66 82 154 0 
+Vehicle 2: 0 140 54 89 100 37 9 12 59 143 188 29 173 155 88 69 176 127 199 84 134 58 113 191 105 118 137 123 144 115 121 71 11 87 17 174 96 135 141 185 2 34 76 8 13 75 60 1 175 97 30 64 67 0 
+Vehicle 3: 0 142 24 15 179 7 68 18 183 124 43 180 3 136 48 131 156 102 196 184 190 51 27 167 152 169 72 161 119 98 16 40 129 106 22 61 198 91 111 145 95 116 44 110 178 90 79 73 193 19 146 202 93 120 39 0 
+Vehicle 4: 0 153 28 163 6 49 47 14 132 162 149 63 200 103 170 10 25 104 164 35 77 122 181 197 42 172 138 46 159 5 62 26 20 186 78 171 130 187 150 166 21 139 107 81 55 194 158 41 70 201 126 80 148 83 36 0 
+--------------------
+
+
+--------------------
+Executing LRC2_2_10.txt
+Test run #0
+Stage 1 : Minimize number of vehicles used
+Min Vehicle User : 6 Best Solution: 3659.7245525017497
+Min Vehicle User : 5 Best Solution: 3384.372919753186
+Min Vehicle User : 4 Best Solution: 3660.718041134594
+Stage 2 : Minimize the cost
+Min Vehicle User : 4 Best Solution: 2053.892337197577
+Time 258.076
+Vehicle 1: 0 150 28 163 187 130 171 6 132 78 162 63 149 42 172 197 5 62 26 181 122 77 35 164 104 202 25 10 170 20 159 46 138 186 79 96 2 185 141 135 120 73 193 19 146 93 39 0 
+Vehicle 2: 0 140 54 89 100 37 9 12 59 143 173 188 29 21 166 139 155 88 105 118 127 199 84 176 69 191 113 58 134 174 17 87 121 115 144 11 71 123 137 13 75 8 60 1 76 34 175 97 30 64 67 0 
+Vehicle 3: 0 4 92 182 57 195 31 23 117 32 38 108 56 45 201 114 86 165 85 112 109 189 125 128 177 65 168 99 94 151 160 192 53 101 74 52 55 129 106 70 41 158 194 107 81 50 157 33 66 82 154 0 
+Vehicle 4: 0 142 153 49 14 47 200 103 124 43 180 3 136 48 131 24 156 102 196 183 15 179 7 68 18 184 190 167 152 169 72 161 119 98 16 40 133 147 22 61 198 91 111 145 51 27 126 80 110 178 90 44 116 95 83 148 36 0 
+--------------------
+
+
+
+Process finished with exit code 0
