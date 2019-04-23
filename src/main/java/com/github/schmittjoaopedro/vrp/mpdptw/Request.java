@@ -24,4 +24,7 @@ public class Request {
 
     public double announceTime;
 
+    public int getNodeId() {
+        return nodeId;
+    }
 }

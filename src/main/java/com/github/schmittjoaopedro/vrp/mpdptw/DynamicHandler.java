@@ -14,13 +14,17 @@ public class DynamicHandler {
 
     private ArrayList<RequestWrapper> dynamicRequests;
 
+    private Map<Integer, Integer> requestOriginals = new HashMap<>();
+
+    private Map<Integer, Integer> nodeOriginals = new HashMap<>();
+
     public DynamicHandler(ProblemInstance instance, double startAlgorithmTime, double endAlgorithmTime) {
         this.instance = instance;
         this.startAlgorithmTime = startAlgorithmTime;
         this.endAlgorithmTime = endAlgorithmTime;
     }
 
-    public void prepareInstance() {
+    public void adaptDynamicVersion() {
         Map<Integer, RequestWrapper> requestsMap = new HashMap<>();
         for (Request request : instance.getRequests()) {
             if (!requestsMap.containsKey(request.requestId)) {
@@ -33,10 +37,16 @@ public class DynamicHandler {
         dynamicRequests = new ArrayList<>(requestsMap.values());
         Collections.sort(dynamicRequests, Comparator.comparing(RequestWrapper::getAnnounceTime).thenComparing(RequestWrapper::getRequestId));
         int count = 0;
+        int node = 1;
         for (RequestWrapper requestWrapper : dynamicRequests) {
             for (Request request : requestWrapper.requests) {
+                requestOriginals.put(count, request.requestId);
+                nodeOriginals.put(node, request.nodeId);
                 request.requestId = count;
+                request.nodeId = node;
+                node++;
             }
+            requestWrapper.requestId = count;
             count++;
         }
         instance.setRequests(new Request[0]);
@@ -67,53 +77,24 @@ public class DynamicHandler {
             for (Request request : newRequests) {
                 maxNodeId = Math.max(maxNodeId, request.nodeId + 1);
             }
-            Request[] requestNodes = new Request[maxNodeId]; // Ignore depot
-            Map<Integer, List<Request>> pickups = new HashMap<>();
-            Map<Integer, Request> delivery = new HashMap<>();
+            Request[] requestNodes = new Request[maxNodeId - 1]; // Ignore depot
 
             // Add existent request nodes
             for (Request request : instance.getRequests()) {
                 if (request != null) {
                     requestNodes[request.nodeId - 1] = request;
                 }
-                if (request.isPickup) {
-                    if (!pickups.containsKey(request.requestId)) {
-                        pickups.put(request.requestId, new ArrayList<>());
-                    }
-                    pickups.get(request.requestId).add(request);
-                } else {
-                    if (!delivery.containsKey(request.requestId)) {
-                        delivery.put(request.requestId, request);
-                    }
-                }
             }
             // Add new request nodes
             for (Request request : newRequests) {
                 requestNodes[request.nodeId - 1] = request;
-                if (request.isPickup) {
-                    if (!pickups.containsKey(request.requestId)) {
-                        pickups.put(request.requestId, new ArrayList<>());
-                    }
-                    pickups.get(request.requestId).add(request);
-                } else {
-                    if (!delivery.containsKey(request.requestId)) {
-                        delivery.put(request.requestId, request);
-                    }
-                }
             }
 
             // Load requests information
             int numReq = instance.getNumReq() + numNewReqs;
             instance.setNumReq(numReq);
-            List<Request>[] pickupsArray = new ArrayList[instance.getNumReq()];
-            Request[] deliveriesArray = new Request[instance.getNumReq()];
-            instance.setPickups(pickupsArray);
-            instance.setDelivery(deliveriesArray);
-            for (int i = 0; i < instance.getNumReq(); i++) {
-                pickupsArray[i] = pickups.get(i);
-                deliveriesArray[i] = delivery.get(i);
-            }
             instance.setRequests(requestNodes);
+            instance.updateRequestStructures();
 
             // Calculate distances
             instance.setNumNodes(maxNodeId);
@@ -123,6 +104,27 @@ public class DynamicHandler {
 
         }
         return newRequestIds;
+    }
+
+    public void reloadOriginalInformation(Solution solution) {
+        for (Request request : instance.getRequests()) {
+            request.requestId = requestOriginals.get(request.requestId);
+            request.nodeId = nodeOriginals.get(request.nodeId);
+        }
+        Arrays.sort(instance.getRequests(), Comparator.comparing(Request::getNodeId));
+        for (int k = 0; k < solution.tours.size(); k++) {
+            for (int i = 1; i < solution.tours.get(k).size() - 1; i++) {
+                solution.tours.get(k).set(i, nodeOriginals.get(solution.tours.get(k).get(i)));
+            }
+            for (int i = 0; i < solution.requests.get(k).size(); i++) {
+                solution.requests.get(k).set(i, requestOriginals.get(solution.requests.get(k).get(i)));
+            }
+        }
+        instance.updateRequestStructures();
+        instance.setDistances(new double[instance.getNumNodes()][instance.getNumNodes()]);
+        instance.calculateDistances();
+        instance.calculateMaxDistance();
+        instance.solutionEvaluation(solution);
     }
 
     private double getAlgScaledTime(double currentTime) {

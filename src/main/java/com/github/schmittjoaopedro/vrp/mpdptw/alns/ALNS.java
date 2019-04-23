@@ -91,7 +91,7 @@ public class ALNS {
         this.random = random;
 
         dynamicHandler = new DynamicHandler(instance, 0.0, maxIterations);
-        dynamicHandler.prepareInstance();
+        dynamicHandler.adaptDynamicVersion();
 
         insertionOperator = new InsertionOperator(instance, random);
         removalOperator = new RemovalOperator(instance, random);
@@ -149,55 +149,59 @@ public class ALNS {
                 solution = applyImprovement(solution);
                 instance.solutionEvaluation(solution);
                 solutionBest = SolutionUtils.copy(solution);
+                log("NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible);
                 updateParameters();
             }
 
-            Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
-            int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
-            /*
-             * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
-             * roulette wheels based on the score of each operator.
-             */
-            int ro = selectRemovalOperator(); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
-            int ri = selectInsertionOperator(); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
-            List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
-            insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
-            instance.solutionEvaluation(solutionNew); // Update the solution cost
-            if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
-                updateBest(solution); // S_best <- S <- S'
-                // Increase the scores of io and ro by sigma1
-                updateScores(ro, ri, sigma1); // Increment by sigma1 if the new solution is a new best one
-            } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
-                solution = solutionNew; // S <- S'
-                // Increase the scores of the ro and io by sigma2
-                updateScores(ro, ri, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
-            } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
-                solution = solutionNew; // S <- S'
-                // Increase the scores of the ro and io by sigma3
-                updateScores(ro, ri, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
-            }
+            if (instance.getNumReq() > 0) {
+                Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
+                int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
+                /*
+                 * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
+                 * roulette wheels based on the score of each operator.
+                 */
+                int ro = selectRemovalOperator(); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
+                int ri = selectInsertionOperator(); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
+                List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
+                insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
+                instance.solutionEvaluation(solutionNew); // Update the solution cost
+                if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
+                    solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
+                    updateBest(solution); // S_best <- S <- S'
+                    // Increase the scores of io and ro by sigma1
+                    updateScores(ro, ri, sigma1); // Increment by sigma1 if the new solution is a new best one
+                } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
+                    solution = solutionNew; // S <- S'
+                    // Increase the scores of the ro and io by sigma2
+                    updateScores(ro, ri, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+                } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
+                    solution = solutionNew; // S <- S'
+                    // Increase the scores of the ro and io by sigma3
+                    updateScores(ro, ri, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+                }
 
-            /*
-             * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
-             * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
-             * allow worse solutions to be more easily accepted and increase the diversity.
-             */
-            T = T * c;
-            if (T < minT) {
-                T = initialT;
-            }
-            if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
-                updateWeights(); // Update weights and reset scores of operators
-                resetOperatorsScores();
-                solution = applyImprovement(solution); // Apply improvement to S
-                printIterationStatus();
-                updateBest(solution);
+                /*
+                 * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
+                 * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
+                 * allow worse solutions to be more easily accepted and increase the diversity.
+                 */
+                T = T * c;
+                if (T < minT) {
+                    T = initialT;
+                }
+                if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
+                    updateWeights(); // Update weights and reset scores of operators
+                    resetOperatorsScores();
+                    solution = applyImprovement(solution); // Apply improvement to S
+                    printIterationStatus();
+                    updateBest(solution);
+                }
             }
             iteration++;
         }
 
         endTime = System.currentTimeMillis();
+        dynamicHandler.reloadOriginalInformation(solutionBest);
         printFinalRoute();
     }
 
@@ -416,11 +420,11 @@ public class ALNS {
         msg += "\nInstance = " + instance.getFileName();
         msg += "\nBest solution feasibility = " + solution.feasible + "\nRoutes";
         for (ArrayList route : solution.tours) {
-            msg += "\n" + StringUtils.join(route, "-");
+            msg += "\n" + StringUtils.join(route, " ");
         }
         msg += "\nRequests";
         for (ArrayList requests : solution.requests) {
-            msg += "\n" + StringUtils.join(requests, "-");
+            msg += "\n" + StringUtils.join(requests, " ");
         }
         msg += "\nCost = " + solution.totalCost;
         msg += "\nNum. vehicles = " + solution.tours.size();

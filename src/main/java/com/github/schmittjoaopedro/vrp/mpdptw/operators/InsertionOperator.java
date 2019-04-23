@@ -62,7 +62,7 @@ public class InsertionOperator {
                 List<InsertRequest> feasibleRoutes = new ArrayList<>();
                 // Create a new empty vehicle, if there is not one available, as a possibility to insert the request
                 int lastVehicle = solution.tours.size() - 1;
-                if (solution.tours.get(lastVehicle).size() > 2) {
+                if (solution.tours.isEmpty() || solution.tours.get(lastVehicle).size() > 2) {
                     SolutionUtils.addEmptyVehicle(solution);
                     lastVehicle++;
                 }
@@ -133,7 +133,7 @@ public class InsertionOperator {
             Req currReq = requestsToInsert.get(r);
             InsertRequest insertRequest = null;
             int lastVehicle = solution.tours.size() - 1;
-            if (solution.tours.get(lastVehicle).size() > 2) {
+            if (solution.tours.isEmpty() || solution.tours.get(lastVehicle).size() > 2) {
                 // Create a new vehicle to let available to the greedy operator
                 lastVehicle++;
                 SolutionUtils.addEmptyVehicle(solution);

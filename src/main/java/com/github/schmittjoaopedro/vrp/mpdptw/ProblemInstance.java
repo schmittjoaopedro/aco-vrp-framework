@@ -652,6 +652,31 @@ public class ProblemInstance {
         return cost;
     }
 
+    public void updateRequestStructures() {
+        Map<Integer, List<Request>> pickups = new HashMap<>();
+        Map<Integer, Request> delivery = new HashMap<>();
+        for (Request request : getRequests()) {
+            if (request.isPickup) {
+                if (!pickups.containsKey(request.requestId)) {
+                    pickups.put(request.requestId, new ArrayList<>());
+                }
+                pickups.get(request.requestId).add(request);
+            } else {
+                if (!delivery.containsKey(request.requestId)) {
+                    delivery.put(request.requestId, request);
+                }
+            }
+        }
+        List<Request>[] pickupsArray = new ArrayList[getNumReq()];
+        Request[] deliveriesArray = new Request[getNumReq()];
+        setPickups(pickupsArray);
+        setDelivery(deliveriesArray);
+        for (int i = 0; i < getNumReq(); i++) {
+            pickupsArray[i] = pickups.get(i);
+            deliveriesArray[i] = delivery.get(i);
+        }
+    }
+
     public class FitnessResult {
 
         public double cost;
