@@ -4,7 +4,6 @@ import com.github.schmittjoaopedro.tsp.graph.Edge;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.Req;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -110,7 +109,6 @@ public class DataReader {
         instance.calculateMaxDistance();
         // Create valid edges between nodes
         for (int i = 0; i < instance.getNumNodes(); i++) {
-            instance.getNeighbors().add(new ArrayList<>());
             for (int j = 0; j < instance.getNumNodes(); j++) {
                 // Nodes linked with itself aren't valid
                 if (i == j) {
@@ -128,7 +126,6 @@ public class DataReader {
                 if (!instance.isFeasible(i, j)) {
                     continue;
                 }
-                instance.getNeighbors().get(i).add(j);
             }
         }
         return instance;

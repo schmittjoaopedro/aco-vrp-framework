@@ -27,30 +27,34 @@ public class InsertionHeuristic {
     public Solution createInitialSolution() {
         Solution solution = SolutionUtils.createEmptyAnt(instance);
         for (int r = 0; r < instance.getNumReq(); r++) {
-            boolean found = false;
-            int kMax = solution.tours.size();
-            for (int k = 0; k < kMax; k++) {
-                if (insertionOperator.insertRequestOnVehicle(solution, k, r, PickupMethod.Random, InsertionMethod.Greedy)) {
-                    solution.requests.get(k).add(r);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                SolutionUtils.addEmptyVehicle(solution);
-                OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(r, instance);
-                optimalRequestSolver.optimize();
-                int lastK = solution.tours.size() - 1;
-                solution.tours.get(lastK).clear();
-                for (int i = 0; i < optimalRequestSolver.getBestRoute().length; i++) {
-                    solution.tours.get(lastK).add(optimalRequestSolver.getBestRoute()[i]);
-                }
-                solution.requests.get(lastK).add(r);
-                instance.solutionEvaluation(solution, lastK);
-            }
+            addRequests(solution, r);
         }
         instance.solutionEvaluation(solution);
         return solution;
+    }
+
+    public void addRequests(Solution solution, int r) {
+        boolean found = false;
+        int kMax = solution.tours.size();
+        for (int k = 0; k < kMax; k++) {
+            if (insertionOperator.insertRequestOnVehicle(solution, k, r, PickupMethod.Random, InsertionMethod.Greedy)) {
+                solution.requests.get(k).add(r);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            SolutionUtils.addEmptyVehicle(solution);
+            OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(r, instance);
+            optimalRequestSolver.optimize();
+            int lastK = solution.tours.size() - 1;
+            solution.tours.get(lastK).clear();
+            for (int i = 0; i < optimalRequestSolver.getBestRoute().length; i++) {
+                solution.tours.get(lastK).add(optimalRequestSolver.getBestRoute()[i]);
+            }
+            solution.requests.get(lastK).add(r);
+            instance.solutionEvaluation(solution, lastK);
+        }
     }
 
 }

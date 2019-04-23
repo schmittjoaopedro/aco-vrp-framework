@@ -1,8 +1,5 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Request {
 
     public int nodeId;
@@ -26,7 +23,5 @@ public class Request {
     public double serviceTime;
 
     public double announceTime;
-
-    public List<Request> feasibleRequests = new ArrayList<>();
 
 }

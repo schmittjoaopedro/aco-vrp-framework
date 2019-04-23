@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
+import com.github.schmittjoaopedro.vrp.mpdptw.DynamicHandler;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
@@ -78,12 +79,19 @@ public class ALNS {
 
     private boolean generateFile = Boolean.FALSE;
 
+    private InsertionHeuristic insertionHeuristic;
+
+    private DynamicHandler dynamicHandler;
+
     private List<String> log = new ArrayList<>();
 
     public ALNS(ProblemInstance instance, int maxIterations, Random random) {
         this.instance = instance;
         this.maxIterations = maxIterations;
         this.random = random;
+
+        dynamicHandler = new DynamicHandler(instance, 0.0, maxIterations);
+        dynamicHandler.prepareInstance();
 
         insertionOperator = new InsertionOperator(instance, random);
         removalOperator = new RemovalOperator(instance, random);
@@ -95,20 +103,13 @@ public class ALNS {
          * inserted within an available vehicle, at its minimum insertion cost position. After all requests have been
          * inserted, solution S is improved by our local search operator.
          */
-        InsertionHeuristic insertionHeuristic = new InsertionHeuristic(instance, random);
+        insertionHeuristic = new InsertionHeuristic(instance, random);
         solution = insertionHeuristic.createInitialSolution();
         instance.solutionEvaluation(solution);
         solution = applyImprovement(solution);
         instance.solutionEvaluation(solution);
         solutionBest = SolutionUtils.copy(solution);
-
-        d = solution.totalCost;
-        w = 0.05;
-        c = 0.9995;
-        initialT = (1.0 + w) * d;
-        //initialT = d * w / Math.log(2);
-        T = initialT;
-        minT = initialT * Math.pow(c, 30000);
+        updateParameters();
     }
 
     public void execute() {
@@ -134,6 +135,23 @@ public class ALNS {
         }
 
         while (!stopCriteriaMeet()) {
+
+            // Process new requests
+            List<Integer> newRequestIds = dynamicHandler.processDynamism(iteration);
+            if (!newRequestIds.isEmpty()) {
+                System.out.println("New requests add: " + StringUtils.join(newRequestIds));
+                log.add("New requests add: " + StringUtils.join(newRequestIds));
+                for (int req : newRequestIds) {
+                    instance.solutionEvaluation(solution);
+                    insertionHeuristic.addRequests(solution, req);
+                }
+                instance.solutionEvaluation(solution);
+                solution = applyImprovement(solution);
+                instance.solutionEvaluation(solution);
+                solutionBest = SolutionUtils.copy(solution);
+                updateParameters();
+            }
+
             Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
             int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
             /*
@@ -183,6 +201,18 @@ public class ALNS {
         printFinalRoute();
     }
 
+    private void log(String msg) {
+        log.add(msg);
+        System.out.println(msg);
+        if (generateFile) {
+            try {
+                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), msg + "\n", "UTF-8", true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void printIterationStatus() {
         String msg = "Iter " + iteration +
                 " Best = " + solution.toString() +
@@ -191,6 +221,16 @@ public class ALNS {
                 ", ro = " + StringUtils.join(getArray(roWeights), ',') +
                 ", ri = " + StringUtils.join(getArray(riWeights), ',');
         //System.out.println(msg);
+    }
+
+    private void updateParameters() {
+        d = solution.totalCost;
+        w = 0.05;
+        c = 0.9995;
+        initialT = (1.0 + w) * d;
+        //initialT = d * w / Math.log(2);
+        T = initialT;
+        minT = initialT * Math.pow(c, 30000);
     }
 
     private String[] getArray(double[] array) {
@@ -209,9 +249,7 @@ public class ALNS {
         if (solution.feasible && solution.totalCost < solutionBest.totalCost) {
             solutionBest = SolutionUtils.copy(solution);
             String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
-            System.out.println(msg);
-            logInFile(msg);
-            log.add(msg);
+            log(msg);
         }
     }
 
@@ -397,19 +435,7 @@ public class ALNS {
             }
         }
         msg += "\nTotal time (s) = " + ((endTime - startTime) / 1000.0);
-        System.out.println(msg);
-        logInFile(msg);
-        log.add(msg);
-    }
-
-    private void logInFile(String text) {
-        if (generateFile) {
-            try {
-                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        log(msg);
     }
 
     public void setGenerateFile(boolean generateFile) {

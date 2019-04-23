@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
+
 import java.util.*;
 
 public class ProblemInstance {
@@ -13,8 +15,6 @@ public class ProblemInstance {
     private int numMaxVehicles;
 
     private double vehicleCapacity;
-
-    private ArrayList<ArrayList<Integer>> neighbors = new ArrayList<>();
 
     private double[][] distances;
 
@@ -70,10 +70,6 @@ public class ProblemInstance {
 
     public void setVehicleCapacity(double vehicleCapacity) {
         this.vehicleCapacity = vehicleCapacity;
-    }
-
-    public ArrayList<ArrayList<Integer>> getNeighbors() {
-        return neighbors;
     }
 
     public void setDistances(double[][] distances) {
@@ -169,6 +165,32 @@ public class ProblemInstance {
             return 0.0;
         } else {
             return getRequest(node).serviceTime;
+        }
+    }
+
+    public Double x(int node) {
+        if (node == getDepot().nodeId) {
+            return depot.x;
+        } else {
+            return getRequest(node) != null ? getRequest(node).x : null;
+        }
+    }
+
+    public Double y(int node) {
+        if (node == getDepot().nodeId) {
+            return depot.y;
+        } else {
+            return getRequest(node) != null ? getRequest(node).y : null;
+        }
+    }
+
+    public void calculateDistances() {
+        for (int i = 0; i < distances.length; i++) {
+            for (int j = 0; j < distances.length; j++) {
+                if (i != j && x(i) != null && x(j) != null) {
+                    distances[i][j] = Maths.getEuclideanDistance(x(i), x(j), y(i), y(j));
+                }
+            }
         }
     }
 
