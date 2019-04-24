@@ -1,16 +1,14 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.Req;
-
 import java.util.*;
 
 public class DynamicHandler {
 
     private ProblemInstance instance;
 
-    private double startAlgorithmTime;
+    private double startTime;
 
-    private double endAlgorithmTime;
+    private double endTime;
 
     private ArrayList<RequestWrapper> dynamicRequests;
 
@@ -18,28 +16,39 @@ public class DynamicHandler {
 
     private Map<Integer, Integer> nodeOriginals = new HashMap<>();
 
-    public DynamicHandler(ProblemInstance instance, double startAlgorithmTime, double endAlgorithmTime) {
+    public DynamicHandler(ProblemInstance instance, double startTime, double endTime) {
         this.instance = instance;
-        this.startAlgorithmTime = startAlgorithmTime;
-        this.endAlgorithmTime = endAlgorithmTime;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
+    /*
+     * Takes the problem instance, and adapt it to the algorithm based on announce time (dynamic instances).
+     * To adapt the problem instance, we order the request based on the announce time and re-assign the requestIds
+     * and nodeIds in incremental order. The idea is to keep the problem restrictions but increasing the instance
+     * requests accordingly the announce time.
+     */
     public void adaptDynamicVersion() {
-        Map<Integer, RequestWrapper> requestsMap = new HashMap<>();
+        // Group request nodes, based on request id, in a request wrapper.
+        Map<Integer, RequestWrapper> requestsGroups = new HashMap<>();
         for (Request request : instance.getRequests()) {
-            if (!requestsMap.containsKey(request.requestId)) {
-                requestsMap.put(request.requestId, new RequestWrapper());
-                requestsMap.get(request.requestId).announceTime = request.announceTime;
-                requestsMap.get(request.requestId).requestId = request.requestId;
+            if (!requestsGroups.containsKey(request.requestId)) {
+                requestsGroups.put(request.requestId, new RequestWrapper(request.announceTime, request.requestId));
             }
-            requestsMap.get(request.requestId).requests.add(request);
+            requestsGroups.get(request.requestId).requests.add(request);
         }
-        dynamicRequests = new ArrayList<>(requestsMap.values());
+
+        // Sort the requests based on the announce time.
+        dynamicRequests = new ArrayList<>(requestsGroups.values());
         Collections.sort(dynamicRequests, Comparator.comparing(RequestWrapper::getAnnounceTime).thenComparing(RequestWrapper::getRequestId));
+
+        // Re-assign the request and node IDs in incremental order. It will simplify further updates of the problem instance
+        // we new requests are added to the problem.
         int count = 0;
         int node = 1;
         for (RequestWrapper requestWrapper : dynamicRequests) {
             for (Request request : requestWrapper.requests) {
+                // Keeps the mapping of original ID's to revert the problem back to the original instance at the end of execution
                 requestOriginals.put(count, request.requestId);
                 nodeOriginals.put(node, request.nodeId);
                 request.requestId = count;
@@ -49,56 +58,56 @@ public class DynamicHandler {
             requestWrapper.requestId = count;
             count++;
         }
+
+        // Reset all instance structures. At first time all requests are considered unknown
         instance.setRequests(new Request[0]);
         instance.setPickups(new ArrayList[0]);
         instance.setDelivery(new Request[0]);
         instance.setNumReq(0);
         instance.setNumNodes(1);
-        instance.setDistances(new double[][]{{0.0}});
+        instance.setDistances(new double[][]{{0.0}}); // We only have depot information
     }
 
-    public List<Integer> processDynamism(double time) {
+    /*
+     * Add new requests to the problem based on the announce time compared with the current execution time.
+     */
+    public List<Integer> processDynamism(double currentTime) {
+        // Check for new available requests based on the passing time.
         List<Integer> newRequestIds = new ArrayList<>();
-        List<Request> newRequests = new ArrayList<>();
-        List<RequestWrapper> toRemove = new ArrayList<>();
-        int numNewReqs = 0;
+        List<Request> newRequestNodes = new ArrayList<>();
+        List<RequestWrapper> reqWrappersToRemove = new ArrayList<>();
         for (RequestWrapper requestWrapper : dynamicRequests) {
-            if (getAlgScaledTime(time) >= getProbScaledTime(requestWrapper.announceTime)) {
-                newRequests.addAll(requestWrapper.requests);
-                toRemove.add(requestWrapper);
+            if (getAlgorithmTime(currentTime) >= getProblemTime(requestWrapper.announceTime)) {
                 newRequestIds.add(requestWrapper.requestId);
-                numNewReqs++;
+                newRequestNodes.addAll(requestWrapper.requests);
+                reqWrappersToRemove.add(requestWrapper);
             }
         }
-        if (numNewReqs > 0) {
-            dynamicRequests.removeAll(toRemove);
+        // If new requests gets available
+        if (newRequestIds.size() > 0) {
+            // Remove the new requests from the dynamic request list
+            dynamicRequests.removeAll(reqWrappersToRemove);
             // Re-size structures
-            int maxNodeId = instance.getNumNodes();
-            for (Request request : newRequests) {
-                maxNodeId = Math.max(maxNodeId, request.nodeId + 1);
-            }
-            Request[] requestNodes = new Request[maxNodeId - 1]; // Ignore depot
+            int numNodes = instance.getNumNodes() + newRequestNodes.size(); // Update number of nodes
+            Request[] requestNodes = new Request[numNodes - 1]; // Ignore depot (-1)
 
-            // Add existent request nodes
+            // Add existent and new request nodes
             for (Request request : instance.getRequests()) {
-                if (request != null) {
-                    requestNodes[request.nodeId - 1] = request;
-                }
+                requestNodes[request.nodeId - 1] = request;
             }
-            // Add new request nodes
-            for (Request request : newRequests) {
+            for (Request request : newRequestNodes) {
                 requestNodes[request.nodeId - 1] = request;
             }
 
             // Load requests information
-            int numReq = instance.getNumReq() + numNewReqs;
+            int numReq = instance.getNumReq() + newRequestIds.size();
             instance.setNumReq(numReq);
             instance.setRequests(requestNodes);
             instance.updateRequestStructures();
 
-            // Calculate distances
-            instance.setNumNodes(maxNodeId);
-            instance.setDistances(new double[maxNodeId][maxNodeId]);
+            // Update distances matrix
+            instance.setNumNodes(numNodes);
+            instance.setDistances(new double[numNodes][numNodes]);
             instance.calculateDistances();
             instance.calculateMaxDistance();
 
@@ -106,32 +115,43 @@ public class DynamicHandler {
         return newRequestIds;
     }
 
-    public void reloadOriginalInformation(Solution solution) {
+    /*
+     * Rollback original ID's to compare the solution with the literature results.
+     */
+    public void rollbackOriginalInformation(Solution solution) {
+        // Rollback original request ID's
         for (Request request : instance.getRequests()) {
             request.requestId = requestOriginals.get(request.requestId);
             request.nodeId = nodeOriginals.get(request.nodeId);
         }
-        Arrays.sort(instance.getRequests(), Comparator.comparing(Request::getNodeId));
+        // Convert solution ID's for the original prolem ID's
+        ArrayList<Integer> tour, requests;
         for (int k = 0; k < solution.tours.size(); k++) {
-            for (int i = 1; i < solution.tours.get(k).size() - 1; i++) {
-                solution.tours.get(k).set(i, nodeOriginals.get(solution.tours.get(k).get(i)));
+            tour = solution.tours.get(k);
+            requests = solution.requests.get(k);
+            for (int i = 1; i < tour.size() - 1; i++) {
+                tour.set(i, nodeOriginals.get(tour.get(i)));
             }
-            for (int i = 0; i < solution.requests.get(k).size(); i++) {
-                solution.requests.get(k).set(i, requestOriginals.get(solution.requests.get(k).get(i)));
+            for (int i = 0; i < requests.size(); i++) {
+                requests.set(i, requestOriginals.get(requests.get(i)));
             }
         }
+        // Update request structures
+        Arrays.sort(instance.getRequests(), Comparator.comparing(Request::getNodeId));
         instance.updateRequestStructures();
+        // Update distance structures
         instance.setDistances(new double[instance.getNumNodes()][instance.getNumNodes()]);
         instance.calculateDistances();
         instance.calculateMaxDistance();
+        // Calculate solution again
         instance.solutionEvaluation(solution);
     }
 
-    private double getAlgScaledTime(double currentTime) {
-        return (currentTime - startAlgorithmTime) / (endAlgorithmTime - startAlgorithmTime);
+    private double getAlgorithmTime(double currentTime) {
+        return (currentTime - startTime) / (endTime - startTime);
     }
 
-    private double getProbScaledTime(double currentTime) {
+    private double getProblemTime(double currentTime) {
         return (currentTime - instance.getDepot().twStart) / (instance.getDepot().twEnd - instance.getDepot().twStart);
     }
 
@@ -139,6 +159,11 @@ public class DynamicHandler {
         List<Request> requests = new ArrayList<>();
         Double announceTime;
         Integer requestId;
+
+        public RequestWrapper(Double announceTime, Integer requestId) {
+            this.announceTime = announceTime;
+            this.requestId = requestId;
+        }
 
         public Double getAnnounceTime() {
             return announceTime;

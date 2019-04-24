@@ -201,7 +201,7 @@ public class ALNS {
         }
 
         endTime = System.currentTimeMillis();
-        dynamicHandler.reloadOriginalInformation(solutionBest);
+        dynamicHandler.rollbackOriginalInformation(solutionBest);
         printFinalRoute();
     }
 
