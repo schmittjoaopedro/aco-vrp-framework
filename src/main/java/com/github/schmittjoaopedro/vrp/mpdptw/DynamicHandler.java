@@ -66,6 +66,7 @@ public class DynamicHandler {
         instance.setNumReq(0);
         instance.setNumNodes(1);
         instance.setDistances(new double[][]{{0.0}}); // We only have depot information
+        instance.getIdleRequests().clear();
     }
 
     /*
@@ -97,6 +98,7 @@ public class DynamicHandler {
             }
             for (Request request : newRequestNodes) {
                 requestNodes[request.nodeId - 1] = request;
+                instance.getIdleRequests().add(request.requestId);
             }
 
             // Load requests information

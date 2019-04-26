@@ -143,6 +143,14 @@ public class SolutionUtils {
 
     }
 
+    public static void removeNode(int node, ArrayList<Integer> tour) {
+        for (int i = 0; i < tour.size(); i++) {
+            if (tour.get(i) == node) {
+                tour.remove(i);
+                break;
+            }
+        }
+    }
 
     public static boolean containsEmptyVehicle(Solution solution) {
         for (ArrayList<Integer> reqs : solution.requests) {

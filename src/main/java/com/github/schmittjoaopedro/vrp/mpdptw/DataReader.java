@@ -53,9 +53,8 @@ public class DataReader {
         instance.setNumNodes(distances.length);
         instance.setDistances(distances);
         // Load requests
+        int numReq = 0;
         List<Request> allRequests = new ArrayList<>();
-        Map<Integer, List<Request>> pickups = new HashMap<>();
-        Map<Integer, Request> delivery = new HashMap<>();
         for (int i = 1; i < fileContent.length; i++) {
             lineData = fileContent[i].replaceAll("\r", StringUtils.EMPTY).split(" ");
             if (i == 1) {
@@ -77,31 +76,17 @@ public class DataReader {
                 request.isPickup = "0".equals(lineData[7]); // We assume that pickups are marked with zero
                 request.isDeliver = !request.isPickup;
                 request.requestId = Integer.parseInt(lineData[8]);
-                if (request.isPickup) {
-                    if (!pickups.containsKey(request.requestId)) {
-                        pickups.put(request.requestId, new ArrayList<>());
-                    }
-                    pickups.get(request.requestId).add(request);
-                } else {
-                    if (!delivery.containsKey(request.requestId)) {
-                        delivery.put(request.requestId, request);
-                    }
+                if (request.isDeliver) {
+                    numReq++;
                 }
                 allRequests.add(request);
+                instance.getIdleRequests().add(request.requestId);
             }
         }
-        // Load count information
-        instance.setRequests(allRequests.toArray(new Request[]{}));
-        instance.setNumReq(delivery.size());
         // Load requests information
-        List<Request>[] pickupsArray = new ArrayList[instance.getNumReq()];
-        Request[] deliveriesArray = new Request[instance.getNumReq()];
-        instance.setPickups(pickupsArray);
-        instance.setDelivery(deliveriesArray);
-        for (int i = 0; i < instance.getNumReq(); i++) {
-            pickupsArray[i] = pickups.get(i);
-            deliveriesArray[i] = delivery.get(i);
-        }
+        instance.setRequests(allRequests.toArray(new Request[]{}));
+        instance.setNumReq(numReq);
+        instance.updateRequestStructures();
         // Load vehicle information
         lineData = fileContent[0].split(" ");
         instance.setNumMaxVehicles(Integer.valueOf(lineData[0]));
@@ -198,6 +183,7 @@ public class DataReader {
             int deliveryIndex = Integer.valueOf(lineData[8]);
             if (deliveryIndex > 0) {
                 noPickups++;
+                instance.getIdleRequests().add(reqId);
                 requests[nodeId - 1].requestId = reqId;
                 requests[nodeId - 1].isPickup = true;
                 requests[deliveryIndex - 1].requestId = reqId;
@@ -213,21 +199,9 @@ public class DataReader {
         if (noPickups != noDeliveries) {
             throw new RuntimeException("Number of pickups and deliveries are different");
         }
-        List<Request>[] pickups = new ArrayList[noPickups];
-        Request[] deliveries = new Request[noDeliveries];
-        for (int i = 0; i < requests.length; i++) {
-            Request request = requests[i];
-            if (request.isPickup) {
-                pickups[request.requestId] = new ArrayList<>();
-                pickups[request.requestId].add(request);
-            } else {
-                deliveries[request.requestId] = request;
-            }
-        }
-        instance.setNumReq(pickups.length);
+        instance.setNumReq(noDeliveries);
         instance.setRequests(requests);
-        instance.setPickups(pickups);
-        instance.setDelivery(deliveries);
+        instance.updateRequestStructures();
         double[][] distances = new double[noNode][noNode];
         for (int i = 0; i < distances.length; i++) {
             for (int j = 0; j < distances.length; j++) {

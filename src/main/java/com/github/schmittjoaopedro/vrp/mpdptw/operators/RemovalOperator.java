@@ -58,17 +58,20 @@ public class RemovalOperator {
     public List<Req> removeShawRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, int noReqToRemove) {
         ArrayList<Req> R = new ArrayList<>(); // R <- {r} : set of removed requests
         Req r = selectRandomRequestFromSolution(requests); // r <- a randomly chosen request in S
+        Set<Integer> removedReqs = new HashSet<>();
         R.add(r);
+        removedReqs.add(r.requestId);
         removeRequest(solution, requests, r); // Un-assign all the nodes of request r in solution S
         while (R.size() < noReqToRemove) {
             r = R.get((int) (random.nextDouble() * R.size())); // r <- a randomly chosen request in R
-            ArrayList<Req> assignedRequests = getMostRelatedRequests(r, requests); // an array of assigned requests in S
+            ArrayList<Req> assignedRequests = getMostRelatedRequests(r, requests, removedReqs); // an array of assigned requests in S
             assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
             double y = random.nextDouble(); // y <- a randomly number between 0 and 1
             int requestD = (int) (Math.pow(y, D) * assignedRequests.size());
             r = assignedRequests.get(requestD);
             removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
             R.add(r); // R <- R U {L[y^D|L|]}
+            removedReqs.add(r.requestId);
         }
         removeEmptyVehicles(solution, requests);
         return R;
@@ -150,12 +153,12 @@ public class RemovalOperator {
      * Return an array of request ordered by the relatedness (distance between delivery points)
      * with the request parameter.
      */
-    private ArrayList<Req> getMostRelatedRequests(Req request, ArrayList<ArrayList<Integer>> requests) {
+    private ArrayList<Req> getMostRelatedRequests(Req request, ArrayList<ArrayList<Integer>> requests, Set<Integer> removedReqs) {
         ArrayList<Req> assignedRequests = new ArrayList<>();
         for (int k = 0; k < requests.size(); k++) { // For each vehicle k in vehicles
             for (int r = 0; r < requests.get(k).size(); r++) { // For each request r in vehicle k
                 int reqId = requests.get(k).get(r);
-                if (reqId != request.requestId) {
+                if (!removedReqs.contains(reqId)) {
                     // Get the distance between the delivery points between the request parameter and the current request r of vehicle k
                     double relatedCost = instance.dist(instance.getDelivery(request.requestId).nodeId, instance.getDelivery(reqId).nodeId);
                     assignedRequests.add(new Req(k, reqId, relatedCost)); // Add the request with the related cost to the list of assigned requests
@@ -250,14 +253,16 @@ public class RemovalOperator {
     }
 
     private void removeRequest(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests, Req request) {
-        // Remove all pickups node from solution
-        for (Request req : instance.getPickups(request.requestId)) {
-            removeItem(solution.get(request.vehicleId), req.nodeId);
+        if (instance.isFullyIdle(request.requestId)) {
+            // Remove all pickups node from solution
+            for (Request req : instance.getPickups(request.requestId)) {
+                removeItem(solution.get(request.vehicleId), req.nodeId);
+            }
+            // Remove the delivery node from solution
+            removeItem(solution.get(request.vehicleId), instance.getDelivery(request.requestId).nodeId);
+            // Remove request id from solution
+            removeItem(requests.get(request.vehicleId), request.requestId);
         }
-        // Remove the delivery node from solution
-        removeItem(solution.get(request.vehicleId), instance.getDelivery(request.requestId).nodeId);
-        // Remove request id from solution
-        removeItem(requests.get(request.vehicleId), request.requestId);
     }
 
     private void removeItem(List<Integer> array, int item) {

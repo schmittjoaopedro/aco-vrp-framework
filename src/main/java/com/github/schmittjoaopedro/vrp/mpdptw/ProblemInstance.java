@@ -28,6 +28,9 @@ public class ProblemInstance {
 
     private Request[] delivery;
 
+    // Requests not visited yet by the vehicle during moving vehicle simulation
+    private Set<Integer> idleRequests = new HashSet<>();
+
     /*
      * GETTERS and SETTERS
      */
@@ -104,6 +107,10 @@ public class ProblemInstance {
         this.delivery = delivery;
     }
 
+    public Set<Integer> getIdleRequests() {
+        return idleRequests;
+    }
+
     /*
      * Functional methods
      */
@@ -114,6 +121,14 @@ public class ProblemInstance {
 
     public List<Request> getPickups(int requestId) {
         return pickups[requestId];
+    }
+
+    public boolean isIdle(int node) {
+        if (node == depot.nodeId) {
+            return true;
+        } else {
+            return getRequest(node).isIdle();
+        }
     }
 
     public double dist(int i, int j) {
@@ -182,6 +197,10 @@ public class ProblemInstance {
         } else {
             return getRequest(node) != null ? getRequest(node).y : null;
         }
+    }
+
+    public boolean isFullyIdle(int requestId) {
+        return idleRequests.contains(requestId);
     }
 
     public void calculateDistances() {

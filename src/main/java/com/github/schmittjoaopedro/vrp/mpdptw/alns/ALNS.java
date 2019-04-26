@@ -1,9 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.DynamicHandler;
-import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
-import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
-import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
+import com.github.schmittjoaopedro.vrp.mpdptw.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -85,6 +82,8 @@ public class ALNS {
 
     private List<String> log = new ArrayList<>();
 
+    private MovingVehicle movingVehicle;
+
     public ALNS(ProblemInstance instance, int maxIterations, Random random) {
         this.instance = instance;
         this.maxIterations = maxIterations;
@@ -165,6 +164,9 @@ public class ALNS {
                 List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
                 insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
                 instance.solutionEvaluation(solutionNew); // Update the solution cost
+                if (!solutionNew.feasible) {
+                    throw new RuntimeException("Infeasible solution");
+                }
                 if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
                     solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
                     updateBest(solution); // S_best <- S <- S'
@@ -197,6 +199,14 @@ public class ALNS {
                     updateBest(solution);
                 }
             }
+
+            // Check moving vehicle
+            if (movingVehicle != null) {
+                if(movingVehicle.moveVehicle(solutionBest, iteration)) {
+                    solution = SolutionUtils.copy(solutionBest);
+                }
+            }
+
             iteration++;
         }
 
@@ -440,6 +450,10 @@ public class ALNS {
         }
         msg += "\nTotal time (s) = " + ((endTime - startTime) / 1000.0);
         log(msg);
+    }
+
+    public void enableMovingVehicle() {
+        movingVehicle = new MovingVehicle(instance, 0, maxIterations);
     }
 
     public void setGenerateFile(boolean generateFile) {

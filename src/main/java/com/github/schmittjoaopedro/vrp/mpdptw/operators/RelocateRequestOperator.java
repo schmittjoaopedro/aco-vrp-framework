@@ -33,23 +33,34 @@ public class RelocateRequestOperator {
             for (int requestId = 0; requestId < instance.getNumReq(); requestId++) {
                 SolutionUtils.copyFromTo(improvedSol, tempSol);
                 int vehicle = SolutionUtils.findRequestVehicleOwner(tempSol, requestId);
-                SolutionUtils.removeRequest(instance, tempSol, vehicle, requestId);
-                SolutionUtils.removeEmptyVehicles(tempSol);
-                SolutionUtils.addEmptyVehicle(tempSol);
-                instance.solutionEvaluation(tempSol, vehicle);
-                for (int k = 0; k < tempSol.tours.size(); k++) {
-                    if (insertionOperator.insertRequestOnVehicle(tempSol, k, requestId, PickupMethod.Random, InsertionMethod.Greedy)) {
-                        tempSol.requests.get(k).add(requestId);
+                if (instance.isFullyIdle(requestId)) { // Request fully not visited yet
+                    SolutionUtils.removeRequest(instance, tempSol, vehicle, requestId);
+                    SolutionUtils.removeEmptyVehicles(tempSol);
+                    SolutionUtils.addEmptyVehicle(tempSol);
+                    instance.solutionEvaluation(tempSol, vehicle);
+                    for (int k = 0; k < tempSol.tours.size(); k++) {
+                        if (insertionOperator.insertRequestOnVehicle(tempSol, k, requestId, PickupMethod.Random, InsertionMethod.Greedy)) {
+                            tempSol.requests.get(k).add(requestId);
+                            double improvedCost = Maths.round(improvedSol.totalCost + improvedSol.timeWindowPenalty);
+                            double tempCost = Maths.round(tempSol.totalCost + tempSol.timeWindowPenalty);
+                            if (tempCost < improvedCost) {
+                                SolutionUtils.removeEmptyVehicles(tempSol);
+                                SolutionUtils.copyFromTo(tempSol, improvedSol);
+                                SolutionUtils.addEmptyVehicle(tempSol);
+                                improvement = true;
+                            }
+                            SolutionUtils.removeRequest(instance, tempSol, k, requestId);
+                            instance.solutionEvaluation(tempSol, k);
+                        }
+                    }
+                } else if (instance.getDelivery(requestId).isIdle()) {
+                    if (insertionOperator.improveRequestOnVehicle(tempSol, vehicle, requestId, PickupMethod.Random, InsertionMethod.Greedy)) {
                         double improvedCost = Maths.round(improvedSol.totalCost + improvedSol.timeWindowPenalty);
                         double tempCost = Maths.round(tempSol.totalCost + tempSol.timeWindowPenalty);
                         if (tempCost < improvedCost) {
-                            SolutionUtils.removeEmptyVehicles(tempSol);
                             SolutionUtils.copyFromTo(tempSol, improvedSol);
-                            SolutionUtils.addEmptyVehicle(tempSol);
                             improvement = true;
                         }
-                        SolutionUtils.removeRequest(instance, tempSol, k, requestId);
-                        instance.solutionEvaluation(tempSol, k);
                     }
                 }
             }
