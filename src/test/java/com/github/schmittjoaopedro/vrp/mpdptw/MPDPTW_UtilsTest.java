@@ -420,7 +420,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6)));
 
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(5779.107690950086);
         assertThat(ant.timeWindowPenalty).isEqualTo(1954.7132147852114);
         assertThat(ant.feasible).isFalse();
@@ -445,7 +445,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(4, 3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6)));
 
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(5866.440173144294);
         assertThat(ant.timeWindowPenalty).isEqualTo(1394.7584899599913);
         assertThat(ant.feasible).isFalse();
@@ -467,7 +467,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
         ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(4768.957285204959);
         assertThat(ant.timeWindowPenalty).isEqualTo(814.3582706522368);
         assertThat(ant.feasible).isFalse();
@@ -489,7 +489,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
         ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(4768.957285204959);
         assertThat(ant.timeWindowPenalty).isEqualTo(814.3582706522368);
         assertThat(ant.feasible).isFalse();
@@ -516,11 +516,10 @@ public class MPDPTW_UtilsTest {
         assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
         assertThat(removedRequests.get(5).requestId).isEqualTo(1);
         assertThat(removedRequests.get(5).cost).isEqualTo(-550.4068038208605);
-        try {
-            problemInstance.restrictionsEvaluation(ant);
-        } catch (Exception ex) {
-            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
-        }
+
+        problemInstance.solutionEvaluation(ant);
+        assertThat(ant.feasible).isFalse(); // Infeasible number of requests. We expect this error because we removed the requests
+
         assertThat(ant.tours).hasSize(2);
         assertThat(ant.requests).hasSize(2);
         assertThat(ant.tourCosts).hasSize(2);
@@ -540,14 +539,14 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isTrue();
         assertThat(ant.tours.get(0)).containsExactly(0, 7, 13, 14, 8, 1, 2, 0);
         assertThat(ant.tours.get(1)).containsExactly(0, 15, 16, 17, 0);
-        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
-        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
-        assertThat(ant.tours.get(4)).containsExactly(0, 5, 3, 4, 6, 0);
-        assertThat(ant.requests.get(0)).containsExactly(0, 2, 4);
+        assertThat(ant.tours.get(2)).containsExactly(0, 5, 3, 4, 6, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(4)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(0, 4, 2);
         assertThat(ant.requests.get(1)).containsExactly(5);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
-        assertThat(ant.requests.get(3)).containsExactly(6);
-        assertThat(ant.requests.get(4)).containsExactly(1);
+        assertThat(ant.requests.get(2)).containsExactly(1);
+        assertThat(ant.requests.get(3)).containsExactly(3, 7);
+        assertThat(ant.requests.get(4)).containsExactly(6);
     }
 
     @Test
@@ -560,7 +559,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
         ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(4768.957285204959);
         assertThat(ant.timeWindowPenalty).isEqualTo(814.3582706522368);
         assertThat(ant.feasible).isFalse();
@@ -587,11 +586,10 @@ public class MPDPTW_UtilsTest {
         assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
         assertThat(removedRequests.get(5).requestId).isEqualTo(1);
         assertThat(removedRequests.get(5).cost).isEqualTo(0.0);
-        try {
-            problemInstance.restrictionsEvaluation(ant);
-        } catch (Exception ex) {
-            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
-        }
+
+        problemInstance.solutionEvaluation(ant);
+        assertThat(ant.feasible).isFalse(); // Infeasible number of requests. We expect this error because we removed the requests
+
         assertThat(ant.tours).hasSize(2);
         assertThat(ant.requests).hasSize(2);
         assertThat(ant.tourCosts).hasSize(2);
@@ -606,19 +604,19 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours).hasSize(5);
         assertThat(ant.requests).hasSize(5);
         assertThat(ant.tourCosts).hasSize(5);
-        assertThat(ant.totalCost).isEqualTo(5914.953391883539);
+        assertThat(ant.totalCost).isEqualTo(5849.687196671469);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
         assertThat(ant.feasible).isTrue();
         assertThat(ant.tours.get(0)).containsExactly(0, 18, 19, 20, 21, 0);
-        assertThat(ant.tours.get(1)).containsExactly(0, 23, 7, 24, 22, 8, 25, 0);
-        assertThat(ant.tours.get(2)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
-        assertThat(ant.tours.get(3)).containsExactly(0, 15, 16, 17, 0);
-        assertThat(ant.tours.get(4)).containsExactly(0, 11, 10, 9, 12, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 13, 14, 8, 1, 2, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 5, 3, 4, 6, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(4)).containsExactly(0, 15, 16, 17, 0);
         assertThat(ant.requests.get(0)).containsExactly(6);
-        assertThat(ant.requests.get(1)).containsExactly(2, 7);
-        assertThat(ant.requests.get(2)).containsExactly(0, 4, 1);
-        assertThat(ant.requests.get(3)).containsExactly(5);
-        assertThat(ant.requests.get(4)).containsExactly(3);
+        assertThat(ant.requests.get(1)).containsExactly(2, 4, 0);
+        assertThat(ant.requests.get(2)).containsExactly(1);
+        assertThat(ant.requests.get(3)).containsExactly(3, 7);
+        assertThat(ant.requests.get(4)).containsExactly(5);
     }
 
     @Test
@@ -670,22 +668,22 @@ public class MPDPTW_UtilsTest {
         problemInstance.solutionEvaluation(ant);
         insertionOperator.insertRequestsSequentially(ant, removedRequests);
 
-        assertThat(ant.totalCost).isEqualTo(6396.785893881898);
+        assertThat(ant.totalCost).isEqualTo(5687.798144910946);
         assertThat(ant.tours).hasSize(5);
         assertThat(ant.requests).hasSize(5);
         assertThat(ant.tourCosts).hasSize(5);
         assertThat(ant.timeWindowPenalty).isEqualTo(0);
         assertThat(ant.feasible).isTrue();
-        assertThat(ant.tours.get(0)).containsExactly(0, 15, 13, 14, 16, 17, 0);
+        assertThat(ant.tours.get(0)).containsExactly(0, 15, 1, 16, 2, 17, 0);
         assertThat(ant.tours.get(1)).containsExactly(0, 23, 7, 22, 24, 8, 25, 0);
-        assertThat(ant.tours.get(2)).containsExactly(0, 18, 19, 20, 21, 0);
-        assertThat(ant.tours.get(3)).containsExactly(0, 5, 3, 4, 1, 2, 6, 0);
-        assertThat(ant.tours.get(4)).containsExactly(0, 11, 10, 9, 12, 0);
-        assertThat(ant.requests.get(0)).containsExactly(5, 4);
+        assertThat(ant.tours.get(2)).containsExactly(0, 5, 3, 13, 14, 4, 6, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 11, 10, 9, 12, 0);
+        assertThat(ant.tours.get(4)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(5, 0);
         assertThat(ant.requests.get(1)).containsExactly(7, 2);
-        assertThat(ant.requests.get(2)).containsExactly(6);
-        assertThat(ant.requests.get(3)).containsExactly(0, 1);
-        assertThat(ant.requests.get(4)).containsExactly(3);
+        assertThat(ant.requests.get(2)).containsExactly(4, 1);
+        assertThat(ant.requests.get(3)).containsExactly(3);
+        assertThat(ant.requests.get(4)).containsExactly(6);
     }
 
     @Test
@@ -698,7 +696,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
         ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(4768.957285204959);
         assertThat(ant.timeWindowPenalty).isEqualTo(814.3582706522368);
         assertThat(ant.feasible).isFalse();
@@ -712,24 +710,23 @@ public class MPDPTW_UtilsTest {
         assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
         assertThat(removedRequests.get(1).vehicleId).isEqualTo(2);
         assertThat(removedRequests.get(1).requestId).isEqualTo(7);
-        assertThat(removedRequests.get(1).cost).isEqualTo(-670.0664169303625);
-        assertThat(removedRequests.get(2).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(2).requestId).isEqualTo(3);
-        assertThat(removedRequests.get(2).cost).isEqualTo(-698.7432491011773);
+        assertThat(removedRequests.get(1).cost).isEqualTo(-521.6521254712943);
+        assertThat(removedRequests.get(2).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(2).cost).isEqualTo(-395.39044354167004);
         assertThat(removedRequests.get(3).vehicleId).isEqualTo(0);
         assertThat(removedRequests.get(3).requestId).isEqualTo(4);
-        assertThat(removedRequests.get(3).cost).isEqualTo(-27.06020160018079);
-        assertThat(removedRequests.get(4).vehicleId).isEqualTo(1);
-        assertThat(removedRequests.get(4).requestId).isEqualTo(6);
-        assertThat(removedRequests.get(4).cost).isEqualTo(-634.3712007601264);
-        assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
-        assertThat(removedRequests.get(5).requestId).isEqualTo(0);
-        assertThat(removedRequests.get(5).cost).isEqualTo(-395.39044354167004);
-        try {
-            problemInstance.restrictionsEvaluation(ant);
-        } catch (Exception ex) {
-            assertThat(ex).hasMessage("Infeasible number of requests"); // We expect this error because we removed the requests
-        }
+        assertThat(removedRequests.get(3).cost).isEqualTo(-27.060201600181017);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(3);
+        assertThat(removedRequests.get(4).cost).isEqualTo(-299.04667639862214);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(6);
+        assertThat(removedRequests.get(5).cost).isEqualTo(-64.80148790827502);
+
+        problemInstance.solutionEvaluation(ant);
+        assertThat(ant.feasible).isFalse(); // Infeasible number of requests. We expect this error because we removed the requests
+
         assertThat(ant.tours).hasSize(2);
         assertThat(ant.requests).hasSize(2);
         assertThat(ant.tourCosts).hasSize(2);
@@ -753,7 +750,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
         assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
         assertThat(ant.requests.get(3)).containsExactly(6);
 
     }
@@ -790,7 +787,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
         assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
         assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
@@ -826,7 +823,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
         assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
         assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
@@ -862,7 +859,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
         assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
         assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
@@ -898,7 +895,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
         assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
         assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
@@ -970,7 +967,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
         assertThat(ant.requests.get(0)).containsExactly(1, 4);
         assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(7, 3);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
         assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
@@ -985,7 +982,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(4, 8, 7)));
         ant.requests.add(new ArrayList<>(Arrays.asList(3, 5)));
 
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
 
         assertThat(ant.tourCosts).hasSize(3);
         assertThat(ant.totalCost).isEqualTo(4168.7112869780785);
@@ -1110,7 +1107,7 @@ public class MPDPTW_UtilsTest {
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 0, 7)));
         ant.requests.add(new ArrayList<>(Arrays.asList(6, 3)));
         ant.requests.add(new ArrayList<>(Arrays.asList(4, 5, 2)));
-        problemInstance.restrictionsEvaluation(ant);
+        problemInstance.solutionEvaluation(ant);
         assertThat(ant.totalCost).isEqualTo(4713.749202925907);
         assertThat(ant.feasible).isTrue();
     }
@@ -1171,12 +1168,12 @@ public class MPDPTW_UtilsTest {
         assertThat(problemInstance.costEvaluation(route, 0)).isEqualTo(1155.0871770093245);
         assertThat(problemInstance.costEvaluation(route, 1)).isEqualTo(623.9389060056287);
         //Without nodes
-        assertThat(problemInstance.costEvaluation(route, 0, 1)).isEqualTo(1735.6868649597677);
-        assertThat(problemInstance.costEvaluation(route, 0, 2)).isEqualTo(1165.5318171592444);
-        assertThat(problemInstance.costEvaluation(route, 1, 3)).isEqualTo(686.0315492809959);
-        assertThat(problemInstance.costEvaluation(route, 1, 4)).isEqualTo(1067.7668734324507);
-        assertThat(problemInstance.costEvaluation(route, 1, 5)).isEqualTo(637.0370393078327);
-        assertThat(problemInstance.costEvaluation(route, 1, 6)).isEqualTo(968.610898345452);
+        assertThat(problemInstance.costEvaluation(route, 0, 1)).isEqualTo(1165.5318171592444);
+        assertThat(problemInstance.costEvaluation(route, 0, 2)).isEqualTo(1735.6868649597677);
+        assertThat(problemInstance.costEvaluation(route, 1, 3)).isEqualTo(1463.0481036927035);
+        assertThat(problemInstance.costEvaluation(route, 1, 4)).isEqualTo(1081.3127795412488);
+        assertThat(problemInstance.costEvaluation(route, 1, 5)).isEqualTo(1735.7989979810277);
+        assertThat(problemInstance.costEvaluation(route, 1, 6)).isEqualTo(1404.2251389434082);
     }
 
 }

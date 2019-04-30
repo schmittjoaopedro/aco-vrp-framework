@@ -260,15 +260,9 @@ public class RemovalOperator {
         removeItem(requests.get(request.vehicleId), request.requestId);
     }
 
-    private void removeItem(List<Integer> array, int item) {
-        int position = -1;
-        for (int i = 0; i < array.size(); i++) {
-            if (array.get(i) == item) {
-                position = i;
-                break;
-            }
-        }
-        array.remove(position);
+    // Using node as Integer object type allows to remove from array using object reference
+    private void removeItem(List<Integer> array, Integer node) {
+        array.remove(node);
     }
 
     public class RemovalRequest {

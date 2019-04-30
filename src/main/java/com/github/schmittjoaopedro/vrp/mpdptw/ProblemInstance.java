@@ -610,7 +610,7 @@ public class ProblemInstance {
         return cost;
     }
 
-    public double costEvaluation(List<Integer> tour, Integer requestToIgnore, int nodeToConsider) {
+    public double costEvaluation(List<Integer> tour, Integer requestToIgnore, int nodeToIgnore) {
         double cost = 0.0;
         int from, to;
         int i = 0;
@@ -618,7 +618,7 @@ public class ProblemInstance {
             from = tour.get(i);
             i++;
             to = tour.get(i);
-            while (to != depot.nodeId && requests[to - 1].requestId == requestToIgnore && to != nodeToConsider) {
+            while (to != depot.nodeId && requests[to - 1].requestId == requestToIgnore && to == nodeToIgnore) {
                 i++;
                 to = tour.get(i);
             }

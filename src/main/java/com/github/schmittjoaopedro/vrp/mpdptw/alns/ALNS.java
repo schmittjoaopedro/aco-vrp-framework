@@ -55,13 +55,19 @@ public class ALNS {
     private double[] roWeights;
     private double[] riWeights;
 
+    // Probabilities calculated for ro's and ri's
+    private double[] roProbs;
+    private double[] riProbs;
+    private double roProbsSum;
+    private double riProbsSum;
+
     // These are the accumulated scores (PI_i) of each operator during the executiong of segment (delta).
     private double[] roScores;
     private double[] riScores;
 
     // Number of times that each operator has been used in the last segment j.
-    private int[] roUsages;
-    private int[] riUsages;
+    private double[] roUsages;
+    private double[] riUsages;
 
     private Random random;
 
@@ -117,21 +123,29 @@ public class ALNS {
 
         roScores = new double[RemovalMethod.values().length];
         roWeights = new double[RemovalMethod.values().length];
-        roUsages = new int[RemovalMethod.values().length];
+        roUsages = new double[RemovalMethod.values().length];
 
         riScores = new double[InsertionMethod.values().length];
         riWeights = new double[InsertionMethod.values().length];
-        riUsages = new int[InsertionMethod.values().length];
+        riUsages = new double[InsertionMethod.values().length];
 
         /*
          * The score of the operators are initially set to 0.
          */
+        // Init for removal
+        roProbs = new double[roWeights.length];
         for (int i = 0; i < roWeights.length; i++) {
             roWeights[i] = 1.0;
         }
+        roProbsSum = updateWeightsProbabilities(roWeights, roProbs);
+        // Init for insertion
+        riProbs = new double[riWeights.length];
         for (int i = 0; i < riWeights.length; i++) {
             riWeights[i] = 1.0;
         }
+        riProbsSum = updateWeightsProbabilities(riWeights, riProbs);
+
+        Set<Integer> hashNumber = new HashSet<>();
 
         while (!stopCriteriaMeet()) {
             Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
@@ -145,19 +159,24 @@ public class ALNS {
             List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
             insertRequests(solutionNew, ri, removedRequests); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
             instance.solutionEvaluation(solutionNew); // Update the solution cost
-            if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
-                updateBest(solution); // S_best <- S <- S'
-                // Increase the scores of io and ro by sigma1
-                updateScores(ro, ri, sigma1); // Increment by sigma1 if the new solution is a new best one
-            } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
-                solution = solutionNew; // S <- S'
-                // Increase the scores of the ro and io by sigma2
-                updateScores(ro, ri, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
-            } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
-                solution = solutionNew; // S <- S'
-                // Increase the scores of the ro and io by sigma3
-                updateScores(ro, ri, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+
+            int solutionHash = SolutionUtils.getHash(solutionNew);
+            if (!hashNumber.contains(solutionHash)) {
+                hashNumber.add(solutionHash);
+                if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
+                    solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
+                    updateBest(solution); // S_best <- S <- S'
+                    // Increase the scores of io and ro by sigma1
+                    updateScores(ro, ri, sigma1); // Increment by sigma1 if the new solution is a new best one
+                } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
+                    solution = solutionNew; // S <- S'
+                    // Increase the scores of the ro and io by sigma2
+                    updateScores(ro, ri, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+                } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
+                    solution = solutionNew; // S <- S'
+                    // Increase the scores of the ro and io by sigma3
+                    updateScores(ro, ri, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+                }
             }
 
             /*
@@ -190,7 +209,7 @@ public class ALNS {
                 ", T = " + format(T) + ", minT = " + format(minT) +
                 ", ro = " + StringUtils.join(getArray(roWeights), ',') +
                 ", ri = " + StringUtils.join(getArray(riWeights), ',');
-        //System.out.println(msg);
+        System.out.println(msg);
     }
 
     private String[] getArray(double[] array) {
@@ -230,14 +249,20 @@ public class ALNS {
     }
 
     private void updateWeights() {
-        for (int ri = 0; ri < riWeights.length; ri++) {
-            if (riUsages[ri] != 0) {
-                riWeights[ri] = (1.0 - rho) * riWeights[ri] + rho * riScores[ri] / riUsages[ri];
-            }
-        }
-        for (int ro = 0; ro < roWeights.length; ro++) {
-            if (roUsages[ro] != 0) {
-                roWeights[ro] = (1.0 - rho) * roWeights[ro] + rho * roScores[ro] / roUsages[ro];
+        // Update for removal operators
+        updateWeight(roWeights, roUsages, roScores);
+        roProbsSum = updateWeightsProbabilities(roWeights, roProbs);
+        // Update for insertion operators
+        updateWeight(riWeights, riUsages, riScores);
+        riProbsSum = updateWeightsProbabilities(riWeights, riProbs);
+    }
+
+    private void updateWeight(double weight[], double usage[], double scores[]) {
+        for (int r = 0; r < weight.length; r++) {
+            if (usage[r] > 0) {
+                weight[r] = (1.0 - rho) * weight[r] + rho * (scores[r] / usage[r]);
+            } else {
+                //weight[r] = (1.0 - rho) * weight[r];
             }
         }
     }
@@ -286,6 +311,10 @@ public class ALNS {
             case Greedy:
                 insertionOperator.insertGreedyRequests(solution, removedRequests, PickupMethod.Random);
                 break;
+            case Regret2:
+            case Regret2Noise:
+                insertionOperator.insertRegretRequests(solution, removedRequests, 2, insertionMethod, PickupMethod.Random);
+                break;
             case Regret3Noise:
             case Regret3:
                 insertionOperator.insertRegretRequests(solution, removedRequests, 3, insertionMethod, PickupMethod.Random);
@@ -327,15 +356,15 @@ public class ALNS {
     }
 
     private int selectRemovalOperator() {
-        int ro = getNextRouletteWheelOperator(roWeights);
+        int ro = getNextRouletteWheelOperator(roProbsSum, roProbs);
         roUsages[ro] = roUsages[ro] + 1;
         return ro;
     }
 
     private int selectInsertionOperator() {
         // Ignore K-regret
-        riWeights[InsertionMethod.RegretM.ordinal()] = 0.0; // Accordingly coelho, k-regret is deteriorating the results.
-        int ri = getNextRouletteWheelOperator(riWeights);
+        // riWeights[InsertionMethod.RegretM.ordinal()] = 0.0; // Accordingly coelho, k-regret is deteriorating the results.
+        int ri = getNextRouletteWheelOperator(riProbsSum, riProbs);
         riUsages[ri] = riUsages[ri] + 1;
         return ri;
     }
@@ -343,15 +372,9 @@ public class ALNS {
     /*
      * Given h operators with weights w_i, operator j will be selected with probability w_j / sum_{i=1}_{h} w_i
      */
-    private int getNextRouletteWheelOperator(double[] weights) {
-        double sum = 0.0;
-        double probs[] = new double[weights.length];
-        for (int i = 0; i < weights.length; i++) {
-            probs[i] = sum + weights[i];
-            sum = probs[i];
-        }
+    private int getNextRouletteWheelOperator(double sum, double[] probs) {
         if (sum == 0.0) {
-            return (int) (random.nextDouble() * weights.length);
+            return (int) (random.nextDouble() * probs.length);
         } else {
             int count = 0;
             double partialSum = probs[count];
@@ -362,6 +385,15 @@ public class ALNS {
             }
             return count;
         }
+    }
+
+    private double updateWeightsProbabilities(double[] weights, double[] probs) {
+        double sum = 0.0;
+        for (int i = 0; i < weights.length; i++) {
+            probs[i] = sum + weights[i];
+            sum = probs[i];
+        }
+        return sum;
     }
 
     private void printFinalRoute() {

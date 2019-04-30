@@ -4,7 +4,6 @@ import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;

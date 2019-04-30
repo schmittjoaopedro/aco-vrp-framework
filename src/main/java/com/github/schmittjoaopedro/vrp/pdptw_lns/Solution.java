@@ -12,6 +12,7 @@ public class Solution {
     boolean visited[];
     double[] visitedTime, startTime, waitingTime, routeAmount;
     double maxTime = 0.0;
+    BigInteger hash;
 
     public Solution(Instance instance) {
         vehicleRoute = new ArrayList[instance.vehicleNumber];

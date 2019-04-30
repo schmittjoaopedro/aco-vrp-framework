@@ -29,6 +29,10 @@ public class InsertionOperator {
             case Greedy:
                 insertGreedyRequests(solution, requestsToInsert, pickupMethod);
                 break;
+            case Regret2:
+            case Regret2Noise:
+                insertRegretRequests(solution, requestsToInsert, 3, insertionMethod, pickupMethod);
+                break;
             case Regret3:
             case Regret3Noise:
                 insertRegretRequests(solution, requestsToInsert, 3, insertionMethod, pickupMethod);
@@ -51,6 +55,7 @@ public class InsertionOperator {
      * Regret-m, with noise: similarly, we use a regret-m criterion to which insertion noise is added.
      */
     public void insertRegretRequests(Solution solution, List<Req> requestsToInsert, int regretLevel, InsertionMethod insertionMethod, PickupMethod pickupMethod) {
+        int q = requestsToInsert.size();
         // Cache already processed routes to evict over processing
         RouteCache originalRoutesCache = new RouteCache();
         RouteCache newRoutesCache = new RouteCache();
@@ -129,43 +134,54 @@ public class InsertionOperator {
      * yielding the lowest increase in the objective function.
      */
     public void insertGreedyRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod) {
-        for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
-            Req currReq = requestsToInsert.get(r);
-            InsertRequest insertRequest = null;
-            int lastVehicle = solution.tours.size() - 1;
-            if (solution.tours.get(lastVehicle).size() > 2) {
-                // Create a new vehicle to let available to the greedy operator
-                lastVehicle++;
-                SolutionUtils.addEmptyVehicle(solution);
-            }
-            for (int k = 0; k < solution.tours.size(); k++) { // For each vehicle from solution
-                double prevCost = solution.tourCosts.get(k); // Evaluate the current vehicle route cost
-                ArrayList<Integer> originalRoute = new ArrayList<>(solution.tours.get(k)); // Clone the route from vehicle k to evict update the original one
-                if (insertRequestOnVehicle(solution, k, currReq.requestId, pickupMethod, InsertionMethod.Greedy)) { // If the request insertion is feasible
-                    double costIncrease = (solution.tourCosts.get(k) - prevCost); // Calculate the lost of insert request r in vehicle k
-                    // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
-                    if (insertRequest == null || costIncrease < insertRequest.cost) {
-                        insertRequest = new InsertRequest(costIncrease, k, currReq.requestId, solution.tours.get(k));
+        while (!requestsToInsert.isEmpty()) {
+            InsertRequest bestRequest = null;
+            for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
+                Req currReq = requestsToInsert.get(r);
+                InsertRequest insertRequest = null;
+                int lastVehicle = solution.tours.size() - 1;
+                if (solution.tours.get(lastVehicle).size() > 2) {
+                    // Create a new vehicle to let available to the greedy operator
+                    lastVehicle++;
+                    SolutionUtils.addEmptyVehicle(solution);
+                }
+                for (int k = 0; k < solution.tours.size(); k++) { // For each vehicle from solution
+                    double prevCost = solution.tourCosts.get(k); // Evaluate the current vehicle route cost
+                    ArrayList<Integer> originalRoute = new ArrayList<>(solution.tours.get(k)); // Clone the route from vehicle k to evict update the original one
+                    if (insertRequestOnVehicle(solution, k, currReq.requestId, pickupMethod, InsertionMethod.Greedy)) { // If the request insertion is feasible
+                        double costIncrease = (solution.tourCosts.get(k) - prevCost); // Calculate the lost of insert request r in vehicle k
+                        // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
+                        if (insertRequest == null || costIncrease < insertRequest.cost) {
+                            insertRequest = new InsertRequest(costIncrease, k, currReq.requestId, solution.tours.get(k));
+                        }
+                        solution.tours.set(k, originalRoute);
+                        instance.solutionEvaluation(solution, k);
                     }
-                    solution.tours.set(k, originalRoute);
-                    instance.solutionEvaluation(solution, k);
+                }
+                if (insertRequest == null) { // If no solution using heuristic was found
+                    // Use the optimal solver to build a feasible request
+                    OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
+                    optimalRequestSolver.optimize();
+                    ArrayList<Integer> route = new ArrayList<>();
+                    for (int i : optimalRequestSolver.getBestRoute()) {
+                        route.add(i);
+                    }
+                    insertRequest = new InsertRequest(optimalRequestSolver.getBestCost(), lastVehicle, currReq.requestId, route);
+                }
+                // Greedy criterion, select the request with the minimum increasing cost
+                if (bestRequest == null || insertRequest.cost < bestRequest.cost) {
+                    bestRequest = insertRequest;
                 }
             }
-            if (insertRequest == null) {
-                // Use the optimal solver to build a feasible request
-                OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
-                optimalRequestSolver.optimize();
-                solution.tours.get(lastVehicle).clear();
-                for (int i : optimalRequestSolver.getBestRoute()) {
-                    solution.tours.get(lastVehicle).add(i);
+            // Add the inserted request on the vehicle
+            solution.tours.set(bestRequest.vehicle, bestRequest.route);
+            solution.requests.get(bestRequest.vehicle).add(bestRequest.reqId);
+            instance.solutionEvaluation(solution, bestRequest.vehicle);
+            for (Req r : requestsToInsert) {
+                if (r.requestId == bestRequest.reqId) {
+                    requestsToInsert.remove(r);
+                    break;
                 }
-                solution.requests.get(lastVehicle).add(currReq.requestId);
-                instance.solutionEvaluation(solution, lastVehicle);
-            } else {
-                // Add the inserted request on the vehicle
-                solution.tours.set(insertRequest.vehicle, insertRequest.route);
-                solution.requests.get(insertRequest.vehicle).add(currReq.requestId);
-                instance.solutionEvaluation(solution, insertRequest.vehicle);
             }
         }
         removeEmptyVehicles(solution);
@@ -249,7 +265,7 @@ public class InsertionOperator {
         for (int h = 1; h < k; h++) { // Start at the second request
             regretValue += requests.get(h).cost - r1.cost; // Sum the regret cost
         }
-        return new InsertRequest(regretValue, r1.vehicle, r1.reqId, r1.route);
+        return new InsertRequest(regretValue, r1.vehicle, r1.reqId, r1.route, Math.min(level, requests.size()));
     }
 
     /*
@@ -307,6 +323,7 @@ public class InsertionOperator {
     private double generateRandomNoise(InsertionMethod insertionMethod) {
         double randomNoise = 0.0;
         switch (insertionMethod) {
+            case Regret2Noise:
             case Regret3Noise:
             case RegretMNoise:
                 randomNoise = (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
@@ -482,6 +499,7 @@ public class InsertionOperator {
         public int vehicle;
         public int reqId;
         public ArrayList<Integer> route;
+        public int numRoutes;
 
         public InsertRequest(double cost, int vehicle, int reqId, ArrayList<Integer> route) {
             this.cost = cost;
@@ -490,8 +508,20 @@ public class InsertionOperator {
             this.route = route;
         }
 
+        public InsertRequest(double cost, int vehicle, int reqId, ArrayList<Integer> route, int numRoutes) {
+            this.cost = cost;
+            this.vehicle = vehicle;
+            this.reqId = reqId;
+            this.route = route;
+            this.numRoutes = numRoutes;
+        }
+
         public double getCost() {
             return cost;
+        }
+
+        public int getNumRoutes() {
+            return numRoutes;
         }
 
         @Override

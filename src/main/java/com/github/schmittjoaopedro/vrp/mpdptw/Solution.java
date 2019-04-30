@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Solution {

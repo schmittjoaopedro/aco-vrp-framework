@@ -3,6 +3,9 @@ package com.github.schmittjoaopedro.vrp.mpdptw;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class SolutionUtils {
 
@@ -143,6 +146,15 @@ public class SolutionUtils {
 
     }
 
+    public static int getHash(Solution solution) {
+        ArrayList<ArrayList<Integer>> clone = new ArrayList<>(solution.tours);
+        Collections.sort(clone, Comparator.comparingInt(ArrayList::size));
+        int[] hashCode = new int[clone.size()];
+        for (int i = 0; i < clone.size(); ++i) {
+            hashCode[i] = Arrays.hashCode(clone.get(i).toArray());
+        }
+        return Arrays.hashCode(hashCode);
+    }
 
     public static boolean containsEmptyVehicle(Solution solution) {
         for (ArrayList<Integer> reqs : solution.requests) {
