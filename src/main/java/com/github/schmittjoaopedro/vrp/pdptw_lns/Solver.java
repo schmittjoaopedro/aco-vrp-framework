@@ -164,6 +164,7 @@ public class Solver {
             }
             temp = temp * coolingRate;
             if (nbIteration % 100 == 0) {
+                printWeights();
                 updateAdaptiveWeight(removalWeight, removalScore, removalCount, reactionFactor);
                 updateAdaptiveWeight(insertingWeight, insertingScore, insertingCount, reactionFactor);
                 updateAdaptiveWeight(noiseWeight, noiseScore, noiseCount, reactionFactor);
@@ -177,6 +178,18 @@ public class Solver {
             }
         } while (nbIteration < maxIteration);
         return sBest;
+    }
+
+    void printWeights() {
+        System.out.print("Removal = [");
+        for (int i = 0; i < removalWeight.length; i++) {
+            System.out.printf(Locale.US,"%.2f,", removalWeight[i]);
+        }
+        System.out.print("] Repair = [");
+        for (int i = 0; i < insertingWeight.length; i++) {
+            System.out.printf(Locale.US,"%.2f,", insertingWeight[i]);
+        }
+        System.out.println("]");
     }
 
     // Remove requests from solution and return used heuristic
@@ -204,6 +217,7 @@ public class Solver {
         for (int i = 0; i < instance.vehicleNumber; ++i) {
             s.findRoute(i);
         }
+        // Calculates the cost difference for each route for each request removed
         double[] C = new double[instance.requestNumber];
         for (int i = 1; i < instance.requestNumber; ++i) {
             if (s.visited[i] && instance.requestList[i].amount > 0) {
@@ -212,7 +226,8 @@ public class Solver {
                 C[i] = removeCost(pos, s.vehicleRoute[removeRoute]);
             }
         }
-        while (q > 0) {
+        while (q > 0) { // While there are requests to remove
+            // Create a heap to hold requests with expensive costs in front
             Queue<Pair<Double, Integer>> heap = new PriorityQueue<>();
             for (int i = 1; i < instance.requestNumber; ++i) {
                 if (s.visited[i] && instance.requestList[i].amount > 0) {
@@ -359,6 +374,7 @@ public class Solver {
         ArrayList<Double> startTime = new ArrayList<>();
         ArrayList<Double> waitingTime = new ArrayList<>();
         ArrayList<Double> maxDelay = new ArrayList<>();
+        // Initialize request/vehicle structures
         for (int i = 1; i < instance.requestNumber; ++i) {
             if (!s.visited[i] && (instance.requestList[i].amount > 0)) {
                 C[i] = new ArrayList<>();
@@ -376,8 +392,8 @@ public class Solver {
             for (int i = 1; i < instance.requestNumber; ++i) {
                 if (!s.visited[i] && instance.requestList[i].amount > 0) {
                     Pair<Double, Pair<Integer, Integer>> ret = insertingCost(s.vehicleRoute[j], i, pos[i].get(j), startTime, waitingTime, maxDelay);
-                    C[i].set(j, ret.getLeft());
-                    pos[i].set(j, ret.getRight());
+                    C[i].set(j, ret.getLeft()); // Calculate the cost to insert request i on vehicle j
+                    pos[i].set(j, ret.getRight()); // Hold the insertion position of request i on vehicle j
                 }
             }
         }
@@ -390,12 +406,12 @@ public class Solver {
             double insertCost = Double.MAX_VALUE;
             Pair<Integer, Integer> insertPos = null;
             for (int i = 1; i < instance.requestNumber; ++i) {
-                if (!s.visited[i] && instance.requestList[i].amount > 0) {
-                    Queue<Pair<Double, Integer>> heap = new PriorityQueue<>();
+                if (!s.visited[i] && instance.requestList[i].amount > 0) { // For each pickup not visited
+                    Queue<Pair<Double, Integer>> heap = new PriorityQueue<>(); // Create a heap to hold the best vehicle to insert the request
                     for (int j = 0; j < instance.vehicleNumber; ++j) {
                         double cost = C[i].get(j);
                         if (cost < Double.MAX_VALUE) {
-                            cost += useNoise * generateNoise();
+                            cost += useNoise * generateNoise(); // Generate noise to increase diversity
                         }
                         heap.add(Pair.of(cost, j));
                     }
@@ -407,7 +423,7 @@ public class Solver {
                     heap.poll();
                     double kCost = minCost;
                     int kRoute;
-                    for (int z = 1; z < k; ++z)
+                    for (int z = 1; z < k; ++z) // Obtain the k-position to calculate regret cost
                         if (!heap.isEmpty()) {
                             kCost = heap.peek().getLeft();
                             kRoute = heap.peek().getRight();
@@ -415,9 +431,9 @@ public class Solver {
                             heap.poll();
                         }
                     double regretCost = kCost - minCost;
-                    if (possibleRoute < minPossible
-                            || (possibleRoute == minPossible && (regretCost > maxRegret
-                            || (regretCost == maxRegret && minCost < insertCost)))) {
+                    if (possibleRoute < minPossible // Prioritize minimum vehicles number
+                            || (possibleRoute == minPossible && (regretCost > maxRegret // If the number of vehicles is the same and the regret cost is greater
+                            || (regretCost == maxRegret && minCost < insertCost)))) { // If the greedy strategy (same regret costs, but is a better insertion cost)
 
                         minPossible = possibleRoute;
                         maxRegret = regretCost;
@@ -432,7 +448,7 @@ public class Solver {
             // Insert node and recalculate Insert Cost
 
             s.insert(instance, insertRequest, insertRoute, insertPos);
-            calcMaxDelay(s.vehicleRoute[insertRoute], startTime, waitingTime, maxDelay);
+            calcMaxDelay(s.vehicleRoute[insertRoute], startTime, waitingTime, maxDelay); // Update inserted vehicle
             for (int i = 1; i < instance.requestNumber; ++i)
                 if (!s.visited[i] && (instance.requestList[i].amount > 0) && C[i].get(insertRoute) < Double.MAX_VALUE) {
                     Pair<Double, Pair<Integer, Integer>> ret = insertingCost(s.vehicleRoute[insertRoute], i, pos[i].get(insertRoute), startTime, waitingTime, maxDelay);

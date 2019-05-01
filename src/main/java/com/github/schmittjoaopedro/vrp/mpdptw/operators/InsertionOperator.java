@@ -15,31 +15,29 @@ public class InsertionOperator {
 
     private Random random;
 
+    private double noiseControl = 0.0;
+
     public InsertionOperator(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
     }
 
     public void insertRequestsSequentially(Solution solution, List<Req> requestsToInsert) {
-        insertGreedyRequests(solution, requestsToInsert, PickupMethod.Random);
+        insertGreedyRequests(solution, requestsToInsert, PickupMethod.Random, 0);
     }
 
-    public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
+    public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, InsertionMethod insertionMethod, int useNoise) {
         switch (insertionMethod) {
             case Greedy:
-                insertGreedyRequests(solution, requestsToInsert, pickupMethod);
-                break;
-            case Regret2:
-            case Regret2Noise:
-                insertRegretRequests(solution, requestsToInsert, 3, insertionMethod, pickupMethod);
+                insertGreedyRequests(solution, requestsToInsert, pickupMethod, useNoise);
                 break;
             case Regret3:
             case Regret3Noise:
-                insertRegretRequests(solution, requestsToInsert, 3, insertionMethod, pickupMethod);
+                insertRegretRequests(solution, requestsToInsert, 3, insertionMethod, pickupMethod, useNoise);
                 break;
             case RegretM:
             case RegretMNoise:
-                insertRegretRequests(solution, requestsToInsert, solution.tours.size(), insertionMethod, pickupMethod);
+                insertRegretRequests(solution, requestsToInsert, solution.tours.size(), insertionMethod, pickupMethod, useNoise);
                 break;
         }
     }
@@ -54,13 +52,14 @@ public class InsertionOperator {
      * regret-3 computation.
      * Regret-m, with noise: similarly, we use a regret-m criterion to which insertion noise is added.
      */
-    public void insertRegretRequests(Solution solution, List<Req> requestsToInsert, int regretLevel, InsertionMethod insertionMethod, PickupMethod pickupMethod) {
+    public void insertRegretRequests(Solution solution, List<Req> requestsToInsert, int regretLevel, InsertionMethod insertionMethod, PickupMethod pickupMethod, int useNoise) {
         int q = requestsToInsert.size();
         // Cache already processed routes to evict over processing
         RouteCache originalRoutesCache = new RouteCache();
         RouteCache newRoutesCache = new RouteCache();
         // Compute the gain (time difference) for each request insertion
         while (!requestsToInsert.isEmpty()) {
+            boolean isLessAvailableVehicles = false; // Indicates when the number of available routes for one request is less than the number of requests to insert
             List<InsertRequest> requestsRegret = new ArrayList<>();
             for (int r = 0; r < requestsToInsert.size(); r++) { // for each request r in requests to insert
                 int requestId = requestsToInsert.get(r).requestId;
@@ -82,8 +81,9 @@ public class InsertionOperator {
                             // Calculate the lost in cost to be inserting request r in vehicle k
                             newRoutesCache.setCacheCost(k, requestId, solution.tours.get(k));
                             double newCost = newRoutesCache.getCacheCost(k, requestId);
-                            double costDiff = newCost - originalCost;
-                            feasibleRoutes.add(new InsertRequest(costDiff, k, requestId, solution.tours.get(k)));
+                            double costIncrease = newCost - originalCost;
+                            costIncrease += useNoise + generateNoise();
+                            feasibleRoutes.add(new InsertRequest(costIncrease, k, requestId, solution.tours.get(k)));
                             solution.tours.set(k, originalRoute);
                             instance.solutionEvaluation(solution, k);
                         } else {
@@ -108,9 +108,18 @@ public class InsertionOperator {
                 feasibleRoutes.sort(Comparator.comparing(InsertRequest::getCost));
                 // Get the best request based on regret criterion
                 requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel));
+                if (feasibleRoutes.size() < regretLevel) {
+                    isLessAvailableVehicles = true;
+                }
             }
-            // Sort in descending order, to select the most expensive request based on the regret criterion
-            requestsRegret.sort(Comparator.comparing(InsertRequest::getCost).reversed());
+            if (isLessAvailableVehicles) {
+                // When is not possible to calculate regret value because the regret level is greater than the number of feasible position
+                // the vehicle with small available positions should be taken in account.
+                requestsRegret.sort(Comparator.comparing(InsertRequest::getNumRoutes).thenComparing(InsertRequest::getCost));
+            } else {
+                // Sort in descending order, to select the most expensive request based on the regret criterion
+                requestsRegret.sort(Comparator.comparing(InsertRequest::getCost).reversed());
+            }
             // Insert the costly insertion on the solution
             InsertRequest reqToInsert = requestsRegret.get(0);
             solution.tours.set(reqToInsert.vehicle, reqToInsert.route);
@@ -133,7 +142,7 @@ public class InsertionOperator {
      * Greedy insertion: select a remaining request and inserted it based on a greedy criterion, namely in the position
      * yielding the lowest increase in the objective function.
      */
-    public void insertGreedyRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod) {
+    public void insertGreedyRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, int useNoise) {
         while (!requestsToInsert.isEmpty()) {
             InsertRequest bestRequest = null;
             for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
@@ -150,6 +159,7 @@ public class InsertionOperator {
                     ArrayList<Integer> originalRoute = new ArrayList<>(solution.tours.get(k)); // Clone the route from vehicle k to evict update the original one
                     if (insertRequestOnVehicle(solution, k, currReq.requestId, pickupMethod, InsertionMethod.Greedy)) { // If the request insertion is feasible
                         double costIncrease = (solution.tourCosts.get(k) - prevCost); // Calculate the lost of insert request r in vehicle k
+                        costIncrease += useNoise + generateNoise();
                         // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
                         if (insertRequest == null || costIncrease < insertRequest.cost) {
                             insertRequest = new InsertRequest(costIncrease, k, currReq.requestId, solution.tours.get(k));
@@ -186,6 +196,10 @@ public class InsertionOperator {
         }
         removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
+    }
+
+    private double generateNoise() {
+        return (random.nextDouble() - 0.5) * (noiseControl * instance.getMaxDistance()) * 2.0;
     }
 
     /*
@@ -323,7 +337,6 @@ public class InsertionOperator {
     private double generateRandomNoise(InsertionMethod insertionMethod) {
         double randomNoise = 0.0;
         switch (insertionMethod) {
-            case Regret2Noise:
             case Regret3Noise:
             case RegretMNoise:
                 randomNoise = (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
@@ -398,6 +411,35 @@ public class InsertionOperator {
                     route.remove(currIdx);
                 }
             }
+            prev = next;
+            if (prev == instance.getDepot().nodeId) {
+                break;
+            }
+            currIdx++;
+            next = route.get(currIdx);
+        }
+        return bestPosition;
+    }
+
+    public BestPosition insertAtBestPosition2(Solution solution, int vehicle, Integer node, InsertionMethod insertionMethod, int prevPos) {
+        double deltaBestCost = Double.MAX_VALUE; // \Delta_{i}^{k*} <- Infinity
+        BestPosition bestPosition = null; // BestPosition(i, k) <- null
+        ArrayList<Integer> route = solution.tours.get(vehicle);
+        double originalCost = instance.costEvaluation(route);
+        prevPos++;
+        int prev, next = route.get(prevPos); // next <- first customer of route k
+        int currIdx = prevPos;
+        while (currIdx < route.size()) { // while prev <> p + n + 1
+            route.add(currIdx, node);
+            ProblemInstance.FitnessResult result = instance.restrictionsEvaluation(route);
+            if (result.feasible) {
+                double costDiff = result.cost - originalCost  + generateRandomNoise(insertionMethod);
+                if (costDiff < deltaBestCost) {
+                    deltaBestCost = costDiff;
+                    bestPosition = new BestPosition(currIdx, deltaBestCost);
+                }
+            }
+            route.remove(currIdx);
             prev = next;
             if (prev == instance.getDepot().nodeId) {
                 break;
@@ -530,4 +572,7 @@ public class InsertionOperator {
         }
     }
 
+    public void setNoiseControl(double noiseControl) {
+        this.noiseControl = noiseControl;
+    }
 }

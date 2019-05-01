@@ -20,6 +20,8 @@ public class ProblemInstance {
 
     private double maxDistance;
 
+    private double maxDemand;
+
     private Depot depot;
 
     private Request[] requests;
@@ -82,6 +84,10 @@ public class ProblemInstance {
 
     public double getMaxDistance() {
         return maxDistance;
+    }
+
+    public double getMaxDemand() {
+        return maxDemand;
     }
 
     public Depot getDepot() {
@@ -172,7 +178,7 @@ public class ProblemInstance {
         }
     }
 
-    public void calculateMaxDistance() {
+    public void calculateMaxValues() {
         for (int i = 0; i < distances.length; i++) {
             for (int j = 0; j < distances.length; j++) {
                 if (i != j) {
@@ -181,6 +187,7 @@ public class ProblemInstance {
                     }
                 }
             }
+            maxDemand = Math.max(Math.abs(demand(i)), maxDemand);
         }
     }
 
@@ -227,6 +234,9 @@ public class ProblemInstance {
                 solution.arrivalTime.get(k)[i + 1] = currentTime;
                 solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
                 currentTime = Math.max(currentTime, twStart(next));
+                if (next != getDepot().nodeId) {
+                    solution.maxTime = Math.max(solution.maxTime, currentTime);
+                }
                 capacity += demand(next);
                 solution.capacity[next] = capacity;
                 // For precedence and attendance restrictions
@@ -362,37 +372,26 @@ public class ProblemInstance {
         FitnessResult fitnessResult = new FitnessResult();
         double currentTime = 0.0;
         double capacity = 0.0;
-        double demand, twStart, twEnd, serviceTime;
-        int curr, next, reqId;
+        double cost = 0.0;
+        int curr, next;
         for (int i = 0; i < tour.size() - 1; i++) {
             curr = tour.get(i);
             next = tour.get(i + 1);
-            if (next == depot.nodeId) {
-                twStart = depot.twStart;
-                twEnd = depot.twEnd;
-                demand = 0.0;
-                serviceTime = 0.0;
-            } else {
-                reqId = next - 1;
-                twStart = requests[reqId].twStart;
-                twEnd = requests[reqId].twEnd;
-                demand = requests[reqId].demand;
-                serviceTime = requests[reqId].serviceTime;
-            }
+            cost += distances[curr][next];
             currentTime += distances[curr][next];
-            currentTime = Math.max(currentTime, twStart);
-            capacity += demand;
-            if (currentTime > twEnd) {
-                fitnessResult.timeWindowPenalty += currentTime - twEnd;
+            currentTime = Math.max(currentTime, twStart(next));
+            capacity += demand(next);
+            if (currentTime > twEnd(next)) {
+                fitnessResult.timeWindowPenalty += currentTime - twEnd(next);
                 fitnessResult.feasible = false;
             }
             if (capacity > vehicleCapacity) {
                 fitnessResult.capacityPenalty += capacity - vehicleCapacity;
                 fitnessResult.feasible = false;
             }
-            currentTime += serviceTime;
+            currentTime += serviceTime(next);
         }
-        fitnessResult.cost = currentTime;
+        fitnessResult.cost = cost;
         return fitnessResult;
     }
 

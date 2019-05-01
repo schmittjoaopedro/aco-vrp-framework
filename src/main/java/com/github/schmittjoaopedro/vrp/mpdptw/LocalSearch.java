@@ -68,7 +68,7 @@ public class LocalSearch {
         boolean improved = false;
         while (improvement) {
             List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
-            insertionOperator.insertRequests(tempAnt, removedRequests, pickupMethod, insertionMethod);
+            insertionOperator.insertRequests(tempAnt, removedRequests, pickupMethod, insertionMethod, 0);
             instance.solutionEvaluation(tempAnt);
             SolutionUtils.removeEmptyVehicles(tempAnt);
             improvement = SolutionUtils.getBest(improvedAnt, tempAnt) == tempAnt;
@@ -91,7 +91,7 @@ public class LocalSearch {
                 removedRequests = removalOperator.removeRandomRequest(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
                 break;
             case Shaw:
-                removedRequests = removalOperator.removeShawRequests(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
+                removedRequests = removalOperator.removeShawRequests(tempAnt, generateNoRemovalRequests());
                 break;
             case ExpensiveNode:
                 removedRequests = removalOperator.removeMostExpensiveNodes(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());

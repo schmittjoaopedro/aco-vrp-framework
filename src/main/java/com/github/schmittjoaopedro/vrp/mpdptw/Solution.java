@@ -41,12 +41,19 @@ public class Solution {
 
     public double capacityPenalty;
 
+    public double maxTime;
+
     public double getCost() {
         return totalCost;
     }
 
     @Override
     public String toString() {
-        return "[Num. vehicles = " + tours.size() + ", Feasible = " + feasible + ", Total cost = " + Maths.round(totalCost, 2) + "]";
+        String print = "[NV = " + tours.size();
+        if (!feasible) {
+            print += ", F = " + feasible;
+        }
+        print += ", TC = " + Maths.round(totalCost, 2) + "]";
+        return print;
     }
 }

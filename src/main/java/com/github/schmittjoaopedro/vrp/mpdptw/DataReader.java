@@ -4,7 +4,6 @@ import com.github.schmittjoaopedro.tsp.graph.Edge;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.Req;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -107,7 +106,7 @@ public class DataReader {
         lineData = fileContent[0].split(" ");
         instance.setNumMaxVehicles(Integer.valueOf(lineData[0]));
         instance.setVehicleCapacity(Double.parseDouble(lineData[1]));
-        instance.calculateMaxDistance();
+        instance.calculateMaxValues();
         // Create valid edges between nodes
         for (int i = 0; i < instance.getNumNodes(); i++) {
             instance.getNeighbors().add(new ArrayList<>());

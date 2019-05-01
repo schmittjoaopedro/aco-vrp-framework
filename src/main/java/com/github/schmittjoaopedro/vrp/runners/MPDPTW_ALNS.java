@@ -18,16 +18,16 @@ public class MPDPTW_ALNS {
     }
 
     public static void main(String[] args) throws Exception {
-        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_4_400_1.txt").toFile());
-        ALNS alns = new ALNS(instance, maxIterations, new Random(1));
+        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_8_50_2.txt").toFile());
+        ALNS alns = new ALNS(instance, new Random(1));
         alns.execute();
-        //mpdptw_test();
+        /*mpdptw_test();*/
     }
 
     private static void mpdptw_test() throws Exception {
         //for (String noVert : new String[]{"400", "100", "50", "25"}) {
         for (String noVert : new String[]{"25", "50", "100", "400"}) {
-            for (String typ : new String[]{/*"l", "n",*/ "w"}) {
+            for (String typ : new String[]{"l", "n", "w"}) {
                 for (String reqSize : new String[]{"4", "8"}) {
                     for (String id : new String[]{"1", "2", "3", "4", "5"}) {
                         String file = typ + "_" + reqSize + "_" + noVert + "_" + id;

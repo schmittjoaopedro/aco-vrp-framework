@@ -498,32 +498,32 @@ public class MPDPTW_UtilsTest {
         List<Req> removedRequests = removalOperator.removeExpensiveRequests(ant.tours, ant.requests, 6);
 
         assertThat(removedRequests).hasSize(6);
-        assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(0).requestId).isEqualTo(2);
-        assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
-        assertThat(removedRequests.get(1).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(1).requestId).isEqualTo(7);
-        assertThat(removedRequests.get(1).cost).isEqualTo(-733.5123299217429);
+        assertThat(removedRequests.get(0).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(0).requestId).isEqualTo(6);
+        assertThat(removedRequests.get(0).cost).isEqualTo(-699.1726886684014);
+        assertThat(removedRequests.get(1).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(1).requestId).isEqualTo(5);
+        assertThat(removedRequests.get(1).cost).isEqualTo(-906.7745789247228);
         assertThat(removedRequests.get(2).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(2).requestId).isEqualTo(3);
-        assertThat(removedRequests.get(2).cost).isEqualTo(-856.2361060820575);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(7);
+        assertThat(removedRequests.get(2).cost).isEqualTo(-710.5402020765637);
         assertThat(removedRequests.get(3).vehicleId).isEqualTo(0);
-        assertThat(removedRequests.get(3).requestId).isEqualTo(4);
-        assertThat(removedRequests.get(3).cost).isEqualTo(-137.61090803210936);
-        assertThat(removedRequests.get(4).vehicleId).isEqualTo(1);
-        assertThat(removedRequests.get(4).requestId).isEqualTo(6);
-        assertThat(removedRequests.get(4).cost).isEqualTo(-699.1726886684014);
-        assertThat(removedRequests.get(5).vehicleId).isEqualTo(0);
-        assertThat(removedRequests.get(5).requestId).isEqualTo(1);
-        assertThat(removedRequests.get(5).cost).isEqualTo(-550.4068038208605);
+        assertThat(removedRequests.get(3).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(3).cost).isEqualTo(-683.7227097531211);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(2);
+        assertThat(removedRequests.get(4).cost).isEqualTo(-115.13005610108814);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(3);
+        assertThat(removedRequests.get(5).cost).isEqualTo(-856.2361060820575);
 
         problemInstance.solutionEvaluation(ant);
         assertThat(ant.feasible).isFalse(); // Infeasible number of requests. We expect this error because we removed the requests
 
-        assertThat(ant.tours).hasSize(2);
-        assertThat(ant.requests).hasSize(2);
-        assertThat(ant.tourCosts).hasSize(2);
-        assertThat(ant.totalCost).isEqualTo(1699.860520423878);
+        assertThat(ant.tours).hasSize(1);
+        assertThat(ant.requests).hasSize(1);
+        assertThat(ant.tourCosts).hasSize(1);
+        assertThat(ant.totalCost).isEqualTo(797.3809435990038);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
         assertThat(ant.feasible).isFalse();
 
@@ -531,22 +531,20 @@ public class MPDPTW_UtilsTest {
         problemInstance.solutionEvaluation(ant);
         insertionOperator.insertRequestsSequentially(ant, removedRequests);
 
-        assertThat(ant.tours).hasSize(5);
-        assertThat(ant.requests).hasSize(5);
-        assertThat(ant.tourCosts).hasSize(5);
-        assertThat(ant.totalCost).isEqualTo(5849.68719667147);
+        assertThat(ant.tours).hasSize(4);
+        assertThat(ant.requests).hasSize(4);
+        assertThat(ant.tourCosts).hasSize(4);
+        assertThat(ant.totalCost).isEqualTo(5108.8608230373175);
         assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
         assertThat(ant.feasible).isTrue();
-        assertThat(ant.tours.get(0)).containsExactly(0, 7, 13, 14, 8, 1, 2, 0);
-        assertThat(ant.tours.get(1)).containsExactly(0, 15, 16, 17, 0);
-        assertThat(ant.tours.get(2)).containsExactly(0, 5, 3, 4, 6, 0);
-        assertThat(ant.tours.get(3)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
-        assertThat(ant.tours.get(4)).containsExactly(0, 18, 19, 20, 21, 0);
-        assertThat(ant.requests.get(0)).containsExactly(0, 4, 2);
-        assertThat(ant.requests.get(1)).containsExactly(5);
-        assertThat(ant.requests.get(2)).containsExactly(1);
-        assertThat(ant.requests.get(3)).containsExactly(3, 7);
-        assertThat(ant.requests.get(4)).containsExactly(6);
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 1, 16, 2, 17, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 4);
+        assertThat(ant.requests.get(1)).containsExactly(2, 0, 5);
+        assertThat(ant.requests.get(2)).containsExactly(3, 7);
+        assertThat(ant.requests.get(3)).containsExactly(6);
     }
 
     @Test
@@ -635,7 +633,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.feasible).isFalse();
 
         RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
-        List<Req> removedRequests = removalOperator.removeShawRequests(ant.tours, ant.requests, 6);
+        List<Req> removedRequests = removalOperator.removeShawRequests(ant, 6);
 
         assertThat(removedRequests).hasSize(6);
         assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
@@ -691,38 +689,44 @@ public class MPDPTW_UtilsTest {
         ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
         ant.tours.add(new ArrayList<>(Arrays.asList(0, 5, 3, 13, 14, 4, 1, 2, 6, 0)));
-        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 18, 16, 19, 20, 21, 17, 0)));
-        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 7, 11, 22, 24, 25, 10, 9, 8, 12, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 15, 16, 17, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 7, 8, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 18, 19, 20, 21, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 23, 22, 24, 25, 0)));
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 11, 10, 9, 12, 0)));
         ant.requests.add(new ArrayList<>(Arrays.asList(1, 4, 0)));
-        ant.requests.add(new ArrayList<>(Arrays.asList(5, 6)));
-        ant.requests.add(new ArrayList<>(Arrays.asList(7, 2, 3)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(5)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(2)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(6)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(7)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(3)));
         problemInstance.solutionEvaluation(ant);
-        assertThat(ant.totalCost).isEqualTo(4768.957285204959);
-        assertThat(ant.timeWindowPenalty).isEqualTo(814.3582706522368);
-        assertThat(ant.feasible).isFalse();
+        assertThat(ant.totalCost).isEqualTo(6178.199194042737);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
+        assertThat(ant.feasible).isTrue();
 
         RemovalOperator removalOperator = new RemovalOperator(problemInstance, new Random(1));
         List<Req> removedRequests = removalOperator.removeMostExpensiveNodes(ant.tours, ant.requests, 6);
 
         assertThat(removedRequests).hasSize(6);
-        assertThat(removedRequests.get(0).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(0).requestId).isEqualTo(2);
-        assertThat(removedRequests.get(0).cost).isEqualTo(0.0);
-        assertThat(removedRequests.get(1).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(1).requestId).isEqualTo(7);
-        assertThat(removedRequests.get(1).cost).isEqualTo(-521.6521254712943);
-        assertThat(removedRequests.get(2).vehicleId).isEqualTo(0);
-        assertThat(removedRequests.get(2).requestId).isEqualTo(0);
-        assertThat(removedRequests.get(2).cost).isEqualTo(-395.39044354167004);
+        assertThat(removedRequests.get(0).vehicleId).isEqualTo(3);
+        assertThat(removedRequests.get(0).requestId).isEqualTo(6);
+        assertThat(removedRequests.get(0).cost).isEqualTo(-422.0393360326907);
+        assertThat(removedRequests.get(1).vehicleId).isEqualTo(1);
+        assertThat(removedRequests.get(1).requestId).isEqualTo(5);
+        assertThat(removedRequests.get(1).cost).isEqualTo(-482.98138421076436);
+        assertThat(removedRequests.get(2).vehicleId).isEqualTo(2);
+        assertThat(removedRequests.get(2).requestId).isEqualTo(2);
+        assertThat(removedRequests.get(2).cost).isEqualTo(-417.32115184854763);
         assertThat(removedRequests.get(3).vehicleId).isEqualTo(0);
-        assertThat(removedRequests.get(3).requestId).isEqualTo(4);
-        assertThat(removedRequests.get(3).cost).isEqualTo(-27.060201600181017);
-        assertThat(removedRequests.get(4).vehicleId).isEqualTo(2);
-        assertThat(removedRequests.get(4).requestId).isEqualTo(3);
-        assertThat(removedRequests.get(4).cost).isEqualTo(-299.04667639862214);
-        assertThat(removedRequests.get(5).vehicleId).isEqualTo(1);
-        assertThat(removedRequests.get(5).requestId).isEqualTo(6);
-        assertThat(removedRequests.get(5).cost).isEqualTo(-64.80148790827502);
+        assertThat(removedRequests.get(3).requestId).isEqualTo(0);
+        assertThat(removedRequests.get(3).cost).isEqualTo(-395.39044354167004);
+        assertThat(removedRequests.get(4).vehicleId).isEqualTo(0);
+        assertThat(removedRequests.get(4).requestId).isEqualTo(4);
+        assertThat(removedRequests.get(4).cost).isEqualTo(-27.060201600181017);
+        assertThat(removedRequests.get(5).vehicleId).isEqualTo(4);
+        assertThat(removedRequests.get(5).requestId).isEqualTo(7);
+        assertThat(removedRequests.get(5).cost).isEqualTo(-355.4200364911517);
 
         problemInstance.solutionEvaluation(ant);
         assertThat(ant.feasible).isFalse(); // Infeasible number of requests. We expect this error because we removed the requests
@@ -730,7 +734,7 @@ public class MPDPTW_UtilsTest {
         assertThat(ant.tours).hasSize(2);
         assertThat(ant.requests).hasSize(2);
         assertThat(ant.tourCosts).hasSize(2);
-        assertThat(ant.totalCost).isEqualTo(1566.5446144916173);
+        assertThat(ant.totalCost).isEqualTo(1516.006141648952);
         assertThat(ant.timeWindowPenalty).isEqualTo(0);
         assertThat(ant.feasible).isFalse();
 
@@ -738,20 +742,22 @@ public class MPDPTW_UtilsTest {
         problemInstance.solutionEvaluation(ant);
         insertionOperator.insertRequestsSequentially(ant, removedRequests);
 
-        assertThat(ant.tours).hasSize(4);
-        assertThat(ant.requests).hasSize(4);
-        assertThat(ant.tourCosts).hasSize(4);
-        assertThat(ant.totalCost).isEqualTo(5108.8608230373175);
+        assertThat(ant.tours).hasSize(5);
+        assertThat(ant.requests).hasSize(5);
+        assertThat(ant.tourCosts).hasSize(5);
+        assertThat(ant.totalCost).isEqualTo(5971.441973850669);
         assertThat(ant.timeWindowPenalty).isEqualTo(0);
         assertThat(ant.feasible).isTrue();
-        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 6, 0);
-        assertThat(ant.tours.get(1)).containsExactly(0, 7, 15, 8, 1, 16, 2, 17, 0);
-        assertThat(ant.tours.get(2)).containsExactly(0, 23, 11, 22, 24, 25, 10, 9, 12, 0);
-        assertThat(ant.tours.get(3)).containsExactly(0, 18, 19, 20, 21, 0);
-        assertThat(ant.requests.get(0)).containsExactly(1, 4);
-        assertThat(ant.requests.get(1)).containsExactly(5, 2, 0);
-        assertThat(ant.requests.get(2)).containsExactly(3, 7);
-        assertThat(ant.requests.get(3)).containsExactly(6);
+        assertThat(ant.tours.get(0)).containsExactly(0, 5, 3, 13, 14, 4, 1, 2, 6, 0);
+        assertThat(ant.tours.get(1)).containsExactly(0, 7, 11, 8, 10, 9, 12, 0);
+        assertThat(ant.tours.get(2)).containsExactly(0, 15, 16, 17, 0);
+        assertThat(ant.tours.get(3)).containsExactly(0, 23, 22, 24, 25, 0);
+        assertThat(ant.tours.get(4)).containsExactly(0, 18, 19, 20, 21, 0);
+        assertThat(ant.requests.get(0)).containsExactly(1, 4, 0);
+        assertThat(ant.requests.get(1)).containsExactly(3, 2);
+        assertThat(ant.requests.get(2)).containsExactly(5);
+        assertThat(ant.requests.get(3)).containsExactly(7);
+        assertThat(ant.requests.get(4)).containsExactly(6);
 
     }
 
@@ -773,7 +779,7 @@ public class MPDPTW_UtilsTest {
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
         problemInstance.solutionEvaluation(ant);
-        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Random, InsertionMethod.Greedy);
+        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Random, InsertionMethod.Greedy, 0);
 
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
@@ -809,7 +815,7 @@ public class MPDPTW_UtilsTest {
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
         problemInstance.solutionEvaluation(ant);
-        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, InsertionMethod.Greedy);
+        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, InsertionMethod.Greedy, 0);
 
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
@@ -845,7 +851,7 @@ public class MPDPTW_UtilsTest {
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
         problemInstance.solutionEvaluation(ant);
-        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Cheapest, InsertionMethod.Greedy);
+        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Cheapest, InsertionMethod.Greedy, 0);
 
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
@@ -881,7 +887,7 @@ public class MPDPTW_UtilsTest {
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
         problemInstance.solutionEvaluation(ant);
-        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, InsertionMethod.Greedy);
+        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, InsertionMethod.Greedy, 0);
 
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
@@ -917,7 +923,7 @@ public class MPDPTW_UtilsTest {
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
         problemInstance.solutionEvaluation(ant);
-        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, InsertionMethod.Regret3);
+        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, InsertionMethod.Regret3, 0);
 
         assertThat(ant.totalCost).isEqualTo(5108.8608230373175);
         assertThat(ant.timeWindowPenalty).isEqualTo(0);
@@ -953,7 +959,7 @@ public class MPDPTW_UtilsTest {
 
         InsertionOperator insertionOperator = new InsertionOperator(problemInstance, new Random(1));
         problemInstance.solutionEvaluation(ant);
-        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Expensive, InsertionMethod.Greedy);
+        insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Expensive, InsertionMethod.Greedy, 0);
 
         assertThat(ant.tours).hasSize(4);
         assertThat(ant.requests).hasSize(4);
