@@ -1182,4 +1182,22 @@ public class MPDPTW_UtilsTest {
         assertThat(problemInstance.costEvaluation(route, 1, 6)).isEqualTo(1404.2251389434082);
     }
 
+
+    @Test
+    public void bestSolutionCoelhoRoute_w_8_25_3_test() throws IOException {
+        ProblemInstance problemInstance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_8_25_3.txt").toFile());
+        //Solution cost:2950.7741
+        Solution ant = SolutionUtils.createEmptyAnt(problemInstance);
+        //Route:1 cost:1237.5600 arr:1337 len:10 Dep-20-24-22-23-18-25-26-19-21-27-Dep-
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 21, 25, 23, 24, 19, 26, 27, 20, 22, 28, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(4, 5, 6)));
+        //Route:2 cost:1713.2141 arr:1873 len:18 Dep-8-5-7-0-14-2-15-13-10-12-4-1-6-3-16-17-9-11-Dep-
+        ant.tours.add(new ArrayList<>(Arrays.asList(0, 9, 6, 8, 1, 15, 3, 16, 14, 11, 13, 5, 2, 7, 4, 17, 18, 10, 12, 0)));
+        ant.requests.add(new ArrayList<>(Arrays.asList(0, 1, 2, 3)));
+        problemInstance.solutionEvaluation(ant);
+        assertThat(ant.totalCost).isEqualTo(2950.7741171841853);
+        assertThat(ant.timeWindowPenalty).isEqualTo(0.0);
+        assertThat(ant.feasible).isTrue();
+    }
+
 }

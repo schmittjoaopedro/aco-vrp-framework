@@ -178,6 +178,14 @@ public class ProblemInstance {
         }
     }
 
+    public boolean allowAddVehicles() {
+        return Objective.Vehicles.getValue() == 0.0;
+    }
+
+    public boolean isCapacityRestricted() {
+        return Objective.Demand.getValue() == 1.0;
+    }
+
     public void calculateMaxValues() {
         for (int i = 0; i < distances.length; i++) {
             for (int j = 0; j < distances.length; j++) {
@@ -205,6 +213,8 @@ public class ProblemInstance {
         solution.feasible = true;
         solution.timeWindowPenalty = 0.0;
         solution.capacityPenalty = 0.0;
+        solution.visited = new boolean[getNumNodes()];
+        solution.visitedRequests = new boolean[getNumReq()];
         int[] numNodesByRequest = new int[getNumReq()];
         Double[] pickupByRequestTime = new Double[getNumReq()];
         Double[] deliveryByRequestTime = new Double[getNumReq()];
@@ -229,6 +239,7 @@ public class ProblemInstance {
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
+                solution.visited[curr] = true;
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
                 solution.arrivalTime.get(k)[i + 1] = currentTime;
@@ -242,6 +253,7 @@ public class ProblemInstance {
                 // For precedence and attendance restrictions
                 request = getRequest(next);
                 if (request != null) { // Ignore node depot
+                    solution.visitedRequests[request.requestId] = true;
                     if (request.isPickup) {
                         numNodesByRequest[request.requestId]++;
                         pickupByRequestTime[request.requestId] = currentTime;
@@ -259,8 +271,8 @@ public class ProblemInstance {
                     solution.delays.get(k)[i + 1] = 0.0;
                 }
                 // Check capacity feasibility
-                if (capacity > vehicleCapacity) {
-                    solution.capacityPenalty += capacity - vehicleCapacity;
+                if (isCapacityRestricted() && capacity > getVehicleCapacity()) {
+                    solution.capacityPenalty += capacity - getVehicleCapacity();
                     solution.feasible = false;
                 }
                 currentTime += serviceTime(next);
@@ -293,6 +305,7 @@ public class ProblemInstance {
                 slackTime += solution.waitingTimes.get(k)[i];
                 solution.arrivalSlackTimes.get(k)[i] = slackTime;
             }
+            tourCost = tourCost * Objective.Distance.getValue();
             solution.tourCosts.add(tourCost);
             solution.totalCost += tourCost;
         }
@@ -303,6 +316,12 @@ public class ProblemInstance {
         // Check if number of vehicles is not extrapolated
         if (solution.tours.size() > numMaxVehicles) {
             solution.feasible = false;
+        }
+        // Calculate requests attendance
+        for (int i = 0; i < solution.visited.length; i++) {
+            if (!solution.visited[i]) {
+                solution.totalCost += Objective.Attendance.getValue();
+            }
         }
     }
 
@@ -360,6 +379,7 @@ public class ProblemInstance {
             slackTime += solution.waitingTimes.get(k)[i];
             solution.arrivalSlackTimes.get(k)[i] = slackTime;
         }
+        tourCost = tourCost * Objective.Distance.getValue();
         solution.tourCosts.set(k, tourCost);
         solution.totalCost += tourCost;
         if (routePenalty > 0) {
@@ -385,8 +405,8 @@ public class ProblemInstance {
                 fitnessResult.timeWindowPenalty += currentTime - twEnd(next);
                 fitnessResult.feasible = false;
             }
-            if (capacity > vehicleCapacity) {
-                fitnessResult.capacityPenalty += capacity - vehicleCapacity;
+            if (isCapacityRestricted() && capacity > getVehicleCapacity()) {
+                fitnessResult.capacityPenalty += capacity - getVehicleCapacity();
                 fitnessResult.feasible = false;
             }
             currentTime += serviceTime(next);
@@ -586,6 +606,7 @@ public class ProblemInstance {
         for (int i = 0; i < tour.size() - 1; i++) {
             cost += distances[tour.get(i)][tour.get(i + 1)];
         }
+        cost = cost * Objective.Distance.getValue();
         return cost;
     }
 
@@ -606,6 +627,7 @@ public class ProblemInstance {
                 break;
             }
         }
+        cost = cost * Objective.Distance.getValue();
         return cost;
     }
 
@@ -626,6 +648,7 @@ public class ProblemInstance {
                 break;
             }
         }
+        cost = cost * Objective.Distance.getValue();
         return cost;
     }
 
@@ -670,6 +693,20 @@ public class ProblemInstance {
             feasible = requests[reqI].twStart + requests[reqI].serviceTime + distances[i][j] < requests[reqJ].twEnd; // is time feasible
         }
         return feasible;
+    }
+
+    public enum Objective {
+        Demand(0.0), Distance(1.0), Vehicles(0.0), Attendance(100000.0);
+
+        private double value;
+
+        Objective(double value) {
+            this.value = value;
+        }
+
+        public double getValue() {
+            return value;
+        }
     }
 
 }

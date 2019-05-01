@@ -43,7 +43,6 @@ public class RemovalOperator {
             assignedRequests.remove(request);
             removeRequest(solution, requests, request); // Un-assign all the nodes of request r in solution S
         }
-        removeEmptyVehicles(solution, requests);
         return removedRequests;
     }
 
@@ -96,7 +95,6 @@ public class RemovalOperator {
             removeRequest(solution.tours, solution.requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
             R.add(r); // R <- R U {L[y^D|L|]}
         }
-        removeEmptyVehicles(solution.tours, solution.requests);
         return R;
     }
 
@@ -114,7 +112,6 @@ public class RemovalOperator {
             removeRequest(solution, requests, r); // Un-assign all the nodes of request L[y^D|L|] in solution S
             updateChangedVehicle(solution, requests, r, assignedRequests, removalMethod); // Update vehicle that had their route changed
         }
-        removeEmptyVehicles(solution, requests); // Remove empty vehicles at the end, to evict update indices during algorithm execution
         return R;
     }
 
@@ -131,19 +128,6 @@ public class RemovalOperator {
             i++;
         }
         assignedRequests.sort(Comparator.comparing(Req::getCost)); // Sort L such that for i < j => G(r_i, r, S) < g(r_j, r, S)
-    }
-
-    // Remove vehicles with empty request list
-    private void removeEmptyVehicles(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
-        int position = 0;
-        while (solution.size() > position) {
-            if (requests.get(position).isEmpty()) {
-                solution.remove(position);
-                requests.remove(position);
-            } else {
-                position++;
-            }
-        }
     }
 
     /*

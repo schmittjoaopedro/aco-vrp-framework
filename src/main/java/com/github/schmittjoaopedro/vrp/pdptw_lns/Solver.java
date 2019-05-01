@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.pdptw_lns;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigInteger;
@@ -164,7 +165,7 @@ public class Solver {
             }
             temp = temp * coolingRate;
             if (nbIteration % 100 == 0) {
-                printWeights();
+                printWeights(temp, sBest);
                 updateAdaptiveWeight(removalWeight, removalScore, removalCount, reactionFactor);
                 updateAdaptiveWeight(insertingWeight, insertingScore, insertingCount, reactionFactor);
                 updateAdaptiveWeight(noiseWeight, noiseScore, noiseCount, reactionFactor);
@@ -180,16 +181,24 @@ public class Solver {
         return sBest;
     }
 
-    void printWeights() {
-        System.out.print("Removal = [");
-        for (int i = 0; i < removalWeight.length; i++) {
-            System.out.printf(Locale.US,"%.2f,", removalWeight[i]);
+    void printWeights(double temp, Solution sBest) {
+        System.out.println("Removal = [" + StringUtils.join(getArray(removalWeight),',') +
+                "] Repair = [" + StringUtils.join(getArray(insertingWeight),',') + "]" +
+                " T = " + temp +
+                " Hash = " + visitedList.size() +
+                " NV = " + sBest.usedVehicle(instance) + " TC = " + sBest.objFunction(instance));
+    }
+
+    private String[] getArray(double[] array) {
+        String data[] = new String[array.length];
+        double sum = 0.0;
+        for (int i = 0; i < array.length; i++) {
+            sum += array[i];
         }
-        System.out.print("] Repair = [");
-        for (int i = 0; i < insertingWeight.length; i++) {
-            System.out.printf(Locale.US,"%.2f,", insertingWeight[i]);
+        for (int i = 0; i < array.length; i++) {
+            data[i] = String.valueOf((int) (100 * array[i] / sum));
         }
-        System.out.println("]");
+        return data;
     }
 
     // Remove requests from solution and return used heuristic

@@ -64,11 +64,9 @@ public class InsertionOperator {
             for (int r = 0; r < requestsToInsert.size(); r++) { // for each request r in requests to insert
                 int requestId = requestsToInsert.get(r).requestId;
                 List<InsertRequest> feasibleRoutes = new ArrayList<>();
-                // Create a new empty vehicle, if there is not one available, as a possibility to insert the request
-                int lastVehicle = solution.tours.size() - 1;
-                if (solution.tours.get(lastVehicle).size() > 2) {
+                if (instance.allowAddVehicles() && solution.tours.get(solution.tours.size() - 1).size() > 2) {
+                    // Create a new empty vehicle, if there is not one available, as a possibility to insert the request
                     SolutionUtils.addEmptyVehicle(solution);
-                    lastVehicle++;
                 }
                 for (int k = 0; k < solution.tours.size(); k++) {
                     if (!originalRoutesCache.hasCacheCost(k, requestId)) {
@@ -94,47 +92,42 @@ public class InsertionOperator {
                         feasibleRoutes.add(new InsertRequest(costDiff, k, requestId, newRoutesCache.getCacheRoute(k, requestId)));
                     }
                 }
-                // Use the optimal solver to execute the insertion heuristic
-                if (feasibleRoutes.isEmpty()) {
-                    OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(requestId, instance);
-                    optimalRequestSolver.optimize();
-                    ArrayList<Integer> newRoute = new ArrayList<>();
-                    for (int i : optimalRequestSolver.getBestRoute()) {
-                        newRoute.add(i);
+                if (!feasibleRoutes.isEmpty()) {
+                    // Sort the vector in ascending order, from the best to worst
+                    feasibleRoutes.sort(Comparator.comparing(InsertRequest::getCost));
+                    // Get the best request based on regret criterion
+                    requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel));
+                    if (feasibleRoutes.size() < regretLevel) {
+                        isLessAvailableVehicles = true;
                     }
-                    feasibleRoutes.add(new InsertRequest(optimalRequestSolver.getBestCost(), lastVehicle, requestId, newRoute));
-                }
-                // Sort the vector in ascending order, from the best to worst
-                feasibleRoutes.sort(Comparator.comparing(InsertRequest::getCost));
-                // Get the best request based on regret criterion
-                requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel));
-                if (feasibleRoutes.size() < regretLevel) {
-                    isLessAvailableVehicles = true;
                 }
             }
-            if (isLessAvailableVehicles) {
-                // When is not possible to calculate regret value because the regret level is greater than the number of feasible position
-                // the vehicle with small available positions should be taken in account.
-                requestsRegret.sort(Comparator.comparing(InsertRequest::getNumRoutes).thenComparing(InsertRequest::getCost));
+            if(requestsRegret.isEmpty()) { // No found position for the remaining requests
+                break;
             } else {
-                // Sort in descending order, to select the most expensive request based on the regret criterion
-                requestsRegret.sort(Comparator.comparing(InsertRequest::getCost).reversed());
-            }
-            // Insert the costly insertion on the solution
-            InsertRequest reqToInsert = requestsRegret.get(0);
-            solution.tours.set(reqToInsert.vehicle, reqToInsert.route);
-            solution.requests.get(reqToInsert.vehicle).add(reqToInsert.reqId);
-            originalRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
-            newRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
-            // Remove the inserted request from the requests to insert list
-            for (int i = 0; i < requestsToInsert.size(); i++) {
-                if (reqToInsert.reqId == requestsToInsert.get(i).requestId) {
-                    requestsToInsert.remove(i);
-                    break;
+                if (isLessAvailableVehicles) {
+                    // When is not possible to calculate regret value because the regret level is greater than the number of feasible position
+                    // the vehicle with small available positions should be taken in account.
+                    requestsRegret.sort(Comparator.comparing(InsertRequest::getNumRoutes).thenComparing(InsertRequest::getCost));
+                } else {
+                    // Sort in descending order, to select the most expensive request based on the regret criterion
+                    requestsRegret.sort(Comparator.comparing(InsertRequest::getCost).reversed());
+                }
+                // Insert the costly insertion on the solution
+                InsertRequest reqToInsert = requestsRegret.get(0);
+                solution.tours.set(reqToInsert.vehicle, reqToInsert.route);
+                solution.requests.get(reqToInsert.vehicle).add(reqToInsert.reqId);
+                originalRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
+                newRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
+                // Remove the inserted request from the requests to insert list
+                for (int i = 0; i < requestsToInsert.size(); i++) {
+                    if (reqToInsert.reqId == requestsToInsert.get(i).requestId) {
+                        requestsToInsert.remove(i);
+                        break;
+                    }
                 }
             }
         }
-        removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
     }
 
@@ -148,10 +141,8 @@ public class InsertionOperator {
             for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
                 Req currReq = requestsToInsert.get(r);
                 InsertRequest insertRequest = null;
-                int lastVehicle = solution.tours.size() - 1;
-                if (solution.tours.get(lastVehicle).size() > 2) {
+                if (instance.allowAddVehicles() && solution.tours.get(solution.tours.size() - 1).size() > 2) {
                     // Create a new vehicle to let available to the greedy operator
-                    lastVehicle++;
                     SolutionUtils.addEmptyVehicle(solution);
                 }
                 for (int k = 0; k < solution.tours.size(); k++) { // For each vehicle from solution
@@ -168,33 +159,26 @@ public class InsertionOperator {
                         instance.solutionEvaluation(solution, k);
                     }
                 }
-                if (insertRequest == null) { // If no solution using heuristic was found
-                    // Use the optimal solver to build a feasible request
-                    OptimalRequestSolver optimalRequestSolver = new OptimalRequestSolver(currReq.requestId, instance);
-                    optimalRequestSolver.optimize();
-                    ArrayList<Integer> route = new ArrayList<>();
-                    for (int i : optimalRequestSolver.getBestRoute()) {
-                        route.add(i);
-                    }
-                    insertRequest = new InsertRequest(optimalRequestSolver.getBestCost(), lastVehicle, currReq.requestId, route);
-                }
                 // Greedy criterion, select the request with the minimum increasing cost
-                if (bestRequest == null || insertRequest.cost < bestRequest.cost) {
+                if (insertRequest != null && (bestRequest == null || insertRequest.cost < bestRequest.cost)) {
                     bestRequest = insertRequest;
                 }
             }
-            // Add the inserted request on the vehicle
-            solution.tours.set(bestRequest.vehicle, bestRequest.route);
-            solution.requests.get(bestRequest.vehicle).add(bestRequest.reqId);
-            instance.solutionEvaluation(solution, bestRequest.vehicle);
-            for (Req r : requestsToInsert) {
-                if (r.requestId == bestRequest.reqId) {
-                    requestsToInsert.remove(r);
-                    break;
+            if (bestRequest == null) { // No found position for the remaining requests
+                break;
+            } else {
+                // Add the inserted request on the vehicle
+                solution.tours.set(bestRequest.vehicle, bestRequest.route);
+                solution.requests.get(bestRequest.vehicle).add(bestRequest.reqId);
+                instance.solutionEvaluation(solution, bestRequest.vehicle);
+                for (Req r : requestsToInsert) {
+                    if (r.requestId == bestRequest.reqId) {
+                        requestsToInsert.remove(r);
+                        break;
+                    }
                 }
             }
         }
-        removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
     }
 
@@ -425,7 +409,7 @@ public class InsertionOperator {
         double deltaBestCost = Double.MAX_VALUE; // \Delta_{i}^{k*} <- Infinity
         BestPosition bestPosition = null; // BestPosition(i, k) <- null
         ArrayList<Integer> route = solution.tours.get(vehicle);
-        double originalCost = instance.costEvaluation(route);
+        double originalCost = solution.tourCosts.get(vehicle);
         prevPos++;
         int prev, next = route.get(prevPos); // next <- first customer of route k
         int currIdx = prevPos;
@@ -433,7 +417,7 @@ public class InsertionOperator {
             route.add(currIdx, node);
             ProblemInstance.FitnessResult result = instance.restrictionsEvaluation(route);
             if (result.feasible) {
-                double costDiff = result.cost - originalCost  + generateRandomNoise(insertionMethod);
+                double costDiff = result.cost - originalCost + generateRandomNoise(insertionMethod);
                 if (costDiff < deltaBestCost) {
                     deltaBestCost = costDiff;
                     bestPosition = new BestPosition(currIdx, deltaBestCost);
@@ -455,19 +439,6 @@ public class InsertionOperator {
             return instance.getDepot().twEnd;
         } else {
             return instance.getRequest(next).twEnd;
-        }
-    }
-
-    // Remove empty vehicles
-    private void removeEmptyVehicles(Solution solution) {
-        int position = 0;
-        while (solution.tours.size() > position) {
-            if (solution.requests.get(position).isEmpty()) {
-                solution.tours.remove(position);
-                solution.requests.remove(position);
-            } else {
-                position++;
-            }
         }
     }
 

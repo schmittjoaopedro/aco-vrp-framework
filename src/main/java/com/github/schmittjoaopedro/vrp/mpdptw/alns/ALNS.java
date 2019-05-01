@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Request;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
@@ -76,7 +77,7 @@ public class ALNS {
     private double sigma2 = 20; // reward for finding an improving, not global best, solution
     private double sigma3 = 13; // reward for finding an accepted non-improving solution
     private double rho = 0.1; // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance. (p)
-    private int dMin(double n) { return (int) Math.min(6, 0.15 * n); }
+    private int dMin(double n) { return (int) Math.max(1, Math.min(6, 0.15 * n)); }
     private int dMax(double n) { return (int) Math.min(18, 0.4 * n); }
     //private double getInitialT() { return (1.0 + tolerance) * initialCost; }
     private double getInitialT() { return (initialCost * tolerance) / Math.log(2); }
@@ -201,27 +202,29 @@ public class ALNS {
             riUsages[ri] = riUsages[ri] + 1;
             noiseUsages[useNoise] = noiseUsages[useNoise] + 1;
 
-            List<Req> removedRequests = removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
-            insertRequests(solutionNew, ri, removedRequests, useNoise); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
+            removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
+            insertRequests(solutionNew, ri, useNoise); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
+            SolutionUtils.removeEmptyVehicles(solutionNew);
             instance.solutionEvaluation(solutionNew); // Update the solution cost
 
-            int solutionHash = SolutionUtils.getHash(solutionNew);
-            if (!hashNumber.contains(solutionHash)) {
-                hashNumber.add(solutionHash);
-                if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                    solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
-                    updateBest(solution); // S_best <- S <- S'
-                    // Increase the scores of io and ro by sigma1
-                    updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
-                } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
-                    solution = solutionNew; // S <- S'
-                    // Increase the scores of the ro and io by sigma2
-                    updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
-                } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
-                    solution = solutionNew; // S <- S'
-                    // Increase the scores of the ro and io by sigma3
-                    updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+            if (accept(solutionNew, solution)) {
+                int solutionHash = SolutionUtils.getHash(solutionNew);
+                if (!hashNumber.contains(solutionHash)) {
+                    hashNumber.add(solutionHash);
+                    if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
+                        solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
+                        updateBest(solution); // S_best <- S <- S'
+                        // Increase the scores of io and ro by sigma1
+                        updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
+                    } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
+                        // Increase the scores of the ro and io by sigma2
+                        updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+                    } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
+                        // Increase the scores of the ro and io by sigma3
+                        updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+                    }
                 }
+                solution = solutionNew; // S <- S'
             }
 
             /*
@@ -343,7 +346,9 @@ public class ALNS {
      * with a probability e^-(f(S')-f(S))/T.
      */
     private boolean accept(Solution newSolution, Solution solution) {
-        if ("SA".equals(acceptMethod)) {
+        if (SolutionUtils.getBest(solution, newSolution) == newSolution) {
+            return true;
+        } else if ("SA".equals(acceptMethod)) {
             double difference = newSolution.totalCost - solution.totalCost;
             return random.nextDouble() < Math.exp(-1.0 * difference / T);
         } else if ("TA".equals(acceptMethod)) {
@@ -380,7 +385,13 @@ public class ALNS {
         return iteration > numIterations;
     }
 
-    private void insertRequests(Solution solution, int ri, List<Req> removedRequests, int useNoise) {
+    private void insertRequests(Solution solution, int ri, int useNoise) {
+        ArrayList<Req> removedRequests = new ArrayList<>();
+        for (int i = 0; i < solution.visitedRequests.length; i++) {
+            if (!solution.visitedRequests[i]) {
+                removedRequests.add(new Req(-1, i));
+            }
+        }
         InsertionMethod insertionMethod = InsertionMethod.values()[ri];
         // Use random pickup method
         switch (insertionMethod) {
@@ -398,7 +409,7 @@ public class ALNS {
         }
     }
 
-    private List<Req> removeRequests(Solution solution, int ro, int q) {
+    private void removeRequests(Solution solution, int ro, int q) {
         List<Req> removedRequests = null;
         RemovalMethod removalMethod = RemovalMethod.values()[ro];
         switch (removalMethod) {
@@ -415,7 +426,13 @@ public class ALNS {
                 removedRequests = removalOperator.removeMostExpensiveNodes(solution.tours, solution.requests, q);
                 break;
         }
-        return removedRequests;
+        for (Req req : removedRequests) {
+            solution.visitedRequests[req.requestId] = false;
+            for (Request pickup : instance.getPickups(req.requestId)) {
+                solution.visited[pickup.nodeId] = false;
+            }
+            solution.visited[instance.getDelivery(req.requestId).nodeId] = false;
+        }
     }
 
     /*
