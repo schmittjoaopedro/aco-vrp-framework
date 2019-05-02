@@ -240,7 +240,7 @@ public class ALNS {
             if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
                 updateWeights(); // Update weights and reset scores of operators
                 solution = applyImprovement(solution); // Apply improvement to S
-                printIterationStatus();
+                //printIterationStatus();
                 updateBest(solution);
             }
             iteration++;

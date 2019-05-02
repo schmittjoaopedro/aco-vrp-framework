@@ -18,10 +18,10 @@ public class MPDPTW_ALNS {
     }
 
     public static void main(String[] args) throws Exception {
-        ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_4_400_1.txt").toFile());
+        /*ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_4_400_1.txt").toFile());
         ALNS alns = new ALNS(instance, new Random(1));
-        alns.execute();
-        /*mpdptw_test();*/
+        alns.execute();*/
+        mpdptw_test();
     }
 
     private static void mpdptw_test() throws Exception {
