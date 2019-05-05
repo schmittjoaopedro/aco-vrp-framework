@@ -130,6 +130,7 @@ public class DataReader {
                 instance.getNeighbors().get(i).add(j);
             }
         }
+        instance.setCapacityRestricted(false);
         return instance;
     }
 
@@ -237,7 +238,7 @@ public class DataReader {
             }
         }
         instance.setDistances(distances);
-
+        instance.setCapacityRestricted(true);
         return instance;
     }
 

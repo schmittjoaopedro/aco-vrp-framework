@@ -165,7 +165,7 @@ public class Solver {
             }
             temp = temp * coolingRate;
             if (nbIteration % 100 == 0) {
-                printWeights(temp, sBest);
+                //printWeights(temp, sBest);
                 updateAdaptiveWeight(removalWeight, removalScore, removalCount, reactionFactor);
                 updateAdaptiveWeight(insertingWeight, insertingScore, insertingCount, reactionFactor);
                 updateAdaptiveWeight(noiseWeight, noiseScore, noiseCount, reactionFactor);

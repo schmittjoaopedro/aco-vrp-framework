@@ -50,7 +50,7 @@ public class RelocateNodeOperator {
                 }
             }
         }
-        instance.restrictionsEvaluation(improvedSol);
+        instance.solutionEvaluation(improvedSol);
         return SolutionUtils.getBest(ant, improvedSol);
     }
 

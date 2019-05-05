@@ -31,42 +31,41 @@ public class MPDPTW_MMAS_TEST {
         solver.setParallel(false);
         solver.run();
         List<IterationStatistic> iterationStatistics = solver.getIterationStatistics();
-        assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 17412.37   BSF. SD: 0.00    IT. WORST: 21685.26    IT. BEST: 17412.37    IT. MEAN: 19670.08    IT. SD: 1043.76   BRANCH FACTOR: 0.990     DIV: 0.98      ");
-        assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 17058.92   BSF. SD: 0.00    IT. WORST: 22574.03    IT. BEST: 17058.92    IT. MEAN: 19985.31    IT. SD: 1128.29   BRANCH FACTOR: 1.827     DIV: 0.96      ");
-        assertThat(iterationStatistics.get(2).toString()).isEqualTo("IT. 3       BSF: 17058.92   BSF. SD: 0.00    IT. WORST: 21291.34    IT. BEST: 17267.36    IT. MEAN: 19465.14    IT. SD: 970.42    BRANCH FACTOR: 0.990     DIV: 0.92      ");
-        assertThat(iterationStatistics.get(3).toString()).isEqualTo("IT. 4       BSF: 15633.10   BSF. SD: 0.00    IT. WORST: 21219.29    IT. BEST: 15633.10    IT. MEAN: 18601.03    IT. SD: 1083.70   BRANCH FACTOR: 1.721     DIV: 0.77      ");
-        assertThat(iterationStatistics.get(4).toString()).isEqualTo("IT. 5       BSF: 15633.10   BSF. SD: 0.00    IT. WORST: 19715.72    IT. BEST: 15681.73    IT. MEAN: 17630.24    IT. SD: 1081.70   BRANCH FACTOR: 0.990     DIV: 0.64      ");
-        assertThat(iterationStatistics.get(5).toString()).isEqualTo("IT. 6       BSF: 15303.60   BSF. SD: 0.00    IT. WORST: 18539.47    IT. BEST: 15303.60    IT. MEAN: 16323.91    IT. SD: 803.66    BRANCH FACTOR: 1.048     DIV: 0.26      ");
-        assertThat(iterationStatistics.get(6).toString()).isEqualTo("IT. 7       BSF: 15303.60   BSF. SD: 0.00    IT. WORST: 17611.99    IT. BEST: 15303.60    IT. MEAN: 16060.29    IT. SD: 624.92    BRANCH FACTOR: 0.990     DIV: 0.26      ");
-        assertThat(iterationStatistics.get(7).toString()).isEqualTo("IT. 8       BSF: 15202.22   BSF. SD: 0.00    IT. WORST: 17434.81    IT. BEST: 15202.22    IT. MEAN: 15729.94    IT. SD: 477.22    BRANCH FACTOR: 1.038     DIV: 0.16      ");
-        assertThat(iterationStatistics.get(8).toString()).isEqualTo("IT. 9       BSF: 15202.22   BSF. SD: 0.00    IT. WORST: 17562.19    IT. BEST: 15202.22    IT. MEAN: 15787.15    IT. SD: 450.24    BRANCH FACTOR: 0.990     DIV: 0.21      ");
-        assertThat(iterationStatistics.get(9).toString()).isEqualTo("IT. 10      BSF: 15202.22   BSF. SD: 0.00    IT. WORST: 16774.05    IT. BEST: 15202.22    IT. MEAN: 15738.64    IT. SD: 431.42    BRANCH FACTOR: 0.990     DIV: 0.18      ");
+        assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 17364.22   BSF. SD: 0.00    IT. WORST: 22124.68    IT. BEST: 17364.22    IT. MEAN: 19739.02    IT. SD: 969.48    BRANCH FACTOR: 0.990     DIV: 0.98      ");
+        assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 16707.86   BSF. SD: 0.00    IT. WORST: 22212.62    IT. BEST: 16707.86    IT. MEAN: 19575.32    IT. SD: 1251.90   BRANCH FACTOR: 1.865     DIV: 0.96      ");
+        assertThat(iterationStatistics.get(2).toString()).isEqualTo("IT. 3       BSF: 16707.86   BSF. SD: 0.00    IT. WORST: 21160.09    IT. BEST: 17150.12    IT. MEAN: 19251.82    IT. SD: 1055.28   BRANCH FACTOR: 0.990     DIV: 0.91      ");
+        assertThat(iterationStatistics.get(3).toString()).isEqualTo("IT. 4       BSF: 16610.43   BSF. SD: 0.00    IT. WORST: 21797.75    IT. BEST: 16610.43    IT. MEAN: 18590.18    IT. SD: 973.76    BRANCH FACTOR: 1.385     DIV: 0.79      ");
+        assertThat(iterationStatistics.get(4).toString()).isEqualTo("IT. 5       BSF: 16610.43   BSF. SD: 0.00    IT. WORST: 19375.35    IT. BEST: 16646.12    IT. MEAN: 17872.71    IT. SD: 662.90    BRANCH FACTOR: 0.990     DIV: 0.55      ");
+        assertThat(iterationStatistics.get(5).toString()).isEqualTo("IT. 6       BSF: 16542.72   BSF. SD: 0.00    IT. WORST: 19769.93    IT. BEST: 16542.72    IT. MEAN: 17683.80    IT. SD: 757.73    BRANCH FACTOR: 1.087     DIV: 0.43      ");
+        assertThat(iterationStatistics.get(6).toString()).isEqualTo("IT. 7       BSF: 15910.98   BSF. SD: 0.00    IT. WORST: 18773.36    IT. BEST: 15910.98    IT. MEAN: 17254.79    IT. SD: 522.42    BRANCH FACTOR: 1.135     DIV: 0.30      ");
+        assertThat(iterationStatistics.get(7).toString()).isEqualTo("IT. 8       BSF: 15910.98   BSF. SD: 0.00    IT. WORST: 17764.54    IT. BEST: 15910.98    IT. MEAN: 16239.55    IT. SD: 482.93    BRANCH FACTOR: 0.990     DIV: 0.10      ");
+        assertThat(iterationStatistics.get(8).toString()).isEqualTo("IT. 9       BSF: 15910.98   BSF. SD: 0.00    IT. WORST: 18073.38    IT. BEST: 15910.98    IT. MEAN: 16085.48    IT. SD: 494.69    BRANCH FACTOR: 0.990     DIV: 0.07      ");
+        assertThat(iterationStatistics.get(9).toString()).isEqualTo("IT. 10      BSF: 15910.98   BSF. SD: 0.00    IT. WORST: 16613.62    IT. BEST: 15910.98    IT. MEAN: 15925.03    IT. SD: 99.37     BRANCH FACTOR: 0.990     DIV: 0.00      ");
         assertThat(solver.getFinalSolution()).contains("Instance = w_4_100_1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0-48-44-16-49-15-46-17-7-45-8-47-0\n" +
-                "0-19-94-27-18-28-26-95-96-20-21-36-37-29-0\n" +
-                "0-1-51-102-101-2-100-63-50-52-103-64-53-0\n" +
-                "0-91-42-92-93-86-69-85-41-87-71-70-43-72-0\n" +
-                "0-59-57-60-75-76-13-14-58-31-30-73-74-32-0\n" +
-                "0-24-10-11-22-38-9-54-23-39-12-55-40-25-56-0\n" +
-                "0-80-67-33-97-81-66-98-99-34-35-65-68-0\n" +
-                "0-78-88-5-77-79-3-4-89-90-6-0\n" +
-                "0-83-82-84-61-62-0\n" +
+                "0-50-44-5-3-97-52-13-51-14-4-46-45-98-99-53-6-47-0\n" +
+                "0-31-42-57-41-63-43-30-32-58-64-0\n" +
+                "0-19-61-62-59-18-60-75-76-20-21-36-37-0\n" +
+                "0-67-85-70-73-74-66-86-69-87-65-68-71-72-0\n" +
+                "0-23-1-54-22-24-55-56-91-25-92-93-2-0\n" +
+                "0-48-101-102-49-100-16-103-15-17-0\n" +
+                "0-78-38-82-39-40-77-79-83-84-0\n" +
+                "0-7-8-9-11-88-10-89-12-90-0\n" +
+                "0-33-94-80-27-28-26-95-34-35-96-81-29-0\n" +
                 "Requests\n" +
-                "15-14-5-2\n" +
-                "6-32-8-11\n" +
-                "0-16-34-21\n" +
-                "31-13-29-23\n" +
-                "19-18-25-4-9-24\n" +
-                "7-3-12-17\n" +
-                "27-22-10-33\n" +
-                "26-30-1\n" +
-                "28-20\n" +
+                "16-14-1-33-4\n" +
+                "9-13-18-21\n" +
+                "6-20-19-25-11\n" +
+                "22-29-23-24\n" +
+                "7-0-17-31\n" +
+                "15-34-5\n" +
+                "26-12-28\n" +
+                "2-3-30\n" +
+                "10-32-27-8\n" +
                 "Num. Vehicles = 9\n" +
-                "Cost = 15202.218798841075\n" +
-                "Penalty = 0.0\n" +
-                "Total time (ms) = ");
+                "Cost = 15910.97914089543\n" +
+                "Penalty = 0.0");
     }
 
     @Test
@@ -78,40 +77,39 @@ public class MPDPTW_MMAS_TEST {
         solver.setParallel(false);
         solver.run();
         List<IterationStatistic> iterationStatistics = solver.getIterationStatistics();
-        assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 22062.96   BSF. SD: 0.00    IT. WORST: 26443.83    IT. BEST: 22062.96    IT. MEAN: 24131.55    IT. SD: 1011.14   BRANCH FACTOR: 0.990     DIV: 1.00      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 20657.80   BSF. SD: 0.00    IT. WORST: 26862.76    IT. BEST: 20657.80    IT. MEAN: 23953.56    IT. SD: 1110.20   BRANCH FACTOR: 1.952     DIV: 0.99      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(2).toString()).isEqualTo("IT. 3       BSF: 20657.80   BSF. SD: 0.00    IT. WORST: 26222.27    IT. BEST: 21375.75    IT. MEAN: 23350.67    IT. SD: 1075.56   BRANCH FACTOR: 0.990     DIV: 0.95      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(3).toString()).isEqualTo("IT. 4       BSF: 20115.41   BSF. SD: 0.00    IT. WORST: 25204.62    IT. BEST: 20115.41    IT. MEAN: 22693.02    IT. SD: 1049.13   BRANCH FACTOR: 1.452     DIV: 0.86      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(4).toString()).isEqualTo("IT. 5       BSF: 20115.41   BSF. SD: 0.00    IT. WORST: 23581.92    IT. BEST: 19739.14    IT. MEAN: 21374.74    IT. SD: 1002.66   BRANCH FACTOR: 0.990     DIV: 0.63      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(5).toString()).isEqualTo("IT. 6       BSF: 19090.57   BSF. SD: 0.00    IT. WORST: 22568.50    IT. BEST: 19090.57    IT. MEAN: 20913.70    IT. SD: 840.14    BRANCH FACTOR: 1.317     DIV: 0.39      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(6).toString()).isEqualTo("IT. 7       BSF: 18922.97   BSF. SD: 0.00    IT. WORST: 22477.40    IT. BEST: 18922.97    IT. MEAN: 19748.68    IT. SD: 800.59    BRANCH FACTOR: 1.221     DIV: 0.34      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(7).toString()).isEqualTo("IT. 8       BSF: 18533.95   BSF. SD: 0.00    IT. WORST: 20698.53    IT. BEST: 18533.95    IT. MEAN: 19145.43    IT. SD: 480.64    BRANCH FACTOR: 1.125     DIV: 0.14      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(8).toString()).isEqualTo("IT. 9       BSF: 18533.95   BSF. SD: 0.00    IT. WORST: 21083.77    IT. BEST: 18398.31    IT. MEAN: 18805.72    IT. SD: 561.75    BRANCH FACTOR: 0.990     DIV: 0.11      PEN. RATE: 1.00    FEASIBLE: F");
-        assertThat(iterationStatistics.get(9).toString()).isEqualTo("IT. 10      BSF: 17887.38   BSF. SD: 0.00    IT. WORST: 18881.26    IT. BEST: 17887.38    IT. MEAN: 18527.96    IT. SD: 104.68    BRANCH FACTOR: 1.202     DIV: 0.02      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(0).toString()).isEqualTo("IT. 1       BSF: 22564.36   BSF. SD: 0.00    IT. WORST: 26127.46    IT. BEST: 22564.36    IT. MEAN: 24409.79    IT. SD: 921.66    BRANCH FACTOR: 0.990     DIV: 1.00      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(1).toString()).isEqualTo("IT. 2       BSF: 22564.36   BSF. SD: 0.00    IT. WORST: 25870.07    IT. BEST: 22078.00    IT. MEAN: 24046.70    IT. SD: 945.56    BRANCH FACTOR: 0.990     DIV: 0.97      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(2).toString()).isEqualTo("IT. 3       BSF: 22564.36   BSF. SD: 0.00    IT. WORST: 25982.70    IT. BEST: 21686.59    IT. MEAN: 23842.73    IT. SD: 954.11    BRANCH FACTOR: 0.990     DIV: 0.93      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(3).toString()).isEqualTo("IT. 4       BSF: 21346.57   BSF. SD: 0.00    IT. WORST: 25229.86    IT. BEST: 21346.57    IT. MEAN: 23446.02    IT. SD: 892.78    BRANCH FACTOR: 1.692     DIV: 0.83      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(4).toString()).isEqualTo("IT. 5       BSF: 20703.30   BSF. SD: 0.00    IT. WORST: 24025.82    IT. BEST: 20703.30    IT. MEAN: 22296.72    IT. SD: 832.76    BRANCH FACTOR: 1.481     DIV: 0.69      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(5).toString()).isEqualTo("IT. 6       BSF: 19857.02   BSF. SD: 0.00    IT. WORST: 23505.07    IT. BEST: 19857.02    IT. MEAN: 21353.49    IT. SD: 794.86    BRANCH FACTOR: 1.144     DIV: 0.47      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(6).toString()).isEqualTo("IT. 7       BSF: 19332.89   BSF. SD: 0.00    IT. WORST: 22824.29    IT. BEST: 19332.89    IT. MEAN: 20215.10    IT. SD: 642.85    BRANCH FACTOR: 1.183     DIV: 0.22      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(7).toString()).isEqualTo("IT. 8       BSF: 19118.76   BSF. SD: 0.00    IT. WORST: 21169.88    IT. BEST: 19118.76    IT. MEAN: 19612.95    IT. SD: 417.12    BRANCH FACTOR: 1.087     DIV: 0.14      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(8).toString()).isEqualTo("IT. 9       BSF: 19118.76   BSF. SD: 0.00    IT. WORST: 22254.56    IT. BEST: 18725.66    IT. MEAN: 19914.66    IT. SD: 888.68    BRANCH FACTOR: 0.990     DIV: 0.29      PEN. RATE: 1.00    FEASIBLE: F");
+        assertThat(iterationStatistics.get(9).toString()).isEqualTo("IT. 10      BSF: 18764.82   BSF. SD: 0.00    IT. WORST: 22621.65    IT. BEST: 18764.82    IT. MEAN: 20039.15    IT. SD: 948.97    BRANCH FACTOR: 1.096     DIV: 0.32      PEN. RATE: 1.00    FEASIBLE: F");
         assertThat(solver.getFinalSolution()).contains("Instance = w_4_100_1.txt\n" +
                 "Best solution feasibility = false\n" +
                 "Routes\n" +
-                "0-30-91-73-74-83-82-59-57-38-58-31-84-39-32-92-93-40-60-0\n" +
-                "0-80-42-54-55-41-56-43-81-36-37-0\n" +
-                "0-98-69-101-48-1-97-2-100-102-70-49-99-71-72-103-0\n" +
-                "0-23-52-20-50-19-18-21-51-53-24-22-25-0\n" +
-                "0-63-33-16-15-7-8-64-34-35-17-0\n" +
-                "0-5-78-77-79-9-10-11-28-4-27-12-26-29-3-6-0\n" +
-                "0-65-46-45-66-61-44-47-67-86-62-68-85-87-0\n" +
-                "0-95-75-76-13-14-88-94-96-89-90-0\n" +
+                "0-54-66-78-77-23-7-67-55-79-8-22-24-65-56-68-25-0\n" +
+                "0-31-97-33-73-74-30-32-16-98-99-34-35-15-17-0\n" +
+                "0-83-36-37-39-38-10-59-11-9-60-12-40-82-84-0\n" +
+                "0-70-92-91-93-69-71-72-51-13-52-14-50-53-0\n" +
+                "0-75-76-3-1-42-41-43-2-4-5-6-0\n" +
+                "0-63-19-18-57-58-64-20-21-88-89-90-0\n" +
+                "0-85-86-87-27-94-46-26-95-96-45-44-47-28-29-0\n" +
+                "0-48-100-101-102-80-61-81-62-103-49-0\n" +
                 "Requests\n" +
-                "9-31-24-28-19-18-12\n" +
-                "27-13-17-11\n" +
-                "33-23-34-15-0\n" +
-                "7-16-6\n" +
-                "21-10-5-2\n" +
-                "1-26-3-8\n" +
-                "22-14-20-29\n" +
-                "32-25-4-30\n" +
+                "17-22-26-7-2\n" +
+                "9-33-10-24-5\n" +
+                "28-11-12-3-19\n" +
+                "23-31-16-4\n" +
+                "25-1-0-13\n" +
+                "21-6-18-30\n" +
+                "29-8-32-14\n" +
+                "15-34-27-20\n" +
                 "Num. Vehicles = 8\n" +
-                "Cost = 17887.379592436664\n" +
-                "Penalty = 9823.56395480934\n" +
-                "Total time (ms) = ");
+                "Cost = 18764.824102864066\n" +
+                "Penalty = 11600.052786421777");
     }
 
     @Test

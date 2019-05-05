@@ -30,6 +30,8 @@ public class ProblemInstance {
 
     private Request[] delivery;
 
+    private boolean capacityRestricted;
+
     /*
      * GETTERS and SETTERS
      */
@@ -114,6 +116,14 @@ public class ProblemInstance {
         this.delivery = delivery;
     }
 
+    public void setCapacityRestricted(boolean capacityRestricted) {
+        this.capacityRestricted = capacityRestricted;
+    }
+
+    public boolean isCapacityRestricted() {
+        return capacityRestricted;
+    }
+
     /*
      * Functional methods
      */
@@ -180,10 +190,6 @@ public class ProblemInstance {
 
     public boolean allowAddVehicles() {
         return Objective.Vehicles.getValue() == 0.0;
-    }
-
-    public boolean isCapacityRestricted() {
-        return Objective.Demand.getValue() == 1.0;
     }
 
     public void calculateMaxValues() {
@@ -696,7 +702,7 @@ public class ProblemInstance {
     }
 
     public enum Objective {
-        Demand(0.0), Distance(1.0), Vehicles(0.0), Attendance(100000.0);
+        Distance(1.0), Vehicles(0.0), Attendance(100000.0);
 
         private double value;
 
