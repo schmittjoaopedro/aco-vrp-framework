@@ -179,4 +179,36 @@ public class PDPTW_ALNS_TEST {
                 "Cost = 2704.567766330473\n" +
                 "Num. vehicles = 20");
     }
+
+    @Test
+    public void pdptw_lrc207_test() throws IOException {
+        String problem = "lrc207.txt";
+        ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
+        ALNS alns = new ALNS(instance, maxIterations, new Random(1));
+        alns.execute();
+        List<String> logs = alns.getLog();
+        assertThat(logs.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, " +
+                "22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]");
+        assertThat(logs.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 1413.787015477243, feasible = true");
+        assertThat(logs.get(2)).isEqualTo("NEW BEST = Iter 49 BFS = 1203.1080187499058, feasible = true");
+        assertThat(logs.get(3)).isEqualTo("NEW BEST = Iter 200 BFS = 1198.9906204404626, feasible = true");
+        assertThat(logs.get(4)).isEqualTo("NEW BEST = Iter 225 BFS = 1187.955877856017, feasible = true");
+        assertThat(logs.get(5)).isEqualTo("NEW BEST = Iter 574 BFS = 1118.1856307372213, feasible = true");
+        assertThat(logs.get(6)).isEqualTo("NEW BEST = Iter 773 BFS = 1083.9846208486392, feasible = true");
+        assertThat(logs.get(7)).isEqualTo("NEW BEST = Iter 1750 BFS = 1075.150917971318, feasible = true");
+        assertThat(logs.get(8)).isEqualTo("NEW BEST = Iter 3215 BFS = 1062.0483117841093, feasible = true");
+        assertThat(logs.get(9)).contains("Instance = lrc207.txt\n" +
+                "Best solution feasibility = true\n" +
+                "Routes\n" +
+                "0 69 98 88 2 45 5 6 7 73 12 14 47 17 16 15 11 9 87 86 74 57 22 20 49 77 58 97 13 10 60 55 100 70 68 0\n" +
+                "0 65 83 64 95 63 33 30 28 29 31 67 71 72 41 39 38 40 44 42 61 81 90 53 78 79 8 46 4 3 1 43 36 35 37 101 54 0\n" +
+                "0 82 99 52 59 75 23 21 18 19 76 51 85 84 56 92 94 96 93 62 50 34 27 26 32 89 48 25 102 24 66 91 80 0\n" +
+                "Requests\n" +
+                "9 0 3 44 24 4 28 48 2 6 36 11 43 1 26 50 5\n" +
+                "19 33 18 30 16 34 32 41 22 25 20 37 15 23 17 35 21 14\n" +
+                "47 45 29 46 12 8 42 7 40 13 27 31 39 10 38 49\n" +
+                "Cost = 1062.0483117841093\n" +
+                "Num. vehicles = 3\n" +
+                "Total time (s) =");
+    }
 }

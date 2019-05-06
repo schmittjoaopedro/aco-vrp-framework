@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
+
 import java.util.*;
 
 public class ProblemInstance {
@@ -13,8 +15,6 @@ public class ProblemInstance {
     private int numMaxVehicles;
 
     private double vehicleCapacity;
-
-    private ArrayList<ArrayList<Integer>> neighbors = new ArrayList<>();
 
     private double[][] distances;
 
@@ -31,6 +31,9 @@ public class ProblemInstance {
     private Request[] delivery;
 
     private boolean capacityRestricted;
+
+    // Requests not visited yet by the vehicle during moving vehicle simulation
+    private Set<Integer> idleRequests = new HashSet<>();
 
     /*
      * GETTERS and SETTERS
@@ -74,10 +77,6 @@ public class ProblemInstance {
 
     public void setVehicleCapacity(double vehicleCapacity) {
         this.vehicleCapacity = vehicleCapacity;
-    }
-
-    public ArrayList<ArrayList<Integer>> getNeighbors() {
-        return neighbors;
     }
 
     public void setDistances(double[][] distances) {
@@ -124,6 +123,10 @@ public class ProblemInstance {
         return capacityRestricted;
     }
 
+    public Set<Integer> getIdleRequests() {
+        return idleRequests;
+    }
+
     /*
      * Functional methods
      */
@@ -134,6 +137,14 @@ public class ProblemInstance {
 
     public List<Request> getPickups(int requestId) {
         return pickups[requestId];
+    }
+
+    public boolean isIdle(int node) {
+        if (node == depot.nodeId) {
+            return true;
+        } else {
+            return getRequest(node).isIdle();
+        }
     }
 
     public double dist(int i, int j) {
@@ -190,6 +201,36 @@ public class ProblemInstance {
 
     public boolean allowAddVehicles() {
         return Objective.Vehicles.getValue() == 0.0;
+    }
+
+    public Double x(int node) {
+        if (node == getDepot().nodeId) {
+            return depot.x;
+        } else {
+            return getRequest(node) != null ? getRequest(node).x : null;
+        }
+    }
+
+    public Double y(int node) {
+        if (node == getDepot().nodeId) {
+            return depot.y;
+        } else {
+            return getRequest(node) != null ? getRequest(node).y : null;
+        }
+    }
+
+    public boolean isFullyIdle(int requestId) {
+        return idleRequests.contains(requestId);
+    }
+
+    public void calculateDistances() {
+        for (int i = 0; i < distances.length; i++) {
+            for (int j = 0; j < distances.length; j++) {
+                if (i != j && x(i) != null && x(j) != null) {
+                    distances[i][j] = Maths.getEuclideanDistance(x(i), x(j), y(i), y(j));
+                }
+            }
+        }
     }
 
     public void calculateMaxValues() {
@@ -656,6 +697,31 @@ public class ProblemInstance {
         }
         cost = cost * Objective.Distance.getValue();
         return cost;
+    }
+
+    public void updateRequestStructures() {
+        Map<Integer, List<Request>> pickups = new HashMap<>();
+        Map<Integer, Request> delivery = new HashMap<>();
+        for (Request request : getRequests()) {
+            if (request.isPickup) {
+                if (!pickups.containsKey(request.requestId)) {
+                    pickups.put(request.requestId, new ArrayList<>());
+                }
+                pickups.get(request.requestId).add(request);
+            } else {
+                if (!delivery.containsKey(request.requestId)) {
+                    delivery.put(request.requestId, request);
+                }
+            }
+        }
+        List<Request>[] pickupsArray = new ArrayList[getNumReq()];
+        Request[] deliveriesArray = new Request[getNumReq()];
+        setPickups(pickupsArray);
+        setDelivery(deliveriesArray);
+        for (int i = 0; i < getNumReq(); i++) {
+            pickupsArray[i] = pickups.get(i);
+            deliveriesArray[i] = delivery.get(i);
+        }
     }
 
     public class FitnessResult {

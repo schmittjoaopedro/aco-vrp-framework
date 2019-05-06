@@ -1,9 +1,6 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
-import com.github.schmittjoaopedro.vrp.mpdptw.Request;
-import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
-import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
+import com.github.schmittjoaopedro.vrp.mpdptw.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,13 +74,13 @@ public class ALNS {
     private double sigma2 = 20; // reward for finding an improving, not global best, solution
     private double sigma3 = 13; // reward for finding an accepted non-improving solution
     private double rho = 0.1; // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance. (p)
+    private String acceptMethod = "SA";
+    private double minWeight = 1.0;
+    private double noiseControl = 0.025;
     private int dMin(double n) { return (int) Math.max(1, Math.min(6, 0.15 * n)); }
     private int dMax(double n) { return (int) Math.min(18, 0.4 * n); }
     //private double getInitialT() { return (1.0 + tolerance) * initialCost; }
     private double getInitialT() { return (initialCost * tolerance) / Math.log(2); }
-    private String acceptMethod = "SA";
-    private double minWeight = 1.0;
-    private double noiseControl = 0.025;
 
 
     private double segment = 100.0;
@@ -129,9 +126,15 @@ public class ALNS {
 
     private boolean generateFile = Boolean.FALSE;
 
+    private InsertionHeuristic insertionHeuristic;
+
+    private DynamicHandler dynamicHandler;
+
     private List<String> log = new ArrayList<>();
 
     private Set<Integer> hashNumber = new HashSet<>();
+
+    private MovingVehicle movingVehicle;
 
     public ALNS(ProblemInstance instance, int numIterations, Random random) {
         this(instance, random);
@@ -142,31 +145,30 @@ public class ALNS {
         this.instance = instance;
         this.random = random;
 
+        dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
+        dynamicHandler.adaptDynamicVersion();
+
         insertionOperator = new InsertionOperator(instance, random);
         insertionOperator.setNoiseControl(noiseControl);
         removalOperator = new RemovalOperator(instance, random);
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
+    }
+
+    public void execute() {
 
         /*
          * An initial solution S is generated through a construction heuristic in which requests are progressively
          * inserted within an available vehicle, at its minimum insertion cost position. After all requests have been
          * inserted, solution S is improved by our local search operator.
          */
-        InsertionHeuristic insertionHeuristic = new InsertionHeuristic(instance, random);
+        insertionHeuristic = new InsertionHeuristic(instance, random);
         solution = insertionHeuristic.createInitialSolution();
         instance.solutionEvaluation(solution);
         solution = applyImprovement(solution);
         instance.solutionEvaluation(solution);
         solutionBest = SolutionUtils.copy(solution);
-
-        initialCost = solution.totalCost;
-        initialT = getInitialT();
-        T = initialT;
-        minT = initialT * Math.pow(coolingRate, 30000);
-    }
-
-    public void execute() {
+        updateParameters();
 
         startTime = System.currentTimeMillis();
 
@@ -188,65 +190,92 @@ public class ALNS {
         resetWeights();
 
         while (!stopCriteriaMeet()) {
-            Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
-            int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
-            /*
-             * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
-             * roulette wheels based on the score of each operator.
-             */
-            int ro = getNextRouletteWheelOperator(roProbsSum, roProbs); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
-            int ri = getNextRouletteWheelOperator(riProbsSum, riProbs); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
-            int useNoise = getNextRouletteWheelOperator(noiseProbsSum, noiseProbs);
 
-            roUsages[ro] = roUsages[ro] + 1;
-            riUsages[ri] = riUsages[ri] + 1;
-            noiseUsages[useNoise] = noiseUsages[useNoise] + 1;
-
-            removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
-            insertRequests(solutionNew, ri, useNoise); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
-            SolutionUtils.removeEmptyVehicles(solutionNew);
-            instance.solutionEvaluation(solutionNew); // Update the solution cost
-
-            if (accept(solutionNew, solution)) {
-                int solutionHash = SolutionUtils.getHash(solutionNew);
-                if (!hashNumber.contains(solutionHash)) {
-                    hashNumber.add(solutionHash);
-                    if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                        solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
-                        updateBest(solution); // S_best <- S <- S'
-                        // Increase the scores of io and ro by sigma1
-                        updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
-                    } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
-                        // Increase the scores of the ro and io by sigma2
-                        updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
-                    } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
-                        // Increase the scores of the ro and io by sigma3
-                        updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
-                    }
+            // Process new requests
+            List<Integer> newRequestIds = dynamicHandler.processDynamism(iteration);
+            if (!newRequestIds.isEmpty()) {
+                System.out.println("New requests add: " + StringUtils.join(newRequestIds));
+                log.add("New requests add: " + StringUtils.join(newRequestIds));
+                for (int req : newRequestIds) {
+                    instance.solutionEvaluation(solution);
+                    insertionHeuristic.addRequests(solution, req);
                 }
-                solution = solutionNew; // S <- S'
+                instance.solutionEvaluation(solution);
+                solution = applyImprovement(solution);
+                instance.solutionEvaluation(solution);
+                updateBest(solution, true);
+                updateParameters();
             }
 
-            /*
-             * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
-             * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
-             * allow worse solutions to be more easily accepted and increase the diversity.
-             */
-            T = T * coolingRate;
-            if (T < minT) {
-                resetWeights();
-                T = initialT;
+            if (instance.getNumReq() > 0) {
+                Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
+                int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
+                /*
+                 * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
+                 * roulette wheels based on the score of each operator.
+                 */
+                int ro = getNextRouletteWheelOperator(roProbsSum, roProbs); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
+                int ri = getNextRouletteWheelOperator(riProbsSum, riProbs); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
+                int useNoise = getNextRouletteWheelOperator(noiseProbsSum, noiseProbs);
+
+                roUsages[ro] = roUsages[ro] + 1;
+                riUsages[ri] = riUsages[ri] + 1;
+                noiseUsages[useNoise] = noiseUsages[useNoise] + 1;
+
+                removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
+                insertRequests(solutionNew, ri, useNoise); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
+                SolutionUtils.removeEmptyVehicles(solutionNew);
+                instance.solutionEvaluation(solutionNew); // Update the solution cost
+
+                if (accept(solutionNew, solution)) {
+                    int solutionHash = SolutionUtils.getHash(solutionNew);
+                    if (!hashNumber.contains(solutionHash)) {
+                        hashNumber.add(solutionHash);
+                        if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
+                            solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
+                            updateBest(solution); // S_best <- S <- S'
+                            // Increase the scores of io and ro by sigma1
+                            updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
+                        } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
+                            // Increase the scores of the ro and io by sigma2
+                            updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+                        } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
+                            // Increase the scores of the ro and io by sigma3
+                            updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+                        }
+                    }
+                    solution = solutionNew; // S <- S'
+                }
+
+                /*
+                 * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
+                 * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
+                 * allow worse solutions to be more easily accepted and increase the diversity.
+                 */
+                T = T * coolingRate;
+                if (T < minT) {
+                    resetWeights();
+                    T = initialT;
+                }
+                if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
+                    updateWeights(); // Update weights and reset scores of operators
+                    solution = applyImprovement(solution); // Apply improvement to S
+                    //printIterationStatus();
+                    updateBest(solution);
+                }
             }
-            if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
-                updateWeights(); // Update weights and reset scores of operators
-                solution = applyImprovement(solution); // Apply improvement to S
-                //printIterationStatus();
-                updateBest(solution);
+
+            // Check moving vehicle
+            if (movingVehicle != null) {
+                if (movingVehicle.moveVehicle(solutionBest, iteration)) {
+                    solution = SolutionUtils.copy(solutionBest);
+                }
             }
             iteration++;
         }
 
         endTime = System.currentTimeMillis();
+        dynamicHandler.rollbackOriginalInformation(solutionBest);
         printFinalRoute();
     }
 
@@ -271,6 +300,18 @@ public class ALNS {
         noiseProbsSum = updateWeightsProbabilities(noiseWeights, noiseProbs);
     }
 
+    private void log(String msg) {
+        log.add(msg);
+        System.out.println(msg);
+        if (generateFile) {
+            try {
+                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), msg + "\n", "UTF-8", true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void printIterationStatus() {
         String msg = "Iter " + iteration +
                 " Best = " + solution.toString() +
@@ -281,6 +322,13 @@ public class ALNS {
                 ", noise = [" + StringUtils.join(getArray(noiseWeights), ',') + "]" +
                 ", Hash = " + hashNumber.size();
         System.out.println(msg);
+    }
+
+    private void updateParameters() {
+        initialCost = solution.totalCost;
+        initialT = getInitialT();
+        T = initialT;
+        minT = initialT * Math.pow(coolingRate, 30000);
     }
 
     private String[] getArray(double[] array) {
@@ -300,12 +348,14 @@ public class ALNS {
     }
 
     private void updateBest(Solution solution) {
-        if (solution.feasible && solution.totalCost < solutionBest.totalCost) {
+        updateBest(solution, false);
+    }
+
+    private void updateBest(Solution solution, boolean force) {
+        if (force || (solution.feasible && solution.totalCost < solutionBest.totalCost)) {
             solutionBest = SolutionUtils.copy(solution);
             String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
-            System.out.println(msg);
-            logInFile(msg);
-            log.add(msg);
+            log(msg);
         }
     }
 
@@ -485,11 +535,11 @@ public class ALNS {
         msg += "\nInstance = " + instance.getFileName();
         msg += "\nBest solution feasibility = " + solution.feasible + "\nRoutes";
         for (ArrayList route : solution.tours) {
-            msg += "\n" + StringUtils.join(route, "-");
+            msg += "\n" + StringUtils.join(route, " ");
         }
         msg += "\nRequests";
         for (ArrayList requests : solution.requests) {
-            msg += "\n" + StringUtils.join(requests, "-");
+            msg += "\n" + StringUtils.join(requests, " ");
         }
         msg += "\nCost = " + solution.totalCost;
         msg += "\nNum. vehicles = " + solution.tours.size();
@@ -504,19 +554,11 @@ public class ALNS {
             }
         }
         msg += "\nTotal time (s) = " + ((endTime - startTime) / 1000.0);
-        System.out.println(msg);
-        logInFile(msg);
-        log.add(msg);
+        log(msg);
     }
 
-    private void logInFile(String text) {
-        if (generateFile) {
-            try {
-                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    public void enableMovingVehicle() {
+        movingVehicle = new MovingVehicle(instance, 0, numIterations);
     }
 
     public void setGenerateFile(boolean generateFile) {
