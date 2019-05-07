@@ -207,6 +207,7 @@ public class InsertionOperator {
                 }
             }
         }
+        instance.solutionEvaluation(solution);
     }
 
     private double generateNoise() {
