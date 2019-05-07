@@ -1,6 +1,6 @@
-package com.github.schmittjoaopedro.tsp.analisys;
+package com.github.schmittjoaopedro.statistic;
 
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import org.apache.commons.io.FileUtils;
 
 import java.nio.file.Paths;

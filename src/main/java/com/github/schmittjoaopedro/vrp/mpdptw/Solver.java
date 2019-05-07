@@ -1,7 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.GlobalStatistics;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialFeasiblePDPTW;
 import com.github.schmittjoaopedro.vrp.mpdptw.aco.SolutionBuilder;

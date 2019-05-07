@@ -1,8 +1,8 @@
 package com.github.schmittjoaopedro.tsp;
 
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
-import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.GlobalStatistics;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

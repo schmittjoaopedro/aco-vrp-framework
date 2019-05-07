@@ -3,8 +3,8 @@ package com.github.schmittjoaopedro.tsp;
 import com.github.schmittjoaopedro.tsp.algorithms.MMAS_ADTSP;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.GraphFactory;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
-import com.github.schmittjoaopedro.tsp.tools.TrialExecutor;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.TrialExecutor;
 import org.junit.Test;
 
 import java.io.File;

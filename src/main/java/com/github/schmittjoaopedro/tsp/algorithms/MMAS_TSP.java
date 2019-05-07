@@ -2,13 +2,11 @@ package com.github.schmittjoaopedro.tsp.algorithms;
 
 import com.github.schmittjoaopedro.tsp.aco.MMAS;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
-import com.github.schmittjoaopedro.tsp.graph.GraphFactory;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
-import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.GlobalStatistics;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

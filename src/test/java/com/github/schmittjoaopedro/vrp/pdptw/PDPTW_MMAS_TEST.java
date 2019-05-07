@@ -1,6 +1,6 @@
 package com.github.schmittjoaopedro.vrp.pdptw;
 
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import com.github.schmittjoaopedro.vrp.dvrptw.DVRPTW_ACS_Test;
 import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
@@ -34,16 +34,16 @@ public class PDPTW_MMAS_TEST {
         solver.setLsActive(true);
         solver.run();
         List<IterationStatistic> logs = solver.getIterationStatistics();
-        assertThat(logs.get(0).toString()).isEqualTo("IT. 1       BSF: 919.02     BSF. SD: 0.00    IT. WORST: 3922.52     IT. BEST: 919.02      IT. MEAN: 3354.29     IT. SD: 408.40    BRANCH FACTOR: 0.990     DIV: 0.85      ");
-        assertThat(logs.get(1).toString()).isEqualTo("IT. 2       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3757.92     IT. BEST: 827.86      IT. MEAN: 3312.74     IT. SD: 405.26    BRANCH FACTOR: 1.105     DIV: 0.84      ");
-        assertThat(logs.get(2).toString()).isEqualTo("IT. 3       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3867.05     IT. BEST: 853.31      IT. MEAN: 3310.80     IT. SD: 420.99    BRANCH FACTOR: 1.105     DIV: 0.85      ");
-        assertThat(logs.get(3).toString()).isEqualTo("IT. 4       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3723.51     IT. BEST: 981.03      IT. MEAN: 3165.87     IT. SD: 370.83    BRANCH FACTOR: 1.105     DIV: 0.84      ");
-        assertThat(logs.get(4).toString()).isEqualTo("IT. 5       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3887.03     IT. BEST: 827.86      IT. MEAN: 3181.34     IT. SD: 442.16    BRANCH FACTOR: 1.105     DIV: 0.84      ");
-        assertThat(logs.get(5).toString()).isEqualTo("IT. 6       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3883.04     IT. BEST: 827.86      IT. MEAN: 3156.53     IT. SD: 402.17    BRANCH FACTOR: 1.105     DIV: 0.84      ");
-        assertThat(logs.get(6).toString()).isEqualTo("IT. 7       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3433.05     IT. BEST: 875.48      IT. MEAN: 3082.15     IT. SD: 380.02    BRANCH FACTOR: 1.105     DIV: 0.82      ");
-        assertThat(logs.get(7).toString()).isEqualTo("IT. 8       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3721.73     IT. BEST: 827.86      IT. MEAN: 3028.16     IT. SD: 390.29    BRANCH FACTOR: 0.990     DIV: 0.81      ");
-        assertThat(logs.get(8).toString()).isEqualTo("IT. 9       BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3436.07     IT. BEST: 853.31      IT. MEAN: 2840.81     IT. SD: 354.59    BRANCH FACTOR: 0.990     DIV: 0.78      ");
-        assertThat(logs.get(9).toString()).isEqualTo("IT. 10      BSF: 827.86     BSF. SD: 0.00    IT. WORST: 3557.89     IT. BEST: 827.86      IT. MEAN: 2826.03     IT. SD: 414.30    BRANCH FACTOR: 0.990     DIV: 0.78      ");
+        assertThat(logs.get(0).toString()).isEqualTo("IT. 1       BSF: 919.02     IT. WORST: 3922.52     IT. BEST: 919.02      IT. MEAN: 3354.29     IT. SD: 408.40    BRANCH FACTOR: 0.990     DIV: 0.85      FEASIBLE: 1.0");
+        assertThat(logs.get(1).toString()).isEqualTo("IT. 2       BSF: 827.86     IT. WORST: 3757.92     IT. BEST: 827.86      IT. MEAN: 3312.74     IT. SD: 405.26    BRANCH FACTOR: 1.105     DIV: 0.84      FEASIBLE: 1.0");
+        assertThat(logs.get(2).toString()).isEqualTo("IT. 3       BSF: 827.86     IT. WORST: 3867.05     IT. BEST: 853.31      IT. MEAN: 3310.80     IT. SD: 420.99    BRANCH FACTOR: 1.105     DIV: 0.85      FEASIBLE: 1.0");
+        assertThat(logs.get(3).toString()).isEqualTo("IT. 4       BSF: 827.86     IT. WORST: 3723.51     IT. BEST: 981.03      IT. MEAN: 3165.87     IT. SD: 370.83    BRANCH FACTOR: 1.105     DIV: 0.84      FEASIBLE: 1.0");
+        assertThat(logs.get(4).toString()).isEqualTo("IT. 5       BSF: 827.86     IT. WORST: 3887.03     IT. BEST: 827.86      IT. MEAN: 3181.34     IT. SD: 442.16    BRANCH FACTOR: 1.105     DIV: 0.84      FEASIBLE: 1.0");
+        assertThat(logs.get(5).toString()).isEqualTo("IT. 6       BSF: 827.86     IT. WORST: 3883.04     IT. BEST: 827.86      IT. MEAN: 3156.53     IT. SD: 402.17    BRANCH FACTOR: 1.105     DIV: 0.84      FEASIBLE: 1.0");
+        assertThat(logs.get(6).toString()).isEqualTo("IT. 7       BSF: 827.86     IT. WORST: 3433.05     IT. BEST: 875.48      IT. MEAN: 3082.15     IT. SD: 380.02    BRANCH FACTOR: 1.105     DIV: 0.82      FEASIBLE: 1.0");
+        assertThat(logs.get(7).toString()).isEqualTo("IT. 8       BSF: 827.86     IT. WORST: 3721.73     IT. BEST: 827.86      IT. MEAN: 3028.16     IT. SD: 390.29    BRANCH FACTOR: 0.990     DIV: 0.81      FEASIBLE: 1.0");
+        assertThat(logs.get(8).toString()).isEqualTo("IT. 9       BSF: 827.86     IT. WORST: 3436.07     IT. BEST: 853.31      IT. MEAN: 2840.81     IT. SD: 354.59    BRANCH FACTOR: 0.990     DIV: 0.78      FEASIBLE: 1.0");
+        assertThat(logs.get(9).toString()).isEqualTo("IT. 10      BSF: 827.86     IT. WORST: 3557.89     IT. BEST: 827.86      IT. MEAN: 2826.03     IT. SD: 414.30    BRANCH FACTOR: 0.990     DIV: 0.78      FEASIBLE: 1.0");
         assertThat(solver.getFinalSolution()).contains("Instance = lc103.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
@@ -82,16 +82,16 @@ public class PDPTW_MMAS_TEST {
         solver.setLsActive(true);
         solver.run();
         List<IterationStatistic> logs = solver.getIterationStatistics();
-        assertThat(logs.get(0).toString()).isEqualTo("IT. 10      BSF: 1494.46    BSF. SD: 0.00    IT. WORST: 3111.35     IT. BEST: 1495.85     IT. MEAN: 2708.52     IT. SD: 232.88    BRANCH FACTOR: 1.720     DIV: 0.68      ");
-        assertThat(logs.get(1).toString()).isEqualTo("IT. 20      BSF: 1432.78    BSF. SD: 0.00    IT. WORST: 2549.50     IT. BEST: 1432.78     IT. MEAN: 1971.23     IT. SD: 244.58    BRANCH FACTOR: 1.243     DIV: 0.46      ");
-        assertThat(logs.get(2).toString()).isEqualTo("IT. 30      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 2017.75     IT. BEST: 1360.74     IT. MEAN: 1611.05     IT. SD: 145.07    BRANCH FACTOR: 1.103     DIV: 0.24      ");
-        assertThat(logs.get(3).toString()).isEqualTo("IT. 40      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1635.12     IT. BEST: 1360.74     IT. MEAN: 1481.26     IT. SD: 58.44     BRANCH FACTOR: 0.991     DIV: 0.15      ");
-        assertThat(logs.get(4).toString()).isEqualTo("IT. 50      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1747.08     IT. BEST: 1360.74     IT. MEAN: 1501.88     IT. SD: 81.77     BRANCH FACTOR: 0.991     DIV: 0.16      ");
-        assertThat(logs.get(5).toString()).isEqualTo("IT. 60      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1583.99     IT. BEST: 1368.10     IT. MEAN: 1479.93     IT. SD: 53.58     BRANCH FACTOR: 0.991     DIV: 0.14      ");
-        assertThat(logs.get(6).toString()).isEqualTo("IT. 70      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1668.61     IT. BEST: 1360.74     IT. MEAN: 1481.09     IT. SD: 68.18     BRANCH FACTOR: 0.991     DIV: 0.14      ");
-        assertThat(logs.get(7).toString()).isEqualTo("IT. 80      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1769.28     IT. BEST: 1368.10     IT. MEAN: 1483.04     IT. SD: 77.75     BRANCH FACTOR: 1.028     DIV: 0.14      ");
-        assertThat(logs.get(8).toString()).isEqualTo("IT. 90      BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1823.76     IT. BEST: 1360.74     IT. MEAN: 1488.58     IT. SD: 97.88     BRANCH FACTOR: 0.991     DIV: 0.14      ");
-        assertThat(logs.get(9).toString()).isEqualTo("IT. 100     BSF: 1360.74    BSF. SD: 0.00    IT. WORST: 1673.82     IT. BEST: 1360.74     IT. MEAN: 1486.79     IT. SD: 65.50     BRANCH FACTOR: 0.991     DIV: 0.14      ");
+        assertThat(logs.get(0).toString()).isEqualTo("IT. 10      BSF: 1494.46    IT. WORST: 3111.35     IT. BEST: 1495.85     IT. MEAN: 2708.52     IT. SD: 232.88    BRANCH FACTOR: 1.720     DIV: 0.68      FEASIBLE: 1.0");
+        assertThat(logs.get(1).toString()).isEqualTo("IT. 20      BSF: 1432.78    IT. WORST: 2549.50     IT. BEST: 1432.78     IT. MEAN: 1971.23     IT. SD: 244.58    BRANCH FACTOR: 1.243     DIV: 0.46      FEASIBLE: 1.0");
+        assertThat(logs.get(2).toString()).isEqualTo("IT. 30      BSF: 1360.74    IT. WORST: 2017.75     IT. BEST: 1360.74     IT. MEAN: 1611.05     IT. SD: 145.07    BRANCH FACTOR: 1.103     DIV: 0.24      FEASIBLE: 1.0");
+        assertThat(logs.get(3).toString()).isEqualTo("IT. 40      BSF: 1360.74    IT. WORST: 1635.12     IT. BEST: 1360.74     IT. MEAN: 1481.26     IT. SD: 58.44     BRANCH FACTOR: 0.991     DIV: 0.15      FEASIBLE: 1.0");
+        assertThat(logs.get(4).toString()).isEqualTo("IT. 50      BSF: 1360.74    IT. WORST: 1747.08     IT. BEST: 1360.74     IT. MEAN: 1501.88     IT. SD: 81.77     BRANCH FACTOR: 0.991     DIV: 0.16      FEASIBLE: 1.0");
+        assertThat(logs.get(5).toString()).isEqualTo("IT. 60      BSF: 1360.74    IT. WORST: 1583.99     IT. BEST: 1368.10     IT. MEAN: 1479.93     IT. SD: 53.58     BRANCH FACTOR: 0.991     DIV: 0.14      FEASIBLE: 1.0");
+        assertThat(logs.get(6).toString()).isEqualTo("IT. 70      BSF: 1360.74    IT. WORST: 1668.61     IT. BEST: 1360.74     IT. MEAN: 1481.09     IT. SD: 68.18     BRANCH FACTOR: 0.991     DIV: 0.14      FEASIBLE: 1.0");
+        assertThat(logs.get(7).toString()).isEqualTo("IT. 80      BSF: 1360.74    IT. WORST: 1769.28     IT. BEST: 1368.10     IT. MEAN: 1483.04     IT. SD: 77.75     BRANCH FACTOR: 1.028     DIV: 0.14      FEASIBLE: 1.0");
+        assertThat(logs.get(8).toString()).isEqualTo("IT. 90      BSF: 1360.74    IT. WORST: 1823.76     IT. BEST: 1360.74     IT. MEAN: 1488.58     IT. SD: 97.88     BRANCH FACTOR: 0.991     DIV: 0.14      FEASIBLE: 1.0");
+        assertThat(logs.get(9).toString()).isEqualTo("IT. 100     BSF: 1360.74    IT. WORST: 1673.82     IT. BEST: 1360.74     IT. MEAN: 1486.79     IT. SD: 65.50     BRANCH FACTOR: 0.991     DIV: 0.14      FEASIBLE: 1.0");
         assertThat(solver.getFinalSolution()).contains("Instance = lrc103.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
@@ -133,16 +133,16 @@ public class PDPTW_MMAS_TEST {
         solver.setLsActive(true);
         solver.run();
         List<IterationStatistic> logs = solver.getIterationStatistics();
-        assertThat(logs.get(0).toString()).isEqualTo("IT. 10      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 9224.86     IT. BEST: 2704.57     IT. MEAN: 7212.31     IT. SD: 1023.94   BRANCH FACTOR: 0.995     DIV: 0.60      ");
-        assertThat(logs.get(1).toString()).isEqualTo("IT. 20      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 5017.15     IT. BEST: 2704.57     IT. MEAN: 3805.19     IT. SD: 569.19    BRANCH FACTOR: 0.995     DIV: 0.24      ");
-        assertThat(logs.get(2).toString()).isEqualTo("IT. 30      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 4005.43     IT. BEST: 2704.57     IT. MEAN: 3031.96     IT. SD: 255.88    BRANCH FACTOR: 0.995     DIV: 0.09      ");
-        assertThat(logs.get(3).toString()).isEqualTo("IT. 40      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3748.40     IT. BEST: 2704.57     IT. MEAN: 2994.94     IT. SD: 147.62    BRANCH FACTOR: 0.995     DIV: 0.07      ");
-        assertThat(logs.get(4).toString()).isEqualTo("IT. 50      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3199.70     IT. BEST: 2704.57     IT. MEAN: 2942.02     IT. SD: 98.54     BRANCH FACTOR: 0.995     DIV: 0.07      ");
-        assertThat(logs.get(5).toString()).isEqualTo("IT. 60      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3095.75     IT. BEST: 2704.57     IT. MEAN: 2963.33     IT. SD: 76.95     BRANCH FACTOR: 0.995     DIV: 0.07      ");
-        assertThat(logs.get(6).toString()).isEqualTo("IT. 70      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3161.72     IT. BEST: 2704.57     IT. MEAN: 2955.60     IT. SD: 91.53     BRANCH FACTOR: 0.995     DIV: 0.07      ");
-        assertThat(logs.get(7).toString()).isEqualTo("IT. 80      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3148.29     IT. BEST: 2704.57     IT. MEAN: 2971.01     IT. SD: 83.30     BRANCH FACTOR: 0.995     DIV: 0.07      ");
-        assertThat(logs.get(8).toString()).isEqualTo("IT. 90      BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3074.37     IT. BEST: 2704.57     IT. MEAN: 2932.53     IT. SD: 94.34     BRANCH FACTOR: 0.995     DIV: 0.07      ");
-        assertThat(logs.get(9).toString()).isEqualTo("IT. 100     BSF: 2704.57    BSF. SD: 0.00    IT. WORST: 3129.72     IT. BEST: 2704.57     IT. MEAN: 2961.08     IT. SD: 94.87     BRANCH FACTOR: 0.995     DIV: 0.07      ");
+        assertThat(logs.get(0).toString()).isEqualTo("IT. 10      BSF: 2704.57    IT. WORST: 9224.86     IT. BEST: 2704.57     IT. MEAN: 7212.31     IT. SD: 1023.94   BRANCH FACTOR: 0.995     DIV: 0.60      FEASIBLE: 1.0");
+        assertThat(logs.get(1).toString()).isEqualTo("IT. 20      BSF: 2704.57    IT. WORST: 5017.15     IT. BEST: 2704.57     IT. MEAN: 3805.19     IT. SD: 569.19    BRANCH FACTOR: 0.995     DIV: 0.24      FEASIBLE: 1.0");
+        assertThat(logs.get(2).toString()).isEqualTo("IT. 30      BSF: 2704.57    IT. WORST: 4005.43     IT. BEST: 2704.57     IT. MEAN: 3031.96     IT. SD: 255.88    BRANCH FACTOR: 0.995     DIV: 0.09      FEASIBLE: 1.0");
+        assertThat(logs.get(3).toString()).isEqualTo("IT. 40      BSF: 2704.57    IT. WORST: 3748.40     IT. BEST: 2704.57     IT. MEAN: 2994.94     IT. SD: 147.62    BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
+        assertThat(logs.get(4).toString()).isEqualTo("IT. 50      BSF: 2704.57    IT. WORST: 3199.70     IT. BEST: 2704.57     IT. MEAN: 2942.02     IT. SD: 98.54     BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
+        assertThat(logs.get(5).toString()).isEqualTo("IT. 60      BSF: 2704.57    IT. WORST: 3095.75     IT. BEST: 2704.57     IT. MEAN: 2963.33     IT. SD: 76.95     BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
+        assertThat(logs.get(6).toString()).isEqualTo("IT. 70      BSF: 2704.57    IT. WORST: 3161.72     IT. BEST: 2704.57     IT. MEAN: 2955.60     IT. SD: 91.53     BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
+        assertThat(logs.get(7).toString()).isEqualTo("IT. 80      BSF: 2704.57    IT. WORST: 3148.29     IT. BEST: 2704.57     IT. MEAN: 2971.01     IT. SD: 83.30     BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
+        assertThat(logs.get(8).toString()).isEqualTo("IT. 90      BSF: 2704.57    IT. WORST: 3074.37     IT. BEST: 2704.57     IT. MEAN: 2932.53     IT. SD: 94.34     BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
+        assertThat(logs.get(9).toString()).isEqualTo("IT. 100     BSF: 2704.57    IT. WORST: 3129.72     IT. BEST: 2704.57     IT. MEAN: 2961.08     IT. SD: 94.87     BRANCH FACTOR: 0.995     DIV: 0.07      FEASIBLE: 1.0");
         assertThat(solver.getFinalSolution()).contains("Instance = LC1_2_1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +

@@ -238,8 +238,7 @@ public class DPDPTW_ALNS_TEST {
                 "20 19 17 18 16\n" +
                 "8 7 9 6\n" +
                 "Cost = 828.9368669428338\n" +
-                "Num. vehicles = 10\n" +
-                "Total time (s) = ");
+                "Num. vehicles = 10");
     }
 
     @Test
@@ -382,8 +381,7 @@ public class DPDPTW_ALNS_TEST {
                 "10 12 15 11 14 13\n" +
                 "31 30 29 28\n" +
                 "Cost = 828.9368669428338\n" +
-                "Num. vehicles = 10\n" +
-                "Total time (s) = ");
+                "Num. vehicles = 10");
     }
 
     @Test

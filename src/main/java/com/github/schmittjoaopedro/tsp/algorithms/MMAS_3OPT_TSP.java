@@ -5,8 +5,8 @@ import com.github.schmittjoaopedro.tsp.aco.MMAS;
 import com.github.schmittjoaopedro.tsp.aco.ls.opt3.Opt3Operator;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
-import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.GlobalStatistics;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 
 import java.util.ArrayList;

@@ -4,8 +4,8 @@ import com.github.schmittjoaopedro.tsp.aco.MMAS;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.Vertex;
 import com.github.schmittjoaopedro.tsp.tools.DBGP;
-import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.GlobalStatistics;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import com.github.schmittjoaopedro.tsp.tools.MVBS;
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 

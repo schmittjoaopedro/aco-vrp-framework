@@ -1,8 +1,8 @@
 package com.github.schmittjoaopedro.vrp.runners;
 
-import com.github.schmittjoaopedro.tsp.analisys.ExperimentResultWriter;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
-import com.github.schmittjoaopedro.tsp.tools.TrialExecutor;
+import com.github.schmittjoaopedro.statistic.ExperimentResultWriter;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.TrialExecutor;
 import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;

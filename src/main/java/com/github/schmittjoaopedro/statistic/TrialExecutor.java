@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.tsp.tools;
+package com.github.schmittjoaopedro.statistic;
 
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 

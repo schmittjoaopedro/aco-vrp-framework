@@ -1,10 +1,11 @@
 package com.github.schmittjoaopedro.tsp.analisys;
 
+import com.github.schmittjoaopedro.statistic.ExperimentResultWriter;
 import com.github.schmittjoaopedro.tsp.algorithms.*;
 import com.github.schmittjoaopedro.tsp.graph.Graph;
 import com.github.schmittjoaopedro.tsp.graph.GraphFactory;
-import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
-import com.github.schmittjoaopedro.tsp.tools.TrialExecutor;
+import com.github.schmittjoaopedro.statistic.IterationStatistic;
+import com.github.schmittjoaopedro.statistic.TrialExecutor;
 
 import java.io.File;
 import java.util.ArrayList;
