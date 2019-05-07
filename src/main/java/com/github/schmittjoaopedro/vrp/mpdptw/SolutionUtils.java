@@ -162,6 +162,12 @@ public class SolutionUtils {
         }
     }
 
+    public static void addRequest(Integer reqId, int vehicle, Solution solution) {
+        if (!solution.requests.get(vehicle).contains(reqId)) {
+            solution.requests.get(vehicle).add(reqId);
+        }
+    }
+
     public static boolean containsEmptyVehicle(Solution solution) {
         for (ArrayList<Integer> reqs : solution.requests) {
             if (reqs.isEmpty()) {

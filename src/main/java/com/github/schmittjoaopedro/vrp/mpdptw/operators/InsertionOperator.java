@@ -123,7 +123,7 @@ public class InsertionOperator {
                 // Insert the costly insertion on the solution
                 InsertRequest reqToInsert = requestsRegret.get(0);
                 solution.tours.set(reqToInsert.vehicle, reqToInsert.route);
-                solution.requests.get(reqToInsert.vehicle).add(reqToInsert.reqId);
+                SolutionUtils.addRequest(reqToInsert.reqId, reqToInsert.vehicle, solution);
                 originalRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
                 newRoutesCache.removeVehicleFromCache(reqToInsert.vehicle);
                 // Remove the inserted request from the requests to insert list
@@ -145,7 +145,6 @@ public class InsertionOperator {
     public void insertGreedyRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, int useNoise) {
         while (!requestsToInsert.isEmpty()) {
             InsertRequest bestRequest = null;
-            boolean fullyIdle = false;
             for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
                 Req currReq = requestsToInsert.get(r);
                 InsertRequest insertRequest = null;
@@ -198,7 +197,7 @@ public class InsertionOperator {
             } else {
                 // Add the inserted request on the vehicle
                 solution.tours.set(bestRequest.vehicle, bestRequest.route);
-                solution.requests.get(bestRequest.vehicle).add(bestRequest.reqId);
+                SolutionUtils.addRequest(bestRequest.reqId, bestRequest.vehicle, solution);
                 instance.solutionEvaluation(solution, bestRequest.vehicle);
                 for (Req r : requestsToInsert) {
                     if (r.requestId == bestRequest.reqId) {

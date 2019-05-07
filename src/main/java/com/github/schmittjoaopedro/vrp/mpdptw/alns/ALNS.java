@@ -37,7 +37,7 @@ public class ALNS {
      */
 
     // Ropke and Pisinger
-    /*private int numIterations = 25000;
+    /*private static final int DEFAULT_MAX_ITERATIONS = 25000;
     private double tolerance = 0.05; // (w)
     private double coolingRate = 0.99975; // reduction factor of acceptance methods (c)
     private double sigma1 = 33; // reward for finding a new global best solution
@@ -52,7 +52,7 @@ public class ALNS {
     private double noiseControl = 0.025;*/
 
     // Lutz
-    /*private int numIterations = 10000;
+    /*private static final int DEFAULT_MAX_ITERATIONS = 10000;
     private double tolerance = 0.01; // (w)
     private double coolingRate = 0.9997; // reduction factor of acceptance methods (c)
     private double sigma1 = 135; // reward for finding a new global best solution
@@ -67,7 +67,7 @@ public class ALNS {
     private double noiseControl = 0.43;*/
 
     // Coelho
-    private int numIterations = 100000;
+    private static final int DEFAULT_MAX_ITERATIONS = 100000;
     private double tolerance = 0.05; // (w)
     private double coolingRate = 0.9995; // reduction factor of acceptance methods (c)
     private double sigma1 = 33; // reward for finding a new global best solution
@@ -82,6 +82,7 @@ public class ALNS {
     //private double getInitialT() { return (1.0 + tolerance) * initialCost; }
     private double getInitialT() { return (initialCost * tolerance) / Math.log(2); }
 
+    private int numIterations;
 
     private double segment = 100.0;
 
@@ -136,14 +137,14 @@ public class ALNS {
 
     private MovingVehicle movingVehicle;
 
-    public ALNS(ProblemInstance instance, int numIterations, Random random) {
-        this(instance, random);
-        this.numIterations = numIterations;
+    public ALNS(ProblemInstance instance, Random random) {
+        this(instance, DEFAULT_MAX_ITERATIONS, random);
     }
 
-    public ALNS(ProblemInstance instance, Random random) {
+    public ALNS(ProblemInstance instance, int numIterations, Random random) {
         this.instance = instance;
         this.random = random;
+        this.numIterations = numIterations;
 
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
@@ -439,7 +440,7 @@ public class ALNS {
         ArrayList<Req> removedRequests = new ArrayList<>();
         for (int i = 0; i < solution.visitedRequests.length; i++) {
             if (!solution.visitedRequests[i]) {
-                removedRequests.add(new Req(-1, i));
+                removedRequests.add(new Req(findVehicle(i, solution), i));
             }
         }
         InsertionMethod insertionMethod = InsertionMethod.values()[ri];
@@ -457,6 +458,15 @@ public class ALNS {
                 insertionOperator.insertRegretRequests(solution, removedRequests, solution.tours.size(), insertionMethod, PickupMethod.Random, useNoise);
                 break;
         }
+    }
+
+    private int findVehicle(Integer reqId, Solution solution) {
+        for (int k = 0; k < solution.requests.size(); k++) {
+            if (solution.requests.get(k).contains(reqId)) {
+                return k;
+            }
+        }
+        return -1;
     }
 
     private void removeRequests(Solution solution, int ro, int q) {
