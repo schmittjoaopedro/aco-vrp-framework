@@ -31,7 +31,7 @@ public class PDPTW_ALNS_TEST {
         String problem = "lc103.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         assertThat(logs.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51]");
         assertThat(logs.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 972.1290684955856, feasible = true");
@@ -72,7 +72,7 @@ public class PDPTW_ALNS_TEST {
         String problem = "lrc102.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         assertThat(logs.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]");
         assertThat(logs.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 1881.869285285301, feasible = true");
@@ -121,7 +121,7 @@ public class PDPTW_ALNS_TEST {
         String problem = "LC1_2_1.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw200Directory, problem).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         assertThat(logs.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105]");
         assertThat(logs.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 4374.8388767824335, feasible = true");
@@ -190,7 +190,7 @@ public class PDPTW_ALNS_TEST {
         String problem = "lrc207.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         assertThat(logs.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]");
         assertThat(logs.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 1413.787015477243, feasible = true");

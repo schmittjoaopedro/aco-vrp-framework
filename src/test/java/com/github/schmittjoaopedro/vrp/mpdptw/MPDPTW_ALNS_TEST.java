@@ -24,7 +24,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_large_4_25_1_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_4_25_1.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 5265.6562907478765, feasible = true");
@@ -49,7 +49,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_normal_4_25_1_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_4_25_1.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 5456.053007895955, feasible = true");
@@ -74,7 +74,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_without_4_25_1_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_4_25_1.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 4726.727878734164, feasible = true");
@@ -98,7 +98,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_large_8_50_1_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "l_8_50_1.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 6657.017613416864, feasible = true");
@@ -125,7 +125,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_normal_8_50_1_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "n_8_50_1.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 7688.999168652441, feasible = true");
@@ -157,7 +157,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_without_8_50_1_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_8_50_1.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 4996.067384581166, feasible = true");
@@ -184,7 +184,7 @@ public class MPDPTW_ALNS_TEST {
     public void mpdptw_without_8_25_3_test() throws Exception {
         ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, "w_8_25_3.txt").toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> log = alns.getLog();
         assertThat(log.get(0)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6]");
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 BFS = 3589.7020398715913, feasible = true");

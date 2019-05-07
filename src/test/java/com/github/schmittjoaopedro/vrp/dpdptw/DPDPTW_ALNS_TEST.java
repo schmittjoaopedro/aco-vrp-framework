@@ -25,7 +25,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lc101_a_0.1.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 10000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
@@ -108,7 +108,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lc101_a_0.5.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 10000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
@@ -247,7 +247,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lc101_a_0.9.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 10000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
@@ -391,7 +391,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lc101_q_0_0.1.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 10000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3]");
@@ -538,7 +538,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lc101_q_0_0.5.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 10000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]");
@@ -634,7 +634,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lc101_q_0_0.9.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 10000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]");
@@ -679,7 +679,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lrc107_a_0.1.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 20000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
@@ -760,7 +760,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lrc107_a_0.5.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 20000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
@@ -929,7 +929,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lrc107_a_0.9.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 20000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
@@ -1116,7 +1116,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lrc107_q_0_0.1.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 20000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3]");
@@ -1300,7 +1300,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lrc107_q_0_0.5.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 20000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]");
@@ -1465,7 +1465,7 @@ public class DPDPTW_ALNS_TEST {
         String problem = "lrc107_q_0_0.9.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(dpdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, 20000, new Random(1));
-        alns.execute();
+        alns.run();
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46]");

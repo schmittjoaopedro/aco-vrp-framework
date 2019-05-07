@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
+import com.github.schmittjoaopedro.tsp.tools.GlobalStatistics;
+import com.github.schmittjoaopedro.tsp.tools.IterationStatistic;
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 import org.apache.commons.io.FileUtils;
@@ -14,7 +16,7 @@ import java.util.*;
  * Naccache, S., Côté, J., & Coelho, L. C. (2018). The multi-pickup and delivery problem with time windows.
  * European Journal of Operational Research, 269(1), 353–362. https://doi.org/10.1016/j.ejor.2018.01.035
  */
-public class ALNS {
+public class ALNS implements Runnable {
 
     private double initialT;
 
@@ -30,6 +32,9 @@ public class ALNS {
 
     private ProblemInstance instance;
 
+    private List<IterationStatistic> iterationStatistics;
+
+    private GlobalStatistics globalStatistics = new GlobalStatistics();
     /*
      * Parameters section.
      *
@@ -77,10 +82,19 @@ public class ALNS {
     private String acceptMethod = "SA";
     private double minWeight = 1.0;
     private double noiseControl = 0.025;
-    private int dMin(double n) { return (int) Math.max(1, Math.min(6, 0.15 * n)); }
-    private int dMax(double n) { return (int) Math.min(18, 0.4 * n); }
+
+    private int dMin(double n) {
+        return (int) Math.max(1, Math.min(6, 0.15 * n));
+    }
+
+    private int dMax(double n) {
+        return (int) Math.min(18, 0.4 * n);
+    }
+
     //private double getInitialT() { return (1.0 + tolerance) * initialCost; }
-    private double getInitialT() { return (initialCost * tolerance) / Math.log(2); }
+    private double getInitialT() {
+        return (initialCost * tolerance) / Math.log(2);
+    }
 
     private int numIterations;
 
@@ -121,6 +135,8 @@ public class ALNS {
 
     private Long endTime;
 
+    private Long statisticInterval = 1L;
+
     private RelocateRequestOperator relocateRequestOperator;
 
     private ExchangeRequestOperator exchangeRequestOperator;
@@ -136,6 +152,8 @@ public class ALNS {
     private Set<Integer> hashNumber = new HashSet<>();
 
     private MovingVehicle movingVehicle;
+
+    private boolean showLog = false;
 
     public ALNS(ProblemInstance instance, Random random) {
         this(instance, DEFAULT_MAX_ITERATIONS, random);
@@ -154,15 +172,18 @@ public class ALNS {
         removalOperator = new RemovalOperator(instance, random);
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
+        iterationStatistics = new ArrayList<>(numIterations);
     }
 
-    public void execute() {
+    @Override
+    public void run() {
 
         /*
          * An initial solution S is generated through a construction heuristic in which requests are progressively
          * inserted within an available vehicle, at its minimum insertion cost position. After all requests have been
          * inserted, solution S is improved by our local search operator.
          */
+        globalStatistics.startTimer();
         insertionHeuristic = new InsertionHeuristic(instance, random);
         solution = insertionHeuristic.createInitialSolution();
         instance.solutionEvaluation(solution);
@@ -170,6 +191,7 @@ public class ALNS {
         instance.solutionEvaluation(solution);
         solutionBest = SolutionUtils.copy(solution);
         updateParameters();
+        globalStatistics.endTimer("Initialization");
 
         startTime = System.currentTimeMillis();
 
@@ -190,13 +212,13 @@ public class ALNS {
 
         resetWeights();
 
+        globalStatistics.startTimer();
         while (!stopCriteriaMeet()) {
 
             // Process new requests
             List<Integer> newRequestIds = dynamicHandler.processDynamism(iteration);
             if (!newRequestIds.isEmpty()) {
-                System.out.println("New requests add: " + StringUtils.join(newRequestIds));
-                log.add("New requests add: " + StringUtils.join(newRequestIds));
+                log("New requests add: " + StringUtils.join(newRequestIds));
                 for (int req : newRequestIds) {
                     instance.solutionEvaluation(solution);
                     insertionHeuristic.addRequests(solution, req);
@@ -272,8 +294,25 @@ public class ALNS {
                     solution = SolutionUtils.copy(solutionBest);
                 }
             }
+
+            if (iteration % statisticInterval == 0) {
+                IterationStatistic iterationStatistic = new IterationStatistic();
+                iterationStatistic.setIteration(iteration);
+                iterationStatistic.setBestSoFar(solutionBest.totalCost);
+                iterationStatistic.setBestSoFarNV(solutionBest.tours.size());
+                iterationStatistic.setIterationBest(solution.totalCost);
+                iterationStatistic.setIterationBestNV(solution.tours.size());
+                iterationStatistic.setFeasible(solution.feasible);
+                iterationStatistics.add(iterationStatistic);
+                if (showLog) {
+                    System.out.println(iterationStatistic);
+                    logInFile(iterationStatistic.toString());
+                }
+            }
+
             iteration++;
         }
+        globalStatistics.endTimer("Algorithm");
 
         endTime = System.currentTimeMillis();
         dynamicHandler.rollbackOriginalInformation(solutionBest);
@@ -303,26 +342,19 @@ public class ALNS {
 
     private void log(String msg) {
         log.add(msg);
-        System.out.println(msg);
+        if (showLog) {
+            System.out.println(msg);
+        }
+    }
+
+    private void logInFile(String text) {
         if (generateFile) {
             try {
-                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), msg + "\n", "UTF-8", true);
+                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void printIterationStatus() {
-        String msg = "Iter " + iteration +
-                " Best = " + solution.toString() +
-                " BSF = " + solutionBest.toString() +
-                ", T = " + format(T) + ", minT = " + format(minT) +
-                ", ro = [" + StringUtils.join(getArray(roWeights), ',') + "]" +
-                ", ri = [" + StringUtils.join(getArray(riWeights), ',') + "]" +
-                ", noise = [" + StringUtils.join(getArray(noiseWeights), ',') + "]" +
-                ", Hash = " + hashNumber.size();
-        System.out.println(msg);
     }
 
     private void updateParameters() {
@@ -330,22 +362,6 @@ public class ALNS {
         initialT = getInitialT();
         T = initialT;
         minT = initialT * Math.pow(coolingRate, 30000);
-    }
-
-    private String[] getArray(double[] array) {
-        String data[] = new String[array.length];
-        double sum = 0.0;
-        for (int i = 0; i < array.length; i++) {
-            sum += array[i];
-        }
-        for (int i = 0; i < array.length; i++) {
-            data[i] = String.valueOf((int) (100 * array[i] / sum));
-        }
-        return data;
-    }
-
-    private String format(double value) {
-        return String.format(Locale.US, "%.3f", value);
     }
 
     private void updateBest(Solution solution) {
@@ -563,8 +579,10 @@ public class ALNS {
                 }
             }
         }
-        msg += "\nTotal time (s) = " + ((endTime - startTime) / 1000.0);
+        msg += "\nInitialization time(s) = " + ((globalStatistics.getTimeStatistics().get("Initialization")) / 1000.0);
+        msg += "\nAlgorithm time(s) = " + ((globalStatistics.getTimeStatistics().get("Algorithm")) / 1000.0);
         log(msg);
+        logInFile(msg);
     }
 
     public void enableMovingVehicle() {
@@ -577,5 +595,25 @@ public class ALNS {
 
     public List<String> getLog() {
         return log;
+    }
+
+    public Long getStatisticInterval() {
+        return statisticInterval;
+    }
+
+    public void setStatisticInterval(Long statisticInterval) {
+        this.statisticInterval = statisticInterval;
+    }
+
+    public boolean isShowLog() {
+        return showLog;
+    }
+
+    public void setShowLog(boolean showLog) {
+        this.showLog = showLog;
+    }
+
+    public List<IterationStatistic> getIterationStatistics() {
+        return iterationStatistics;
     }
 }

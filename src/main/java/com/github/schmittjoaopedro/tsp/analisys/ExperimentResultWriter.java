@@ -35,6 +35,11 @@ public class ExperimentResultWriter {
         keys.add("header");
     }
 
+    public void initialize(int numIterations, String[] headerNames) {
+        this.headerNames = headerNames;
+        initialize(numIterations);
+    }
+
     public void computeResults(String resultsPath, String algName, String testInstance, double mag, int freq, double rho, double alpha, double beta, List<IterationStatistic> result) throws Exception {
         String fileName = testInstance +
                 "_freq_" + freq +
@@ -63,6 +68,29 @@ public class ExperimentResultWriter {
         addLine(fileName, String.valueOf(rho));
         addLine(fileName, String.valueOf(alpha));
         addLine(fileName, String.valueOf(beta));
+        addLine(fileName, String.valueOf(mean));
+        addLine(fileName, String.valueOf(sdMean));
+        for (IterationStatistic iter : result) {
+            addLine(fileName, String.valueOf(iter.getBestSoFar()));
+        }
+    }
+
+    public void computeResults(String resultsPath, String algName, String testInstance, List<IterationStatistic> result) throws Exception {
+        String fileName = testInstance + "_" + algName + ".txt";
+        keys.add(fileName);
+        StringBuilder finalResult = new StringBuilder();
+        double mean = 0.0;
+        double sdMean = 0.0;
+        for (IterationStatistic iter : result) {
+            finalResult.append(iter).append('\n');
+            mean += iter.getBestSoFar();
+            sdMean += iter.getBestSoFarSd();
+        }
+        mean /= numIterations;
+        sdMean /= numIterations;
+        FileUtils.writeStringToFile(Paths.get(resultsPath, fileName).toFile(), finalResult.toString(), "UTF-8");
+        addLine(fileName, algName);
+        addLine(fileName, testInstance);
         addLine(fileName, String.valueOf(mean));
         addLine(fileName, String.valueOf(sdMean));
         for (IterationStatistic iter : result) {

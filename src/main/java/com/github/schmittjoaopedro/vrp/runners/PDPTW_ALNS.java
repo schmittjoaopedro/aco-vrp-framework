@@ -280,7 +280,7 @@ public class PDPTW_ALNS {
         String fileName = problem + ".txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(root, fileName).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
-        alns.execute();
+        alns.run();
     }
 
 }

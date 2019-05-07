@@ -89,7 +89,7 @@ public class Opt3Operator {
     public void optimize() {
         if (subTourOptimization) {
             /*
-            We create a new tour to execute optimization based on the sub-tour map, as the sub-tour map
+            We create a new tour to run optimization based on the sub-tour map, as the sub-tour map
             was created considering the order of the original tour, the result will be a tour with the
             nodes in sequence, e.g.: [0,1,2,3,...,n,0]
              */

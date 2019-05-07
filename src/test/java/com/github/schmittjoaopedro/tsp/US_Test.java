@@ -242,7 +242,7 @@ public class US_Test {
     /**
      * The same test executed in the original version in C++ from Mavrovouniotis et al. causes the same behavior.
      *
-     *  Code in C++ to execute:
+     *  Code in C++ to run:
      *  int main(int argc, char *argv[]) {
      *
      * 	problem_size = 10;

@@ -32,7 +32,7 @@ public class LocalSearchUtils {
     }
 
     /**
-     * Create a sub-graph from the original one to execute the optimization. This graph is relative
+     * Create a sub-graph from the original one to run the optimization. This graph is relative
      * to the IDs in the sub-tour map.
      */
     public static Graph createSubGraph(int[] subTourMap, Graph graph, int toId, int subTourLength) {

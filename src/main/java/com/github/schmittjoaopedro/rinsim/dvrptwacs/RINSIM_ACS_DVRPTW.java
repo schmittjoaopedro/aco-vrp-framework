@@ -167,7 +167,7 @@ public class RINSIM_ACS_DVRPTW implements Runnable {
     private void setScenario(File problemFile) {
         // Create scenario
         scenario = Scenario.builder()
-                // Configure when the simulator will stop to execute
+                // Configure when the simulator will stop to run
                 .setStopCondition(
                         StopConditions.or(
                                 StatsStopConditions.vehiclesDoneAndBackAtDepot(), StatsStopConditions.timeOutEvent(), new StopCondition[0]))

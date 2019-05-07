@@ -10,6 +10,10 @@ public class IterationStatistic {
 
     private Map<String, Long> timeStatistics = new HashMap<>();
 
+    private int bestSoFarNV;
+
+    private int iterationBestNV;
+
     private double iteration;
 
     private double iterationBest;
@@ -44,6 +48,22 @@ public class IterationStatistic {
 
     public void endTimer(String eventName) {
         timeStatistics.put(eventName, System.currentTimeMillis() - currentTime);
+    }
+
+    public int getBestSoFarNV() {
+        return bestSoFarNV;
+    }
+
+    public void setBestSoFarNV(int bestSoFarNV) {
+        this.bestSoFarNV = bestSoFarNV;
+    }
+
+    public int getIterationBestNV() {
+        return iterationBestNV;
+    }
+
+    public void setIterationBestNV(int iterationBestNV) {
+        this.iterationBestNV = iterationBestNV;
     }
 
     public double getIteration() {
@@ -153,19 +173,19 @@ public class IterationStatistic {
     @Override
     public String toString() {
         StringBuilder log = new StringBuilder();
-        log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
-        log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 11));
-        log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFarSd()), 8));
-        log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 12));
-        log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 12));
-        log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 12));
-        log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 10));
-        log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 10));
-        log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 10));
-        if (getPenaltyRate() > 0) {
-            log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
-            log.append("FEASIBLE: " + (feasible ? "T" : "F"));
-        }
+        if (this.getIteration() > 0) log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
+        if (this.getBestSoFar() > 0) log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 11));
+        if (this.getBestSoFarNV() > 0) log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%d", this.getBestSoFarNV()), 4));
+        if (this.getBestSoFarSd() > 0) log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFarSd()), 8));
+        if (this.getIterationWorst() > 0) log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 12));
+        if (this.getIterationBest() > 0) log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 12));
+        if (this.getIterationBestNV() > 0) log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%d", this.getIterationBestNV()), 4));
+        if (this.getIterationMean() > 0) log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 12));
+        if (this.getIterationSd() > 0) log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 10));
+        if (this.getBranchFactor() > 0) log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 10));
+        if (this.getDiversity() > 0) log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 10));
+        if (getPenaltyRate() > 0) log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
+        log.append("FEASIBLE: " + (feasible ? "T" : "F"));
         return log.toString();
     }
 }
