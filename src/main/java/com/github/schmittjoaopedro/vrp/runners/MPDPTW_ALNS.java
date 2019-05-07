@@ -16,7 +16,7 @@ public class MPDPTW_ALNS {
 
     private static final String rootDirectory;
 
-    private static int maxIterations = 100000;
+    private static int maxIterations = 10000;
 
     private static final String resultsPath = "C:\\Temp\\mpdptw";
 
@@ -37,7 +37,7 @@ public class MPDPTW_ALNS {
         //for (String noVert : new String[]{"400", "100", "50", "25"}) {
         for (String noVert : new String[]{"25", "50", "100", "400"}) {
             ExperimentResultWriter resultWriter = new ExperimentResultWriter();
-            resultWriter.initialize(maxIterations, new String[]{"INSTANCE", "MEAN", "SD_MEAN"});
+            resultWriter.initializeALNS(maxIterations);
             for (String typ : new String[]{"l", "n", "w"}) {
                 for (String reqSize : new String[]{"4", "8"}) {
                     for (String id : new String[]{"1", "2", "3", "4", "5"}) {
@@ -51,13 +51,13 @@ public class MPDPTW_ALNS {
     }
 
     private static void executeInstance(ExperimentResultWriter resultWriter, String problem) throws Exception {
-        int trials = 10;
+        int trials = 2;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             ProblemInstance instance = DataReader.getMpdptwInstance(Paths.get(rootDirectory, problem + ".txt").toFile());
             ALNS alns = new ALNS(instance, maxIterations, new Random(1));
             alns.setGenerateFile(false);
-            alns.setShowLog(false);
+            alns.setShowLog(true);
             algs.add(alns);
         }
         TrialExecutor trialExecutor = new TrialExecutor();
@@ -67,7 +67,7 @@ public class MPDPTW_ALNS {
             results.add(((ALNS) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
-        resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), problem, result);
+        resultWriter.computeResultsALNS(resultsPath, algs.get(0).getClass().getSimpleName(), problem, result);
     }
 
 }

@@ -302,7 +302,7 @@ public class ALNS implements Runnable {
                 iterationStatistic.setBestSoFarNV(solutionBest.tours.size());
                 iterationStatistic.setIterationBest(solution.totalCost);
                 iterationStatistic.setIterationBestNV(solution.tours.size());
-                iterationStatistic.setFeasible(solution.feasible);
+                iterationStatistic.setFeasible(solution.feasible ? 1.0 : 0.0);
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);

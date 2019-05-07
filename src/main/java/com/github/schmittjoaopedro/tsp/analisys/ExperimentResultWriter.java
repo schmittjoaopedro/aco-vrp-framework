@@ -15,7 +15,7 @@ public class ExperimentResultWriter {
 
     private double numIterations;
 
-    private String[] headerNames = {"ALG", "INSTANCE", "FREQ", "MAG", "RHO", "ALPHA", "BETA", "MEAN", "SD_MEAN"};
+    private String[] headerNames;
 
     private List<String> keys = new ArrayList<>();
 
@@ -24,7 +24,17 @@ public class ExperimentResultWriter {
         algorithmsResult = new HashMap<>();
     }
 
-    public void initialize(int numIterations) {
+    public void initializeACO(int numIterations) {
+        this.headerNames = new String[]{"ALG", "INSTANCE", "FREQ", "MAG", "RHO", "ALPHA", "BETA", "MEAN", "SD_MEAN"};
+        initialize(numIterations);
+    }
+
+    public void initializeALNS(int numIterations) {
+        this.headerNames = new String[]{"ALG", "INSTANCE", "NV", "TC", "MEAN", "MEAN_SD"};
+        initialize(numIterations);
+    }
+
+    private void initialize(int numIterations) {
         this.numIterations = numIterations;
         for (String header : headerNames) {
             addLine("header", header);
@@ -35,12 +45,7 @@ public class ExperimentResultWriter {
         keys.add("header");
     }
 
-    public void initialize(int numIterations, String[] headerNames) {
-        this.headerNames = headerNames;
-        initialize(numIterations);
-    }
-
-    public void computeResults(String resultsPath, String algName, String testInstance, double mag, int freq, double rho, double alpha, double beta, List<IterationStatistic> result) throws Exception {
+    public void computeResultsACO(String resultsPath, String algName, String testInstance, double mag, int freq, double rho, double alpha, double beta, List<IterationStatistic> result) throws Exception {
         String fileName = testInstance +
                 "_freq_" + freq +
                 "_mag_" + mag +
@@ -75,22 +80,28 @@ public class ExperimentResultWriter {
         }
     }
 
-    public void computeResults(String resultsPath, String algName, String testInstance, List<IterationStatistic> result) throws Exception {
+    public void computeResultsALNS(String resultsPath, String algName, String testInstance, List<IterationStatistic> result) throws Exception {
         String fileName = testInstance + "_" + algName + ".txt";
         keys.add(fileName);
         StringBuilder finalResult = new StringBuilder();
         double mean = 0.0;
         double sdMean = 0.0;
+        double nv = 0.0;
+        double tc = 0.0;
         for (IterationStatistic iter : result) {
             finalResult.append(iter).append('\n');
             mean += iter.getBestSoFar();
             sdMean += iter.getBestSoFarSd();
+            nv = iter.getBestSoFarNV();
+            tc = iter.getBestSoFar();
         }
         mean /= numIterations;
         sdMean /= numIterations;
         FileUtils.writeStringToFile(Paths.get(resultsPath, fileName).toFile(), finalResult.toString(), "UTF-8");
         addLine(fileName, algName);
         addLine(fileName, testInstance);
+        addLine(fileName, String.valueOf(nv));
+        addLine(fileName, String.valueOf(tc));
         addLine(fileName, String.valueOf(mean));
         addLine(fileName, String.valueOf(sdMean));
         for (IterationStatistic iter : result) {

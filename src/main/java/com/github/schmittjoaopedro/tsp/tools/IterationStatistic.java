@@ -10,9 +10,9 @@ public class IterationStatistic {
 
     private Map<String, Long> timeStatistics = new HashMap<>();
 
-    private int bestSoFarNV;
+    private double bestSoFarNV;
 
-    private int iterationBestNV;
+    private double iterationBestNV;
 
     private double iteration;
 
@@ -40,7 +40,7 @@ public class IterationStatistic {
 
     private double penaltyRate;
 
-    private boolean feasible;
+    private double feasible;
 
     public void startTimer() {
         currentTime = System.currentTimeMillis();
@@ -50,19 +50,19 @@ public class IterationStatistic {
         timeStatistics.put(eventName, System.currentTimeMillis() - currentTime);
     }
 
-    public int getBestSoFarNV() {
+    public double getBestSoFarNV() {
         return bestSoFarNV;
     }
 
-    public void setBestSoFarNV(int bestSoFarNV) {
+    public void setBestSoFarNV(double bestSoFarNV) {
         this.bestSoFarNV = bestSoFarNV;
     }
 
-    public int getIterationBestNV() {
+    public double getIterationBestNV() {
         return iterationBestNV;
     }
 
-    public void setIterationBestNV(int iterationBestNV) {
+    public void setIterationBestNV(double iterationBestNV) {
         this.iterationBestNV = iterationBestNV;
     }
 
@@ -162,11 +162,11 @@ public class IterationStatistic {
         this.penaltyRate = penaltyRate;
     }
 
-    public boolean isFeasible() {
+    public double getFeasible() {
         return feasible;
     }
 
-    public void setFeasible(boolean feasible) {
+    public void setFeasible(double feasible) {
         this.feasible = feasible;
     }
 
@@ -175,17 +175,17 @@ public class IterationStatistic {
         StringBuilder log = new StringBuilder();
         if (this.getIteration() > 0) log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
         if (this.getBestSoFar() > 0) log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 11));
-        if (this.getBestSoFarNV() > 0) log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%d", this.getBestSoFarNV()), 4));
-        if (this.getBestSoFarSd() > 0) log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFarSd()), 8));
+        if (this.getBestSoFarNV() > 0) log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%.1f", this.getBestSoFarNV()), 5));
+        if (this.getBestSoFarSd() > 0) log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.1f", this.getBestSoFarSd()), 8));
         if (this.getIterationWorst() > 0) log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 12));
         if (this.getIterationBest() > 0) log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 12));
-        if (this.getIterationBestNV() > 0) log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%d", this.getIterationBestNV()), 4));
+        if (this.getIterationBestNV() > 0) log.append("IT. BEST NV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBestNV()), 5));
         if (this.getIterationMean() > 0) log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 12));
         if (this.getIterationSd() > 0) log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 10));
         if (this.getBranchFactor() > 0) log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 10));
         if (this.getDiversity() > 0) log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 10));
         if (getPenaltyRate() > 0) log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
-        log.append("FEASIBLE: " + (feasible ? "T" : "F"));
+        if (getFeasible() > 0) log.append("FEASIBLE: " + getFeasible());
         return log.toString();
     }
 }

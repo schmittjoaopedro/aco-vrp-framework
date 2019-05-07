@@ -29,11 +29,14 @@ public class TrialExecutor {
             double diversity = 0.0;
             double mean = 0.0;
             double bestSoFar = 0.0;
+            double bestSoFarNV = 0.0;
             double bestSoFars[] = new double[results.size()];
             double bestSoFarSd = 0.0;
             double worst = 0.0;
             double best = 0.0;
+            double bestNV = 0.0;
             double branchFactor = 0.0;
+            double feasible = 0.0;
 
             int count = 0;
             for (List<IterationStatistic> result : results) {
@@ -42,29 +45,38 @@ public class TrialExecutor {
                 diversity += result.get(i).getDiversity();
                 mean += result.get(i).getIterationMean();
                 bestSoFar += result.get(i).getBestSoFar();
+                bestSoFarNV += result.get(i).getBestSoFarNV();
                 bestSoFars[count++] = result.get(i).getBestSoFar();
                 worst += result.get(i).getIterationWorst();
                 best += result.get(i).getIterationBest();
+                bestNV += result.get(i).getIterationBestNV();
                 branchFactor += result.get(i).getBranchFactor();
+                feasible += result.get(i).getFeasible();
             }
 
             iterationSd /= results.size();
             diversity /= results.size();
             mean /= results.size();
             bestSoFar /= results.size();
+            bestSoFarNV /= results.size();
             worst /= results.size();
             best /= results.size();
+            bestNV /= results.size();
             branchFactor /= results.size();
             bestSoFarSd = Maths.sd(bestSoFars);
+            feasible /= results.size();
 
             iterationStatistic.setIterationSd(iterationSd);
             iterationStatistic.setDiversity(diversity);
             iterationStatistic.setIterationMean(mean);
             iterationStatistic.setBestSoFar(bestSoFar);
+            iterationStatistic.setBestSoFarNV(bestSoFarNV);
             iterationStatistic.setBestSoFarSd(bestSoFarSd);
             iterationStatistic.setIterationWorst(worst);
             iterationStatistic.setIterationBest(best);
+            iterationStatistic.setIterationBestNV(bestNV);
             iterationStatistic.setBranchFactor(branchFactor);
+            iterationStatistic.setFeasible(feasible);
         }
 
         return iterationStatistics;

@@ -26,7 +26,7 @@ public class AlgorithmComparator {
 //        double[] betas = {2.0, 3.0, 4.0, 5.0};
 
         ExperimentResultWriter resultWriter = new ExperimentResultWriter();
-        resultWriter.initialize(numIterations);
+        resultWriter.initializeACO(numIterations);
         for (String test : tspInstances) {
             for (int freq : frequencies) {
                 for (double mag : magnitudes) {
@@ -67,7 +67,7 @@ public class AlgorithmComparator {
             results.add(((MMAS_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
-        resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
+        resultWriter.computeResultsACO(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
     }
 
     private static void executeMMASUSTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
@@ -90,7 +90,7 @@ public class AlgorithmComparator {
             results.add(((MMAS_US_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
-        resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
+        resultWriter.computeResultsACO(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
     }
 
     private static void executeMMAS3OPTTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
@@ -113,7 +113,7 @@ public class AlgorithmComparator {
             results.add(((MMAS_3OPT_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
-        resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
+        resultWriter.computeResultsACO(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
     }
 
     private static void executeMMASMEMTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
@@ -136,7 +136,7 @@ public class AlgorithmComparator {
             results.add(((MMAS_MEM_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
-        resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
+        resultWriter.computeResultsACO(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
     }
 
     private static void executeMMASMEMUSTest(ExperimentResultWriter resultWriter, String testInstance, double mag, int freq, double rho, double alpha, double beta) throws Exception {
@@ -159,6 +159,6 @@ public class AlgorithmComparator {
             results.add(((MMAS_MEM_US_ADTSP) algs.get(i)).getIterationStatistics());
         }
         List<IterationStatistic> result = trialExecutor.getUnifiedStatistics(results);
-        resultWriter.computeResults(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
+        resultWriter.computeResultsACO(resultsPath, algs.get(0).getClass().getSimpleName(), testInstance, mag, freq, rho, alpha, beta, result);
     }
 }

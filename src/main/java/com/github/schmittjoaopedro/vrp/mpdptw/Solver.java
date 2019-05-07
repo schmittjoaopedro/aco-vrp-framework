@@ -118,7 +118,7 @@ public class Solver implements Runnable {
                 iterationStatistic.setBranchFactor(mmas.nodeBranching());
                 iterationStatistic.setIterationBest(mmas.findBest().totalCost);
                 iterationStatistic.setIterationWorst(mmas.findWorst().totalCost);
-                iterationStatistic.setFeasible(mmas.getBestSoFar().feasible);
+                iterationStatistic.setFeasible(mmas.getBestSoFar().feasible ? 1.0 : 0.0);
                 iterationStatistic.setIterationMean(Maths.getMean(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
                 iterationStatistic.setIterationSd(Maths.getStd(mmas.getAntPopulation().stream().map(Solution::getCost).collect(Collectors.toList())));
                 iterationStatistic.setPenaltyRate(mmas.getPenaltyRate());
