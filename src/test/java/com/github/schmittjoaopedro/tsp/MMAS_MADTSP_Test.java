@@ -33,7 +33,7 @@ public class MMAS_MADTSP_Test {
         mmas_madtsp.run();
 
         assertThat(mmas_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(25214.27406067593);
-        assertThat(mmas_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(25214.27406067593);
+        assertThat(mmas_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(25214.27406067593);
         assertThat(TestUtils.getTourString(mmas_madtsp.getGlobalStatistics())).isEqualTo("[94, 75, 12, 32, 4, 36, 51, 77, 95, 38, 29, 28, 2, 40, 70, 99, 47, 13, 42, 45, 54, 82, 33, 6, 8, 56, 19, 11, 26, 85, 34, 61, 76, 59, 22, 97, 90, 44, 31, 10, 14, 16, 73, 58, 20, 71, 35, 98, 37, 23, 17, 78, 52, 87, 15, 93, 21, 69, 65, 64, 3, 25, 96, 18, 74, 55, 79, 30, 88, 41, 7, 91, 62, 5, 48, 89, 83, 9, 46, 0, 92, 27, 66, 57, 86, 50, 60, 80, 24, 68, 63, 39, 53, 72, 43, 1, 49, 67, 84, 81, 94]");
 
         TestUtils.checkValues(mmas_madtsp.getIterationStatistics(), 1, 32087.941671030396, 2484.2471787650425, 0.0, 54.590204081632656, 26322.068575260324);
@@ -551,7 +551,7 @@ public class MMAS_MADTSP_Test {
         mmas_madtsp.run();
 
         assertThat(mmas_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(34018.264505597384);
-        assertThat(mmas_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(34018.264505597384);
+        assertThat(mmas_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(34018.264505597384);
         assertThat(TestUtils.getTourString(mmas_madtsp.getGlobalStatistics())).isEqualTo("[115, 49, 72, 68, 80, 24, 60, 50, 124, 144, 86, 8, 116, 6, 56, 19, 85, 26, 149, 61, 76, 109, 97, 90, 108, 31, 44, 14, 16, 10, 58, 140, 73, 20, 71, 9, 83, 35, 37, 23, 17, 78, 136, 105, 89, 5, 48, 91, 74, 96, 138, 55, 142, 118, 117, 123, 25, 128, 65, 64, 3, 18, 52, 133, 87, 15, 21, 69, 93, 103, 110, 101, 98, 126, 112, 62, 0, 129, 141, 147, 132, 7, 41, 121, 79, 30, 88, 104, 66, 57, 107, 27, 92, 130, 46, 22, 59, 34, 11, 148, 54, 82, 33, 134, 139, 106, 120, 29, 100, 38, 146, 81, 125, 94, 12, 75, 32, 145, 102, 36, 4, 95, 77, 51, 47, 99, 70, 40, 13, 135, 2, 45, 122, 42, 127, 114, 119, 28, 131, 111, 84, 67, 113, 143, 63, 39, 53, 137, 1, 43, 115]");
 
         TestUtils.checkValues(mmas_madtsp.getIterationStatistics(), 1, 40137.01783897471, 1991.2217779278133, 0.0, 81.65306122448979, 36214.666772975776);

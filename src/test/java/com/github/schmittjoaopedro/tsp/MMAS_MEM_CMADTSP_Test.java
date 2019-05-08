@@ -31,7 +31,7 @@ public class MMAS_MEM_CMADTSP_Test {
         mmas_mem_cmadtsp.setStatisticInterval(1);
         mmas_mem_cmadtsp.setShowLog(false);
         mmas_mem_cmadtsp.run();
-        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(35223.62068716791);
+        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(35223.62068716791);
         assertThat(TestUtils.getTourString(mmas_mem_cmadtsp.getGlobalStatistics())).isEqualTo("[59, 61, 76, 22, 97, 90, 44, 31, 10, 14, 16, 73, 58, 20, 71, 83, 9, 48, 5, 62, 89, 46, 92, 27, 57, 60, 80, 24, 50, 86, 56, 8, 6, 19, 11, 26, 85, 34, 82, 54, 33, 28, 45, 2, 42, 13, 99, 40, 70, 47, 29, 38, 51, 77, 95, 4, 36, 32, 75, 12, 94, 81, 67, 84, 49, 43, 1, 63, 68, 72, 39, 53, 66, 0, 91, 7, 41, 88, 30, 79, 55, 96, 74, 18, 52, 78, 17, 23, 37, 98, 35, 87, 15, 21, 93, 69, 65, 64, 3, 25, 59]");
 
         TestUtils.checkValues(mmas_mem_cmadtsp.getIterationStatistics(), 1, 39601.077353207074, 3256.4480241212223, 0.0, 57.137142857142855, 34060.60184509465);
@@ -548,7 +548,7 @@ public class MMAS_MEM_CMADTSP_Test {
         mmas_mem_cmadtsp.setStatisticInterval(1);
         mmas_mem_cmadtsp.setShowLog(false);
         mmas_mem_cmadtsp.run();
-        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(31156.72274024026);
+        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(31156.72274024026);
         assertThat(TestUtils.getTourString(mmas_mem_cmadtsp.getGlobalStatistics())).isEqualTo("[59, 61, 76, 22, 90, 97, 46, 31, 44, 10, 16, 14, 73, 58, 20, 71, 83, 9, 89, 48, 5, 74, 18, 52, 78, 15, 21, 87, 93, 69, 65, 64, 25, 3, 96, 55, 30, 79, 88, 41, 7, 91, 0, 92, 27, 57, 60, 80, 24, 50, 86, 56, 6, 8, 19, 11, 26, 85, 34, 82, 54, 33, 28, 45, 2, 42, 13, 70, 40, 99, 47, 29, 38, 51, 77, 95, 4, 36, 32, 75, 12, 94, 81, 1, 43, 49, 72, 84, 67, 68, 63, 39, 53, 66, 62, 37, 23, 17, 98, 35, 59]");
 
         TestUtils.checkValues(mmas_mem_cmadtsp.getIterationStatistics(), 1, 39601.077353207074, 3256.4480241212223, 0.0, 57.137142857142855, 34060.60184509465);
@@ -794,7 +794,7 @@ public class MMAS_MEM_CMADTSP_Test {
         mmas_mem_cmadtsp.setStatisticInterval(1);
         mmas_mem_cmadtsp.setShowLog(false);
         mmas_mem_cmadtsp.run();
-        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(39365.618574442226);
+        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(39365.618574442226);
         assertThat(TestUtils.getTourString(mmas_mem_cmadtsp.getGlobalStatistics())).isEqualTo("[128, 65, 64, 117, 3, 118, 142, 55, 138, 7, 91, 74, 18, 133, 52, 136, 87, 15, 21, 69, 93, 23, 37, 103, 110, 101, 98, 83, 9, 112, 71, 73, 20, 140, 58, 126, 35, 105, 89, 48, 5, 62, 0, 129, 104, 141, 147, 66, 107, 57, 27, 92, 130, 46, 108, 31, 10, 14, 16, 44, 22, 97, 90, 76, 109, 59, 61, 149, 85, 26, 34, 19, 6, 8, 116, 139, 134, 84, 67, 72, 49, 113, 143, 63, 39, 53, 68, 80, 24, 60, 124, 50, 144, 86, 56, 11, 54, 82, 33, 148, 119, 114, 122, 42, 127, 135, 13, 47, 99, 70, 40, 2, 45, 28, 131, 111, 106, 29, 120, 38, 100, 51, 77, 95, 4, 36, 146, 12, 75, 32, 145, 102, 94, 125, 81, 115, 43, 1, 137, 132, 41, 121, 79, 88, 30, 96, 25, 123, 78, 17, 128]");
 
         TestUtils.checkValues(mmas_mem_cmadtsp.getIterationStatistics(), 1, 47612.67939543519, 2940.9855025489237, 0.0, 84.57142857142857, 42683.170205531416);
@@ -1310,7 +1310,7 @@ public class MMAS_MEM_CMADTSP_Test {
         mmas_mem_cmadtsp.setStatisticInterval(1);
         mmas_mem_cmadtsp.setShowLog(false);
         mmas_mem_cmadtsp.run();
-        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(37479.07242335973);
+        assertThat(mmas_mem_cmadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(37479.07242335973);
         assertThat(TestUtils.getTourString(mmas_mem_cmadtsp.getGlobalStatistics())).isEqualTo("[128, 65, 64, 117, 3, 118, 138, 55, 142, 79, 30, 41, 121, 7, 91, 129, 0, 62, 5, 48, 74, 18, 133, 52, 17, 105, 89, 78, 136, 87, 15, 21, 69, 93, 23, 37, 103, 110, 101, 98, 35, 83, 9, 71, 20, 73, 58, 140, 126, 14, 16, 10, 31, 108, 97, 22, 44, 90, 109, 76, 59, 61, 149, 85, 26, 34, 19, 11, 148, 54, 82, 33, 13, 2, 135, 70, 40, 99, 47, 77, 51, 95, 4, 36, 145, 102, 32, 12, 75, 94, 125, 81, 1, 53, 39, 63, 143, 43, 113, 49, 115, 146, 38, 100, 106, 29, 120, 111, 131, 28, 45, 122, 42, 127, 114, 119, 116, 6, 8, 56, 144, 86, 124, 50, 60, 80, 24, 68, 72, 67, 84, 134, 139, 57, 107, 141, 147, 66, 104, 27, 92, 130, 46, 112, 96, 88, 137, 132, 123, 25, 128]");
 
         TestUtils.checkValues(mmas_mem_cmadtsp.getIterationStatistics(), 1, 47612.67939543519, 2940.9855025489237, 0.0, 84.57142857142857, 42683.170205531416);

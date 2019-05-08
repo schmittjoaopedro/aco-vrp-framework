@@ -31,7 +31,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(31496.229809282446);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(31496.229809282446);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[26, 85, 34, 19, 11, 8, 6, 56, 82, 54, 33, 42, 45, 28, 13, 99, 70, 40, 2, 47, 51, 77, 95, 4, 36, 32, 12, 75, 94, 81, 43, 1, 72, 49, 38, 29, 67, 84, 68, 63, 39, 53, 24, 80, 60, 50, 86, 57, 92, 27, 66, 46, 44, 90, 31, 10, 14, 16, 58, 73, 20, 71, 35, 98, 23, 37, 17, 15, 21, 93, 87, 52, 18, 74, 96, 55, 79, 30, 41, 88, 7, 0, 5, 48, 89, 9, 83, 78, 69, 64, 3, 65, 25, 62, 91, 22, 97, 59, 61, 76, 26]");
 
         TestUtils.checkValues(mmas_cadtsp.getIterationStatistics(), 1, 38845.35851682551, 3004.3870870225496, 0.0, 57.41877551020408, 32527.274478424253);
@@ -448,7 +448,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(26887.432804258024);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(26887.432804258024);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[11, 6, 8, 56, 86, 50, 60, 80, 24, 72, 67, 84, 29, 38, 95, 77, 51, 4, 36, 32, 75, 12, 94, 81, 43, 49, 1, 53, 39, 63, 68, 66, 57, 92, 27, 46, 71, 83, 9, 89, 74, 18, 52, 87, 15, 21, 93, 69, 65, 25, 64, 3, 96, 55, 30, 79, 88, 41, 7, 91, 0, 62, 48, 5, 78, 17, 37, 23, 98, 35, 20, 73, 58, 16, 14, 10, 31, 90, 44, 22, 97, 76, 59, 61, 34, 85, 26, 19, 54, 82, 33, 42, 2, 28, 13, 47, 99, 70, 40, 45, 11]");
 
         TestUtils.checkValues(mmas_cadtsp.getIterationStatistics(), 1, 38845.35851682551, 3004.3870870225496, 0.0, 57.41877551020408, 32527.274478424253);
@@ -595,7 +595,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(38518.538124267456);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(38518.538124267456);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[131, 111, 28, 33, 54, 82, 148, 11, 19, 149, 61, 109, 76, 59, 31, 130, 27, 92, 57, 124, 50, 139, 134, 84, 67, 49, 115, 1, 143, 43, 113, 68, 72, 63, 39, 53, 137, 132, 30, 79, 121, 88, 41, 138, 55, 142, 118, 3, 65, 64, 128, 25, 123, 117, 69, 21, 15, 87, 52, 133, 78, 105, 136, 93, 103, 98, 101, 110, 37, 23, 17, 35, 126, 140, 58, 73, 20, 71, 112, 9, 83, 10, 14, 16, 44, 97, 22, 90, 108, 46, 62, 5, 48, 89, 18, 74, 96, 7, 91, 129, 0, 141, 104, 147, 66, 107, 60, 24, 80, 86, 144, 6, 116, 8, 56, 34, 85, 26, 119, 114, 42, 2, 45, 122, 135, 127, 99, 70, 40, 13, 47, 51, 95, 77, 4, 36, 146, 81, 125, 94, 75, 12, 32, 145, 102, 120, 29, 106, 38, 100, 131]");
 
         TestUtils.checkValues(mmas_cadtsp.getIterationStatistics(), 1, 48631.26584637324, 3256.9421086281377, 0.0, 85.8269387755102, 43037.34303154829);
@@ -1012,7 +1012,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(34226.614622602094);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(34226.614622602094);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[108, 44, 97, 22, 90, 130, 92, 27, 66, 104, 141, 147, 60, 24, 80, 72, 84, 67, 68, 63, 39, 53, 1, 143, 113, 43, 49, 115, 81, 125, 94, 12, 75, 32, 145, 102, 36, 146, 4, 51, 77, 95, 38, 100, 106, 29, 120, 111, 131, 28, 45, 2, 135, 99, 70, 40, 47, 13, 127, 42, 122, 114, 119, 82, 54, 148, 33, 139, 134, 8, 116, 6, 56, 11, 26, 85, 61, 59, 76, 109, 34, 149, 19, 144, 86, 50, 124, 57, 107, 137, 132, 41, 121, 30, 79, 88, 138, 7, 74, 91, 129, 0, 62, 5, 48, 9, 83, 35, 103, 110, 101, 98, 37, 23, 17, 136, 93, 87, 15, 21, 69, 64, 65, 128, 123, 25, 117, 3, 118, 55, 142, 96, 18, 52, 133, 78, 105, 89, 46, 112, 71, 20, 73, 58, 140, 126, 14, 16, 10, 31, 108]");
 
         TestUtils.checkValues(mmas_cadtsp.getIterationStatistics(), 1, 48631.26584637324, 3256.9421086281377, 0.0, 85.8269387755102, 43037.34303154829);
@@ -1159,7 +1159,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(28991.525014805873);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(28991.525014805873);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[96, 55, 30, 79, 88, 41, 7, 91, 62, 5, 48, 89, 83, 9, 71, 20, 73, 58, 16, 14, 10, 31, 90, 97, 22, 76, 59, 61, 19, 11, 26, 85, 34, 82, 54, 33, 42, 45, 2, 28, 13, 70, 40, 99, 47, 95, 77, 51, 29, 38, 4, 36, 32, 75, 12, 94, 81, 1, 43, 72, 49, 39, 53, 63, 68, 60, 50, 86, 56, 6, 8, 24, 80, 84, 67, 57, 92, 27, 66, 46, 44, 0, 78, 52, 87, 15, 21, 93, 17, 23, 37, 35, 98, 69, 65, 64, 25, 3, 18, 74, 96]");
 
         graph = GraphFactory.createGraphFromTSP(new File(kroA100));
@@ -1169,7 +1169,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(27046.904794907718);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(27046.904794907718);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[19, 11, 26, 85, 34, 61, 76, 59, 22, 97, 90, 44, 31, 10, 16, 14, 73, 58, 20, 71, 83, 9, 23, 37, 98, 35, 17, 78, 52, 87, 15, 21, 93, 69, 65, 64, 25, 3, 18, 74, 96, 55, 30, 79, 88, 41, 7, 91, 62, 48, 5, 89, 0, 46, 92, 27, 66, 57, 60, 24, 80, 50, 86, 56, 6, 8, 54, 82, 33, 42, 45, 2, 28, 13, 99, 70, 40, 47, 51, 77, 95, 4, 36, 32, 75, 12, 94, 81, 43, 1, 53, 39, 63, 68, 49, 72, 67, 84, 38, 29, 19]");
 
         graph = GraphFactory.createGraphFromTSP(new File(kroA150));
@@ -1179,7 +1179,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(37849.19806567066);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(37849.19806567066);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[28, 131, 111, 106, 29, 120, 38, 100, 95, 51, 77, 4, 36, 146, 145, 102, 32, 12, 75, 94, 125, 81, 115, 49, 43, 113, 143, 63, 39, 53, 1, 72, 68, 80, 24, 60, 124, 50, 86, 144, 6, 56, 8, 116, 139, 134, 84, 67, 33, 148, 82, 54, 19, 149, 85, 26, 34, 61, 76, 109, 59, 97, 22, 90, 108, 31, 44, 16, 14, 10, 73, 140, 58, 126, 35, 37, 103, 110, 101, 98, 23, 136, 78, 105, 89, 48, 5, 62, 0, 129, 141, 104, 66, 107, 57, 27, 92, 130, 46, 112, 71, 20, 9, 83, 17, 133, 52, 21, 15, 87, 93, 69, 64, 3, 65, 128, 25, 123, 117, 96, 118, 142, 55, 138, 121, 41, 88, 30, 79, 7, 91, 74, 18, 132, 137, 147, 11, 119, 114, 122, 42, 2, 45, 13, 47, 99, 70, 40, 135, 127, 28]");
 
         graph = GraphFactory.createGraphFromTSP(new File(kroA150));
@@ -1189,7 +1189,7 @@ public class MMAS_CADTSP_Test {
         mmas_cadtsp.setStatisticInterval(1);
         mmas_cadtsp.setShowLog(false);
         mmas_cadtsp.run();
-        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(35595.96639266827);
+        assertThat(mmas_cadtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(35595.96639266827);
         assertThat(TestUtils.getTourString(mmas_cadtsp.getGlobalStatistics())).isEqualTo("[2, 45, 28, 131, 111, 106, 29, 120, 38, 100, 95, 77, 51, 4, 36, 146, 102, 145, 32, 75, 12, 94, 125, 81, 115, 43, 143, 63, 39, 53, 1, 49, 113, 68, 72, 67, 84, 33, 139, 134, 82, 54, 148, 11, 26, 85, 19, 149, 34, 61, 59, 76, 109, 97, 22, 90, 108, 31, 44, 16, 14, 10, 46, 112, 71, 20, 73, 58, 140, 126, 35, 37, 23, 103, 110, 101, 98, 17, 136, 78, 105, 89, 48, 5, 62, 91, 7, 121, 41, 30, 79, 88, 137, 132, 104, 141, 147, 66, 27, 92, 130, 0, 129, 138, 55, 142, 96, 118, 3, 64, 65, 128, 123, 25, 117, 69, 21, 15, 87, 93, 52, 133, 18, 74, 9, 83, 107, 57, 60, 24, 80, 50, 124, 144, 86, 56, 8, 116, 6, 114, 119, 122, 42, 127, 135, 13, 47, 99, 70, 40, 2]");
     }
 }

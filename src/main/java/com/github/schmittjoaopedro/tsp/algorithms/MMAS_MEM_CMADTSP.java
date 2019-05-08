@@ -186,7 +186,7 @@ public class MMAS_MEM_CMADTSP implements Runnable {
             repairSolution();
         }
         globalStatistics.endTimer("MMAS Execution");
-        globalStatistics.setBestSoFar(mmas.getBestSoFar().getCost());
+        globalStatistics.setBestSoFarTC(mmas.getBestSoFar().getCost());
         List<Vertex> tour = new ArrayList<>(graph.getVertexCount() + 1);
         for (int vertexId : mmas.getBestSoFar().getTour()) {
             tour.add(graph.getVertex(vertexId));

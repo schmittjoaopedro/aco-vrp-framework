@@ -32,7 +32,7 @@ public class MMAS_3OPT_MADTSP_Test {
         mmas_3OPT_madtsp.setShowLog(false);
         mmas_3OPT_madtsp.run();
         assertThat(mmas_3OPT_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(23152.3879115671);
-        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(23152.3879115671);
+        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(23152.3879115671);
         assertThat(TestUtils.getTourString(mmas_3OPT_madtsp.getGlobalStatistics())).isEqualTo("[0, 27, 92, 66, 57, 60, 50, 86, 8, 6, 56, 11, 54, 82, 33, 28, 45, 42, 2, 13, 70, 40, 99, 47, 29, 38, 95, 51, 77, 4, 36, 75, 32, 12, 94, 81, 1, 53, 39, 63, 43, 49, 84, 67, 72, 68, 80, 24, 19, 26, 85, 34, 61, 59, 76, 22, 97, 90, 44, 31, 10, 14, 16, 58, 73, 20, 71, 46, 62, 5, 48, 89, 9, 83, 35, 98, 37, 23, 17, 78, 52, 87, 15, 21, 93, 69, 65, 25, 64, 3, 18, 74, 96, 55, 79, 30, 88, 41, 7, 91, 0]");
 
         TestUtils.checkValues(mmas_3OPT_madtsp.getIterationStatistics(), 1, 32017.634697867114, 2691.8294718872035, 0.0, 54.50775510204082, 22806.71991709633);
@@ -550,7 +550,7 @@ public class MMAS_3OPT_MADTSP_Test {
         mmas_3OPT_madtsp.setShowLog(false);
         mmas_3OPT_madtsp.run();
         assertThat(mmas_3OPT_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(23088.879421201884);
-        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(23088.879421201884);
+        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(23088.879421201884);
         assertThat(TestUtils.getTourString(mmas_3OPT_madtsp.getGlobalStatistics())).isEqualTo("[0, 27, 92, 66, 57, 50, 60, 24, 80, 68, 63, 39, 53, 43, 1, 49, 72, 67, 84, 29, 38, 4, 36, 32, 75, 12, 94, 81, 95, 77, 51, 47, 99, 70, 40, 13, 2, 42, 45, 28, 33, 82, 54, 11, 6, 8, 86, 56, 19, 85, 26, 34, 61, 59, 76, 22, 97, 90, 44, 31, 10, 14, 16, 73, 58, 20, 71, 9, 83, 35, 98, 23, 37, 17, 78, 52, 93, 87, 15, 21, 69, 3, 64, 25, 65, 18, 74, 96, 55, 79, 30, 88, 41, 7, 91, 5, 48, 89, 62, 46, 0]");
 
         TestUtils.checkValues(mmas_3OPT_madtsp.getIterationStatistics(), 1, 32017.634697867114, 2691.8294718872035, 0.0, 54.50775510204082, 22806.71991709633);
@@ -798,7 +798,7 @@ public class MMAS_3OPT_MADTSP_Test {
         mmas_3OPT_madtsp.setShowLog(false);
         mmas_3OPT_madtsp.run();
         assertThat(mmas_3OPT_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(29913.22546796049);
-        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(29913.22546796049);
+        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(29913.22546796049);
         assertThat(TestUtils.getTourString(mmas_3OPT_madtsp.getGlobalStatistics())).isEqualTo("[0, 112, 71, 20, 73, 58, 140, 126, 9, 83, 35, 98, 110, 103, 101, 37, 23, 17, 133, 52, 18, 74, 96, 138, 55, 142, 118, 117, 25, 123, 128, 64, 3, 65, 69, 21, 93, 15, 87, 136, 78, 105, 89, 48, 5, 62, 91, 7, 41, 121, 79, 30, 88, 137, 132, 147, 141, 104, 66, 27, 92, 130, 46, 31, 10, 16, 14, 44, 108, 90, 97, 22, 109, 76, 59, 61, 149, 34, 26, 85, 19, 11, 6, 116, 8, 56, 144, 86, 124, 50, 60, 24, 80, 139, 134, 33, 82, 54, 148, 119, 114, 122, 45, 2, 42, 127, 135, 40, 70, 99, 47, 13, 28, 131, 111, 106, 29, 120, 38, 100, 95, 77, 51, 4, 36, 146, 102, 145, 32, 75, 12, 94, 125, 81, 115, 49, 43, 143, 63, 39, 53, 1, 113, 72, 67, 84, 68, 107, 57, 129, 0]");
 
         TestUtils.checkValues(mmas_3OPT_madtsp.getIterationStatistics(), 1, 40016.22976406926, 2379.356272740218, 0.0, 81.43836734693878, 30175.263027703353);
@@ -1316,7 +1316,7 @@ public class MMAS_3OPT_MADTSP_Test {
         mmas_3OPT_madtsp.setShowLog(false);
         mmas_3OPT_madtsp.run();
         assertThat(mmas_3OPT_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(30278.21824839056);
-        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(30278.21824839056);
+        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(30278.21824839056);
         assertThat(TestUtils.getTourString(mmas_3OPT_madtsp.getGlobalStatistics())).isEqualTo("[0, 112, 9, 83, 71, 20, 73, 34, 26, 11, 148, 54, 82, 33, 119, 114, 122, 42, 127, 135, 40, 70, 99, 47, 13, 2, 45, 28, 131, 111, 120, 29, 106, 100, 38, 95, 77, 51, 4, 36, 146, 102, 32, 145, 75, 12, 94, 125, 81, 115, 113, 143, 63, 39, 53, 1, 43, 49, 84, 67, 72, 68, 80, 24, 60, 50, 124, 86, 144, 139, 134, 8, 116, 6, 56, 19, 85, 149, 59, 61, 76, 109, 22, 97, 90, 44, 108, 31, 10, 14, 16, 140, 58, 126, 35, 98, 101, 110, 103, 37, 23, 17, 93, 87, 15, 21, 69, 65, 64, 128, 25, 123, 117, 3, 118, 96, 142, 55, 138, 7, 41, 121, 79, 30, 88, 137, 132, 147, 104, 141, 66, 57, 107, 92, 27, 130, 46, 62, 5, 48, 89, 78, 136, 105, 133, 52, 18, 74, 91, 129, 0]");
 
         TestUtils.checkValues(mmas_3OPT_madtsp.getIterationStatistics(), 1, 40016.22976406926, 2379.356272740218, 0.0, 81.43836734693878, 30175.263027703353);
@@ -1564,7 +1564,7 @@ public class MMAS_3OPT_MADTSP_Test {
         mmas_3OPT_madtsp.setShowLog(false);
         mmas_3OPT_madtsp.run();
         assertThat(mmas_3OPT_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(37304.71641538353);
-        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(37304.71641538353);
+        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(37304.71641538353);
         assertThat(TestUtils.getTourString(mmas_3OPT_madtsp.getGlobalStatistics())).isEqualTo("[0, 5, 48, 74, 91, 7, 41, 79, 30, 88, 96, 55, 62, 89, 18, 3, 64, 25, 65, 69, 93, 21, 15, 52, 87, 17, 78, 23, 37, 98, 35, 83, 9, 71, 73, 58, 20, 10, 14, 16, 31, 22, 97, 90, 44, 76, 59, 61, 19, 11, 56, 6, 8, 86, 50, 26, 85, 34, 33, 82, 54, 45, 28, 13, 47, 99, 70, 40, 42, 2, 29, 95, 77, 51, 36, 4, 32, 12, 75, 94, 81, 1, 43, 72, 49, 38, 84, 67, 53, 39, 63, 68, 60, 80, 24, 57, 92, 27, 66, 46, 0]");
 
         TestUtils.checkValues(mmas_3OPT_madtsp.getIterationStatistics(), 1, 46567.88566249352, 4338.286883293141, 0.0, 57.16, 32672.64769159847);
@@ -2081,7 +2081,7 @@ public class MMAS_3OPT_MADTSP_Test {
         mmas_3OPT_madtsp.setShowLog(false);
         mmas_3OPT_madtsp.run();
         assertThat(mmas_3OPT_madtsp.getMvbs().getAccumulativeCost()).isEqualTo(34630.58748306688);
-        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(34630.58748306688);
+        assertThat(mmas_3OPT_madtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(34630.58748306688);
         assertThat(TestUtils.getTourString(mmas_3OPT_madtsp.getGlobalStatistics())).isEqualTo("[0, 5, 62, 48, 91, 74, 96, 18, 89, 78, 17, 23, 37, 98, 35, 83, 9, 71, 20, 73, 58, 16, 14, 10, 31, 90, 97, 22, 61, 11, 54, 82, 33, 28, 2, 45, 99, 70, 40, 42, 13, 47, 51, 77, 95, 4, 36, 12, 32, 75, 94, 81, 43, 49, 72, 67, 84, 38, 29, 39, 53, 63, 1, 68, 80, 24, 60, 50, 86, 56, 8, 6, 19, 26, 85, 34, 59, 76, 44, 46, 92, 27, 57, 66, 41, 88, 30, 79, 55, 3, 64, 65, 25, 69, 21, 93, 87, 15, 52, 7, 0]");
 
         TestUtils.checkValues(mmas_3OPT_madtsp.getIterationStatistics(), 1, 46567.88566249352, 4338.286883293141, 0.0, 57.16, 32672.64769159847);

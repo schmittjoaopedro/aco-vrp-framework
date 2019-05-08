@@ -37,7 +37,7 @@ public class MMAS_3OPT_TSP_Test {
         MMAS_3OPT_TSP mmas__3OptTSP = new MMAS_3OPT_TSP(graph, 1500, 1);
         mmas__3OptTSP.setStatisticInterval(100);
         mmas__3OptTSP.run();
-        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFar()).isEqualTo(21282);
+        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFarTC()).isEqualTo(21282);
         assertThat(TestUtils.getTourString(mmas__3OptTSP.getGlobalStatistics())).isEqualTo("[84, 81, 94, 12, 75, 32, 36, 4, 51, 77, 95, 38, 29, 47, 99, 40, 70, 13, 2, 42, 45, 28, 33, 82, 54, 6, 8, 56, 19, 11, 26, 85, 34, 61, 59, 76, 22, 97, 90, 44, 31, 10, 14, 16, 58, 73, 20, 71, 9, 83, 35, 98, 37, 23, 17, 78, 52, 87, 15, 93, 21, 69, 65, 25, 64, 3, 96, 55, 79, 30, 88, 41, 7, 91, 74, 18, 89, 48, 5, 62, 0, 46, 92, 27, 66, 57, 60, 50, 86, 24, 80, 68, 63, 39, 53, 1, 43, 49, 72, 67, 84]");
 
         // Iteration 100
@@ -174,7 +174,7 @@ public class MMAS_3OPT_TSP_Test {
         MMAS_3OPT_TSP mmas__3OptTSP = new MMAS_3OPT_TSP(graph, 1500, 1);
         mmas__3OptTSP.setStatisticInterval(100);
         mmas__3OptTSP.run();
-        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFar()).isEqualTo(29368);
+        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFarTC()).isEqualTo(29368);
         assertThat(TestUtils.getTourString(mmas__3OptTSP.getGlobalStatistics())).isEqualTo("[39, 131, 110, 116, 114, 52, 0, 84, 144, 190, 26, 197, 122, 14, 12, 78, 159, 161, 63, 19, 54, 41, 134, 185, 126, 111, 119, 46, 30, 66, 176, 64, 79, 76, 157, 192, 127, 166, 29, 67, 168, 34, 1, 180, 124, 160, 150, 186, 156, 106, 108, 5, 53, 74, 182, 154, 7, 21, 133, 128, 145, 102, 142, 16, 24, 89, 33, 57, 140, 170, 199, 97, 113, 87, 147, 27, 38, 37, 70, 129, 71, 82, 61, 184, 167, 49, 138, 85, 195, 55, 151, 177, 4, 104, 42, 136, 132, 175, 112, 194, 181, 93, 94, 90, 149, 172, 22, 143, 69, 75, 101, 163, 139, 20, 153, 88, 40, 58, 2, 72, 188, 130, 179, 141, 68, 107, 13, 191, 59, 100, 3, 162, 92, 105, 148, 189, 48, 17, 109, 28, 183, 36, 178, 152, 65, 118, 18, 98, 91, 9, 174, 35, 56, 73, 99, 155, 32, 44, 196, 80, 96, 103, 164, 165, 95, 125, 86, 51, 10, 83, 47, 169, 121, 115, 187, 43, 62, 193, 50, 15, 117, 123, 137, 8, 77, 81, 6, 198, 25, 60, 135, 31, 23, 158, 173, 120, 171, 45, 11, 146, 39]");
 
         // Iteration 100
@@ -311,7 +311,7 @@ public class MMAS_3OPT_TSP_Test {
         MMAS_3OPT_TSP mmas__3OptTSP = new MMAS_3OPT_TSP(graph, 1500, 2);
         mmas__3OptTSP.setStatisticInterval(100);
         mmas__3OptTSP.run();
-        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFar()).isEqualTo(29368);
+        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFarTC()).isEqualTo(29368);
         assertThat(TestUtils.getTourString(mmas__3OptTSP.getGlobalStatistics())).isEqualTo("[139, 20, 153, 88, 40, 58, 2, 72, 188, 130, 179, 141, 68, 107, 13, 191, 59, 100, 3, 162, 92, 105, 148, 189, 48, 17, 109, 28, 183, 36, 178, 152, 65, 118, 18, 98, 91, 9, 174, 35, 56, 73, 99, 155, 32, 44, 196, 80, 96, 103, 164, 165, 95, 125, 86, 51, 10, 83, 47, 169, 121, 115, 187, 43, 62, 193, 50, 15, 117, 123, 137, 8, 77, 81, 6, 198, 25, 60, 135, 31, 23, 158, 173, 120, 171, 45, 11, 146, 39, 131, 110, 116, 114, 52, 0, 84, 144, 190, 26, 197, 122, 14, 12, 78, 159, 161, 63, 19, 54, 41, 134, 185, 126, 111, 119, 46, 30, 66, 176, 64, 79, 76, 157, 192, 127, 166, 29, 67, 168, 34, 1, 180, 124, 160, 150, 186, 156, 106, 108, 5, 53, 74, 182, 154, 7, 21, 133, 128, 145, 102, 142, 16, 24, 89, 33, 57, 140, 170, 199, 97, 113, 87, 147, 27, 38, 37, 70, 129, 71, 82, 61, 184, 167, 49, 138, 85, 195, 55, 151, 177, 4, 104, 42, 136, 132, 175, 112, 194, 181, 93, 94, 90, 149, 172, 22, 143, 69, 75, 101, 163, 139]");
 
         // Iteration 100
@@ -450,7 +450,7 @@ public class MMAS_3OPT_TSP_Test {
         mmas__3OptTSP.setShowLog(true);
         mmas__3OptTSP.run();
         mmas__3OptTSP.roundStatistics();
-        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFar()).isEqualTo(42926.52299999999);
+        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFarTC()).isEqualTo(42926.52299999999);
         assertThat(TestUtils.getTourString(mmas__3OptTSP.getGlobalStatistics())).isEqualTo("[38, 13, 0, 41, 24, 5, 31, 17, 25, 42, 4, 36, 3, 21, 29, 14, 6, 9, 12, 30, 11, 46, 44, 20, 19, 32, 2, 45, 35, 37, 8, 16, 18, 1, 10, 39, 40, 23, 15, 43, 27, 34, 28, 33, 7, 22, 26, 38]");
 
         // Iteration 100
@@ -589,7 +589,7 @@ public class MMAS_3OPT_TSP_Test {
         mmas__3OptTSP.setShowLog(true);
         mmas__3OptTSP.run();
         mmas__3OptTSP.roundStatistics();
-        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFar()).isEqualTo(52497.89099999997);
+        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFarTC()).isEqualTo(52497.89099999997);
         assertThat(TestUtils.getTourString(mmas__3OptTSP.getGlobalStatistics())).isEqualTo("[37, 77, 32, 57, 2, 22, 65, 27, 53, 62, 34, 28, 33, 59, 69, 7, 54, 51, 26, 38, 64, 13, 71, 72, 0, 74, 41, 24, 5, 31, 56, 17, 25, 42, 4, 36, 3, 21, 29, 66, 11, 46, 58, 44, 20, 19, 45, 35, 8, 48, 16, 67, 68, 15, 43, 73, 40, 23, 70, 52, 47, 75, 39, 55, 61, 1, 10, 18, 76, 60, 30, 14, 6, 9, 12, 78, 49, 63, 50, 37]");
 
         // Iteration 100
@@ -728,7 +728,7 @@ public class MMAS_3OPT_TSP_Test {
         mmas__3OptTSP.setShowLog(true);
         mmas__3OptTSP.run();
         mmas__3OptTSP.roundStatistics();
-        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFar()).isEqualTo(64724.60799999997);
+        assertThat(mmas__3OptTSP.getGlobalStatistics().getBestSoFarTC()).isEqualTo(64724.60799999997);
         assertThat(TestUtils.getTourString(mmas__3OptTSP.getGlobalStatistics())).isEqualTo("[57, 2, 45, 110, 88, 19, 79, 92, 32, 117, 123, 113, 22, 90, 51, 93, 64, 13, 94, 71, 72, 91, 0, 83, 74, 41, 24, 5, 31, 98, 38, 26, 116, 96, 65, 97, 54, 7, 69, 99, 59, 100, 33, 104, 28, 102, 34, 62, 53, 27, 43, 108, 73, 119, 40, 23, 70, 52, 103, 105, 109, 55, 39, 75, 47, 118, 101, 18, 122, 61, 1, 10, 121, 112, 89, 76, 107, 50, 63, 49, 60, 30, 78, 12, 9, 14, 6, 115, 3, 21, 36, 42, 4, 17, 56, 87, 106, 25, 86, 124, 29, 66, 11, 46, 44, 20, 58, 84, 77, 35, 37, 80, 8, 48, 16, 67, 114, 120, 68, 82, 15, 81, 111, 85, 95, 57]");
 
         // Iteration 100

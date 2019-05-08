@@ -28,7 +28,7 @@ public class MMAS_MEM_ADTSP_Test {
         mmas_mem_adtsp.setStatisticInterval(1);
         mmas_mem_adtsp.setShowLog(false);
         mmas_mem_adtsp.run();
-        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(23854.88035088098);
+        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(23854.88035088098);
         assertThat(TestUtils.getTourString(mmas_mem_adtsp.getGlobalStatistics())).isEqualTo("[36, 4, 77, 51, 95, 38, 29, 47, 99, 70, 40, 13, 2, 42, 45, 28, 33, 82, 54, 6, 8, 56, 19, 11, 26, 85, 34, 61, 59, 76, 97, 22, 44, 90, 31, 10, 14, 16, 58, 73, 20, 71, 9, 83, 89, 48, 5, 62, 0, 91, 7, 41, 79, 30, 88, 55, 96, 74, 18, 3, 64, 65, 25, 69, 21, 15, 87, 93, 52, 78, 17, 23, 37, 35, 98, 46, 92, 27, 66, 57, 60, 50, 86, 24, 80, 68, 63, 39, 53, 1, 43, 49, 72, 67, 84, 81, 94, 75, 32, 12, 36]");
 
         TestUtils.checkValues(mmas_mem_adtsp.getIterationStatistics(), 1, 31671.967452268564, 1903.8917677261363, 0.0, 54.80326530612245, 28431.703154969287);
@@ -72,7 +72,7 @@ public class MMAS_MEM_ADTSP_Test {
         mmas_mem_adtsp.setStatisticInterval(1);
         mmas_mem_adtsp.setShowLog(false);
         mmas_mem_adtsp.run();
-        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(23147.150201020875);
+        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(23147.150201020875);
         assertThat(TestUtils.getTourString(mmas_mem_adtsp.getGlobalStatistics())).isEqualTo("[81, 94, 12, 75, 32, 36, 4, 51, 77, 95, 38, 29, 47, 99, 70, 40, 13, 2, 42, 45, 28, 33, 82, 54, 11, 26, 85, 34, 19, 56, 6, 8, 86, 50, 60, 57, 66, 27, 92, 0, 91, 7, 79, 30, 88, 41, 55, 96, 74, 18, 3, 64, 65, 25, 69, 21, 15, 87, 93, 52, 78, 17, 23, 37, 35, 98, 58, 20, 73, 71, 83, 9, 89, 48, 5, 62, 46, 31, 10, 14, 16, 44, 90, 97, 22, 59, 76, 61, 24, 80, 68, 63, 39, 53, 1, 43, 49, 72, 67, 84, 81]");
 
         TestUtils.checkValues(mmas_mem_adtsp.getIterationStatistics(), 1, 31671.967452268564, 1903.8917677261363, 0.0, 54.80326530612245, 28431.703154969287);
@@ -116,7 +116,7 @@ public class MMAS_MEM_ADTSP_Test {
         mmas_mem_adtsp.setStatisticInterval(1);
         mmas_mem_adtsp.setShowLog(false);
         mmas_mem_adtsp.run();
-        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(30256.959914015813);
+        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(30256.959914015813);
         assertThat(TestUtils.getTourString(mmas_mem_adtsp.getGlobalStatistics())).isEqualTo("[63, 39, 53, 1, 43, 49, 72, 67, 84, 38, 29, 95, 77, 51, 4, 36, 32, 75, 12, 94, 81, 47, 99, 40, 70, 13, 2, 28, 45, 42, 54, 82, 33, 8, 6, 56, 86, 50, 60, 24, 80, 68, 57, 92, 27, 66, 88, 41, 7, 91, 0, 62, 5, 48, 89, 9, 83, 35, 98, 37, 23, 17, 93, 21, 15, 87, 69, 65, 64, 25, 3, 96, 55, 30, 79, 74, 18, 52, 78, 71, 20, 73, 58, 10, 14, 16, 31, 46, 90, 97, 22, 44, 59, 76, 61, 19, 11, 26, 85, 34, 63]");
 
         TestUtils.checkValues(mmas_mem_adtsp.getIterationStatistics(), 1, 39000.247953448736, 3282.359634636903, 0.0, 55.57061224489796, 34158.42633851369);
@@ -160,7 +160,7 @@ public class MMAS_MEM_ADTSP_Test {
         mmas_mem_adtsp.setStatisticInterval(1);
         mmas_mem_adtsp.setShowLog(false);
         mmas_mem_adtsp.run();
-        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(29092.618832926928);
+        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(29092.618832926928);
         assertThat(TestUtils.getTourString(mmas_mem_adtsp.getGlobalStatistics())).isEqualTo("[68, 63, 39, 53, 1, 43, 49, 72, 67, 84, 38, 29, 95, 77, 51, 4, 36, 32, 75, 12, 94, 81, 47, 99, 70, 40, 2, 42, 45, 28, 13, 54, 82, 33, 6, 8, 56, 19, 11, 34, 26, 85, 61, 59, 76, 22, 97, 90, 44, 31, 10, 14, 16, 20, 73, 58, 71, 83, 35, 98, 37, 23, 17, 93, 21, 15, 87, 69, 65, 25, 64, 3, 96, 55, 30, 79, 88, 41, 7, 91, 0, 62, 5, 48, 89, 9, 18, 74, 52, 78, 46, 27, 92, 66, 57, 60, 86, 50, 24, 80, 68]");
 
         TestUtils.checkValues(mmas_mem_adtsp.getIterationStatistics(), 1, 39000.247953448736, 3282.359634636903, 0.0, 55.57061224489796, 34158.42633851369);
@@ -204,7 +204,7 @@ public class MMAS_MEM_ADTSP_Test {
         mmas_mem_adtsp.setStatisticInterval(1);
         mmas_mem_adtsp.setShowLog(false);
         mmas_mem_adtsp.run();
-        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(35849.740145438955);
+        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(35849.740145438955);
         assertThat(TestUtils.getTourString(mmas_mem_adtsp.getGlobalStatistics())).isEqualTo("[26, 11, 19, 85, 34, 61, 59, 76, 22, 97, 90, 44, 31, 10, 16, 14, 58, 73, 20, 71, 9, 83, 98, 17, 23, 37, 35, 48, 5, 62, 0, 46, 91, 7, 41, 88, 30, 79, 55, 96, 74, 18, 89, 78, 87, 15, 21, 93, 52, 65, 64, 3, 69, 25, 66, 57, 27, 92, 50, 86, 56, 6, 8, 54, 82, 33, 45, 28, 2, 42, 13, 70, 40, 99, 47, 51, 77, 95, 29, 67, 84, 38, 4, 36, 12, 32, 75, 94, 81, 43, 72, 49, 1, 53, 39, 63, 68, 24, 80, 60, 26]");
 
         TestUtils.checkValues(mmas_mem_adtsp.getIterationStatistics(), 1, 46813.33363202887, 3211.946543021583, 0.0, 56.90775510204082, 39102.466113931514);
@@ -248,7 +248,7 @@ public class MMAS_MEM_ADTSP_Test {
         mmas_mem_adtsp.setStatisticInterval(1);
         mmas_mem_adtsp.setShowLog(false);
         mmas_mem_adtsp.run();
-        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFar()).isEqualTo(32326.680745082165);
+        assertThat(mmas_mem_adtsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(32326.680745082165);
         assertThat(TestUtils.getTourString(mmas_mem_adtsp.getGlobalStatistics())).isEqualTo("[31, 14, 16, 10, 58, 73, 20, 71, 9, 83, 89, 5, 48, 91, 7, 41, 88, 30, 79, 55, 3, 64, 65, 25, 69, 21, 93, 87, 15, 52, 78, 17, 23, 37, 35, 98, 18, 74, 96, 62, 0, 27, 92, 66, 57, 56, 8, 6, 86, 50, 60, 80, 24, 68, 63, 39, 53, 1, 72, 49, 67, 84, 29, 51, 77, 95, 4, 36, 12, 32, 75, 94, 81, 43, 38, 47, 99, 40, 70, 13, 2, 42, 28, 45, 33, 54, 82, 26, 11, 19, 85, 34, 59, 76, 61, 44, 90, 97, 22, 46, 31]");
 
         TestUtils.checkValues(mmas_mem_adtsp.getIterationStatistics(), 1, 46813.33363202887, 3211.946543021583, 0.0, 56.90775510204082, 39102.466113931514);

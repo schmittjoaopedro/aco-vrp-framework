@@ -12,7 +12,9 @@ public class GlobalStatistics {
 
     private List<Vertex> bestRoute = new ArrayList<>();
 
-    private double bestSoFar;
+    private double bestSoFarTC;
+
+    private double bestSoFarNV;
 
     public void startTimer() {
         currentTime = System.currentTimeMillis();
@@ -22,12 +24,20 @@ public class GlobalStatistics {
         timeStatistics.put(eventName, System.currentTimeMillis() - currentTime);
     }
 
-    public double getBestSoFar() {
-        return bestSoFar;
+    public double getBestSoFarTC() {
+        return bestSoFarTC;
     }
 
-    public void setBestSoFar(double bestSoFar) {
-        this.bestSoFar = bestSoFar;
+    public void setBestSoFarTC(double bestSoFarTC) {
+        this.bestSoFarTC = bestSoFarTC;
+    }
+
+    public double getBestSoFarNV() {
+        return bestSoFarNV;
+    }
+
+    public void setBestSoFarNV(double bestSoFarNV) {
+        this.bestSoFarNV = bestSoFarNV;
     }
 
     public List<Vertex> getBestRoute() {

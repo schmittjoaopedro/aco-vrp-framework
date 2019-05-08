@@ -30,7 +30,7 @@ public class ExperimentResultWriter {
     }
 
     public void initializeALNS(int numIterations) {
-        this.headerNames = new String[]{"ALG", "INSTANCE", "NV", "TC", "MEAN", "MEAN_SD"};
+        this.headerNames = new String[]{"ALG", "INSTANCE", "BSF NV", "BSF TC", "BSF NV MEAN", "BSF TC MEAN", "POFF", "POFF_SD"};
         initialize(numIterations);
     }
 
@@ -80,31 +80,33 @@ public class ExperimentResultWriter {
         }
     }
 
-    public void computeResultsALNS(String resultsPath, String algName, String testInstance, List<IterationStatistic> result) throws Exception {
+    public void computeResultsALNS(String resultsPath, String algName, String testInstance, GlobalStatistics globalStatistics, List<IterationStatistic> unifiedStatistics) throws Exception {
         String fileName = testInstance + "_" + algName + ".txt";
         keys.add(fileName);
         StringBuilder finalResult = new StringBuilder();
-        double mean = 0.0;
-        double sdMean = 0.0;
-        double nv = 0.0;
-        double tc = 0.0;
-        for (IterationStatistic iter : result) {
+        double bsfMeanTC = 0.0;
+        double bsfMeanNV = 0.0;
+        double poffMean = 0.0;
+        double poffMeanSd = 0.0;
+        for (IterationStatistic iter : unifiedStatistics) {
             finalResult.append(iter).append('\n');
-            mean += iter.getBestSoFar();
-            sdMean += iter.getBestSoFarSd();
-            nv = iter.getBestSoFarNV();
-            tc = iter.getBestSoFar();
+            poffMean += iter.getBestSoFar();
+            poffMeanSd += iter.getBestSoFarSd();
+            bsfMeanTC = iter.getBestSoFar();
+            bsfMeanNV = iter.getBestSoFarNV();
         }
-        mean /= numIterations;
-        sdMean /= numIterations;
+        poffMean /= numIterations;
+        poffMeanSd /= numIterations;
         FileUtils.writeStringToFile(Paths.get(resultsPath, fileName).toFile(), finalResult.toString(), "UTF-8");
         addLine(fileName, algName);
         addLine(fileName, testInstance);
-        addLine(fileName, String.valueOf(nv));
-        addLine(fileName, String.valueOf(tc));
-        addLine(fileName, String.valueOf(mean));
-        addLine(fileName, String.valueOf(sdMean));
-        for (IterationStatistic iter : result) {
+        addLine(fileName, String.valueOf(globalStatistics.getBestSoFarNV()));
+        addLine(fileName, String.valueOf(globalStatistics.getBestSoFarTC()));
+        addLine(fileName, String.valueOf(bsfMeanNV));
+        addLine(fileName, String.valueOf(bsfMeanTC));
+        addLine(fileName, String.valueOf(poffMean));
+        addLine(fileName, String.valueOf(poffMeanSd));
+        for (IterationStatistic iter : unifiedStatistics) {
             addLine(fileName, String.valueOf(iter.getBestSoFar()));
         }
     }

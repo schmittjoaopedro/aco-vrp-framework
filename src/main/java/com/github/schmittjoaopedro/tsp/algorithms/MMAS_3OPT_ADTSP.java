@@ -152,7 +152,7 @@ public class MMAS_3OPT_ADTSP implements Runnable {
             }
         }
         globalStatistics.endTimer("MMAS Execution");
-        globalStatistics.setBestSoFar(mmas.getBestSoFar().getCost());
+        globalStatistics.setBestSoFarTC(mmas.getBestSoFar().getCost());
         List<Vertex> tour = new ArrayList<>(graph.getVertexCount() + 1);
         for (int vertexId : mmas.getBestSoFar().getTour()) {
             tour.add(graph.getVertex(vertexId));

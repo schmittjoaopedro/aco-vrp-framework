@@ -82,4 +82,25 @@ public class TrialExecutor {
         return iterationStatistics;
     }
 
+    public GlobalStatistics getGlobalStatistics(List<List<IterationStatistic>> results) {
+        GlobalStatistics globalStatistics = new GlobalStatistics();
+        int iteration = results.get(0).size();
+        double bsfTC = Double.MAX_VALUE;
+        double bsfNV = Double.MAX_VALUE;
+        for (int i = 0; i < iteration; i++) {
+            for (List<IterationStatistic> result : results) {
+                if (result.get(i).getBestSoFarNV() < bsfNV) {
+                    bsfTC = result.get(i).getBestSoFar();
+                    bsfNV = result.get(i).getBestSoFarNV();
+                } else if (result.get(i).getBestSoFarNV() == bsfNV && result.get(i).getBestSoFar() < bsfTC) {
+                    bsfTC = result.get(i).getBestSoFar();
+                    bsfNV = result.get(i).getBestSoFarNV();
+                }
+            }
+        }
+        globalStatistics.setBestSoFarTC(bsfTC);
+        globalStatistics.setBestSoFarNV(bsfNV);
+        return globalStatistics;
+    }
+
 }

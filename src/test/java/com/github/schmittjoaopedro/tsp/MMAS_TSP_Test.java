@@ -37,7 +37,7 @@ public class MMAS_TSP_Test {
         MMAS_TSP mmas_tsp = new MMAS_TSP(graph, 0.02, 1500, 1);
         mmas_tsp.setStatisticInterval(100);
         mmas_tsp.run();
-        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFar()).isEqualTo(21644);
+        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(21644);
         assertThat(TestUtils.getTourString(mmas_tsp.getGlobalStatistics())).isEqualTo("[86, 50, 60, 57, 66, 27, 92, 46, 0, 62, 5, 48, 89, 9, 83, 78, 52, 18, 74, 91, 7, 41, 88, 30, 79, 55, 96, 3, 64, 25, 65, 69, 21, 15, 87, 93, 17, 23, 37, 98, 35, 71, 20, 73, 58, 16, 14, 10, 31, 44, 90, 97, 22, 76, 59, 61, 34, 85, 26, 11, 19, 56, 8, 6, 54, 82, 33, 28, 45, 42, 2, 13, 70, 40, 99, 47, 29, 38, 95, 77, 51, 4, 36, 32, 75, 12, 94, 81, 1, 53, 39, 63, 43, 49, 84, 67, 72, 68, 80, 24, 86]");
 
         // Iteration 100
@@ -174,7 +174,7 @@ public class MMAS_TSP_Test {
         MMAS_TSP mmas_tsp = new MMAS_TSP(graph, 0.02, 1500, 1);
         mmas_tsp.setStatisticInterval(100);
         mmas_tsp.run();
-        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFar()).isEqualTo(30074);
+        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(30074);
         assertThat(TestUtils.getTourString(mmas_tsp.getGlobalStatistics())).isEqualTo("[15, 117, 178, 65, 152, 118, 91, 9, 174, 98, 18, 189, 48, 17, 109, 28, 183, 36, 123, 137, 8, 77, 81, 6, 198, 25, 60, 135, 31, 23, 158, 173, 120, 171, 45, 110, 116, 114, 52, 0, 131, 84, 144, 14, 122, 197, 26, 190, 39, 146, 11, 92, 148, 105, 162, 3, 100, 59, 192, 127, 166, 157, 76, 79, 64, 30, 66, 176, 12, 78, 159, 161, 63, 19, 54, 41, 134, 185, 126, 111, 119, 46, 156, 106, 108, 74, 154, 182, 21, 133, 7, 16, 24, 142, 89, 33, 57, 140, 170, 199, 147, 87, 97, 113, 102, 145, 128, 82, 61, 71, 129, 38, 27, 37, 70, 195, 177, 55, 151, 4, 104, 42, 136, 132, 175, 112, 194, 181, 75, 69, 143, 101, 153, 20, 139, 163, 22, 172, 149, 90, 93, 94, 85, 138, 49, 184, 167, 53, 5, 186, 150, 160, 124, 180, 1, 34, 168, 67, 29, 88, 40, 58, 2, 72, 188, 130, 179, 141, 68, 107, 191, 13, 35, 56, 73, 99, 155, 32, 44, 196, 80, 96, 103, 164, 165, 95, 125, 86, 51, 10, 83, 47, 169, 121, 115, 187, 43, 62, 193, 50, 15]");
 
         // Iteration 100
@@ -311,7 +311,7 @@ public class MMAS_TSP_Test {
         MMAS_TSP mmas_tsp = new MMAS_TSP(graph, 0.02, 1500, 2);
         mmas_tsp.setStatisticInterval(100);
         mmas_tsp.run();
-        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFar()).isEqualTo(29772);
+        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(29772);
         assertThat(TestUtils.getTourString(mmas_tsp.getGlobalStatistics())).isEqualTo("[44, 196, 35, 56, 73, 99, 32, 155, 179, 130, 141, 68, 188, 72, 2, 58, 40, 166, 127, 192, 157, 76, 160, 124, 180, 1, 34, 168, 67, 29, 88, 153, 20, 139, 163, 101, 75, 69, 143, 22, 172, 149, 90, 94, 93, 181, 194, 112, 175, 132, 136, 42, 104, 4, 177, 151, 55, 195, 85, 138, 49, 167, 184, 61, 82, 71, 129, 38, 70, 37, 27, 147, 87, 113, 97, 199, 170, 140, 57, 33, 89, 24, 16, 142, 102, 145, 128, 133, 21, 7, 154, 182, 74, 53, 5, 108, 106, 156, 186, 150, 79, 64, 12, 176, 66, 30, 46, 119, 111, 126, 185, 134, 41, 54, 19, 63, 161, 159, 78, 14, 122, 197, 26, 190, 144, 84, 131, 0, 52, 114, 116, 110, 39, 146, 11, 45, 171, 120, 173, 158, 23, 31, 135, 60, 25, 198, 6, 81, 77, 8, 137, 123, 117, 15, 50, 193, 121, 115, 187, 43, 62, 178, 36, 183, 28, 109, 17, 48, 189, 148, 105, 92, 162, 3, 100, 59, 107, 191, 13, 174, 9, 91, 98, 18, 118, 65, 152, 47, 169, 83, 10, 51, 86, 125, 95, 165, 164, 103, 96, 80, 44]");
 
         // Iteration 100
@@ -449,7 +449,7 @@ public class MMAS_TSP_Test {
         mmas_tsp.setStatisticInterval(100);
         mmas_tsp.setShowLog(false);
         mmas_tsp.run();
-        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFar()).isEqualTo(43128.98399999998);
+        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(43128.98399999998);
         assertThat(TestUtils.getTourString(mmas_tsp.getGlobalStatistics())).isEqualTo("[41, 13, 0, 24, 5, 31, 17, 25, 42, 4, 36, 21, 3, 29, 14, 6, 9, 12, 30, 11, 46, 44, 20, 19, 32, 2, 45, 35, 37, 8, 16, 15, 18, 1, 10, 39, 40, 23, 43, 27, 34, 28, 33, 7, 22, 26, 38, 41]");
 
         // Iteration 100
@@ -587,7 +587,7 @@ public class MMAS_TSP_Test {
         mmas_tsp.setStatisticInterval(100);
         mmas_tsp.setShowLog(false);
         mmas_tsp.run();
-        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFar()).isEqualTo(54915.86299999997);
+        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(54915.86299999997);
         assertThat(TestUtils.getTourString(mmas_tsp.getGlobalStatistics())).isEqualTo("[18, 76, 50, 63, 49, 60, 30, 78, 12, 9, 14, 6, 29, 66, 3, 21, 36, 42, 4, 17, 56, 19, 45, 57, 2, 32, 22, 51, 26, 38, 64, 13, 71, 72, 0, 74, 41, 24, 5, 31, 25, 11, 46, 44, 58, 20, 77, 35, 37, 8, 48, 16, 67, 68, 15, 52, 70, 23, 27, 53, 62, 34, 28, 33, 59, 69, 7, 54, 65, 43, 73, 40, 47, 75, 39, 55, 61, 1, 10, 18]");
 
         // Iteration 100
@@ -725,7 +725,7 @@ public class MMAS_TSP_Test {
         mmas_tsp.setStatisticInterval(100);
         mmas_tsp.setShowLog(false);
         mmas_tsp.run();
-        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFar()).isEqualTo(70165.09999999999);
+        assertThat(mmas_tsp.getGlobalStatistics().getBestSoFarTC()).isEqualTo(70165.09999999999);
         assertThat(TestUtils.getTourString(mmas_tsp.getGlobalStatistics())).isEqualTo("[88, 56, 17, 87, 106, 42, 4, 36, 115, 3, 21, 11, 46, 37, 35, 8, 48, 16, 67, 120, 68, 82, 15, 81, 111, 85, 114, 57, 2, 117, 123, 113, 22, 79, 92, 32, 95, 45, 77, 84, 58, 44, 20, 25, 86, 124, 29, 66, 49, 14, 6, 9, 12, 78, 30, 60, 63, 50, 80, 107, 76, 89, 18, 122, 1, 10, 121, 112, 61, 101, 118, 52, 103, 23, 70, 105, 109, 55, 39, 75, 47, 40, 119, 73, 108, 43, 53, 62, 54, 7, 69, 99, 59, 100, 33, 104, 28, 102, 34, 27, 97, 65, 96, 116, 90, 51, 26, 38, 93, 64, 13, 94, 71, 72, 0, 91, 83, 74, 41, 24, 5, 31, 98, 19, 110, 88]");
 
         // Iteration 100

@@ -161,7 +161,7 @@ public class MMAS_CMADTSP implements Runnable {
             }
         }
         globalStatistics.endTimer("MMAS Execution");
-        globalStatistics.setBestSoFar(mmas.getBestSoFar().getCost());
+        globalStatistics.setBestSoFarTC(mmas.getBestSoFar().getCost());
         List<Vertex> tour = new ArrayList<>(graph.getVertexCount() + 1);
         for (int vertexId : mmas.getBestSoFar().getTour()) {
             tour.add(graph.getVertex(vertexId));
