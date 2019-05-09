@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 public class TrialExecutor {
 
     public void runAlgorithms(List<Runnable> algorithms) {
-        ExecutorService executorService = Executors.newFixedThreadPool(algorithms.size());
+        ExecutorService executorService = Executors.newFixedThreadPool(6);//algorithms.size());
         for (Runnable runnable : algorithms) {
             executorService.execute(runnable);
         }

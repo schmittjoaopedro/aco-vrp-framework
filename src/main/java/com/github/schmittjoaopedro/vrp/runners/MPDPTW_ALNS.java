@@ -17,7 +17,7 @@ public class MPDPTW_ALNS {
 
     private static final String rootDirectory;
 
-    private static int maxIterations = 10000;
+    private static int maxIterations = 100000;
 
     private static final String resultsPath = "C:\\Temp\\mpdptw";
 
@@ -42,6 +42,7 @@ public class MPDPTW_ALNS {
                     ExperimentResultWriter resultWriter = new ExperimentResultWriter();
                     resultWriter.initializeALNS(maxIterations);
                     String problem = typ + "_" + reqSize + "_" + noVert;
+                    System.out.println(problem);
                     for (String id : new String[]{"1", "2", "3", "4", "5"}) {
                         executeInstance(resultWriter, problem + "_" + id);
                     }
