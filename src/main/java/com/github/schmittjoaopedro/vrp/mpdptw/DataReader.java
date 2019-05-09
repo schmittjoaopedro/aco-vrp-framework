@@ -10,18 +10,25 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.*;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class DataReader {
 
     public static ProblemInstance getMpdptwInstance(File file) throws IOException {
+        FileInputStream fisTargetFile = new FileInputStream(file);
+        return getMpdptwInstance(file.getName(), fisTargetFile);
+    }
+
+    public static ProblemInstance getMpdptwInstance(String fileName, InputStream stream) throws IOException {
         ProblemInstance instance = new ProblemInstance();
-        instance.setFileName(file.getName());
+        instance.setFileName(fileName);
         String[] lineData;
         // Load distances
         Graph graph = new Graph();
-        FileInputStream fisTargetFile = new FileInputStream(file);
-        String fileContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\n");
+        String fileContent[] = IOUtils.toString(stream, "UTF-8").split("\n");
         // In the instance files, the second line represents the depot (here considered id 0) and
         // line 3 represents the first request ID (here considered id 1).
         for (int i = 1; i < fileContent.length; i++) {
