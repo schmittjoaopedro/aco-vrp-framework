@@ -103,7 +103,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        com.github.schmittjoaopedro.vrp.runners.MPDPTW_ALNS
+                                        com.github.schmittjoaopedro.vrp.runners.Runner
                                     </mainClass>
                                 </manifest>
                             </archive>
