@@ -43,6 +43,7 @@ public class Runner {
         trialExecutor.runAlgorithms(algs);
         List<List<IterationStatistic>> results = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
+            System.out.println("Computing results of trial " + i + " instance " + file.getName());
             results.add(((ALNS) algs.get(i)).getIterationStatistics());
         }
         GlobalStatistics globalStatistics = trialExecutor.getGlobalStatistics(results);

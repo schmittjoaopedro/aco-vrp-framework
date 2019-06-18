@@ -373,6 +373,7 @@ public class ALNS implements Runnable {
             solutionBest = SolutionUtils.copy(solution);
             String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
             log(msg);
+            System.out.println(Thread.currentThread().getId() + " -> " + msg);
         }
     }
 
