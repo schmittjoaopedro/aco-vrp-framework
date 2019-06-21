@@ -306,7 +306,7 @@ public class ALNS implements Runnable {
                 iterationStatistics.add(iterationStatistic);
                 if (showLog) {
                     System.out.println(iterationStatistic);
-                    logInFile(iterationStatistic.toString());
+                    logInFile(iterationStatistic.toStringCsv());
                 }
             }
 

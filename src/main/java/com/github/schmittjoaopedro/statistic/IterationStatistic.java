@@ -173,19 +173,62 @@ public class IterationStatistic {
     @Override
     public String toString() {
         StringBuilder log = new StringBuilder();
-        if (this.getIteration() > 0) log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
-        if (this.getBestSoFar() > 0) log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 11));
-        if (this.getBestSoFarNV() > 0) log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%.1f", this.getBestSoFarNV()), 5));
-        if (this.getBestSoFarSd() > 0) log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.1f", this.getBestSoFarSd()), 8));
-        if (this.getIterationWorst() > 0) log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 12));
-        if (this.getIterationBest() > 0) log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 12));
-        if (this.getIterationBestNV() > 0) log.append("IT. BEST NV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBestNV()), 5));
-        if (this.getIterationMean() > 0) log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 12));
-        if (this.getIterationSd() > 0) log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 10));
-        if (this.getBranchFactor() > 0) log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 10));
-        if (this.getDiversity() > 0) log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 10));
-        if (getPenaltyRate() > 0) log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
+        if (this.getIteration() > 0)
+            log.append("IT. " + StringUtils.rightPad(String.format("%d", (int) this.getIteration()), 8));
+        if (this.getBestSoFar() > 0)
+            log.append("BSF: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getBestSoFar()), 11));
+        if (this.getBestSoFarNV() > 0)
+            log.append("BSF. NV: " + StringUtils.rightPad(String.format(Locale.US, "%.1f", this.getBestSoFarNV()), 5));
+        if (this.getBestSoFarSd() > 0)
+            log.append("BSF. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.1f", this.getBestSoFarSd()), 8));
+        if (this.getIterationWorst() > 0)
+            log.append("IT. WORST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationWorst()), 12));
+        if (this.getIterationBest() > 0)
+            log.append("IT. BEST: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBest()), 12));
+        if (this.getIterationBestNV() > 0)
+            log.append("IT. BEST NV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationBestNV()), 8));
+        if (this.getIterationMean() > 0)
+            log.append("IT. MEAN: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationMean()), 12));
+        if (this.getIterationSd() > 0)
+            log.append("IT. SD: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getIterationSd()), 10));
+        if (this.getBranchFactor() > 0)
+            log.append("BRANCH FACTOR: " + StringUtils.rightPad(String.format(Locale.US, "%.3f", this.getBranchFactor()), 10));
+        if (this.getDiversity() > 0)
+            log.append("DIV: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getDiversity()), 10));
+        if (getPenaltyRate() > 0)
+            log.append("PEN. RATE: " + StringUtils.rightPad(String.format(Locale.US, "%.2f", this.getPenaltyRate()), 8));
         if (getFeasible() > 0) log.append("FEASIBLE: " + getFeasible());
+        return log.toString();
+    }
+
+    public String toStringCsv() {
+        StringBuilder log = new StringBuilder();
+        log.append(String.format("%d", (int) this.getIteration())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getBestSoFar())).append(",");
+        log.append(String.format(Locale.US, "%.1f", this.getBestSoFarNV())).append(",");
+        log.append(String.format(Locale.US, "%.1f", this.getBestSoFarSd())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getIterationWorst())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getIterationBest())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getIterationBestNV())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getIterationMean())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getIterationSd())).append(",");
+        log.append(String.format(Locale.US, "%.2f", this.getPenaltyRate())).append(",");
+        log.append(getFeasible());
+        return log.toString();
+    }
+
+    public String toStringCsvHeader() {
+        StringBuilder log = new StringBuilder();
+        log.append("iteration").append(",");
+        log.append("bestSoFar").append(",");
+        log.append("bestSoFarNv").append(",");
+        log.append("bestSoFarSd").append(",");
+        log.append("worst").append(",");
+        log.append("best").append(",");
+        log.append("bestNv").append(",");
+        log.append("mean").append(",");
+        log.append("sd").append(",");
+        log.append("penaltyRate");
         return log.toString();
     }
 }

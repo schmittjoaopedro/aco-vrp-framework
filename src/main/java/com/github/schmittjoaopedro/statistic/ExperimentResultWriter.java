@@ -81,7 +81,7 @@ public class ExperimentResultWriter {
     }
 
     public void computeResultsALNS(String resultsPath, String algName, String testInstance, GlobalStatistics globalStatistics, List<IterationStatistic> unifiedStatistics) throws Exception {
-        String fileName = testInstance + "_" + algName + ".txt";
+        String fileName = testInstance + "_" + algName + ".csv";
         keys.add(fileName);
         StringBuilder finalResult = new StringBuilder();
         double bsfMeanTC = 0.0;
@@ -89,7 +89,10 @@ public class ExperimentResultWriter {
         double poffMean = 0.0;
         double poffMeanSd = 0.0;
         for (IterationStatistic iter : unifiedStatistics) {
-            finalResult.append(iter).append('\n');
+            if (finalResult.length() == 0) {
+                finalResult.append(iter.toStringCsvHeader()).append('\n');
+            }
+            finalResult.append(iter.toStringCsv()).append('\n');
             poffMean += iter.getBestSoFar();
             poffMeanSd += iter.getBestSoFarSd();
             bsfMeanTC = iter.getBestSoFar();
