@@ -13,13 +13,16 @@ public class DynamicInstancesGenerator {
     private static Random random = new Random(1);
 
     public static void generateDynamicInstances(ProblemInstance instance) {
-        double[] varyingTimes = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
-        double[] varyingRequests = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+        //double[] varyingTimes = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+        //double[] varyingRequests = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9};
+        int numTrials = 1;
+        double[] varyingTimes = {0.1, 0.25, 0.5, 0.75, 1.0};
+        double[] varyingRequests = {0.1, 0.25, 0.5, 0.75, 1.0};
 
         for (double a : varyingTimes) {
             generateDataSetP1(instance, a);
         }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < numTrials; i++) {
             for (double q : varyingRequests) {
                 generateDataSetP2(instance, q, i);
             }

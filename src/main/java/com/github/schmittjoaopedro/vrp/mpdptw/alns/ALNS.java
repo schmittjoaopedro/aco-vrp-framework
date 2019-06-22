@@ -304,10 +304,7 @@ public class ALNS implements Runnable {
                 iterationStatistic.setIterationBestNV(solution.tours.size());
                 iterationStatistic.setFeasible(solution.feasible ? 1.0 : 0.0);
                 iterationStatistics.add(iterationStatistic);
-                if (showLog) {
-                    System.out.println(iterationStatistic);
-                    logInFile(iterationStatistic.toStringCsv());
-                }
+                logInFile(iterationStatistic.toStringCsv());
             }
 
             iteration++;
@@ -343,7 +340,7 @@ public class ALNS implements Runnable {
     private void log(String msg) {
         log.add(msg);
         if (showLog) {
-            System.out.println(msg);
+            System.out.println(Thread.currentThread().getId() + " -> " + msg);
         }
     }
 
@@ -373,7 +370,6 @@ public class ALNS implements Runnable {
             solutionBest = SolutionUtils.copy(solution);
             String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
             log(msg);
-            System.out.println(Thread.currentThread().getId() + " -> " + msg);
         }
     }
 

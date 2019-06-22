@@ -339,10 +339,13 @@ public class PDPTW_UtilsTest {
     @Test
     @Ignore
     public void instanceGeneratorTest() throws Exception {
-        File folder = new File(staticRootDirectory);
+        String problem = "pdp_1000";
+        String path = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource(problem).getFile().substring(1)).toString();;
+        File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
         for (File file : listOfFiles) {
-            DynamicInstancesGenerator.generateDynamicInstances(DataReader.getPdptwInstance(Paths.get(staticRootDirectory, file.getName()).toFile()));
+            ProblemInstance problemInstance = DataReader.getPdptwInstance(Paths.get(path, file.getName()).toFile());
+            DynamicInstancesGenerator.generateDynamicInstances(problemInstance);
         }
     }
 
