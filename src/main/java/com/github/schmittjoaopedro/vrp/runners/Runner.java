@@ -10,6 +10,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,10 +23,15 @@ public class Runner {
         String inputFolder = args[0];
         String outputFolder = args[1];
         for (File file : new File(inputFolder).listFiles()) {
-            ExperimentResultWriter resultWriter = new ExperimentResultWriter();
-            resultWriter.initializeALNS(maxIterations);
-            executeInstance(resultWriter, file, outputFolder);
-            resultWriter.compileResults(outputFolder, "RESULTS-" + file.getName().replaceAll(".txt", StringUtils.EMPTY) + ".csv");
+            String resultFile = "RESULTS-" + file.getName().replaceAll(".txt", StringUtils.EMPTY) + ".csv";
+            if (!Paths.get(outputFolder, resultFile).toFile().exists()) {
+                ExperimentResultWriter resultWriter = new ExperimentResultWriter();
+                resultWriter.initializeALNS(maxIterations);
+                executeInstance(resultWriter, file, outputFolder);
+                resultWriter.compileResults(outputFolder, resultFile);
+            } else {
+                System.out.println("Skipping " + resultFile);
+            }
         }
     }
 
