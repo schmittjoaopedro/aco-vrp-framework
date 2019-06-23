@@ -32,6 +32,12 @@ public class ProblemInstance {
 
     private boolean capacityRestricted;
 
+    private long fullEvaluationCount = 0;
+
+    private long partialEvaluationCount = 0;
+
+    private long costEvaluationCount = 0;
+
     // Requests not visited yet by the vehicle during moving vehicle simulation
     private Set<Integer> idleRequests = new HashSet<>();
 
@@ -125,6 +131,18 @@ public class ProblemInstance {
 
     public Set<Integer> getIdleRequests() {
         return idleRequests;
+    }
+
+    public long getFullEvaluationCount() {
+        return fullEvaluationCount;
+    }
+
+    public long getPartialEvaluationCount() {
+        return partialEvaluationCount;
+    }
+
+    public long getCostEvaluationCount() {
+        return costEvaluationCount;
     }
 
     /*
@@ -370,6 +388,7 @@ public class ProblemInstance {
                 solution.totalCost += Objective.Attendance.getValue();
             }
         }
+        fullEvaluationCount++;
     }
 
     public void solutionEvaluation(Solution solution, int k) {
@@ -432,6 +451,7 @@ public class ProblemInstance {
         if (routePenalty > 0) {
             solution.timeWindowPenalty += routePenalty;
         }
+        partialEvaluationCount++;
     }
 
     @Deprecated
@@ -654,6 +674,7 @@ public class ProblemInstance {
             cost += distances[tour.get(i)][tour.get(i + 1)];
         }
         cost = cost * Objective.Distance.getValue();
+        costEvaluationCount++;
         return cost;
     }
 
@@ -675,6 +696,7 @@ public class ProblemInstance {
             }
         }
         cost = cost * Objective.Distance.getValue();
+        costEvaluationCount++;
         return cost;
     }
 
@@ -696,6 +718,7 @@ public class ProblemInstance {
             }
         }
         cost = cost * Objective.Distance.getValue();
+        costEvaluationCount++;
         return cost;
     }
 

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -35,6 +36,9 @@ public class ALNS implements Runnable {
     private List<IterationStatistic> iterationStatistics;
 
     private GlobalStatistics globalStatistics = new GlobalStatistics();
+
+    private DetailedStatistics detailedStatistics = new DetailedStatistics();
+
     /*
      * Parameters section.
      *
@@ -131,10 +135,6 @@ public class ALNS implements Runnable {
 
     private Random random;
 
-    private Long startTime;
-
-    private Long endTime;
-
     private Long statisticInterval = 1L;
 
     private RelocateRequestOperator relocateRequestOperator;
@@ -142,6 +142,8 @@ public class ALNS implements Runnable {
     private ExchangeRequestOperator exchangeRequestOperator;
 
     private boolean generateFile = Boolean.FALSE;
+
+    private boolean generateDetailedStatistics = Boolean.FALSE;
 
     private InsertionHeuristic insertionHeuristic;
 
@@ -154,6 +156,10 @@ public class ALNS implements Runnable {
     private MovingVehicle movingVehicle;
 
     private boolean showLog = false;
+
+    private long endTime;
+
+    private long startTime;
 
     public ALNS(ProblemInstance instance, Random random) {
         this(instance, DEFAULT_MAX_ITERATIONS, random);
@@ -215,6 +221,8 @@ public class ALNS implements Runnable {
         globalStatistics.startTimer();
         while (!stopCriteriaMeet()) {
 
+            Long iterationTime = System.currentTimeMillis();
+
             // Process new requests
             List<Integer> newRequestIds = dynamicHandler.processDynamism(iteration);
             if (!newRequestIds.isEmpty()) {
@@ -250,6 +258,13 @@ public class ALNS implements Runnable {
                 SolutionUtils.removeEmptyVehicles(solutionNew);
                 instance.solutionEvaluation(solutionNew); // Update the solution cost
 
+                detailedStatistics.s_best_TC = solutionBest.totalCost;
+                detailedStatistics.s_best_NV = solutionBest.tours.size();
+                detailedStatistics.s_current_TC = solution.totalCost;
+                detailedStatistics.s_current_NV = solution.tours.size();
+                detailedStatistics.s_new_TC = solutionNew.totalCost;
+                detailedStatistics.s_new_NV = solutionNew.tours.size();
+
                 if (accept(solutionNew, solution)) {
                     int solutionHash = SolutionUtils.getHash(solutionNew);
                     if (!hashNumber.contains(solutionHash)) {
@@ -259,12 +274,15 @@ public class ALNS implements Runnable {
                             updateBest(solution); // S_best <- S <- S'
                             // Increase the scores of io and ro by sigma1
                             updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
+                            detailedStatistics.bsfAcceptCount++;
                         } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
                             // Increase the scores of the ro and io by sigma2
                             updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+                            detailedStatistics.currentAcceptCount++;
                         } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
                             // Increase the scores of the ro and io by sigma3
                             updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+                            detailedStatistics.worstAcceptCount++;
                         }
                     }
                     solution = solutionNew; // S <- S'
@@ -307,6 +325,8 @@ public class ALNS implements Runnable {
                 logInFile(iterationStatistic.toStringCsv());
             }
 
+            detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
+            logDetailedStatistics();
             iteration++;
         }
         globalStatistics.endTimer("Algorithm");
@@ -347,8 +367,49 @@ public class ALNS implements Runnable {
     private void logInFile(String text) {
         if (generateFile) {
             try {
-                FileUtils.writeStringToFile(new File("C:\\Temp\\mpdptw\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
+                FileUtils.writeStringToFile(new File("C:\\Temp\\result-" + instance.getFileName()), text + "\n", "UTF-8", true);
             } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void logDetailedStatistics() {
+        if (generateDetailedStatistics) {
+            detailedStatistics.costEvaluationCount = instance.getCostEvaluationCount();
+            detailedStatistics.partialEvaluationCount = instance.getPartialEvaluationCount();
+            detailedStatistics.fullEvaluationCount = instance.getFullEvaluationCount();
+            detailedStatistics.hash_solution_count = hashNumber.size();
+            detailedStatistics.noise_false = noiseWeights[0];
+            detailedStatistics.noise_true = noiseWeights[1];
+            detailedStatistics.insert_greedy = riWeights[InsertionMethod.Greedy.ordinal()];
+            detailedStatistics.insert_regret3 = riWeights[InsertionMethod.Regret3.ordinal()];
+            detailedStatistics.insert_regret3Noise = riWeights[InsertionMethod.Regret3Noise.ordinal()];
+            detailedStatistics.insert_regretM = riWeights[InsertionMethod.RegretM.ordinal()];
+            detailedStatistics.insert_regretMNoise = riWeights[InsertionMethod.RegretMNoise.ordinal()];
+            detailedStatistics.removal_expensiveNode = roWeights[RemovalMethod.ExpensiveNode.ordinal()];
+            detailedStatistics.removal_expensiveRequest = roWeights[RemovalMethod.ExpensiveRequest.ordinal()];
+            detailedStatistics.removal_random = roWeights[RemovalMethod.Random.ordinal()];
+            detailedStatistics.removal_shaw = roWeights[RemovalMethod.Shaw.ordinal()];
+            detailedStatistics.temperature = T;
+            try {
+                StringBuilder text = new StringBuilder();
+                Field[] fields = DetailedStatistics.class.getFields();
+                // Log file header
+                if (iteration == 1) {
+                    String[] fieldNames = new String[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        fieldNames[i] = fields[i].getName();
+                    }
+                    text.append(StringUtils.join(fieldNames, ';')).append('\n');
+                }
+                String[] values = new String[fields.length];
+                for (int i = 0; i < fields.length; i++) {
+                    values[i] = String.valueOf(fields[i].get(detailedStatistics)).replaceAll(",", ".");
+                }
+                text.append(StringUtils.join(values, ';')).append('\n');
+                FileUtils.writeStringToFile(new File("C:\\Temp\\detailed-" + instance.getFileName().replaceAll(".txt", ".csv")), text.toString(), "UTF-8", true);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -430,7 +491,7 @@ public class ALNS implements Runnable {
     }
 
     private Solution applyImprovement(Solution solution) {
-        boolean improvement = true;
+        boolean improvement = true, foundImprovement = false;
         Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;
         while (improvement) {
@@ -440,8 +501,13 @@ public class ALNS implements Runnable {
             if (SolutionUtils.getBest(improved, tempSolution) == tempSolution) {
                 improved = SolutionUtils.copy(tempSolution);
                 improvement = true;
+                foundImprovement = true;
             }
         }
+        if (foundImprovement) {
+            detailedStatistics.localSearchImproved++;
+        }
+        detailedStatistics.localSearchUsed++;
         return improved;
     }
 
@@ -584,6 +650,10 @@ public class ALNS implements Runnable {
 
     public void enableMovingVehicle() {
         movingVehicle = new MovingVehicle(instance, 0, numIterations);
+    }
+
+    public void setGenerateDetailedStatistics(boolean generateDetailedStatistics) {
+        this.generateDetailedStatistics = generateDetailedStatistics;
     }
 
     public void setGenerateFile(boolean generateFile) {

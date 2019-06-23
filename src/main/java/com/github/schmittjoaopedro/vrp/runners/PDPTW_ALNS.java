@@ -3,14 +3,16 @@ package com.github.schmittjoaopedro.vrp.runners;
 import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
 
 public class PDPTW_ALNS {
 
-    int maxIterations = 100000;
+    private static int maxIterations = 25000;
 
     private static final String pdptw100Directory;
 
@@ -20,11 +22,27 @@ public class PDPTW_ALNS {
 
     private static final String pdptw600Directory;
 
+    private static final String pdptw800Directory;
+
+    private static final String pdptw1000Directory;
+
+    private static final String dpdptw100Directory;
+
+    private static final String dpdptw200Directory;
+
+    private static final String dpdptw400Directory;
+
     static {
         pdptw100Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
         pdptw200Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
         pdptw400Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
         pdptw600Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
+        pdptw800Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
+        pdptw1000Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdptw1000").getFile().substring(1)).toString();
+
+        dpdptw100Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/100-tasks").getFile().substring(1)).toString();
+        dpdptw200Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/200-tasks").getFile().substring(1)).toString();
+        dpdptw400Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/400-tasks").getFile().substring(1)).toString();
     }
 
     public void pdptw_100_tasks_test() throws IOException {
@@ -276,11 +294,28 @@ public class PDPTW_ALNS {
         executeProblemSolver(pdptw600Directory, "LRC2_6_10");
     }
 
-    private void executeProblemSolver(String root, String problem) throws IOException {
+    public static void main(String[] args) throws Exception {
+        //executeProblemSolver(pdptw100Directory, "lrc101");
+        //executeProblemSolver(dpdptw100Directory, "lrc101_a_0.5");
+        //executeProblemSolver(pdptw100Directory, "lrc101_q_0_0.5");
+        executeProblemSolver(pdptw400Directory, "LRC1_4_1");
+        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_a_0.5");
+        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_q_0_0.5");
+        //executeProblemSolver(pdptw1000Directory, "LRC1_10_1");
+    }
+
+    private static void executeProblemSolver(String root, String problem) throws IOException {
         String fileName = problem + ".txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(root, fileName).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
+        alns.setGenerateDetailedStatistics(false);
+        alns.setGenerateFile(false);
+        alns.setShowLog(true);
+        Long startTime = System.currentTimeMillis();
         alns.run();
+        String text = "Time = " + (System.currentTimeMillis() - startTime);
+        FileUtils.writeStringToFile(new File("C:\\Temp\\detailed-" + instance.getFileName()), text, "UTF-8", true);
     }
+
 
 }

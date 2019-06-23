@@ -158,7 +158,7 @@ public class InsertionOperator {
                         ArrayList<Integer> originalRoute = new ArrayList<>(solution.tours.get(k)); // Clone the route from vehicle k to evict update the original one
                         if (insertRequestOnVehicle(solution, k, currReq.requestId, pickupMethod, InsertionMethod.Greedy)) { // If the request insertion is feasible
                             double costIncrease = (solution.tourCosts.get(k) - prevCost); // Calculate the lost of insert request r in vehicle k
-                            costIncrease += useNoise + generateNoise();
+                            costIncrease += useNoise + generateNoise(); //TODO: FIX to multiplication
                             // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
                             if (insertRequest == null || costIncrease < insertRequest.cost) {
                                 insertRequest = new InsertRequest(costIncrease, k, currReq.requestId, solution.tours.get(k));
