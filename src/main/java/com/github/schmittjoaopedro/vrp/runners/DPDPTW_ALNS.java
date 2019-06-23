@@ -34,7 +34,7 @@ public class DPDPTW_ALNS {
     }
 
     public static void main(String[] args) throws Exception {
-        executeProblemSolver(pdptw600Directory, "LC1_6_1_a_0.5");
+        executeProblemSolver(pdptw400Directory, "LR1_4_8_q_0_0.1");
     }
 
     private static void executeProblemSolver(String root, String problem) throws IOException {
