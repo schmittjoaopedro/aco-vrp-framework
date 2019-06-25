@@ -646,6 +646,7 @@ public class ALNS implements Runnable {
         msg += "\nAlgorithm time(s) = " + ((globalStatistics.getTimeStatistics().get("Algorithm")) / 1000.0);
         log(msg);
         logInFile(msg);
+        //MapPrinter.printResult(solutionBest, instance, 800, 600, instance.getFileName());
     }
 
     public void enableMovingVehicle() {

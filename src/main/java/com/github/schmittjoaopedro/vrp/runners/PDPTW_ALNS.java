@@ -3,9 +3,7 @@ package com.github.schmittjoaopedro.vrp.runners;
 import com.github.schmittjoaopedro.vrp.mpdptw.DataReader;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -295,12 +293,14 @@ public class PDPTW_ALNS {
     }
 
     public static void main(String[] args) throws Exception {
-        //executeProblemSolver(pdptw100Directory, "lrc101");
+        executeProblemSolver(pdptw100Directory, "lc101");
+        executeProblemSolver(pdptw100Directory, "lr101");
+        executeProblemSolver(pdptw100Directory, "lrc101");
         //executeProblemSolver(dpdptw100Directory, "lrc101_a_0.5");
         //executeProblemSolver(pdptw100Directory, "lrc101_q_0_0.5");
-        executeProblemSolver(pdptw400Directory, "LRC1_4_1");
-        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_a_0.5");
-        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_q_0_0.5");
+//        executeProblemSolver(pdptw400Directory, "LRC1_4_1");
+//        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_a_0.5");
+//        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_q_0_0.5");
         //executeProblemSolver(pdptw1000Directory, "LRC1_10_1");
     }
 
@@ -309,13 +309,9 @@ public class PDPTW_ALNS {
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(root, fileName).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
         alns.setGenerateDetailedStatistics(false);
-        alns.setGenerateFile(false);
+        alns.setGenerateFile(true);
         alns.setShowLog(true);
-        Long startTime = System.currentTimeMillis();
         alns.run();
-        String text = "Time = " + (System.currentTimeMillis() - startTime);
-        FileUtils.writeStringToFile(new File("C:\\Temp\\detailed-" + instance.getFileName()), text, "UTF-8", true);
     }
-
 
 }
