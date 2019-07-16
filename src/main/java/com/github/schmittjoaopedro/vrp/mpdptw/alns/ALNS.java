@@ -269,13 +269,13 @@ public class ALNS implements Runnable {
                 if (!hashNumber.contains(solutionHash)) { // If not know solution on TABU-list
                     hashNumber.add(solutionHash);
                     if (accept(solutionNew, solution)) { // if accept(S', S) then
-                        if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
+                        if (instance.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
                             solutionNew = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
                             updateBest(solutionNew); // S_best <- S <- S'
                             // Increase the scores of io and ro by sigma1
                             updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
                             detailedStatistics.bsfAcceptCount++;
-                        } else if (SolutionUtils.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
+                        } else if (instance.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
                             // Increase the scores of the ro and io by sigma2
                             updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
                             detailedStatistics.currentAcceptCount++;
@@ -472,7 +472,7 @@ public class ALNS implements Runnable {
      * with a probability e^-(f(S')-f(S))/T.
      */
     private boolean accept(Solution newSolution, Solution oldSolution) {
-        if (SolutionUtils.getBest(oldSolution, newSolution) == newSolution) {
+        if (instance.getBest(oldSolution, newSolution) == newSolution) {
             return true;
         } else if ("SA".equals(acceptMethod)) {
             double difference = newSolution.totalCost - oldSolution.totalCost;
@@ -499,7 +499,7 @@ public class ALNS implements Runnable {
             improvement = false;
             tempSolution = relocateRequestOperator.relocate(tempSolution);
             tempSolution = exchangeRequestOperator.exchange(tempSolution);
-            if (SolutionUtils.getBest(improved, tempSolution) == tempSolution) {
+            if (instance.getBest(improved, tempSolution) == tempSolution) {
                 improved = SolutionUtils.copy(tempSolution);
                 improvement = true;
                 foundImprovement = true;

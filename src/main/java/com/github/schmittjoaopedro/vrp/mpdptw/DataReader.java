@@ -24,6 +24,7 @@ public class DataReader {
 
     public static ProblemInstance getMpdptwInstance(String fileName, InputStream stream) throws IOException {
         ProblemInstance instance = new ProblemInstance();
+        instance.setMinimizeVehicles(false);
         instance.setFileName(fileName);
         String[] lineData;
         // Load distances
@@ -126,6 +127,7 @@ public class DataReader {
 
     public static ProblemInstance getPdptwInstance(File file) throws IOException {
         ProblemInstance instance = new ProblemInstance();
+        instance.setMinimizeVehicles(true);
         instance.setFileName(file.getName());
         String[] lineData;
         FileInputStream fisTargetFile = new FileInputStream(file);

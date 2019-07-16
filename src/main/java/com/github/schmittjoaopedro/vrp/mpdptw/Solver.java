@@ -191,7 +191,7 @@ public class Solver implements Runnable {
         Solution bestAnt = mmas.findBest();
         instance.solutionEvaluation(bestAnt);
         Solution improvedAnt = localSearch.optimize(bestAnt);
-        if (SolutionUtils.getBest(bestAnt, improvedAnt) != bestAnt) {
+        if (instance.getBest(bestAnt, improvedAnt) != bestAnt) {
             int antIndex = mmas.getAntPopulation().indexOf(bestAnt);
             mmas.getAntPopulation().set(antIndex, improvedAnt);
         }

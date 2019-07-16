@@ -51,7 +51,7 @@ public class RelocateNodeOperator {
             }
         }
         instance.solutionEvaluation(improvedSol);
-        return SolutionUtils.getBest(ant, improvedSol);
+        return instance.getBest(ant, improvedSol);
     }
 
     public ArrayList<Integer> relocate(ArrayList<Integer> tour, int startAt) {

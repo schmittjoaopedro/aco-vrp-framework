@@ -170,7 +170,7 @@ public class MMAS {
     public boolean updateBestSoFar() {
         Solution iterationBest = findBest();
         boolean found = false;
-        if (SolutionUtils.getBest(bestSoFar, iterationBest) != bestSoFar) {
+        if (bestSoFar.tours.isEmpty() || instance.getBest(bestSoFar, iterationBest) != bestSoFar) {
             found = true;
             SolutionUtils.copyFromTo(iterationBest, bestSoFar);
             SolutionUtils.copyFromTo(iterationBest, restartBest);
@@ -195,7 +195,7 @@ public class MMAS {
 
     public void updateRestartBest() {
         Solution iterationBest = findBest();
-        if (SolutionUtils.getBest(restartBest, iterationBest) != restartBest) {
+        if (instance.getBest(restartBest, iterationBest) != restartBest) {
             SolutionUtils.copyFromTo(iterationBest, restartBest);
             restartFoundBest = getCurrentIteration();
         }

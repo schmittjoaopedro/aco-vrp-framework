@@ -66,7 +66,7 @@ public class RelocateRequestOperator {
             }
         }
         instance.solutionEvaluation(improvedSol);
-        return SolutionUtils.getBest(solution, improvedSol);
+        return instance.getBest(solution, improvedSol);
     }
 
 }

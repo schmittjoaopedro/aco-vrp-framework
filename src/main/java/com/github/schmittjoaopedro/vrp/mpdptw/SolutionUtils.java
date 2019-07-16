@@ -1,11 +1,8 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.tsp.utils.Maths;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class SolutionUtils {
@@ -135,19 +132,6 @@ public class SolutionUtils {
             }
         }
         return vehicle;
-    }
-
-    public static Solution getBest(Solution oldSol, Solution newSol) {
-        boolean isBetterCost = newSol.tours.size() <= oldSol.tours.size();
-        if (isBetterCost) {
-            isBetterCost = Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
-        }
-        if (oldSol.feasible) {
-            return newSol.feasible && isBetterCost ? newSol : oldSol;
-        } else {
-            return isBetterCost ? newSol : oldSol;
-        }
-
     }
 
     public static int getHash(Solution solution) {

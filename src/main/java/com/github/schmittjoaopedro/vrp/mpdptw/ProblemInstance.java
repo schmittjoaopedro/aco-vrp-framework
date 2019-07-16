@@ -38,12 +38,22 @@ public class ProblemInstance {
 
     private long costEvaluationCount = 0;
 
+    private boolean minimizeVehicles = false;
+
     // Requests not visited yet by the vehicle during moving vehicle simulation
     private Set<Integer> idleRequests = new HashSet<>();
 
     /*
      * GETTERS and SETTERS
      */
+
+    public boolean isMinimizeVehicles() {
+        return minimizeVehicles;
+    }
+
+    public void setMinimizeVehicles(boolean minimizeVehicles) {
+        this.minimizeVehicles = minimizeVehicles;
+    }
 
     public String getFileName() {
         return fileName;
@@ -218,7 +228,7 @@ public class ProblemInstance {
     }
 
     public boolean allowAddVehicles() {
-        return Objective.Vehicles.getValue() == 0.0;
+        return !isMinimizeVehicles();
     }
 
     public Double x(int node) {
@@ -788,6 +798,25 @@ public class ProblemInstance {
             feasible = requests[reqI].twStart + requests[reqI].serviceTime + distances[i][j] < requests[reqJ].twEnd; // is time feasible
         }
         return feasible;
+    }
+
+    public Solution getBest(Solution oldSol, Solution newSol) {
+        boolean isBetterCost;
+        if (isMinimizeVehicles()) {
+            boolean minimizedVehicles = newSol.tours.size() < oldSol.tours.size();
+            boolean minimizedDistance = newSol.tours.size() == oldSol.tours.size() &&
+                    Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
+            isBetterCost = minimizedVehicles || minimizedDistance;
+        } else {
+            boolean minimizedDistance = Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
+            isBetterCost = minimizedDistance;
+        }
+        if (oldSol.feasible) {
+            return newSol.feasible && isBetterCost ? newSol : oldSol;
+        } else {
+            return isBetterCost ? newSol : oldSol;
+        }
+
     }
 
     public enum Objective {

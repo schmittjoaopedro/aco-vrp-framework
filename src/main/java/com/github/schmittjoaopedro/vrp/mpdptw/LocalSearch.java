@@ -71,7 +71,7 @@ public class LocalSearch {
             insertionOperator.insertRequests(tempAnt, removedRequests, pickupMethod, insertionMethod, 0);
             instance.solutionEvaluation(tempAnt);
             SolutionUtils.removeEmptyVehicles(tempAnt);
-            improvement = SolutionUtils.getBest(improvedAnt, tempAnt) == tempAnt;
+            improvement = instance.getBest(improvedAnt, tempAnt) == tempAnt;
             if (improvement) {
                 SolutionUtils.copyFromTo(tempAnt, improvedAnt);
                 improved = true;

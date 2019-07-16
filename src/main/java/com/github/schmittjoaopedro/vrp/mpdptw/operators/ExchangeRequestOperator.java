@@ -73,7 +73,7 @@ public class ExchangeRequestOperator {
             }
         }
         instance.solutionEvaluation(improvedSol);
-        return SolutionUtils.getBest(solution, improvedSol);
+        return instance.getBest(solution, improvedSol);
     }
 
 }
