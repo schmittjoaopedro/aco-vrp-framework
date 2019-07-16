@@ -138,7 +138,10 @@ public class SolutionUtils {
     }
 
     public static Solution getBest(Solution oldSol, Solution newSol) {
-        boolean isBetterCost = Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
+        boolean isBetterCost = newSol.tours.size() <= oldSol.tours.size();
+        if (isBetterCost) {
+            isBetterCost = Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
+        }
         if (oldSol.feasible) {
             return newSol.feasible && isBetterCost ? newSol : oldSol;
         } else {

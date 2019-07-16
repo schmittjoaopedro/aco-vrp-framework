@@ -265,10 +265,10 @@ public class ALNS implements Runnable {
                 detailedStatistics.s_new_TC = solutionNew.totalCost;
                 detailedStatistics.s_new_NV = solutionNew.tours.size();
 
-                if (accept(solutionNew, solution)) {
-                    int solutionHash = SolutionUtils.getHash(solutionNew);
-                    if (!hashNumber.contains(solutionHash)) {
-                        hashNumber.add(solutionHash);
+                int solutionHash = SolutionUtils.getHash(solutionNew);
+                if (!hashNumber.contains(solutionHash)) {
+                    hashNumber.add(solutionHash);
+                    if (accept(solutionNew, solution)) {
                         if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
                             solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
                             updateBest(solution); // S_best <- S <- S'
@@ -279,13 +279,13 @@ public class ALNS implements Runnable {
                             // Increase the scores of the ro and io by sigma2
                             updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
                             detailedStatistics.currentAcceptCount++;
-                        } else if (accept(solutionNew, solution)) { // else if accept(S', S) then
+                        } else { // else if accept(S', S) then
                             // Increase the scores of the ro and io by sigma3
                             updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
                             detailedStatistics.worstAcceptCount++;
                         }
+                        solution = solutionNew; // S <- S'
                     }
-                    solution = solutionNew; // S <- S'
                 }
 
                 /*
@@ -429,7 +429,7 @@ public class ALNS implements Runnable {
     private void updateBest(Solution solution, boolean force) {
         if (force || (solution.feasible && solution.totalCost < solutionBest.totalCost)) {
             solutionBest = SolutionUtils.copy(solution);
-            String msg = "NEW BEST = Iter " + iteration + " BFS = " + solutionBest.totalCost + ", feasible = " + solutionBest.feasible;
+            String msg = "NEW BEST = Iter " + iteration + " Sol = " + solution.toString();
             log(msg);
         }
     }
@@ -470,14 +470,14 @@ public class ALNS implements Runnable {
      * The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
      * with a probability e^-(f(S')-f(S))/T.
      */
-    private boolean accept(Solution newSolution, Solution solution) {
-        if (SolutionUtils.getBest(solution, newSolution) == newSolution) {
+    private boolean accept(Solution newSolution, Solution oldSolution) {
+        if (SolutionUtils.getBest(oldSolution, newSolution) == newSolution) {
             return true;
         } else if ("SA".equals(acceptMethod)) {
-            double difference = newSolution.totalCost - solution.totalCost;
+            double difference = newSolution.totalCost - oldSolution.totalCost;
             return random.nextDouble() < Math.exp(-1.0 * difference / T);
         } else if ("TA".equals(acceptMethod)) {
-            double difference = newSolution.totalCost - solution.totalCost;
+            double difference = newSolution.totalCost - oldSolution.totalCost;
             return difference < T;
         } else {
             return false;
@@ -563,6 +563,9 @@ public class ALNS implements Runnable {
                 break;
             case ExpensiveNode:
                 removedRequests = removalOperator.removeMostExpensiveNodes(solution.tours, solution.requests, q);
+                break;
+            case RandomVehicle:
+                removedRequests = removalOperator.removeVehicleRequests(solution.tours, solution.requests);
                 break;
         }
         for (Req req : removedRequests) {

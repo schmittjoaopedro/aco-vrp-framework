@@ -791,7 +791,7 @@ public class ProblemInstance {
     }
 
     public enum Objective {
-        Distance(1.0), Vehicles(0.0), Attendance(100000.0);
+        Distance(1.0), Vehicles(100000.0), Attendance(100000.0);
 
         private double value;
 

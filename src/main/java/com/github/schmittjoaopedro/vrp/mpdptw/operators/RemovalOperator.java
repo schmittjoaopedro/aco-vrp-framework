@@ -46,6 +46,19 @@ public class RemovalOperator {
         return removedRequests;
     }
 
+    public List<Req> removeVehicleRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
+        ArrayList<Req> removedRequests = new ArrayList<>();
+        ArrayList<Req> assignedRequests = getAllRequests(requests); // L a set of assigned requests in S
+        int v = (int) (random.nextDouble() * requests.size());
+        for (Req request : assignedRequests) { // For i = 1 to q do
+            if (requests.get(v).contains(request.requestId)) {
+                removedRequests.add(request);  // L <- L\{r}
+                removeRequest(solution, requests, request); // Un-assign all the nodes of request r in solution S
+            }
+        }
+        return removedRequests;
+    }
+
     /*
      * Shaw removal: this operator removes clusters of requests that are related one to each other. A seed request is
      * randomly selected, ant the its q-1 most related neighbors are removed from the solution S. The idea o shaw removal
