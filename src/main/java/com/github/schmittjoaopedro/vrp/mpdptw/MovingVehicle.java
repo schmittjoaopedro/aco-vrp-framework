@@ -10,6 +10,9 @@ public class MovingVehicle {
 
     private double endTime;
 
+    // Fix what clients were committed/transition by vehicles during the working day
+    private ArrayList<ArrayList<Integer>> visitedNodes = new ArrayList<>();
+
     public MovingVehicle(ProblemInstance instance, double startTime, double endTime) {
         this.instance = instance;
         this.startTime = startTime;
@@ -31,16 +34,45 @@ public class MovingVehicle {
                         req.status = Request.Status.Committed;
                         moved = true;
                         instance.getIdleRequests().remove(req.requestId);
+                        fixCommittedRequest(req, k);
                     } else if (time >= getScaledProblemTime(solution.departureTime.get(k)[i - 1]) && !req.isTransition()) {
                         // If the vehicle departed from previous client, the current request is in transition.
                         req.status = Request.Status.Transition;
                         moved = true;
                         instance.getIdleRequests().remove(req.requestId);
+                        fixTransitionRequest(req, k);
                     }
                 }
             }
         }
+        checkConsistencyWithVisitedNodes(solution);
         return moved;
+    }
+
+    private void fixTransitionRequest(Request req, int k) {
+        if (visitedNodes.size() <= k) {
+            visitedNodes.add(new ArrayList<>());
+        }
+        visitedNodes.get(k).add(req.nodeId);
+    }
+
+    private void fixCommittedRequest(Request req, int k) {
+        if (visitedNodes.size() <= k) {
+            visitedNodes.add(new ArrayList<>());
+        }
+        if (!visitedNodes.get(k).contains(req.nodeId)) {
+            visitedNodes.get(k).add(req.nodeId);
+        }
+    }
+
+    private void checkConsistencyWithVisitedNodes(Solution solution) {
+        for (int i = 0; i < visitedNodes.size(); i++) {
+            for (int j = 0; j < visitedNodes.get(i).size(); j++) {
+                if (solution.tours.get(i).get(j + 1) != visitedNodes.get(i).get(j)) { // Using j+1 to ignore depot node on solution
+                    throw new RuntimeException("Moving vehicles routes are different from best solution");
+                }
+            }
+        }
     }
 
     private void printPartialRoutes(Solution solution) {

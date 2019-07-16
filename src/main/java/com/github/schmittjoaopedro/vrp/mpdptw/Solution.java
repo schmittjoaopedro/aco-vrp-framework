@@ -49,11 +49,6 @@ public class Solution {
 
     @Override
     public String toString() {
-        String print = "[NV = " + tours.size();
-        if (!feasible) {
-            print += ", F = " + feasible;
-        }
-        print += ", TC = " + Maths.round(totalCost, 2) + "]";
-        return print;
+        return "[F = " + feasible + ", NV = " + tours.size() + ", TC = " + Maths.round(totalCost, 2) + "]";
     }
 }

@@ -46,7 +46,11 @@ public class RemovalOperator {
         return removedRequests;
     }
 
-    public List<Req> removeVehicleRequests(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
+    /**
+     * Takes a random vehicles and try to remove all requests from it. The objective is to minimize the
+     * vehicles number.
+     */
+    public List<Req> removeRandomVehicle(ArrayList<ArrayList<Integer>> solution, ArrayList<ArrayList<Integer>> requests) {
         ArrayList<Req> removedRequests = new ArrayList<>();
         ArrayList<Req> assignedRequests = getAllRequests(requests); // L a set of assigned requests in S
         int v = (int) (random.nextDouble() * requests.size());

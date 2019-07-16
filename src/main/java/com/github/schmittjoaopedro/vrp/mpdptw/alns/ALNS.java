@@ -266,12 +266,12 @@ public class ALNS implements Runnable {
                 detailedStatistics.s_new_NV = solutionNew.tours.size();
 
                 int solutionHash = SolutionUtils.getHash(solutionNew);
-                if (!hashNumber.contains(solutionHash)) {
+                if (!hashNumber.contains(solutionHash)) { // If not know solution on TABU-list
                     hashNumber.add(solutionHash);
-                    if (accept(solutionNew, solution)) {
+                    if (accept(solutionNew, solution)) { // if accept(S', S) then
                         if (SolutionUtils.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                            solution = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
-                            updateBest(solution); // S_best <- S <- S'
+                            solutionNew = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
+                            updateBest(solutionNew); // S_best <- S <- S'
                             // Increase the scores of io and ro by sigma1
                             updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
                             detailedStatistics.bsfAcceptCount++;
@@ -279,7 +279,7 @@ public class ALNS implements Runnable {
                             // Increase the scores of the ro and io by sigma2
                             updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
                             detailedStatistics.currentAcceptCount++;
-                        } else { // else if accept(S', S) then
+                        } else {
                             // Increase the scores of the ro and io by sigma3
                             updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
                             detailedStatistics.worstAcceptCount++;
@@ -360,7 +360,8 @@ public class ALNS implements Runnable {
     private void log(String msg) {
         log.add(msg);
         if (showLog) {
-            System.out.println(Thread.currentThread().getId() + " -> " + msg);
+            //System.out.println(Thread.currentThread().getId() + " -> " + msg);
+            System.out.println(msg);
         }
     }
 
@@ -565,7 +566,7 @@ public class ALNS implements Runnable {
                 removedRequests = removalOperator.removeMostExpensiveNodes(solution.tours, solution.requests, q);
                 break;
             case RandomVehicle:
-                removedRequests = removalOperator.removeVehicleRequests(solution.tours, solution.requests);
+                removedRequests = removalOperator.removeRandomVehicle(solution.tours, solution.requests);
                 break;
         }
         for (Req req : removedRequests) {

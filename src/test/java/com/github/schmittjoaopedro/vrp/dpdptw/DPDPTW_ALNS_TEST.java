@@ -29,77 +29,76 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17 BFS = 68.10749521219215, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17 Sol = [F = true, NV = 1, TC = 68.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [1, 2]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 25 BFS = 170.16459149810834, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 25 Sol = [F = true, NV = 3, TC = 170.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [3, 4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 41 BFS = 277.94452374043783, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 41 Sol = [F = true, NV = 5, TC = 277.94]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5, 6, 7, 8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 49 BFS = 486.5683202048672, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 49 Sol = [F = true, NV = 9, TC = 486.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 57 BFS = 603.70632454849, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 57 Sol = [F = true, NV = 10, TC = 603.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [10, 11, 12, 13]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 89 BFS = 730.5492654458798, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 89 BFS = 630.3929231399821, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 89 Sol = [F = true, NV = 10, TC = 745.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14, 15, 16]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 98 BFS = 658.9675898227432, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 98 Sol = [F = true, NV = 11, TC = 759.12]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 98 Sol = [F = true, NV = 10, TC = 658.97]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [17, 18, 19]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 162 BFS = 705.5661494511836, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 162 BFS = 667.3942406986745, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 162 Sol = [F = true, NV = 10, TC = 667.39]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [20, 21, 22]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 170 BFS = 713.5706006521705, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 170 Sol = [F = true, NV = 10, TC = 713.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23, 24, 25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 235 BFS = 733.3082638062884, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 235 Sol = [F = true, NV = 10, TC = 733.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26, 27, 28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 243 BFS = 750.1061413284173, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 243 Sol = [F = true, NV = 10, TC = 750.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29, 30, 31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 308 BFS = 773.486202550148, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 308 Sol = [F = true, NV = 10, TC = 773.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32, 33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 316 BFS = 779.5108389329196, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 316 Sol = [F = true, NV = 10, TC = 779.51]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34, 35, 36, 37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 389 BFS = 826.2824141675038, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 390 BFS = 793.2781218631536, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 389 Sol = [F = true, NV = 11, TC = 828.15]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 391 Sol = [F = true, NV = 10, TC = 793.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 397 BFS = 794.7691540159126, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 397 Sol = [F = true, NV = 10, TC = 794.77]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39, 40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 462 BFS = 801.9133901055937, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 462 Sol = [F = true, NV = 10, TC = 801.91]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41, 42]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 BFS = 804.7975905059205, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [43, 44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 543 BFS = 810.6609060179901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 543 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45, 46, 47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 BFS = 816.4961882144582, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 Sol = [F = true, NV = 10, TC = 816.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48, 49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 BFS = 822.9297399479576, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 Sol = [F = true, NV = 10, TC = 822.93]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50, 51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 688 BFS = 827.1223140011102, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 688 Sol = [F = true, NV = 10, TC = 827.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 818 BFS = 828.9368669428338, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 818 Sol = [F = true, NV = 10, TC = 828.94]");
         assertThat(logs.get(i++)).contains("Instance = lc101_a_0.1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
+                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
+                "0 57 55 54 53 56 58 60 59 0\n" +
+                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
+                "0 13 17 18 19 15 16 14 12 0\n" +
+                "0 98 96 95 94 92 93 97 106 100 99 0\n" +
+                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
+                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
+                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
                 "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
                 "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
-                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
-                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
-                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
-                "0 98 96 95 94 92 93 97 106 100 99 0\n" +
-                "0 57 55 54 53 56 58 60 59 0\n" +
-                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
-                "0 13 17 18 19 15 16 14 12 0\n" +
-                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
                 "Requests\n" +
-                "21 26 22 27 23 24 25\n" +
-                "15 12 10 14 11 13\n" +
-                "32 34 33 37 35 36\n" +
-                "2 3 1 4 0 5\n" +
-                "46 44 47 45 43\n" +
-                "52 48 50 49 51\n" +
-                "29 31 30 28\n" +
-                "16 20 19 17 18\n" +
-                "6 8 9 7\n" +
-                "38 40 41 39 42\n" +
-                "Cost = 828.9368669428338\n" +
+                "16 17 18 20 19\n" +
+                "30 31 28 29\n" +
+                "1 5 0 3 4 2\n" +
+                "9 8 6 7\n" +
+                "51 50 52 49 48\n" +
+                "37 35 33 32 34 36\n" +
+                "42 39 38 40 41\n" +
+                "47 45 46 43 44\n" +
+                "22 21 23 24 27 26 25\n" +
+                "13 12 10 11 14 15\n" +
+                "Cost = 828.936866942834\n" +
                 "Num. vehicles = 10");
     }
 
@@ -112,131 +111,123 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 89 BFS = 68.10749521219215, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 89 Sol = [F = true, NV = 1, TC = 68.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [1]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 122 BFS = 140.16459149810834, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 122 Sol = [F = true, NV = 2, TC = 140.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [2]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 154 BFS = 170.16459149810834, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 154 Sol = [F = true, NV = 3, TC = 170.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [3]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 203 BFS = 203.53340542602967, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 203 Sol = [F = true, NV = 4, TC = 203.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 211 BFS = 277.94452374043783, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 211 Sol = [F = true, NV = 5, TC = 277.94]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5, 6]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 251 BFS = 371.39698204104434, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 251 Sol = [F = true, NV = 7, TC = 371.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [7]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 259 BFS = 416.4045239406865, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 259 Sol = [F = true, NV = 8, TC = 416.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 276 BFS = 486.5683202048671, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 300 BFS = 486.56832020486706, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 276 Sol = [F = true, NV = 9, TC = 486.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 308 BFS = 603.7063245484899, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 308 Sol = [F = true, NV = 10, TC = 603.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [10]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 BFS = 651.5466337946077, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 BFS = 608.4463579270782, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 Sol = [F = true, NV = 10, TC = 654.46]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 471 Sol = [F = true, NV = 10, TC = 608.45]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [11, 12, 13]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 478 BFS = 730.5492654458798, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 482 BFS = 630.3929231399821, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 478 Sol = [F = true, NV = 11, TC = 730.55]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 482 Sol = [F = true, NV = 10, TC = 630.39]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 502 BFS = 647.9648148254535, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 502 Sol = [F = true, NV = 10, TC = 647.96]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [15, 16]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 518 BFS = 658.9675898227432, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 600 BFS = 658.9675898227431, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 518 Sol = [F = true, NV = 10, TC = 658.97]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [17]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 818 BFS = 660.6182018300894, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 818 Sol = [F = true, NV = 10, TC = 660.62]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [18]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 834 BFS = 661.2769979300508, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 834 Sol = [F = true, NV = 10, TC = 661.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [19]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 842 BFS = 667.3942406986745, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 842 Sol = [F = true, NV = 10, TC = 667.39]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 850 BFS = 667.8290964379999, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 850 Sol = [F = true, NV = 10, TC = 667.83]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 874 BFS = 691.6512511098133, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 874 Sol = [F = true, NV = 10, TC = 691.65]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [22]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 882 BFS = 713.5706006521704, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 882 Sol = [F = true, NV = 10, TC = 713.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1190 BFS = 716.4995328403049, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1190 Sol = [F = true, NV = 10, TC = 716.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24, 25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1206 BFS = 733.3082638062883, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1206 Sol = [F = true, NV = 10, TC = 733.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1214 BFS = 739.0911033463802, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1214 Sol = [F = true, NV = 10, TC = 739.09]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1222 BFS = 742.3064824257782, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1222 Sol = [F = true, NV = 10, TC = 742.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1230 BFS = 750.1061413284173, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1400 BFS = 750.1061413284172, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1230 Sol = [F = true, NV = 10, TC = 750.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1538 BFS = 758.1154379306004, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1538 Sol = [F = true, NV = 10, TC = 758.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30, 31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1554 BFS = 773.486202550148, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1554 Sol = [F = true, NV = 10, TC = 773.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32, 33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1578 BFS = 779.5108389329197, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1600 BFS = 779.5108389329196, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1578 Sol = [F = true, NV = 10, TC = 779.51]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1942 BFS = 781.2026548656958, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1942 Sol = [F = true, NV = 10, TC = 781.2]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1950 BFS = 784.3491896750193, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1950 Sol = [F = true, NV = 10, TC = 784.35]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1958 BFS = 790.3491896750191, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1958 Sol = [F = true, NV = 10, TC = 790.35]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1967 BFS = 793.2781218631536, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1967 Sol = [F = true, NV = 10, TC = 793.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1983 BFS = 794.7691540159126, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1983 Sol = [F = true, NV = 10, TC = 794.77]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2323 BFS = 795.1808428081868, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2323 Sol = [F = true, NV = 10, TC = 795.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2331 BFS = 801.9133901055939, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2331 Sol = [F = true, NV = 10, TC = 801.91]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2347 BFS = 804.2130525118736, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2347 Sol = [F = true, NV = 10, TC = 804.21]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2363 BFS = 804.7975905059207, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2400 BFS = 804.7975905059205, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2700 BFS = 804.7975905059204, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2363 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2711 BFS = 804.7975905059205, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2711 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2719 BFS = 810.66090601799, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2719 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2751 BFS = 810.6609060179901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2751 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2759 BFS = 813.2664572934541, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2759 Sol = [F = true, NV = 10, TC = 813.27]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2776 BFS = 816.4961882144581, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2776 Sol = [F = true, NV = 10, TC = 816.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3075 BFS = 857.2110180969122, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3075 BFS = 821.172380635077, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3075 Sol = [F = true, NV = 10, TC = 821.17]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3091 BFS = 822.9297399479577, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3200 BFS = 822.9297399479576, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3091 Sol = [F = true, NV = 10, TC = 822.93]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3447 BFS = 824.5412890212224, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3447 Sol = [F = true, NV = 10, TC = 824.54]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3471 BFS = 827.1223140011103, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3471 Sol = [F = true, NV = 10, TC = 827.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4102 BFS = 828.9368669428338, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4102 Sol = [F = true, NV = 10, TC = 828.94]");
         assertThat(logs.get(i++)).contains("Instance = lc101_a_0.5.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
-                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
-                "0 98 96 95 94 92 93 97 106 100 99 0\n" +
-                "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
-                "0 57 55 54 53 56 58 60 59 0\n" +
                 "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
-                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
-                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
+                "0 98 96 95 94 92 93 97 106 100 99 0\n" +
+                "0 57 55 54 53 56 58 60 59 0\n" +
                 "0 32 33 31 35 37 38 39 36 105 34 0\n" +
+                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
+                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
                 "0 13 17 18 19 15 16 14 12 0\n" +
+                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
+                "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
+                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
                 "Requests\n" +
-                "2 5 3 4 0 1\n" +
-                "42 40 39 38 41\n" +
-                "51 52 50 48 49\n" +
-                "13 11 15 10 14 12\n" +
-                "31 30 29 28\n" +
-                "37 33 35 34 36 32\n" +
-                "23 22 24 26 21 27 25\n" +
-                "47 45 43 46 44\n" +
-                "20 19 17 18 16\n" +
-                "8 7 9 6\n" +
+                "33 37 35 32 34 36\n" +
+                "52 51 49 50 48\n" +
+                "31 29 28 30\n" +
+                "19 20 16 18 17\n" +
+                "1 3 5 4 2 0\n" +
+                "21 23 27 26 22 24 25\n" +
+                "8 6 9 7\n" +
+                "42 39 38 40 41\n" +
+                "12 10 15 11 14 13\n" +
+                "47 45 44 46 43\n" +
                 "Cost = 828.9368669428338\n" +
                 "Num. vehicles = 10");
     }
@@ -250,137 +241,125 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 162 BFS = 68.10749521219215, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 162 Sol = [F = true, NV = 1, TC = 68.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [1]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 219 BFS = 140.16459149810834, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 219 Sol = [F = true, NV = 2, TC = 140.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [2]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 284 BFS = 170.16459149810834, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 284 Sol = [F = true, NV = 3, TC = 170.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [3]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 373 BFS = 203.53340542602967, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 373 Sol = [F = true, NV = 4, TC = 203.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 381 BFS = 277.94452374043783, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 381 Sol = [F = true, NV = 5, TC = 277.94]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5, 6]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 462 BFS = 371.39698204104434, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 462 Sol = [F = true, NV = 7, TC = 371.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [7]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 BFS = 416.4045239406865, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 470 Sol = [F = true, NV = 8, TC = 416.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 494 BFS = 486.56832020486706, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 494 Sol = [F = true, NV = 9, TC = 486.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 BFS = 603.70632454849, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 600 BFS = 603.7063245484899, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 Sol = [F = true, NV = 10, TC = 603.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [10]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 842 BFS = 608.4463579270783, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 842 Sol = [F = true, NV = 10, TC = 654.46]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 842 Sol = [F = true, NV = 10, TC = 608.45]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [11]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 858 BFS = 621.9776153822555, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 858 Sol = [F = true, NV = 10, TC = 621.98]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [12, 13]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 866 BFS = 630.392923139982, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 866 Sol = [F = true, NV = 10, TC = 630.39]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 907 BFS = 647.9648148254535, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 907 Sol = [F = true, NV = 10, TC = 647.96]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [15, 16]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 BFS = 658.9675898227433, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1100 BFS = 658.9675898227432, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1200 BFS = 658.9675898227431, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 Sol = [F = true, NV = 10, TC = 658.97]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [17]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1481 BFS = 660.6182018300897, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1500 BFS = 660.6182018300896, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1481 Sol = [F = true, NV = 10, TC = 660.62]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [18, 19]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1513 BFS = 667.3942406986744, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1513 Sol = [F = true, NV = 10, TC = 667.39]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1538 BFS = 667.8290964379999, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1538 Sol = [F = true, NV = 10, TC = 667.83]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1578 BFS = 691.6512511098133, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1578 Sol = [F = true, NV = 10, TC = 691.65]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [22]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1586 BFS = 713.5706006521705, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1600 BFS = 713.5706006521704, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1586 Sol = [F = true, NV = 10, TC = 713.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2145 BFS = 716.4995328403049, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2145 Sol = [F = true, NV = 10, TC = 716.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2169 BFS = 727.8843673480433, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2169 Sol = [F = true, NV = 10, TC = 727.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2177 BFS = 733.3082638062882, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2177 Sol = [F = true, NV = 10, TC = 733.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2193 BFS = 739.0911033463802, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2193 Sol = [F = true, NV = 10, TC = 739.09]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2201 BFS = 742.3064824257783, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2201 Sol = [F = true, NV = 10, TC = 742.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2225 BFS = 750.1061413284172, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2225 Sol = [F = true, NV = 10, TC = 750.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2776 BFS = 758.1154379306005, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2776 Sol = [F = true, NV = 10, TC = 758.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30, 31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2800 BFS = 773.4862025501482, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2800 Sol = [F = true, NV = 10, TC = 773.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32, 33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2840 BFS = 804.7468790603042, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2840 BFS = 779.5108389329197, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2900 BFS = 779.5108389329196, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2840 Sol = [F = true, NV = 10, TC = 779.51]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3496 BFS = 781.2026548656958, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3496 Sol = [F = true, NV = 10, TC = 781.2]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3520 BFS = 784.3491896750191, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3520 Sol = [F = true, NV = 10, TC = 784.35]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3528 BFS = 790.3491896750191, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3528 Sol = [F = true, NV = 10, TC = 790.35]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3544 BFS = 793.2781218631537, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3544 Sol = [F = true, NV = 10, TC = 793.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3577 BFS = 794.7691540159128, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3600 BFS = 794.7691540159127, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3577 Sol = [F = true, NV = 10, TC = 794.77]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4183 BFS = 795.1808428081868, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4183 Sol = [F = true, NV = 10, TC = 795.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4200 BFS = 801.9133901055939, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4200 Sol = [F = true, NV = 10, TC = 801.91]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4232 BFS = 804.2130525118735, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4232 Sol = [F = true, NV = 10, TC = 804.21]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4256 BFS = 804.7975905059207, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4400 BFS = 804.7975905059205, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4256 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4887 BFS = 804.7975905059205, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4887 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4903 BFS = 810.6609060179901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4903 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4952 BFS = 810.6609060179901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4952 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4968 BFS = 813.2664572934541, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4968 Sol = [F = true, NV = 10, TC = 813.27]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5000 BFS = 816.4961882144582, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5100 BFS = 816.4961882144581, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5200 BFS = 816.496188214458, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5000 Sol = [F = true, NV = 10, TC = 816.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5534 BFS = 821.172380635077, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5534 Sol = [F = true, NV = 10, TC = 821.17]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5559 BFS = 822.9297399479577, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5600 BFS = 822.9297399479576, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5559 Sol = [F = true, NV = 10, TC = 822.93]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6206 BFS = 824.5412890212222, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6206 Sol = [F = true, NV = 10, TC = 824.54]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6246 BFS = 827.1223140011105, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6300 BFS = 827.1223140011103, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6246 Sol = [F = true, NV = 10, TC = 827.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7395 BFS = 828.9368669428338, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7395 Sol = [F = true, NV = 10, TC = 828.94]");
         assertThat(logs.get(i++)).contains("Instance = lc101_a_0.9.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
-                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
-                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
-                "0 98 96 95 94 92 93 97 106 100 99 0\n" +
-                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
-                "0 13 17 18 19 15 16 14 12 0\n" +
-                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
-                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
-                "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
                 "0 57 55 54 53 56 58 60 59 0\n" +
+                "0 13 17 18 19 15 16 14 12 0\n" +
+                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
+                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
+                "0 98 96 95 94 92 93 97 106 100 99 0\n" +
+                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
+                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
+                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
+                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
+                "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
                 "Requests\n" +
-                "37 36 33 35 32 34\n" +
-                "2 3 1 0 4 5\n" +
-                "23 24 27 26 21 22 25\n" +
-                "51 50 49 48 52\n" +
-                "46 47 45 43 44\n" +
-                "8 9 7 6\n" +
-                "17 19 16 20 18\n" +
-                "39 40 42 38 41\n" +
-                "10 12 15 11 14 13\n" +
-                "31 30 29 28\n" +
-                "Cost = 828.9368669428338\n" +
+                "29 28 30 31\n" +
+                "8 6 7 9\n" +
+                "42 40 39 38 41\n" +
+                "0 2 3 4 1 5\n" +
+                "51 49 48 50 52\n" +
+                "17 20 19 18 16\n" +
+                "45 46 43 47 44\n" +
+                "33 34 35 37 32 36\n" +
+                "24 27 22 21 23 26 25\n" +
+                "15 13 14 11 10 12\n" +
+                "Cost = 828.9368669428341\n" +
                 "Num. vehicles = 10");
     }
 
@@ -393,141 +372,129 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 185.21025295222879, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 182.86944611643477, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 2, TC = 182.87]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 187 BFS = 216.05616339086492, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 187 Sol = [F = true, NV = 2, TC = 216.06]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 251 BFS = 271.89719981718827, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 251 Sol = [F = true, NV = 3, TC = 271.9]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [6]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 316 BFS = 301.89719981718827, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 316 Sol = [F = true, NV = 4, TC = 301.9]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [7]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 413 BFS = 335.2660137451096, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 413 Sol = [F = true, NV = 5, TC = 335.27]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 429 BFS = 373.7225609214243, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 429 Sol = [F = true, NV = 6, TC = 373.72]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 510 BFS = 418.55592045881394, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 510 Sol = [F = true, NV = 7, TC = 418.56]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [10]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 518 BFS = 453.0387972149056, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 518 Sol = [F = true, NV = 8, TC = 453.04]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [11]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 BFS = 523.2025934790862, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 Sol = [F = true, NV = 9, TC = 523.2]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [12]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 BFS = 640.3405978227091, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 700 BFS = 640.340597822709, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 Sol = [F = true, NV = 10, TC = 640.34]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 800 Sol = [F = true, NV = 10, TC = 640.34]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [13]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 BFS = 644.7257626298435, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 Sol = [F = true, NV = 10, TC = 644.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 955 BFS = 644.7257626298435, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 955 Sol = [F = true, NV = 10, TC = 644.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [15, 16]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 963 BFS = 653.1410703875702, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 963 Sol = [F = true, NV = 10, TC = 653.14]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [17]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1004 BFS = 670.7129620730414, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1004 Sol = [F = true, NV = 10, TC = 670.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [18, 19]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1044 BFS = 681.7157370703312, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1044 Sol = [F = true, NV = 10, TC = 681.72]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1643 BFS = 685.4996203683515, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1643 Sol = [F = true, NV = 10, TC = 685.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1675 BFS = 686.1584164683127, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1675 Sol = [F = true, NV = 10, TC = 686.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [22]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1683 BFS = 692.2756592369365, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1700 BFS = 692.2756592369362, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1683 Sol = [F = true, NV = 10, TC = 692.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1708 BFS = 692.7105149762616, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1708 Sol = [F = true, NV = 10, TC = 692.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1748 BFS = 716.5326696480752, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1748 Sol = [F = true, NV = 11, TC = 786.64]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1753 Sol = [F = true, NV = 10, TC = 716.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1764 BFS = 738.7763051127889, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1900 BFS = 738.7763051127888, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1764 Sol = [F = true, NV = 10, TC = 738.78]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1900 Sol = [F = true, NV = 10, TC = 738.78]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2379 BFS = 781.995693159952, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2379 BFS = 741.7052373009234, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2379 Sol = [F = true, NV = 10, TC = 741.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2412 BFS = 745.3082638062883, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2412 Sol = [F = true, NV = 10, TC = 745.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2436 BFS = 791.3815592054088, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2437 BFS = 751.0911033463804, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2436 Sol = [F = true, NV = 10, TC = 751.09]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2444 BFS = 754.3064824257783, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2444 Sol = [F = true, NV = 10, TC = 754.31]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2468 BFS = 762.1061413284173, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2500 BFS = 762.1061413284172, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2468 Sol = [F = true, NV = 10, TC = 762.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3083 BFS = 770.1154379306005, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3100 BFS = 770.1154379306004, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3083 Sol = [F = true, NV = 10, TC = 770.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3115 BFS = 779.4862025501482, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3115 Sol = [F = true, NV = 10, TC = 779.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3156 BFS = 785.29036182878, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3156 Sol = [F = true, NV = 10, TC = 785.29]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3164 BFS = 785.5108389329197, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3300 BFS = 785.5108389329196, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3164 Sol = [F = true, NV = 10, TC = 785.51]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3884 BFS = 787.2026548656955, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3884 Sol = [F = true, NV = 10, TC = 787.2]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3908 BFS = 790.3491896750191, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3908 Sol = [F = true, NV = 10, TC = 790.35]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3941 BFS = 793.2781218631537, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3941 Sol = [F = true, NV = 10, TC = 793.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3973 BFS = 794.7691540159128, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4100 BFS = 794.7691540159127, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4600 BFS = 794.7691540159126, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3973 Sol = [F = true, NV = 10, TC = 794.77]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4653 BFS = 795.1808428081869, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4653 Sol = [F = true, NV = 10, TC = 795.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4669 BFS = 801.913390105594, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4669 Sol = [F = true, NV = 10, TC = 801.91]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4701 BFS = 804.2130525118736, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4701 Sol = [F = true, NV = 10, TC = 804.21]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4725 BFS = 804.7975905059205, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5100 BFS = 804.7975905059204, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4725 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5429 BFS = 804.7975905059205, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5429 Sol = [F = true, NV = 10, TC = 804.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5445 BFS = 810.6609060179901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5445 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5502 BFS = 810.6609060179901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5502 Sol = [F = true, NV = 10, TC = 810.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5526 BFS = 813.266457293454, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5526 Sol = [F = true, NV = 10, TC = 813.27]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5551 BFS = 816.4961882144581, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5600 BFS = 816.496188214458, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5551 Sol = [F = true, NV = 10, TC = 816.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6157 BFS = 821.1723806350769, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6157 Sol = [F = true, NV = 10, TC = 821.17]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6182 BFS = 822.9297399479576, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6800 BFS = 822.9297399479575, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6182 Sol = [F = true, NV = 10, TC = 822.93]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6902 BFS = 824.5412890212224, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6902 Sol = [F = true, NV = 10, TC = 824.54]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6942 BFS = 827.1223140011103, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6942 Sol = [F = true, NV = 10, TC = 827.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8212 BFS = 828.9368669428338, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9600 BFS = 828.9368669428337, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8212 Sol = [F = true, NV = 10, TC = 828.94]");
         assertThat(logs.get(i++)).contains("Instance = lc101_q_0_0.1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
-                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
-                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
+                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
+                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
                 "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
+                "0 13 17 18 19 15 16 14 12 0\n" +
+                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
+                "0 81 78 104 76 71 70 73 77 79 80 0\n" +
+                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
                 "0 90 87 86 83 82 84 85 88 89 91 0\n" +
                 "0 98 96 95 94 92 93 97 106 100 99 0\n" +
                 "0 57 55 54 53 56 58 60 59 0\n" +
-                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
-                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
-                "0 13 17 18 19 15 16 14 12 0\n" +
                 "Requests\n" +
-                "24 22 27 23 21 26 25\n" +
-                "39 38 40 42 41\n" +
-                "33 37 35 32 34 36\n" +
-                "10 13 15 14 12 11\n" +
-                "47 45 44 43 46\n" +
-                "51 49 50 52 48\n" +
-                "28 30 31 29\n" +
-                "20 19 17 18 16\n" +
-                "0 4 5 2 1 3\n" +
-                "9 8 7 6\n" +
-                "Cost = 828.9368669428337\n" +
+                "19 17 18 16 20\n" +
+                "4 2 5 1 0 3\n" +
+                "12 14 10 13 15 11\n" +
+                "9 6 8 7\n" +
+                "32 37 35 33 34 36\n" +
+                "39 38 40 41 42\n" +
+                "22 21 23 24 27 26 25\n" +
+                "43 47 46 45 44\n" +
+                "52 48 51 49 50\n" +
+                "29 28 31 30\n" +
+                "Cost = 828.9368669428338\n" +
                 "Num. vehicles = 10");
     }
 
@@ -540,89 +507,91 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 837.0302395002793, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 806.7757065972233, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2 BFS = 752.7456724775496, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 9, TC = 1273.97]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 9, TC = 1200.59]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4 Sol = [F = true, NV = 9, TC = 1158.5]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8 Sol = [F = true, NV = 9, TC = 1151.25]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9 Sol = [F = true, NV = 9, TC = 1120.75]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10 Sol = [F = true, NV = 9, TC = 1099.95]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11 Sol = [F = true, NV = 9, TC = 1070.52]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19 Sol = [F = true, NV = 9, TC = 873.36]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 22 Sol = [F = true, NV = 9, TC = 871.38]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 23 Sol = [F = true, NV = 9, TC = 844.01]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 220 Sol = [F = true, NV = 9, TC = 777.06]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 251 BFS = 754.695703688548, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 251 Sol = [F = true, NV = 9, TC = 779.01]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 316 BFS = 756.5629577381264, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 316 Sol = [F = true, NV = 9, TC = 825.72]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 510 BFS = 757.9742680547992, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 510 Sol = [F = true, NV = 9, TC = 861.6]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 BFS = 798.407615087962, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 BFS = 766.8900813671936, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 Sol = [F = true, NV = 10, TC = 964.24]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 Sol = [F = true, NV = 10, TC = 766.89]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 BFS = 769.2041305321534, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 700 BFS = 769.2041305321533, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 Sol = [F = true, NV = 10, TC = 813.97]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 622 Sol = [F = true, NV = 10, TC = 769.2]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 BFS = 773.5892953392879, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 Sol = [F = true, NV = 10, TC = 773.59]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 955 BFS = 773.5892953392879, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 955 Sol = [F = true, NV = 10, TC = 773.59]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 963 BFS = 778.6226742721642, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 963 Sol = [F = true, NV = 10, TC = 778.62]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1643 BFS = 782.4065575701845, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1800 BFS = 782.4065575701844, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2300 BFS = 782.4065575701843, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1643 Sol = [F = true, NV = 10, TC = 782.41]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2379 BFS = 786.2262176826855, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2400 BFS = 786.2262176826854, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2379 Sol = [F = true, NV = 10, TC = 786.23]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2468 BFS = 791.1892073134176, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2900 BFS = 791.1892073134175, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2468 Sol = [F = true, NV = 10, TC = 881.87]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2468 Sol = [F = true, NV = 10, TC = 791.19]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3083 BFS = 795.9638066940363, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3100 BFS = 795.9638066940362, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3083 Sol = [F = true, NV = 10, TC = 795.96]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3115 BFS = 802.8119986566195, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3115 Sol = [F = true, NV = 10, TC = 802.81]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3164 BFS = 843.6062099492419, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3164 BFS = 806.1774819409344, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3400 BFS = 806.1774819409343, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3164 Sol = [F = true, NV = 11, TC = 843.61]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3164 Sol = [F = true, NV = 10, TC = 806.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3908 BFS = 808.3790440126782, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3908 Sol = [F = true, NV = 10, TC = 808.38]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3924 BFS = 811.2986809857272, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3924 Sol = [F = true, NV = 10, TC = 811.3]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4669 BFS = 812.9135161785927, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4669 Sol = [F = true, NV = 10, TC = 812.91]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5445 BFS = 818.7768316906622, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5445 Sol = [F = true, NV = 10, TC = 818.78]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5502 BFS = 818.7768316906622, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5502 Sol = [F = true, NV = 10, TC = 818.78]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5526 BFS = 821.3823829661262, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5526 Sol = [F = true, NV = 10, TC = 821.38]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5551 BFS = 824.6121138871304, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5700 BFS = 824.6121138871302, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5551 Sol = [F = true, NV = 10, TC = 824.61]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6182 BFS = 826.3694732000109, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6182 Sol = [F = true, NV = 10, TC = 826.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6902 BFS = 828.9368669428338, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6902 Sol = [F = true, NV = 10, TC = 828.94]");
         assertThat(logs.get(i++)).contains("Instance = lc101_q_0_0.5.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
-                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
-                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
                 "0 81 78 104 76 71 70 73 77 79 80 0\n" +
+                "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
                 "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
-                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
                 "0 13 17 18 19 15 16 14 12 0\n" +
                 "0 57 55 54 53 56 58 60 59 0\n" +
                 "0 98 96 95 94 92 93 97 106 100 99 0\n" +
                 "0 90 87 86 83 82 84 85 88 89 91 0\n" +
+                "0 32 33 31 35 37 38 39 36 105 34 0\n" +
+                "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
+                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
                 "Requests\n" +
-                "15 14 10 13 12 11\n" +
-                "34 37 35 33 32 36\n" +
-                "0 1 4 5 2 3\n" +
-                "42 39 38 40 41\n" +
-                "27 22 24 21 25 23 26\n" +
-                "20 16 18 19 17\n" +
-                "8 9 7 6\n" +
-                "30 28 29 31\n" +
-                "52 49 48 51 50\n" +
-                "46 45 44 47 43\n" +
+                "39 40 42 38 41\n" +
+                "14 15 10 11 13 12\n" +
+                "23 21 27 22 24 25 26\n" +
+                "7 9 8 6\n" +
+                "29 28 30 31\n" +
+                "51 49 50 48 52\n" +
+                "47 45 46 43 44\n" +
+                "20 17 16 18 19\n" +
+                "1 4 2 0 5 3\n" +
+                "33 37 35 34 32 36\n" +
                 "Cost = 828.9368669428338\n" +
                 "Num. vehicles = 10");
     }
@@ -636,38 +605,37 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 824.2505754418187, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 200 BFS = 824.2505754418186, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 10, TC = 824.25]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2444 BFS = 827.1795076299532, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2444 Sol = [F = true, NV = 10, TC = 827.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5502 BFS = 827.1795076299532, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5502 Sol = [F = true, NV = 10, TC = 827.18]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6182 BFS = 828.9368669428338, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6182 Sol = [F = true, NV = 10, TC = 828.94]");
         assertThat(logs.get(i++)).contains("Instance = lc101_q_0_0.9.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
                 "0 5 3 7 8 10 11 9 6 4 2 1 75 0\n" +
                 "0 13 17 18 19 15 16 14 12 0\n" +
-                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
                 "0 20 24 25 27 29 30 28 26 23 103 22 21 0\n" +
-                "0 57 55 54 53 56 58 60 59 0\n" +
                 "0 32 33 31 35 37 38 39 36 105 34 0\n" +
-                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
+                "0 67 65 63 62 74 72 61 64 102 68 66 69 0\n" +
+                "0 57 55 54 53 56 58 60 59 0\n" +
+                "0 43 42 41 40 44 46 45 48 51 101 50 52 49 47 0\n" +
                 "0 81 78 104 76 71 70 73 77 79 80 0\n" +
+                "0 90 87 86 83 82 84 85 88 89 91 0\n" +
                 "0 98 96 95 94 92 93 97 106 100 99 0\n" +
                 "Requests\n" +
-                "32 35 36 34 37 33\n" +
-                "5 4 0 2 1 3\n" +
-                "6 7 8 9\n" +
-                "22 25 24 27 21 23 26\n" +
-                "12 10 15 13 14 11\n" +
-                "28 30 29 31\n" +
-                "19 17 16 20 18\n" +
-                "47 45 46 44 43\n" +
-                "42 38 40 39 41\n" +
-                "50 51 49 52 48\n" +
+                "2 4 1 0 3 5\n" +
+                "8 7 9 6\n" +
+                "10 12 13 15 14 11\n" +
+                "20 17 19 16 18\n" +
+                "32 33 34 35 37 36\n" +
+                "31 29 30 28\n" +
+                "22 24 27 25 21 23 26\n" +
+                "42 39 40 38 41\n" +
+                "47 45 43 44 46\n" +
+                "48 49 50 51 52\n" +
                 "Cost = 828.9368669428338\n" +
                 "Num. vehicles = 10");
     }
@@ -681,75 +649,74 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 334 BFS = 104.49069638727337, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 334 Sol = [F = true, NV = 1, TC = 104.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [1]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 417 BFS = 219.84971319001224, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 417 Sol = [F = true, NV = 2, TC = 219.85]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [2, 3, 4, 5, 6, 7, 8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 500 BFS = 547.2959814653632, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 506 BFS = 540.5488027573015, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 500 Sol = [F = true, NV = 5, TC = 547.3]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 584 BFS = 820.332092407436, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 597 BFS = 814.6418365955808, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 623 BFS = 799.7094772159529, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 584 Sol = [F = true, NV = 9, TC = 893.24]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 584 Sol = [F = true, NV = 8, TC = 820.33]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 600 Sol = [F = true, NV = 8, TC = 814.64]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 606 Sol = [F = true, NV = 7, TC = 806.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21, 22, 23, 24, 25, 26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 667 BFS = 964.4866170070205, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 687 BFS = 949.4469864423157, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 667 Sol = [F = true, NV = 10, TC = 964.49]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 700 Sol = [F = true, NV = 10, TC = 943.76]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27, 28, 29, 30, 31, 32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 750 BFS = 1186.389790553674, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 750 BFS = 1105.4662659682226, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 762 BFS = 1102.467234002377, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 750 Sol = [F = true, NV = 11, TC = 1139.69]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 753 Sol = [F = true, NV = 11, TC = 1109.32]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 814 Sol = [F = true, NV = 10, TC = 1102.47]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 821 Sol = [F = true, NV = 10, TC = 1102.46]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33, 34, 35, 36, 37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 834 BFS = 1158.414535770055, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 846 BFS = 1135.770380850824, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 834 Sol = [F = true, NV = 11, TC = 1214.12]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 836 Sol = [F = true, NV = 11, TC = 1213.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 841 Sol = [F = true, NV = 11, TC = 1155.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38, 39, 40, 41, 42, 43, 44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 917 BFS = 1382.5727671034713, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 953 BFS = 1321.0244650491563, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 954 BFS = 1260.4656370017283, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 917 Sol = [F = true, NV = 13, TC = 1341.13]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 975 Sol = [F = true, NV = 12, TC = 1293.26]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45, 46, 47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1000 BFS = 1457.3849895146304, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1101 BFS = 1435.9061834702845, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1000 Sol = [F = true, NV = 13, TC = 1359.92]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1167 BFS = 1404.0559880340945, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1167 BFS = 1390.0764513541822, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1167 Sol = [F = true, NV = 12, TC = 1460.93]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1169 Sol = [F = true, NV = 12, TC = 1444.65]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1180 Sol = [F = true, NV = 12, TC = 1397.67]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1198 Sol = [F = true, NV = 12, TC = 1394.29]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1200 Sol = [F = true, NV = 12, TC = 1376.15]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1204 Sol = [F = true, NV = 11, TC = 1325.86]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49, 50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1250 BFS = 1391.7963457900805, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1250 Sol = [F = true, NV = 11, TC = 1337.71]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1300 Sol = [F = true, NV = 11, TC = 1335.71]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1410 Sol = [F = true, NV = 11, TC = 1245.07]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51, 52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1584 BFS = 1557.4759531994544, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1586 BFS = 1492.772468587028, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1600 BFS = 1415.165538656299, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1943 BFS = 1339.8197458482628, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4100 BFS = 1318.2647053457283, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4871 BFS = 1309.3386545045962, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8643 BFS = 1296.9181094591308, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13313 BFS = 1249.5846710940457, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13358 BFS = 1230.1448446772672, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1584 Sol = [F = true, NV = 11, TC = 1230.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4400 Sol = [F = true, NV = 11, TC = 1230.14]");
         assertThat(logs.get(i++)).contains("Instance = lrc107_a_0.1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
-                "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
-                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
-                "0 31 29 27 28 26 30 32 34 33 101 0\n" +
-                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
-                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
-                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
-                "0 61 81 106 90 0\n" +
-                "0 69 98 88 53 78 73 79 60 70 68 0\n" +
                 "0 82 99 87 59 75 97 58 77 0\n" +
+                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
+                "0 31 29 27 28 26 30 32 34 33 101 0\n" +
+                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
+                "0 69 98 88 53 78 73 79 60 70 68 0\n" +
+                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
+                "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
+                "0 61 81 106 90 0\n" +
+                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
+                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
                 "0 72 71 93 94 67 50 96 54 0\n" +
                 "Requests\n" +
-                "11 34 12 10 47 14\n" +
-                "4 0 1 29 2 5 3\n" +
-                "33 27 48 32 50\n" +
-                "17 15 19 18 16\n" +
-                "23 24 21 20 22\n" +
-                "6 9 7 25 8\n" +
-                "13 35 28 44 40\n" +
-                "42 31\n" +
-                "52 30 39 36 46\n" +
-                "51 41 43 45\n" +
-                "49 26 37 38\n" +
-                "Cost = 1230.1448446772672\n" +
+                "41 51 43 45\n" +
+                "8 6 9 7 25\n" +
+                "17 18 15 19 16\n" +
+                "10 11 14 34 47 12\n" +
+                "39 30 52 36 46\n" +
+                "27 50 48 32 33\n" +
+                "5 1 0 4 3 2 29\n" +
+                "31 42\n" +
+                "21 22 23 20 24\n" +
+                "13 40 44 28 35\n" +
+                "26 49 38 37\n" +
+                "Cost = 1230.144844677267\n" +
                 "Num. vehicles = 11");
     }
 
@@ -762,163 +729,148 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2000 BFS = 104.49069638727337, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2000 Sol = [F = true, NV = 1, TC = 104.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [1]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2417 BFS = 219.84971319001224, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2417 Sol = [F = true, NV = 2, TC = 219.85]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [2]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2500 BFS = 240.62268786557559, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2500 Sol = [F = true, NV = 2, TC = 240.62]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [3]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2584 BFS = 251.36949052486273, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2584 Sol = [F = true, NV = 2, TC = 251.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2667 BFS = 260.4516030630957, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2667 Sol = [F = true, NV = 2, TC = 260.45]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5, 6, 7]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2750 BFS = 449.8809258945144, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2750 Sol = [F = true, NV = 4, TC = 449.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2834 BFS = 547.2743034415381, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2849 BFS = 536.9625218187405, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2852 BFS = 530.2153431106785, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2834 Sol = [F = true, NV = 5, TC = 547.27]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2838 Sol = [F = true, NV = 5, TC = 536.96]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2848 Sol = [F = true, NV = 4, TC = 530.22]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2917 BFS = 586.8544273910579, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2923 BFS = 541.7669221078286, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2917 Sol = [F = true, NV = 5, TC = 541.77]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [10, 11, 12, 13, 14]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3000 BFS = 733.519288219841, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3006 BFS = 713.9603244811535, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3012 BFS = 669.2286668012526, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3000 Sol = [F = true, NV = 6, TC = 741.21]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3002 Sol = [F = true, NV = 6, TC = 725.06]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3003 Sol = [F = true, NV = 6, TC = 719.36]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3028 Sol = [F = true, NV = 6, TC = 717.33]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3069 Sol = [F = true, NV = 6, TC = 669.23]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [15, 16]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3084 BFS = 712.6559667286147, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3084 Sol = [F = true, NV = 7, TC = 728.93]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3100 Sol = [F = true, NV = 7, TC = 712.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [17]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3167 BFS = 777.7948324591308, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3170 BFS = 738.0321951078446, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3167 Sol = [F = true, NV = 7, TC = 776.55]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3200 Sol = [F = true, NV = 7, TC = 754.3]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3222 Sol = [F = true, NV = 7, TC = 738.03]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [18, 19, 20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3250 BFS = 857.0559810595541, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3260 BFS = 814.6418365955806, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3300 BFS = 799.7094772159528, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3250 Sol = [F = true, NV = 8, TC = 831.45]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3298 Sol = [F = true, NV = 7, TC = 805.4]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3300 Sol = [F = true, NV = 7, TC = 799.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21, 22, 23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3334 BFS = 935.0069849064628, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3334 BFS = 918.9128663774748, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3334 Sol = [F = true, NV = 9, TC = 942.13]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3363 Sol = [F = true, NV = 9, TC = 919.97]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24, 25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3417 BFS = 999.4205043188515, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3466 BFS = 968.0359209472439, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3486 BFS = 961.5314166245848, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3657 BFS = 931.843833637659, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3417 Sol = [F = true, NV = 10, TC = 960.18]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3500 Sol = [F = true, NV = 9, TC = 942.46]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3600 Sol = [F = true, NV = 9, TC = 930.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3667 BFS = 1004.650455248709, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3667 BFS = 995.2394146903608, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3677 BFS = 960.5644719795685, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3684 BFS = 943.7567306304604, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3667 Sol = [F = true, NV = 10, TC = 981.99]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3667 Sol = [F = true, NV = 10, TC = 976.3]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3778 Sol = [F = true, NV = 9, TC = 957.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27, 28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3834 BFS = 1052.1609404550675, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3875 BFS = 996.9145000503452, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3834 Sol = [F = true, NV = 10, TC = 1055.55]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3851 Sol = [F = true, NV = 9, TC = 1002.86]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3917 BFS = 1046.1634375528135, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3918 BFS = 1002.1514772512328, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3917 Sol = [F = true, NV = 9, TC = 1086.75]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4000 BFS = 1044.3606591530004, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4026 BFS = 1031.0512488337256, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4000 Sol = [F = true, NV = 10, TC = 1154.4]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4000 Sol = [F = true, NV = 10, TC = 1055.78]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4010 Sol = [F = true, NV = 10, TC = 1042.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31, 32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 BFS = 1102.4599030341424, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4091 BFS = 1098.6184401455591, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 Sol = [F = true, NV = 11, TC = 1155.83]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4096 Sol = [F = true, NV = 11, TC = 1105.47]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4097 Sol = [F = true, NV = 10, TC = 1098.62]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4118 Sol = [F = true, NV = 10, TC = 1098.62]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33, 34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4167 BFS = 1175.55998154706, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4167 BFS = 1140.9983934193137, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4200 BFS = 1126.7069425303375, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4167 Sol = [F = true, NV = 11, TC = 1140.21]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4200 Sol = [F = true, NV = 11, TC = 1126.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4250 BFS = 1240.2537911871827, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4251 BFS = 1237.9948533253612, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4250 Sol = [F = true, NV = 12, TC = 1288.85]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4259 Sol = [F = true, NV = 12, TC = 1182.46]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4270 Sol = [F = true, NV = 11, TC = 1171.71]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4322 Sol = [F = true, NV = 11, TC = 1158.52]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4334 BFS = 1305.0854277834358, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4338 BFS = 1274.5571365608928, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4341 BFS = 1228.2063639201724, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4356 BFS = 1208.6078527531542, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4334 Sol = [F = true, NV = 11, TC = 1281.64]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4334 Sol = [F = true, NV = 11, TC = 1198.92]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4425 Sol = [F = true, NV = 11, TC = 1134.33]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4500 BFS = 1241.5170284462522, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4504 BFS = 1218.4544182005359, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4509 BFS = 1191.7641992034403, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4530 BFS = 1137.770380850824, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4500 Sol = [F = true, NV = 12, TC = 1203.24]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4500 Sol = [F = true, NV = 11, TC = 1155.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4584 BFS = 1278.3205939332156, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4584 BFS = 1230.1868795898463, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4588 BFS = 1146.9553498025762, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4584 Sol = [F = true, NV = 11, TC = 1176.68]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4600 Sol = [F = true, NV = 11, TC = 1145.44]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4667 BFS = 1299.2989047106066, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4693 BFS = 1210.0870352519046, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4667 Sol = [F = true, NV = 11, TC = 1210.41]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4674 Sol = [F = true, NV = 11, TC = 1201.68]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40, 41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4750 BFS = 1330.5922150276072, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4752 BFS = 1219.3771916757355, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4764 BFS = 1170.0027744681063, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4750 Sol = [F = true, NV = 13, TC = 1378.87]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4769 Sol = [F = true, NV = 13, TC = 1317.53]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4770 Sol = [F = true, NV = 12, TC = 1313.51]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4800 Sol = [F = true, NV = 12, TC = 1303.1]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4830 Sol = [F = true, NV = 12, TC = 1245.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42, 43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4834 BFS = 1422.0936274555888, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4861 BFS = 1389.1548649025522, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4873 BFS = 1274.575642222569, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4834 Sol = [F = true, NV = 12, TC = 1257.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 BFS = 1500.4820426358128, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4920 BFS = 1476.72687674278, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4921 BFS = 1364.032619055516, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4933 BFS = 1315.8929879585583, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 Sol = [F = true, NV = 13, TC = 1339.07]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5000 Sol = [F = true, NV = 12, TC = 1284.41]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5048 Sol = [F = true, NV = 12, TC = 1251.78]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5084 BFS = 1550.6425842040217, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5087 BFS = 1384.6884106189689, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5100 BFS = 1350.708412275289, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5200 BFS = 1321.5123129644292, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5084 Sol = [F = true, NV = 12, TC = 1292.29]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 BFS = 1426.4063521952567, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5300 BFS = 1396.4062646111468, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 Sol = [F = true, NV = 12, TC = 1285.22]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 BFS = 1500.8397237796348, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 BFS = 1480.7659350931356, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5347 BFS = 1431.036813074384, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5349 BFS = 1427.538142674588, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5354 BFS = 1411.7765841714788, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5357 BFS = 1382.890878748565, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5600 BFS = 1369.0799546811825, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5707 BFS = 1345.4043641024352, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 Sol = [F = true, NV = 12, TC = 1416.89]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5335 Sol = [F = true, NV = 12, TC = 1315.25]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5400 Sol = [F = true, NV = 11, TC = 1289.38]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 Sol = [F = true, NV = 11, TC = 1271.18]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5700 Sol = [F = true, NV = 11, TC = 1271.17]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5799 Sol = [F = true, NV = 11, TC = 1214.17]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 BFS = 1422.7509759200686, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6100 BFS = 1381.4736368355093, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 Sol = [F = true, NV = 11, TC = 1312.7]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6143 Sol = [F = true, NV = 11, TC = 1305.87]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6349 Sol = [F = true, NV = 11, TC = 1215.23]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6417 BFS = 1607.2208938592535, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6455 BFS = 1512.603420811247, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6417 Sol = [F = true, NV = 11, TC = 1296.04]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 BFS = 1445.7118441525656, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6648 BFS = 1359.70558155061, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7429 BFS = 1314.6045033069536, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8183 BFS = 1292.8788529727535, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8200 BFS = 1289.0177810680118, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 Sol = [F = true, NV = 11, TC = 1227.08]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51, 52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8250 BFS = 1306.3525242126914, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11400 BFS = 1301.3631846120245, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11415 BFS = 1285.9271514296008, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11600 BFS = 1279.4424152322288, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11625 BFS = 1253.143127821514, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11680 BFS = 1230.1448446772672, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17800 BFS = 1230.144844677267, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8250 Sol = [F = true, NV = 11, TC = 1279.37]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8259 Sol = [F = true, NV = 11, TC = 1236.93]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9100 Sol = [F = true, NV = 11, TC = 1230.14]");
         assertThat(logs.get(i++)).contains("Instance = lrc107_a_0.5.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
-                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
                 "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
-                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
+                "0 61 81 106 90 0\n" +
+                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
                 "0 69 98 88 53 78 73 79 60 70 68 0\n" +
                 "0 31 29 27 28 26 30 32 34 33 101 0\n" +
-                "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
-                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
-                "0 61 81 106 90 0\n" +
-                "0 82 99 87 59 75 97 58 77 0\n" +
                 "0 72 71 93 94 67 50 96 54 0\n" +
+                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
+                "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
+                "0 82 99 87 59 75 97 58 77 0\n" +
+                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
+                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
                 "Requests\n" +
-                "48 50 27 33 32\n" +
-                "6 7 25 9 8\n" +
-                "34 10 12 47 11 14\n" +
-                "23 20 21 24 22\n" +
-                "30 39 46 36 52\n" +
-                "17 15 18 16 19\n" +
-                "5 2 4 29 3 1 0\n" +
-                "13 35 40 44 28\n" +
+                "12 10 14 34 11 47\n" +
                 "42 31\n" +
-                "51 45 43 41\n" +
-                "38 49 26 37\n" +
-                "Cost = 1230.144844677267\n" +
+                "25 6 8 9 7\n" +
+                "46 39 30 52 36\n" +
+                "18 15 17 16 19\n" +
+                "37 49 26 38\n" +
+                "50 32 48 27 33\n" +
+                "4 0 29 1 3 5 2\n" +
+                "45 43 41 51\n" +
+                "44 28 13 35 40\n" +
+                "22 23 20 24 21\n" +
+                "Cost = 1230.1448446772672\n" +
                 "Num. vehicles = 11");
     }
 
@@ -931,182 +883,174 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3667 BFS = 104.49069638727337, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 3667 Sol = [F = true, NV = 1, TC = 104.49]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [1]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4417 BFS = 219.84971319001224, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4417 Sol = [F = true, NV = 2, TC = 219.85]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [2]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4584 BFS = 240.62268786557559, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4584 Sol = [F = true, NV = 2, TC = 240.62]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [3, 4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4750 BFS = 260.4516030630957, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4750 Sol = [F = true, NV = 2, TC = 260.45]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5, 6]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 BFS = 423.2096312542916, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 Sol = [F = true, NV = 4, TC = 423.21]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4936 Sol = [F = true, NV = 3, TC = 421.56]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [7]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5000 BFS = 449.8809258945144, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5000 Sol = [F = true, NV = 4, TC = 483.07]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5018 Sol = [F = true, NV = 4, TC = 449.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5167 BFS = 547.2743034415382, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5223 BFS = 536.9625218187405, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5228 BFS = 530.2153431106785, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5167 Sol = [F = true, NV = 5, TC = 547.27]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5198 Sol = [F = true, NV = 5, TC = 536.96]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 BFS = 541.7669221078286, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 Sol = [F = true, NV = 5, TC = 552.1]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5268 Sol = [F = true, NV = 5, TC = 541.77]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [10]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 BFS = 603.0675210118643, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5384 BFS = 555.7883179679795, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 Sol = [F = true, NV = 5, TC = 555.79]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [11, 12, 13]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5417 BFS = 641.9198348513438, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5437 BFS = 640.1496952728554, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5417 Sol = [F = true, NV = 6, TC = 650.48]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5466 Sol = [F = true, NV = 6, TC = 641.92]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 BFS = 666.302518820863, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 Sol = [F = true, NV = 7, TC = 703.63]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5529 Sol = [F = true, NV = 6, TC = 669.23]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [15]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 BFS = 710.528885502492, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5585 BFS = 670.1096204874016, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 Sol = [F = true, NV = 7, TC = 710.53]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5586 Sol = [F = true, NV = 6, TC = 670.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [16]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5667 BFS = 727.8513280278689, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5700 BFS = 712.6559667286147, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5667 Sol = [F = true, NV = 6, TC = 689.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [17]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5750 BFS = 738.0321951078445, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5750 Sol = [F = true, NV = 6, TC = 714.78]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [18, 19]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5834 BFS = 803.5396240649227, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5834 Sol = [F = true, NV = 8, TC = 862.23]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5840 Sol = [F = true, NV = 7, TC = 805.49]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5900 Sol = [F = true, NV = 7, TC = 804.52]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5902 Sol = [F = true, NV = 7, TC = 798.83]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5917 BFS = 811.9355392579052, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5917 Sol = [F = true, NV = 7, TC = 799.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6000 BFS = 871.7146280839455, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6029 BFS = 830.3549715842555, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6000 Sol = [F = true, NV = 8, TC = 893.07]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6001 Sol = [F = true, NV = 8, TC = 881.47]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6014 Sol = [F = true, NV = 7, TC = 833.68]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [22, 23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 BFS = 944.0694247967086, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6100 BFS = 928.1078399415212, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 Sol = [F = true, NV = 9, TC = 920.94]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6090 Sol = [F = true, NV = 9, TC = 919.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6167 BFS = 950.099175182921, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6210 BFS = 932.4771853230092, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6167 Sol = [F = true, NV = 10, TC = 932.48]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6250 BFS = 983.4792202387722, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6269 BFS = 939.4462029198261, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6250 Sol = [F = true, NV = 9, TC = 942.09]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6400 Sol = [F = true, NV = 9, TC = 938.32]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 Sol = [F = true, NV = 9, TC = 931.84]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6584 BFS = 996.2831978677917, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6585 BFS = 971.5322001470746, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6625 BFS = 966.7056347776099, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6800 BFS = 949.4469864423158, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6584 Sol = [F = true, NV = 10, TC = 982.65]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6600 Sol = [F = true, NV = 10, TC = 943.76]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 BFS = 992.8570318185642, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6949 BFS = 955.4127500811686, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 Sol = [F = true, NV = 9, TC = 1089.04]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 Sol = [F = true, NV = 9, TC = 1059.33]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6922 Sol = [F = true, NV = 9, TC = 1055.08]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6924 Sol = [F = true, NV = 9, TC = 1050.79]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6951 Sol = [F = true, NV = 9, TC = 967.05]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7000 BFS = 1048.96971812375, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7010 BFS = 1040.670316277949, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7018 BFS = 1023.862574928841, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7021 BFS = 991.2242442384897, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7000 Sol = [F = true, NV = 10, TC = 1193.65]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7001 Sol = [F = true, NV = 10, TC = 991.22]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7084 BFS = 1097.2245184229241, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7086 BFS = 1002.151477251233, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7084 Sol = [F = true, NV = 11, TC = 1110.21]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7094 Sol = [F = true, NV = 10, TC = 1034.79]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7107 Sol = [F = true, NV = 10, TC = 1002.15]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7250 BFS = 1117.0859813339007, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7252 BFS = 1088.48961402047, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7300 BFS = 1088.1991342713122, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7314 BFS = 1044.549694468208, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7250 Sol = [F = true, NV = 10, TC = 1191.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7251 Sol = [F = true, NV = 10, TC = 1081.78]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7263 Sol = [F = true, NV = 10, TC = 1045.53]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7300 Sol = [F = true, NV = 10, TC = 1031.05]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31, 32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 BFS = 1201.4009253848963, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7343 BFS = 1171.1979916610294, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7365 BFS = 1122.3553053048727, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7387 BFS = 1117.3489423707924, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7400 BFS = 1092.8102512564778, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 Sol = [F = true, NV = 10, TC = 1106.12]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7339 Sol = [F = true, NV = 10, TC = 1092.81]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7500 BFS = 1157.8582861407754, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7500 BFS = 1109.9872876937545, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7500 Sol = [F = true, NV = 10, TC = 1106.14]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34, 35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7584 BFS = 1258.2041504238737, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7586 BFS = 1234.1888461501921, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7587 BFS = 1196.788355508577, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7600 BFS = 1182.462738190655, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7615 BFS = 1131.4797329344913, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7584 Sol = [F = true, NV = 11, TC = 1185.98]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7600 Sol = [F = true, NV = 11, TC = 1169.16]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7602 Sol = [F = true, NV = 11, TC = 1150.1]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7693 Sol = [F = true, NV = 11, TC = 1130.5]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7750 BFS = 1245.2727804203494, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7757 BFS = 1204.283916719328, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7776 BFS = 1189.8137239511761, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7779 BFS = 1134.3313466124703, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7750 Sol = [F = true, NV = 11, TC = 1153.93]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7800 Sol = [F = true, NV = 11, TC = 1134.33]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 BFS = 1187.7354266766895, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8195 BFS = 1156.3509325875439, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8292 BFS = 1141.2858357877174, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8297 BFS = 1135.770380850824, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 Sol = [F = true, NV = 11, TC = 1242.3]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8173 Sol = [F = true, NV = 11, TC = 1241.2]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8198 Sol = [F = true, NV = 11, TC = 1186.92]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8215 Sol = [F = true, NV = 11, TC = 1155.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8334 BFS = 1142.3111435486132, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8334 Sol = [F = true, NV = 11, TC = 1190.05]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8336 Sol = [F = true, NV = 11, TC = 1184.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 BFS = 1279.7168470687495, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8418 BFS = 1233.326447024609, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8470 BFS = 1211.6526654832178, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 Sol = [F = true, NV = 12, TC = 1257.5]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8463 Sol = [F = true, NV = 11, TC = 1226.49]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8568 Sol = [F = true, NV = 11, TC = 1159.75]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8584 BFS = 1432.5722450182188, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8589 BFS = 1334.1792820766625, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8621 BFS = 1289.1566570435905, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8584 Sol = [F = true, NV = 11, TC = 1235.36]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8585 Sol = [F = true, NV = 11, TC = 1213.72]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 BFS = 1412.4290181647032, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 BFS = 1364.558019717682, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8685 BFS = 1327.6732437284734, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 Sol = [F = true, NV = 12, TC = 1240.28]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42, 43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8750 BFS = 1307.428657735352, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8819 BFS = 1267.5343083018267, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8750 Sol = [F = true, NV = 13, TC = 1423.08]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8758 Sol = [F = true, NV = 13, TC = 1352.75]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8834 BFS = 1325.3407230747018, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8834 Sol = [F = true, NV = 13, TC = 1355.6]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8839 Sol = [F = true, NV = 12, TC = 1332.27]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8924 Sol = [F = true, NV = 12, TC = 1323.07]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8963 Sol = [F = true, NV = 11, TC = 1194.75]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9167 BFS = 1306.885892109441, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9173 BFS = 1284.6666440400745, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9167 Sol = [F = true, NV = 12, TC = 1276.35]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9200 Sol = [F = true, NV = 11, TC = 1271.96]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9230 Sol = [F = true, NV = 11, TC = 1208.59]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9417 BFS = 1473.8078273054973, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9446 BFS = 1402.008940059353, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9500 BFS = 1376.697708761766, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9513 BFS = 1320.4485831545744, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9417 Sol = [F = true, NV = 12, TC = 1321.98]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9667 BFS = 1380.1093169367766, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9894 BFS = 1325.4063499761469, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10000 BFS = 1319.8751565822204, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10001 BFS = 1247.9530057750198, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9667 Sol = [F = true, NV = 12, TC = 1427.75]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9733 Sol = [F = true, NV = 12, TC = 1407.97]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9741 Sol = [F = true, NV = 12, TC = 1287.97]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10300 Sol = [F = true, NV = 11, TC = 1286.4]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10400 Sol = [F = true, NV = 11, TC = 1284.0]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10500 Sol = [F = true, NV = 11, TC = 1281.87]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10900 Sol = [F = true, NV = 11, TC = 1275.77]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10905 Sol = [F = true, NV = 11, TC = 1275.75]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11000 BFS = 1478.487878445128, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11008 BFS = 1364.8733233653702, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11100 BFS = 1347.6331403491185, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11467 BFS = 1312.405779832338, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11000 Sol = [F = true, NV = 11, TC = 1217.63]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11584 BFS = 1506.3833573605718, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11597 BFS = 1473.0464402622888, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11584 Sol = [F = true, NV = 11, TC = 1310.29]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11700 Sol = [F = true, NV = 11, TC = 1298.44]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11750 BFS = 1423.2163161336669, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11767 BFS = 1375.0131750597172, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12966 BFS = 1289.0064892856674, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12970 BFS = 1227.0821192900041, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11750 Sol = [F = true, NV = 11, TC = 1234.67]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11800 Sol = [F = true, NV = 11, TC = 1227.08]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51, 52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14917 BFS = 1373.7198772610093, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14936 BFS = 1323.628485239006, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17415 BFS = 1309.2063939995965, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19100 BFS = 1305.8827380898526, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19121 BFS = 1299.7874485573318, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14917 Sol = [F = true, NV = 11, TC = 1320.78]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 15206 Sol = [F = true, NV = 11, TC = 1230.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16800 Sol = [F = true, NV = 11, TC = 1230.14]");
         assertThat(logs.get(i++)).contains("Instance = lrc107_a_0.9.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
+                "0 82 99 87 59 75 97 58 77 0\n" +
+                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
+                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
                 "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
+                "0 72 71 93 94 67 50 96 54 0\n" +
                 "0 69 98 88 53 78 73 79 60 70 68 0\n" +
                 "0 11 12 14 47 17 16 15 13 9 10 0\n" +
                 "0 65 83 52 86 74 105 57 24 22 66 0\n" +
-                "0 64 19 25 23 21 18 48 49 20 56 0\n" +
-                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
-                "0 95 84 51 91 102 80 0\n" +
-                "0 31 29 27 26 28 30 34 32 0\n" +
-                "0 92 62 85 63 76 89 33 101 0\n" +
-                "0 72 71 93 94 67 50 96 54 0\n" +
                 "0 61 81 106 90 0\n" +
-                "0 82 99 87 59 75 97 58 77 0\n" +
+                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
+                "0 31 29 27 28 26 30 32 34 33 101 0\n" +
                 "Requests\n" +
-                "3 4 5 2 0 1 29\n" +
-                "52 30 36 39 46\n" +
-                "7 6 9 25 8\n" +
-                "44 28 13 40 35\n" +
-                "11 14 12 10 34\n" +
-                "21 24 23 20 22\n" +
-                "27 50 47\n" +
-                "15 18 17 16\n" +
-                "19 33 32 48\n" +
-                "49 37 38 26\n" +
+                "51 41 43 45\n" +
+                "23 21 24 20 22\n" +
+                "10 11 14 12 34 47\n" +
+                "5 4 0 1 29 2 3\n" +
+                "38 37 26 49\n" +
+                "39 46 30 36 52\n" +
+                "9 7 8 6 25\n" +
+                "35 44 28 13 40\n" +
                 "42 31\n" +
-                "43 45 51 41\n" +
-                "Cost = 1299.7874485573318\n" +
-                "Num. vehicles = 12");
+                "48 32 27 50 33\n" +
+                "15 18 17 19 16\n" +
+                "Cost = 1230.1448446772672\n" +
+                "Num. vehicles = 11");
     }
 
     @Test
@@ -1118,179 +1062,164 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 215.6114377533283, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 22 BFS = 179.1097523093241, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 2, TC = 215.61]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17 Sol = [F = true, NV = 2, TC = 179.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [4]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 BFS = 283.6004486965975, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 Sol = [F = true, NV = 3, TC = 283.6]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [5]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 BFS = 360.3636952498931, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 Sol = [F = true, NV = 4, TC = 360.36]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [6]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5084 BFS = 400.2595223085897, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5104 BFS = 380.5555510125147, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5084 Sol = [F = true, NV = 4, TC = 405.51]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5098 Sol = [F = true, NV = 3, TC = 387.41]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [7]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 BFS = 436.2518490611141, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5251 BFS = 391.3023536718018, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 Sol = [F = true, NV = 3, TC = 439.36]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5255 Sol = [F = true, NV = 3, TC = 417.32]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5265 Sol = [F = true, NV = 3, TC = 398.16]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [8]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 BFS = 400.3844662100348, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 Sol = [F = true, NV = 3, TC = 447.24]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5334 Sol = [F = true, NV = 3, TC = 407.24]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [9, 10]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 BFS = 492.93707291890144, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5501 BFS = 461.0434340785012, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 Sol = [F = true, NV = 5, TC = 492.94]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5505 Sol = [F = true, NV = 4, TC = 461.04]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [11]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 BFS = 481.94979886629153, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 Sol = [F = true, NV = 5, TC = 509.9]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5607 Sol = [F = true, NV = 4, TC = 481.95]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [12]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5667 BFS = 607.2901965583432, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5700 BFS = 600.7600686898187, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5714 BFS = 582.0525742557472, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5725 BFS = 579.1998894960411, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5732 BFS = 568.8664298494184, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5667 Sol = [F = true, NV = 5, TC = 579.34]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5681 Sol = [F = true, NV = 5, TC = 574.95]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [13]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5834 BFS = 583.8288253841935, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5834 Sol = [F = true, NV = 6, TC = 611.76]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5837 Sol = [F = true, NV = 5, TC = 583.83]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14, 15, 16, 17]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6000 BFS = 664.2530602859628, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6000 Sol = [F = true, NV = 6, TC = 663.44]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [18]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 BFS = 722.0197667206096, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6116 BFS = 715.2122081036717, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 Sol = [F = true, NV = 7, TC = 722.83]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6111 Sol = [F = true, NV = 6, TC = 712.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [19]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6167 BFS = 719.0193097702104, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6167 Sol = [F = true, NV = 6, TC = 728.33]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [20]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6334 BFS = 746.4277369873901, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6334 Sol = [F = true, NV = 6, TC = 755.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [21, 22]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 BFS = 872.0674092582763, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 BFS = 820.1250377162407, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 Sol = [F = true, NV = 8, TC = 862.15]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6584 BFS = 864.2335726119536, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6585 BFS = 821.8194281479803, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6592 BFS = 821.0051796371765, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6584 Sol = [F = true, NV = 8, TC = 821.01]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6667 BFS = 881.5655804556009, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6674 BFS = 836.7183146258511, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6667 Sol = [F = true, NV = 7, TC = 871.97]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25, 26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6750 BFS = 1027.3844215918823, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6751 BFS = 936.8847579825544, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6800 BFS = 934.5183129868427, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6750 Sol = [F = true, NV = 9, TC = 970.82]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6862 Sol = [F = true, NV = 9, TC = 936.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 BFS = 974.4024041401603, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6920 BFS = 947.360787998033, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7000 BFS = 942.3015790944637, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 Sol = [F = true, NV = 9, TC = 1037.59]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 Sol = [F = true, NV = 9, TC = 1028.31]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7068 Sol = [F = true, NV = 9, TC = 1010.18]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7095 Sol = [F = true, NV = 9, TC = 965.94]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 BFS = 1070.1302774531737, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 BFS = 945.7978582942941, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7400 BFS = 945.797858294294, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 Sol = [F = true, NV = 10, TC = 978.34]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7667 BFS = 968.683158540042, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7700 BFS = 957.4538777450024, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7667 Sol = [F = true, NV = 10, TC = 1068.94]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7672 Sol = [F = true, NV = 9, TC = 1018.58]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7700 Sol = [F = true, NV = 9, TC = 1014.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7750 BFS = 1095.5618023841982, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7751 BFS = 1043.6194308421627, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7833 BFS = 1032.7622472134537, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7750 Sol = [F = true, NV = 9, TC = 1050.34]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7834 BFS = 1045.5050493786712, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7853 BFS = 1006.008174067541, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8000 BFS = 1006.0081740675408, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7834 Sol = [F = true, NV = 10, TC = 1006.01]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8084 BFS = 1041.090059043157, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8084 Sol = [F = true, NV = 10, TC = 1041.09]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33, 34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 BFS = 1159.4473580314411, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8173 BFS = 1099.007598577326, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 Sol = [F = true, NV = 11, TC = 1105.86]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8200 Sol = [F = true, NV = 11, TC = 1104.34]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8334 BFS = 1220.4278574627383, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8388 BFS = 1171.818584019882, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8334 Sol = [F = true, NV = 10, TC = 1123.79]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8338 Sol = [F = true, NV = 10, TC = 1119.94]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 BFS = 1241.1102006375452, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 BFS = 1197.272499095727, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8520 BFS = 1150.1621505136636, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 Sol = [F = true, NV = 11, TC = 1158.94]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 BFS = 1311.237402592633, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8698 BFS = 1214.9333322718112, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8700 BFS = 1204.349863701184, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8732 BFS = 1191.3519212537742, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8867 BFS = 1140.5794069874496, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 Sol = [F = true, NV = 11, TC = 1229.96]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8685 Sol = [F = true, NV = 11, TC = 1192.55]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8700 Sol = [F = true, NV = 11, TC = 1191.57]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9000 BFS = 1155.434838999698, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9000 Sol = [F = true, NV = 11, TC = 1199.95]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9068 Sol = [F = true, NV = 11, TC = 1160.95]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9100 Sol = [F = true, NV = 11, TC = 1155.43]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9250 BFS = 1280.6550602675377, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9250 BFS = 1210.0497026405678, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9300 BFS = 1172.1352628883433, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9250 Sol = [F = true, NV = 11, TC = 1277.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9295 Sol = [F = true, NV = 11, TC = 1265.62]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9298 Sol = [F = true, NV = 11, TC = 1265.12]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9334 BFS = 1283.8141078634546, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9356 BFS = 1228.1184719727908, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9443 BFS = 1207.590506624064, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9334 Sol = [F = true, NV = 12, TC = 1310.55]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9336 Sol = [F = true, NV = 12, TC = 1251.09]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9372 Sol = [F = true, NV = 11, TC = 1196.01]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9392 Sol = [F = true, NV = 11, TC = 1192.23]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9500 Sol = [F = true, NV = 11, TC = 1178.43]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41, 42]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9584 BFS = 1299.0694462884635, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9590 BFS = 1270.8568771641947, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9600 BFS = 1270.1960363157525, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9584 Sol = [F = true, NV = 12, TC = 1206.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9667 BFS = 1321.6103975320436, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9677 BFS = 1287.9675368560038, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9667 Sol = [F = true, NV = 12, TC = 1349.48]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9681 Sol = [F = true, NV = 12, TC = 1327.53]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9682 Sol = [F = true, NV = 11, TC = 1277.17]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9700 Sol = [F = true, NV = 11, TC = 1242.11]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9750 BFS = 1315.7667850586663, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9800 BFS = 1314.0048410664683, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9802 BFS = 1244.7717596042376, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9750 Sol = [F = true, NV = 12, TC = 1301.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9834 BFS = 1378.4989691120793, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9835 BFS = 1330.627970665058, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9960 BFS = 1243.3727240516919, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9834 Sol = [F = true, NV = 12, TC = 1263.18]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9922 Sol = [F = true, NV = 11, TC = 1216.42]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10250 BFS = 1423.1842664456508, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10258 BFS = 1352.2599060409154, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10395 BFS = 1250.7164509721763, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10250 Sol = [F = true, NV = 12, TC = 1350.17]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10271 Sol = [F = true, NV = 12, TC = 1260.04]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10300 Sol = [F = true, NV = 11, TC = 1209.11]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10499 Sol = [F = true, NV = 11, TC = 1198.36]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10500 BFS = 1443.4375939013048, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10565 BFS = 1361.865528715061, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10500 Sol = [F = true, NV = 11, TC = 1212.41]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10750 BFS = 1397.3125053595838, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10847 BFS = 1358.5067609759765, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10750 Sol = [F = true, NV = 11, TC = 1291.56]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10800 Sol = [F = true, NV = 11, TC = 1288.68]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11000 Sol = [F = true, NV = 11, TC = 1284.4]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11579 Sol = [F = true, NV = 11, TC = 1283.48]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11586 Sol = [F = true, NV = 11, TC = 1220.43]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12167 BFS = 1469.2269151263308, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12167 BFS = 1452.5573794017967, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12205 BFS = 1441.9985950464238, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12554 BFS = 1379.9550473182283, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12167 Sol = [F = true, NV = 11, TC = 1221.48]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12917 BFS = 1509.515126341609, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12936 BFS = 1477.7631633512885, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12947 BFS = 1433.3655835141753, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12998 BFS = 1399.1329521243981, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13205 BFS = 1391.801562864834, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13600 BFS = 1378.8304788790927, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13800 BFS = 1350.989088524584, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 15300 BFS = 1339.9870599972287, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 15375 BFS = 1302.2146989307616, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16100 BFS = 1302.2146989307614, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12917 Sol = [F = true, NV = 11, TC = 1323.13]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13000 Sol = [F = true, NV = 11, TC = 1319.72]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13009 Sol = [F = true, NV = 11, TC = 1317.72]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13129 Sol = [F = true, NV = 11, TC = 1227.08]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51, 52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16584 BFS = 1326.8808647957592, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19564 BFS = 1313.6268123106781, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19600 BFS = 1305.2774243180245, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19994 BFS = 1303.404123818299, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16584 Sol = [F = true, NV = 11, TC = 1309.72]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16800 Sol = [F = true, NV = 11, TC = 1302.3]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17682 Sol = [F = true, NV = 11, TC = 1246.12]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17800 Sol = [F = true, NV = 11, TC = 1240.89]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 18300 Sol = [F = true, NV = 11, TC = 1238.51]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 18812 Sol = [F = true, NV = 11, TC = 1232.54]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19200 Sol = [F = true, NV = 11, TC = 1230.16]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 19800 Sol = [F = true, NV = 11, TC = 1230.14]");
         assertThat(logs.get(i++)).contains("Instance = lrc107_q_0_0.1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
                 "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
-                "0 69 98 88 53 78 73 79 60 70 68 0\n" +
-                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
-                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
                 "0 82 99 87 59 75 97 58 77 0\n" +
-                "0 41 39 38 35 36 37 44 43 0\n" +
                 "0 31 29 27 28 26 30 32 34 33 101 0\n" +
-                "0 94 50 96 54 0\n" +
-                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
+                "0 72 71 93 94 67 50 96 54 0\n" +
                 "0 92 95 62 84 85 63 51 76 89 80 0\n" +
-                "0 42 40 72 71 93 67 0\n" +
+                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
+                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
+                "0 69 98 88 53 78 73 79 60 70 68 0\n" +
+                "0 41 38 39 42 44 43 40 37 35 36 0\n" +
+                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
                 "0 61 81 106 90 0\n" +
                 "Requests\n" +
-                "0 5 3 1 2 29 4\n" +
-                "36 46 39 30 52\n" +
-                "6 8 25 7 9\n" +
-                "10 34 14 11 12 47\n" +
-                "45 43 51 41\n" +
-                "23 22 20 21\n" +
-                "17 15 19 16 18\n" +
-                "49 26\n" +
-                "13 44 35 28 40\n" +
-                "48 27 50 33 32\n" +
-                "24 38 37\n" +
+                "29 1 0 3 4 5 2\n" +
+                "51 45 41 43\n" +
+                "15 18 17 19 16\n" +
+                "26 37 38 49\n" +
+                "48 50 33 32 27\n" +
+                "12 14 34 10 11 47\n" +
+                "44 28 13 40 35\n" +
+                "30 46 52 39 36\n" +
+                "23 21 20 24 22\n" +
+                "6 7 9 8 25\n" +
                 "42 31\n" +
-                "Cost = 1303.404123818299\n" +
-                "Num. vehicles = 12");
+                "Cost = 1230.1448446772672\n" +
+                "Num. vehicles = 11");
     }
 
     @Test
@@ -1302,160 +1231,148 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 802.3312991376806, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14 BFS = 761.3417108485291, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 79 BFS = 756.1437358918253, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1352 BFS = 755.4784611954102, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 8, TC = 802.33]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5 Sol = [F = true, NV = 7, TC = 760.57]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 100 Sol = [F = true, NV = 7, TC = 756.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 800 Sol = [F = true, NV = 7, TC = 756.14]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 827 Sol = [F = true, NV = 7, TC = 755.48]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 BFS = 770.2191115124219, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4095 BFS = 768.9015822155807, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4106 BFS = 764.4747703251023, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4700 BFS = 764.4747703251022, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 Sol = [F = true, NV = 7, TC = 768.9]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4400 Sol = [F = true, NV = 7, TC = 764.47]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4717 Sol = [F = true, NV = 7, TC = 763.81]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [24]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 BFS = 856.9112778478504, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4950 BFS = 845.4337830991435, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5035 BFS = 816.8522294332016, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4917 Sol = [F = true, NV = 8, TC = 840.52]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4932 Sol = [F = true, NV = 7, TC = 813.63]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5084 BFS = 939.1421220384134, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5087 BFS = 883.391011311313, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5100 BFS = 855.3155895419393, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5084 Sol = [F = true, NV = 8, TC = 874.01]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5114 Sol = [F = true, NV = 7, TC = 871.27]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5200 Sol = [F = true, NV = 7, TC = 870.61]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 BFS = 979.420378968266, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5255 BFS = 969.0327771186613, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5270 BFS = 922.8268075431855, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5281 BFS = 899.5690827035787, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5284 BFS = 892.7129707860493, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5300 BFS = 884.0838748095714, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5494 BFS = 871.5358018945212, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5250 Sol = [F = true, NV = 7, TC = 887.45]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27, 28]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 BFS = 1006.302347914042, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5540 BFS = 987.1162342489316, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 Sol = [F = true, NV = 9, TC = 1012.5]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5503 Sol = [F = true, NV = 8, TC = 967.74]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5509 Sol = [F = true, NV = 8, TC = 955.66]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 BFS = 1020.1408912271287, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5628 BFS = 1014.3471642739198, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 Sol = [F = true, NV = 9, TC = 1009.78]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5584 Sol = [F = true, NV = 9, TC = 1004.47]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5667 BFS = 1044.2588138196647, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5667 Sol = [F = true, NV = 10, TC = 1057.26]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5834 BFS = 1154.0868215442322, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5835 BFS = 1118.9698762869098, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5838 BFS = 1095.787368094655, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5906 BFS = 1050.4199558003047, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5834 Sol = [F = true, NV = 10, TC = 1157.06]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5847 Sol = [F = true, NV = 9, TC = 1076.61]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5848 Sol = [F = true, NV = 9, TC = 1037.17]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5900 Sol = [F = true, NV = 9, TC = 1036.75]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 BFS = 1068.1669705724903, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6084 Sol = [F = true, NV = 9, TC = 1094.09]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6100 Sol = [F = true, NV = 9, TC = 1091.5]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6115 Sol = [F = true, NV = 9, TC = 1051.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [33]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6167 BFS = 1130.972271318823, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6196 BFS = 1067.432435146116, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6167 Sol = [F = true, NV = 9, TC = 1054.13]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6200 Sol = [F = true, NV = 9, TC = 1047.96]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6250 BFS = 1198.1118502603565, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6261 BFS = 1113.590172353235, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6270 BFS = 1072.9905557496415, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6300 BFS = 1065.8078483693778, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6250 Sol = [F = true, NV = 10, TC = 1073.66]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6253 Sol = [F = true, NV = 10, TC = 1072.67]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6300 Sol = [F = true, NV = 10, TC = 1067.46]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [35]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 BFS = 1081.6645538964526, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 Sol = [F = true, NV = 10, TC = 1086.42]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [36]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6584 BFS = 1137.7721090241237, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6591 BFS = 1089.9380364162791, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6584 Sol = [F = true, NV = 11, TC = 1140.34]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6604 Sol = [F = true, NV = 10, TC = 1090.64]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [37]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6667 BFS = 1153.9282401864762, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6667 Sol = [F = true, NV = 11, TC = 1152.94]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6672 Sol = [F = true, NV = 10, TC = 1102.58]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [38]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6750 BFS = 1335.8732859307468, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6753 BFS = 1180.9415336950333, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6750 Sol = [F = true, NV = 11, TC = 1156.42]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6800 Sol = [F = true, NV = 11, TC = 1144.52]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6801 Sol = [F = true, NV = 11, TC = 1136.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [39]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6834 BFS = 1227.4981808726805, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6834 BFS = 1194.3022612800025, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6900 BFS = 1191.0032008158125, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7177 BFS = 1144.9375974959887, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6834 Sol = [F = true, NV = 11, TC = 1229.91]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6843 Sol = [F = true, NV = 11, TC = 1163.58]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7100 Sol = [F = true, NV = 11, TC = 1140.65]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [40]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 BFS = 1201.7157177245708, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7400 BFS = 1197.1888124278664, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7459 BFS = 1172.726912962849, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7614 BFS = 1146.0135843882515, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7800 BFS = 1141.7263392665568, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 Sol = [F = true, NV = 10, TC = 1234.02]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7358 Sol = [F = true, NV = 10, TC = 1226.54]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7595 Sol = [F = true, NV = 10, TC = 1225.48]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7672 Sol = [F = true, NV = 10, TC = 1224.49]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7680 Sol = [F = true, NV = 10, TC = 1223.25]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7827 Sol = [F = true, NV = 10, TC = 1222.05]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [41]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7834 BFS = 1205.3376881498507, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8002 BFS = 1145.3483096918367, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7834 Sol = [F = true, NV = 11, TC = 1145.35]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [42, 43]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 BFS = 1378.1980949154777, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8173 BFS = 1312.612656116184, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8199 BFS = 1234.3727600753155, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8267 BFS = 1211.1104094491, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 Sol = [F = true, NV = 11, TC = 1236.24]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8363 Sol = [F = true, NV = 11, TC = 1161.01]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [44]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 BFS = 1392.6707595392422, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8423 BFS = 1361.66307918549, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8503 BFS = 1254.2882995916784, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8417 Sol = [F = true, NV = 11, TC = 1201.2]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8500 Sol = [F = true, NV = 11, TC = 1190.48]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8515 Sol = [F = true, NV = 11, TC = 1188.85]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8800 Sol = [F = true, NV = 11, TC = 1184.4]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [45]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9000 BFS = 1405.9075747429642, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9015 BFS = 1306.373920936028, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9418 BFS = 1275.2526000401203, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9000 Sol = [F = true, NV = 12, TC = 1273.82]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9000 Sol = [F = true, NV = 12, TC = 1225.08]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9400 Sol = [F = true, NV = 11, TC = 1195.99]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9584 BFS = 1486.5212093165007, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9600 BFS = 1278.7148433533168, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9584 Sol = [F = true, NV = 12, TC = 1327.86]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9600 Sol = [F = true, NV = 12, TC = 1244.13]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9667 BFS = 1470.5236786900982, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9679 BFS = 1377.4695453170186, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9700 BFS = 1369.8219064805428, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9667 Sol = [F = true, NV = 13, TC = 1381.21]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9742 Sol = [F = true, NV = 12, TC = 1353.41]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9750 BFS = 1568.5839644005844, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9783 BFS = 1453.5242278682094, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9787 BFS = 1350.5000664737333, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10264 BFS = 1219.2090555113527, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9750 Sol = [F = true, NV = 12, TC = 1383.2]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9860 Sol = [F = true, NV = 12, TC = 1369.19]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9898 Sol = [F = true, NV = 12, TC = 1322.76]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10500 Sol = [F = true, NV = 12, TC = 1291.52]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10505 Sol = [F = true, NV = 12, TC = 1246.58]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10750 BFS = 1502.8996435384336, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10755 BFS = 1423.4617525922404, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10893 BFS = 1416.0225130268054, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10895 BFS = 1371.437898809454, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10900 BFS = 1341.2471397171864, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12698 BFS = 1299.6193879932307, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10750 Sol = [F = true, NV = 12, TC = 1363.52]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 10900 Sol = [F = true, NV = 12, TC = 1361.13]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11000 Sol = [F = true, NV = 12, TC = 1344.48]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11300 Sol = [F = true, NV = 12, TC = 1308.07]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11796 Sol = [F = true, NV = 11, TC = 1217.21]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12917 BFS = 1527.5941872094218, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12924 BFS = 1441.7508946648818, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12917 Sol = [F = true, NV = 12, TC = 1334.88]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13000 BFS = 1443.3410522914774, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13002 BFS = 1423.9012258746986, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13600 BFS = 1404.703147389023, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13617 BFS = 1372.1300552257237, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14604 BFS = 1360.1540985683248, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 15022 BFS = 1318.24549060046, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 15061 BFS = 1247.052284893565, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 15990 BFS = 1229.0599386639294, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13000 Sol = [F = true, NV = 12, TC = 1461.15]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13067 Sol = [F = true, NV = 12, TC = 1397.94]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13084 Sol = [F = true, NV = 12, TC = 1368.23]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13089 Sol = [F = true, NV = 12, TC = 1365.57]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13294 Sol = [F = true, NV = 12, TC = 1340.49]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14000 Sol = [F = true, NV = 12, TC = 1324.29]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14867 Sol = [F = true, NV = 11, TC = 1261.07]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14900 Sol = [F = true, NV = 11, TC = 1244.62]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14961 Sol = [F = true, NV = 11, TC = 1239.64]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16584 BFS = 1424.0831539708265, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16586 BFS = 1409.8268696707937, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16590 BFS = 1353.0343956876136, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17742 BFS = 1346.1847388239855, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17997 BFS = 1321.0228965371198, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 18130 BFS = 1311.882252326759, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 18158 BFS = 1299.240025452931, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16584 Sol = [F = true, NV = 11, TC = 1260.77]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 16602 Sol = [F = true, NV = 11, TC = 1252.42]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 17300 Sol = [F = true, NV = 11, TC = 1230.14]");
         assertThat(logs.get(i++)).contains("Instance = lrc107_q_0_0.5.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 61 90 0\n" +
-                "0 82 99 87 59 75 97 58 77 0\n" +
-                "0 72 71 67 27 26 30 32 93 0\n" +
-                "0 94 81 106 54 0\n" +
-                "0 33 101 28 31 29 34 50 96 0\n" +
-                "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
-                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
-                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
                 "0 41 38 39 42 44 43 40 37 35 36 0\n" +
-                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
+                "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
+                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
                 "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
+                "0 61 81 106 90 0\n" +
+                "0 72 71 93 94 67 50 96 54 0\n" +
+                "0 82 99 87 59 75 97 58 77 0\n" +
+                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
+                "0 31 29 27 28 26 30 32 34 33 101 0\n" +
                 "0 69 98 88 53 78 73 79 60 70 68 0\n" +
+                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
                 "Requests\n" +
-                "31\n" +
-                "45 51 43 41\n" +
-                "16 37 15 38\n" +
-                "49 42\n" +
-                "26 17 18 19\n" +
-                "0 1 29 5 4 2 3\n" +
-                "8 6 9 25 7\n" +
-                "50 27 33 48 32\n" +
-                "23 21 20 24 22\n" +
-                "40 28 13 35 44\n" +
-                "34 11 12 47 10 14\n" +
-                "36 39 52 30 46\n" +
-                "Cost = 1299.240025452931\n" +
-                "Num. vehicles = 12");
+                "23 24 21 20 22\n" +
+                "29 0 1 5 4 2 3\n" +
+                "32 50 33 27 48\n" +
+                "10 11 34 12 47 14\n" +
+                "42 31\n" +
+                "49 26 37 38\n" +
+                "51 45 41 43\n" +
+                "13 28 35 44 40\n" +
+                "17 19 15 18 16\n" +
+                "52 39 36 46 30\n" +
+                "8 7 6 25 9\n" +
+                "Cost = 1230.144844677267\n" +
+                "Num. vehicles = 11");
     }
 
     @Test
@@ -1467,63 +1384,65 @@ public class DPDPTW_ALNS_TEST {
         List<String> logs = alns.getLog();
         int i = 0;
         assertThat(logs.get(i++)).isEqualTo("New requests add: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 BFS = 1337.8058416891342, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 100 BFS = 1266.4764495396876, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 200 BFS = 1213.2266709807475, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1338 BFS = 1200.1918740697672, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5183 BFS = 1195.936375652854, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 13, TC = 1337.81]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 100 Sol = [F = true, NV = 12, TC = 1287.26]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 110 Sol = [F = true, NV = 12, TC = 1265.45]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 200 Sol = [F = true, NV = 12, TC = 1260.0]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 356 Sol = [F = true, NV = 12, TC = 1219.08]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 362 Sol = [F = true, NV = 12, TC = 1216.76]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 366 Sol = [F = true, NV = 11, TC = 1185.37]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [47]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 BFS = 1198.3868801950252, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5500 Sol = [F = true, NV = 11, TC = 1205.82]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5889 Sol = [F = true, NV = 11, TC = 1187.82]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [48]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6000 BFS = 1357.6118015779894, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6008 BFS = 1313.0119678499975, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6041 BFS = 1273.9842879803048, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6208 BFS = 1216.6438962873528, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6000 Sol = [F = true, NV = 12, TC = 1333.55]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6261 Sol = [F = true, NV = 11, TC = 1255.54]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6359 Sol = [F = true, NV = 11, TC = 1213.51]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6496 Sol = [F = true, NV = 11, TC = 1206.62]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7700 Sol = [F = true, NV = 11, TC = 1203.14]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [49, 50]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 BFS = 1420.331306814355, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8172 BFS = 1314.5620130596392, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8167 Sol = [F = true, NV = 12, TC = 1374.19]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [51]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 BFS = 1362.3003046990932, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8667 Sol = [F = true, NV = 13, TC = 1486.62]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8670 Sol = [F = true, NV = 13, TC = 1463.95]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8685 Sol = [F = true, NV = 13, TC = 1321.01]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8749 Sol = [F = true, NV = 12, TC = 1289.75]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9000 Sol = [F = true, NV = 12, TC = 1276.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [52]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9750 BFS = 1483.2853968843183, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9800 BFS = 1400.1015597919861, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11673 BFS = 1388.7508825860932, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11680 BFS = 1369.9327082584878, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12307 BFS = 1364.6320303865837, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13325 BFS = 1363.2262941248846, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13500 BFS = 1363.2262941248844, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13600 BFS = 1301.0535749397143, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 13900 BFS = 1299.7874485573318, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14029 BFS = 1276.9433697425147, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14100 BFS = 1230.1448446772672, feasible = true");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 14500 BFS = 1230.144844677267, feasible = true");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9750 Sol = [F = true, NV = 12, TC = 1383.51]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9753 Sol = [F = true, NV = 12, TC = 1378.1]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 9970 Sol = [F = true, NV = 12, TC = 1311.87]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 11900 Sol = [F = true, NV = 11, TC = 1309.74]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12500 Sol = [F = true, NV = 11, TC = 1291.74]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12797 Sol = [F = true, NV = 11, TC = 1230.16]");
+        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 12811 Sol = [F = true, NV = 11, TC = 1230.14]");
         assertThat(logs.get(i++)).contains("Instance = lrc107_q_0_0.9.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
                 "0 69 98 88 53 78 73 79 60 70 68 0\n" +
-                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
-                "0 82 99 87 59 75 97 58 77 0\n" +
+                "0 64 19 25 23 21 18 48 49 20 56 91 102 0\n" +
                 "0 41 38 39 42 44 43 40 37 35 36 0\n" +
-                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
                 "0 31 29 27 28 26 30 32 34 33 101 0\n" +
+                "0 11 12 14 47 17 16 15 13 9 10 0\n" +
+                "0 82 99 87 59 75 97 58 77 0\n" +
                 "0 2 6 7 103 8 5 3 1 45 46 4 100 55 104 0\n" +
-                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
+                "0 65 83 52 86 74 105 57 24 22 66 0\n" +
                 "0 72 71 93 94 67 50 96 54 0\n" +
                 "0 61 81 106 90 0\n" +
+                "0 92 95 62 84 85 63 51 76 89 80 0\n" +
                 "Requests\n" +
-                "12 14 47 10 11 34\n" +
-                "36 30 39 52 46\n" +
-                "13 44 28 40 35\n" +
-                "43 51 45 41\n" +
-                "23 20 22 24 21\n" +
-                "6 9 25 7 8\n" +
-                "17 15 18 19 16\n" +
-                "4 3 1 5 2 0 29\n" +
-                "27 48 32 50 33\n" +
-                "37 26 49 38\n" +
+                "39 52 30 36 46\n" +
+                "34 12 10 14 11 47\n" +
+                "23 24 20 22 21\n" +
+                "15 17 18 16 19\n" +
+                "6 8 7 25 9\n" +
+                "41 51 45 43\n" +
+                "0 4 1 3 29 5 2\n" +
+                "28 35 44 13 40\n" +
+                "37 49 38 26\n" +
                 "42 31\n" +
-                "Cost = 1230.144844677267\n" +
+                "48 32 33 50 27\n" +
+                "Cost = 1230.1448446772672\n" +
                 "Num. vehicles = 11");
     }
 
