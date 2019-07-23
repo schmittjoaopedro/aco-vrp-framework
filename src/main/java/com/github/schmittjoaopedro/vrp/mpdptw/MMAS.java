@@ -65,10 +65,10 @@ public class MMAS {
     public void allocateAnts() {
         antPopulation = new ArrayList<>();
         for (int i = 0; i < getnAnts(); i++) {
-            antPopulation.add(i, SolutionUtils.createEmptyAnt(instance));
+            antPopulation.add(i, SolutionUtils.createNewSolution(instance));
         }
-        bestSoFar = SolutionUtils.createEmptyAnt(instance);
-        restartBest = SolutionUtils.createEmptyAnt(instance);
+        bestSoFar = SolutionUtils.createNewSolution(instance);
+        restartBest = SolutionUtils.createNewSolution(instance);
     }
 
     public void allocateStructures() {

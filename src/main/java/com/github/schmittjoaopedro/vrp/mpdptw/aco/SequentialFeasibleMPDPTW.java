@@ -49,7 +49,7 @@ public class SequentialFeasibleMPDPTW implements SolutionBuilder {
             for (int i = 0; i < antPopulation.size(); i++) {
                 Solution ant = antPopulation.get(i);
                 antBuilders[i] = new Thread(() -> {
-                    SolutionUtils.antEmptyMemory(ant, instance);
+                    SolutionUtils.clearSolution(ant, instance);
                     constructAntSolution(instance, ant);
                     instance.solutionEvaluation(ant);
                     if (ant.capacityPenalty > 0) {
@@ -65,7 +65,7 @@ public class SequentialFeasibleMPDPTW implements SolutionBuilder {
             while (!executorService.isTerminated()) ;
         } else {
             for (Solution ant : antPopulation) {// For each ant
-                SolutionUtils.antEmptyMemory(ant, instance);
+                SolutionUtils.clearSolution(ant, instance);
                 constructAntSolution(instance, ant);
                 instance.solutionEvaluation(ant);
                 if (ant.capacityPenalty > 0) {

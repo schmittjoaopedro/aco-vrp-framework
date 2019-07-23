@@ -46,7 +46,7 @@ public class SolutionUtils {
         to.capacityPenalty = from.capacityPenalty;
     }
 
-    public static void antEmptyMemory(Solution solution, ProblemInstance instance) {
+    public static void clearSolution(Solution solution, ProblemInstance instance) {
         solution.tours = new ArrayList<>();
         solution.requests = new ArrayList<>();
         solution.tourCosts = new ArrayList<>();
@@ -66,9 +66,9 @@ public class SolutionUtils {
         solution.capacityPenalty = 0.0;
     }
 
-    public static Solution createEmptyAnt(ProblemInstance instance) {
+    public static Solution createNewSolution(ProblemInstance instance) {
         Solution solution = new Solution();
-        SolutionUtils.antEmptyMemory(solution, instance);
+        SolutionUtils.clearSolution(solution, instance);
         return solution;
     }
 

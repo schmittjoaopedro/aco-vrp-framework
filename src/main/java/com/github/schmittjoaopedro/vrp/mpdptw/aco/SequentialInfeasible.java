@@ -43,7 +43,7 @@ public class SequentialInfeasible implements SolutionBuilder {
         double demands[] = new double[instance.getNumNodes()];
         ArrayList<Double> capacity = new ArrayList<>();
         for (Solution ant : antPopulation) {
-            SolutionUtils.antEmptyMemory(ant, instance);
+            SolutionUtils.clearSolution(ant, instance);
         }
         for (int k = 0; k < antPopulation.size(); k++) {// For each ant
             vehicle = 0;

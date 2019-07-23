@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.mpdptw.operators;
+package com.github.schmittjoaopedro.vrp.mpdptw;
 
 
 public class Req {

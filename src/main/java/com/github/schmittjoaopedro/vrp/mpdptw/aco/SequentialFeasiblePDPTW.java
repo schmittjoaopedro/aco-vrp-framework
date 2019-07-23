@@ -2,7 +2,6 @@ package com.github.schmittjoaopedro.vrp.mpdptw.aco;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
 
 import java.util.*;
@@ -27,13 +26,13 @@ public class SequentialFeasiblePDPTW implements SolutionBuilder {
 
     private boolean parallel;
 
-    private InsertionOperator insertionOperator;
+    private InsertionMethod insertionMethod;
 
     @Override
     public void init(ProblemInstance instance, Random random, MMAS mmas) {
         this.instance = instance;
         this.mmas = mmas;
-        this.insertionOperator = new InsertionOperator(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random);
         updateParameters();
     }
 
@@ -48,7 +47,7 @@ public class SequentialFeasiblePDPTW implements SolutionBuilder {
             for (int i = 0; i < antPopulation.size(); i++) {
                 Solution ant = antPopulation.get(i);
                 antBuilders[i] = new Thread(() -> {
-                    SolutionUtils.antEmptyMemory(ant, instance);
+                    SolutionUtils.clearSolution(ant, instance);
                     constructAntSolution(instance, ant);
                     instance.solutionEvaluation(ant);
                     if (ant.capacityPenalty > 0) {
@@ -64,7 +63,7 @@ public class SequentialFeasiblePDPTW implements SolutionBuilder {
             while (!executorService.isTerminated()) ;
         } else {
             for (Solution ant : antPopulation) {// For each ant
-                SolutionUtils.antEmptyMemory(ant, instance);
+                SolutionUtils.clearSolution(ant, instance);
                 constructAntSolution(instance, ant);
                 instance.solutionEvaluation(ant);
                 if (ant.capacityPenalty > 0) {
@@ -126,7 +125,7 @@ public class SequentialFeasiblePDPTW implements SolutionBuilder {
                         tempTour.add(currIdx + 1, next); // insert new node after next
                         instance.solutionEvaluation(ant, vehicle);
                         int deliveryNode = instance.getDelivery(req.requestId).nodeId;
-                        InsertionOperator.BestPosition bestPosition = insertionOperator.insertAtBestPosition(ant, vehicle, deliveryNode, InsertionMethod.Greedy, currIdx + 1);
+                        InsertionMethod.BestPosition bestPosition = insertionMethod.insertAtBestPosition(ant, vehicle, deliveryNode, currIdx + 1);
                         if (bestPosition != null) { // If a best position was found
                             tempTour.add(bestPosition.position, deliveryNode);
                             feasible = true;

@@ -17,8 +17,8 @@ public class RelocateNodeOperator {
     }
 
     public Solution relocate(Solution ant) {
-        Solution improvedSol = SolutionUtils.createEmptyAnt(instance);
-        Solution tempSol = SolutionUtils.createEmptyAnt(instance);
+        Solution improvedSol = SolutionUtils.createNewSolution(instance);
+        Solution tempSol = SolutionUtils.createNewSolution(instance);
         SolutionUtils.copyFromTo(ant, improvedSol);
         SolutionUtils.copyFromTo(ant, tempSol);
         boolean improvement = true;

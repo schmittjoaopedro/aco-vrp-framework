@@ -4,6 +4,7 @@ import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod.PickupMethod;
 
 import java.util.Random;
 
@@ -16,16 +17,16 @@ public class RelocateRequestOperator {
 
     private ProblemInstance instance;
 
-    private InsertionOperator insertionOperator;
+    private InsertionMethod insertionMethod;
 
     public RelocateRequestOperator(ProblemInstance instance, Random random) {
         this.instance = instance;
-        this.insertionOperator = new InsertionOperator(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random);
     }
 
     public Solution relocate(Solution solution) {
-        Solution improvedSol = SolutionUtils.createEmptyAnt(instance);
-        Solution tempSol = SolutionUtils.createEmptyAnt(instance);
+        Solution improvedSol = SolutionUtils.createNewSolution(instance);
+        Solution tempSol = SolutionUtils.createNewSolution(instance);
         SolutionUtils.copyFromTo(solution, improvedSol);
         boolean improvement = true;
         while (improvement) {
@@ -39,7 +40,7 @@ public class RelocateRequestOperator {
                     SolutionUtils.addEmptyVehicle(tempSol);
                     instance.solutionEvaluation(tempSol, vehicle);
                     for (int k = 0; k < tempSol.tours.size(); k++) {
-                        if (insertionOperator.insertRequestOnVehicle(tempSol, k, requestId, PickupMethod.Random, InsertionMethod.Greedy)) {
+                        if (insertionMethod.insertRequestOnVehicle(tempSol, k, requestId, PickupMethod.Random)) {
                             tempSol.requests.get(k).add(requestId);
                             double improvedCost = Maths.round(improvedSol.totalCost + improvedSol.timeWindowPenalty);
                             double tempCost = Maths.round(tempSol.totalCost + tempSol.timeWindowPenalty);
@@ -54,7 +55,7 @@ public class RelocateRequestOperator {
                         }
                     }
                 } else if (instance.getDelivery(requestId).isIdle()) {
-                    if (insertionOperator.improveRequestOnVehicle(tempSol, vehicle, requestId, PickupMethod.Random, InsertionMethod.Greedy)) {
+                    if (insertionMethod.improveRequestOnVehicle(tempSol, vehicle, requestId, PickupMethod.Random)) {
                         double improvedCost = Maths.round(improvedSol.totalCost + improvedSol.timeWindowPenalty);
                         double tempCost = Maths.round(tempSol.totalCost + tempSol.timeWindowPenalty);
                         if (tempCost < improvedCost) {

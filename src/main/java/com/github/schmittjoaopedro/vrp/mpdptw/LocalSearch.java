@@ -1,8 +1,12 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.InsertionOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.RandomRemoval;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.ExchangeRequestOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateRequestOperator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -11,8 +15,6 @@ public class LocalSearch {
     private ProblemInstance instance;
 
     private Random random;
-
-    private RemovalOperator removalOperator;
 
     private InsertionOperator insertionOperator;
 
@@ -25,7 +27,6 @@ public class LocalSearch {
     public LocalSearch(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
-        this.removalOperator = new RemovalOperator(instance, random);
         this.insertionOperator = new InsertionOperator(instance, random);
         this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
@@ -40,14 +41,7 @@ public class LocalSearch {
         while (improvement) {
             improvement = false;
             tempAnt = relocateNodeOperator.relocate(tempAnt);
-//            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Greedy);
-//            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveNode, PickupMethod.Random, InsertionMethod.Greedy);
-            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveRequest, PickupMethod.Random, InsertionMethod.Greedy);
-//            tempAnt = optimize(tempAnt, RemovalMethod.Shaw, PickupMethod.Random, InsertionMethod.Greedy);
-//            tempAnt = optimize(tempAnt, RemovalMethod.Random, PickupMethod.Random, InsertionMethod.Regret3);
-//            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveNode, PickupMethod.Random, InsertionMethod.Regret3);
-//            tempAnt = optimize(tempAnt, RemovalMethod.ExpensiveRequest, PickupMethod.Random, InsertionMethod.Regret3);
-//            tempAnt = optimize(tempAnt, RemovalMethod.Shaw, PickupMethod.Random, InsertionMethod.Regret3);
+            tempAnt = optimizeInternal(tempAnt);
             tempAnt = relocateRequestOperator.relocate(tempAnt);
             tempAnt = exchangeRequestOperator.exchange(tempAnt);
             newCost = tempAnt.totalCost + tempAnt.timeWindowPenalty;
@@ -59,16 +53,16 @@ public class LocalSearch {
         return tempAnt;
     }
 
-    public Solution optimize(Solution ant, RemovalMethod removalMethod, PickupMethod pickupMethod, InsertionMethod insertionMethod) {
-        Solution tempAnt = SolutionUtils.createEmptyAnt(instance);
-        Solution improvedAnt = SolutionUtils.createEmptyAnt(instance);
+    public Solution optimizeInternal(Solution ant) {
+        Solution tempAnt = SolutionUtils.createNewSolution(instance);
+        Solution improvedAnt = SolutionUtils.createNewSolution(instance);
         SolutionUtils.copyFromTo(ant, tempAnt);
         SolutionUtils.copyFromTo(ant, improvedAnt);
         boolean improvement = true;
         boolean improved = false;
         while (improvement) {
-            List<Req> removedRequests = removeRequests(tempAnt, removalMethod);
-            insertionOperator.insertRequests(tempAnt, removedRequests, pickupMethod, insertionMethod, 0);
+            List<Req> removedRequests = new RandomRemoval(random, instance).removeRequests(tempAnt, generateNoRemovalRequests());
+            insertionOperator.insertRequests(tempAnt, removedRequests, InsertionMethod.PickupMethod.Random, 0);
             instance.solutionEvaluation(tempAnt);
             SolutionUtils.removeEmptyVehicles(tempAnt);
             improvement = instance.getBest(improvedAnt, tempAnt) == tempAnt;
@@ -82,26 +76,6 @@ public class LocalSearch {
         } else {
             return ant;
         }
-    }
-
-    private List<Req> removeRequests(Solution tempAnt, RemovalMethod removalType) {
-        List<Req> removedRequests = new ArrayList<>();
-        switch (removalType) {
-            case Random:
-                removedRequests = removalOperator.removeRandomRequest(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
-                break;
-            case Shaw:
-                removedRequests = removalOperator.removeShawRequests(tempAnt, generateNoRemovalRequests());
-                break;
-            case ExpensiveNode:
-                removedRequests = removalOperator.removeMostExpensiveNodes(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
-                break;
-            case ExpensiveRequest:
-                removedRequests = removalOperator.removeExpensiveRequests(tempAnt.tours, tempAnt.requests, generateNoRemovalRequests());
-                break;
-        }
-
-        return removedRequests;
     }
 
     private int generateNoRemovalRequests() {

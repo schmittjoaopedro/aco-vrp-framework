@@ -4,6 +4,7 @@ import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod.PickupMethod;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,11 +18,11 @@ public class ExchangeRequestOperator {
 
     private ProblemInstance instance;
 
-    private InsertionOperator insertionOperator;
+    private InsertionMethod insertionMethod;
 
     public ExchangeRequestOperator(ProblemInstance instance, Random random) {
         this.instance = instance;
-        this.insertionOperator = new InsertionOperator(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random);
     }
 
     public Solution exchange(Solution solution) {
@@ -43,11 +44,11 @@ public class ExchangeRequestOperator {
                         if (instance.isFullyIdle(r2)) {
                             v2 = SolutionUtils.findRequestVehicleOwner(tempSol, r2);
                             if (r1 != r2 && v1 != v2) {
-                                if (insertionOperator.insertRequestOnVehicle(tempSol, v1, r2, PickupMethod.Random, InsertionMethod.Greedy)) {
+                                if (insertionMethod.insertRequestOnVehicle(tempSol, v1, r2, PickupMethod.Random)) {
                                     v2RouteOrigin = new ArrayList<>(tempSol.tours.get(v2));
                                     SolutionUtils.removeRequest(instance, tempSol, v2, r2);
                                     tempSol.requests.get(v1).add(r2);
-                                    if (insertionOperator.insertRequestOnVehicle(tempSol, v2, r1, PickupMethod.Random, InsertionMethod.Greedy)) {
+                                    if (insertionMethod.insertRequestOnVehicle(tempSol, v2, r1, PickupMethod.Random)) {
                                         tempSol.requests.get(v2).add(r1);
                                         tempCost = Maths.round(tempSol.totalCost + tempSol.timeWindowPenalty);
                                         if (tempCost < improvedCost) {

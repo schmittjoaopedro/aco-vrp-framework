@@ -16,23 +16,13 @@ public class DetailedStatistics {
 
     public double temperature;
 
-    public double insert_greedy;
+    public String[] insertMethodNames;
 
-    public double insert_regret3;
+    public double[] insertMethodWeights;
 
-    public double insert_regretM;
+    public String[] removalMethodNames;
 
-    public double insert_regret3Noise;
-
-    public double insert_regretMNoise;
-
-    public double removal_random;
-
-    public double removal_shaw;
-
-    public double removal_expensiveNode;
-
-    public double removal_expensiveRequest;
+    public double[] removalMethodWeights;
 
     public double noise_true;
 

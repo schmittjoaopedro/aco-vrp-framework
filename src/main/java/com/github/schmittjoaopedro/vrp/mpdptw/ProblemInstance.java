@@ -393,8 +393,8 @@ public class ProblemInstance {
             solution.feasible = false;
         }
         // Calculate requests attendance
-        for (int i = 0; i < solution.visited.length; i++) {
-            if (!solution.visited[i]) {
+        for (int i = 0; i < solution.visitedRequests.length; i++) {
+            if (!solution.visitedRequests[i]) {
                 solution.totalCost += Objective.Attendance.getValue();
             }
         }

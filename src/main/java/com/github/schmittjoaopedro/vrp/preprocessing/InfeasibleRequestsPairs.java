@@ -1,10 +1,10 @@
 package com.github.schmittjoaopedro.vrp.preprocessing;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.OptimalRequestSolver;
-import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
-import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
-import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.InsertionOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.RandomRemoval;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod.PickupMethod;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class InfeasibleRequestsPairs {
 
     private ProblemInstance instance;
 
-    private RemovalOperator removalOperator;
+    private Random random;
 
     private InsertionOperator insertionOperator;
 
@@ -22,7 +22,7 @@ public class InfeasibleRequestsPairs {
 
     public InfeasibleRequestsPairs(ProblemInstance instance, Random random) {
         this.instance = instance;
-        this.removalOperator = new RemovalOperator(instance, random);
+        this.random = random;
         this.insertionOperator = new InsertionOperator(instance, random);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
     }
@@ -57,7 +57,7 @@ public class InfeasibleRequestsPairs {
         routeMerged.addAll(route2.subList(1, route2.size() - 1));
         routeMerged.add(0);
         // Temporary ant
-        Solution solution = SolutionUtils.createEmptyAnt(instance);
+        Solution solution = SolutionUtils.createNewSolution(instance);
         solution.tours.add(routeMerged);
         solution.requests.add(requests);
         instance.restrictionsEvaluation(solution);
@@ -75,7 +75,7 @@ public class InfeasibleRequestsPairs {
         while (improvement) {
             improvement = false;
             tempSol = relocateNodeOperator.relocate(tempSol);
-            tempSol = optimize(tempSol, InsertionMethod.Greedy);
+            tempSol = optimizeInner(tempSol);
             newCost = tempSol.totalCost + tempSol.timeWindowPenalty;
             if (tempSol.feasible) break;
             if (newCost < oldCost) {
@@ -86,16 +86,16 @@ public class InfeasibleRequestsPairs {
         return tempSol;
     }
 
-    public Solution optimize(Solution solution, InsertionMethod insertionMethod) {
-        Solution tempSol = SolutionUtils.createEmptyAnt(instance);
-        Solution improvedSol = SolutionUtils.createEmptyAnt(instance);
+    public Solution optimizeInner(Solution solution) {
+        Solution tempSol = SolutionUtils.createNewSolution(instance);
+        Solution improvedSol = SolutionUtils.createNewSolution(instance);
         SolutionUtils.copyFromTo(solution, tempSol);
         SolutionUtils.copyFromTo(solution, improvedSol);
         boolean improvement = true;
         boolean improved = false;
         while (improvement) {
-            List<Req> removedRequests = removalOperator.removeRandomRequest(tempSol.tours, tempSol.requests, 1);
-            insertionOperator.insertRequests(tempSol, removedRequests, PickupMethod.Random, insertionMethod, 0);
+            List<Req> removedRequests = new RandomRemoval(random, instance).removeRequests(tempSol, 1);
+            insertionOperator.insertRequests(tempSol, removedRequests, PickupMethod.Random, 0);
             instance.restrictionsEvaluation(tempSol);
             improvement = instance.getBest(improvedSol, tempSol) == tempSol;
             if (improvement) {

@@ -3,13 +3,13 @@ package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 import com.github.schmittjoaopedro.statistic.GlobalStatistics;
 import com.github.schmittjoaopedro.statistic.IterationStatistic;
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
-import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.ExchangeRequestOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateRequestOperator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -19,15 +19,7 @@ import java.util.*;
  */
 public class ALNS implements Runnable {
 
-    private double initialT;
-
-    private double minT;
-
-    private Solution solution;
-
     private Solution solutionBest;
-
-    private double T;
 
     private int iteration = 1;
 
@@ -102,36 +94,9 @@ public class ALNS implements Runnable {
 
     private int numIterations;
 
-    private double segment = 100.0;
+    private int segment = 100;
 
     private double initialCost; // initial cost
-
-    private InsertionOperator insertionOperator;
-
-    private RemovalOperator removalOperator;
-
-    // Probabilities calculated for ro's and ri's
-    private double[] roProbs;
-    private double[] riProbs;
-    private double[] noiseProbs;
-    private double roProbsSum;
-    private double riProbsSum;
-    private double noiseProbsSum;
-
-    // Indicates how well an operator has performed in the past
-    private double[] roWeights;
-    private double[] riWeights;
-    private double[] noiseWeights;
-
-    // These are the accumulated scores (PI_i) of each operator during the executiong of segment (delta).
-    private double[] roScores;
-    private double[] riScores;
-    private double[] noiseScores;
-
-    // Number of times that each operator has been used in the last segment j.
-    private double[] roUsages;
-    private double[] riUsages;
-    private double[] noiseUsages;
 
     private Random random;
 
@@ -151,8 +116,6 @@ public class ALNS implements Runnable {
 
     private List<String> log = new ArrayList<>();
 
-    private Set<Integer> hashNumber = new HashSet<>();
-
     private MovingVehicle movingVehicle;
 
     private boolean showLog = false;
@@ -161,11 +124,15 @@ public class ALNS implements Runnable {
 
     private long startTime;
 
+    private ALNS_TC alns_tc;
+
     public ALNS(ProblemInstance instance, Random random) {
         this(instance, DEFAULT_MAX_ITERATIONS, random);
     }
 
     public ALNS(ProblemInstance instance, int numIterations, Random random) {
+        this.alns_tc = new ALNS_TC(instance, random);
+        this.alns_tc.init();
         this.instance = instance;
         this.random = random;
         this.numIterations = numIterations;
@@ -173,9 +140,6 @@ public class ALNS implements Runnable {
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
 
-        insertionOperator = new InsertionOperator(instance, random);
-        insertionOperator.setNoiseControl(noiseControl);
-        removalOperator = new RemovalOperator(instance, random);
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
         iterationStatistics = new ArrayList<>(numIterations);
@@ -191,32 +155,14 @@ public class ALNS implements Runnable {
          */
         globalStatistics.startTimer();
         insertionHeuristic = new InsertionHeuristic(instance, random);
-        solution = insertionHeuristic.createInitialSolution();
-        instance.solutionEvaluation(solution);
-        solution = applyImprovement(solution);
-        instance.solutionEvaluation(solution);
-        solutionBest = SolutionUtils.copy(solution);
-        updateParameters();
+        Solution initialSolution = insertionHeuristic.createInitialSolution();
+        instance.solutionEvaluation(initialSolution);
+        initialSolution = applyImprovement(initialSolution);
+        instance.solutionEvaluation(initialSolution);
+        solutionBest = SolutionUtils.copy(initialSolution);
+        setAlnsTcParameters();
         globalStatistics.endTimer("Initialization");
-
         startTime = System.currentTimeMillis();
-
-        roScores = new double[RemovalMethod.values().length];
-        roWeights = new double[RemovalMethod.values().length];
-        roUsages = new double[RemovalMethod.values().length];
-        roProbs = new double[RemovalMethod.values().length];
-
-        riScores = new double[InsertionMethod.values().length];
-        riWeights = new double[InsertionMethod.values().length];
-        riUsages = new double[InsertionMethod.values().length];
-        riProbs = new double[InsertionMethod.values().length];
-
-        noiseScores = new double[2];
-        noiseWeights = new double[2];
-        noiseUsages = new double[2];
-        noiseProbs = new double[2];
-
-        resetWeights();
 
         globalStatistics.startTimer();
         while (!stopCriteriaMeet()) {
@@ -228,88 +174,27 @@ public class ALNS implements Runnable {
             if (!newRequestIds.isEmpty()) {
                 log("New requests add: " + StringUtils.join(newRequestIds));
                 for (int req : newRequestIds) {
-                    instance.solutionEvaluation(solution);
-                    insertionHeuristic.addRequests(solution, req);
+                    instance.solutionEvaluation(solutionBest);
+                    insertionHeuristic.addRequest(solutionBest, req);
                 }
-                instance.solutionEvaluation(solution);
-                solution = applyImprovement(solution);
-                instance.solutionEvaluation(solution);
-                updateBest(solution, true);
-                updateParameters();
+                instance.solutionEvaluation(solutionBest);
+                solutionBest = applyImprovement(solutionBest);
+                instance.solutionEvaluation(solutionBest);
+                updateBest(solutionBest, true);
+                setAlnsTcParameters();
             }
 
             if (instance.getNumReq() > 0) {
-                Solution solutionNew = SolutionUtils.copy(solution); // S' <- S
-                int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
-                /*
-                 * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
-                 * roulette wheels based on the score of each operator.
-                 */
-                int ro = getNextRouletteWheelOperator(roProbsSum, roProbs); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
-                int ri = getNextRouletteWheelOperator(riProbsSum, riProbs); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
-                int useNoise = getNextRouletteWheelOperator(noiseProbsSum, noiseProbs);
-
-                roUsages[ro] = roUsages[ro] + 1;
-                riUsages[ri] = riUsages[ri] + 1;
-                noiseUsages[useNoise] = noiseUsages[useNoise] + 1;
-
-                removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
-                insertRequests(solutionNew, ri, useNoise); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
-                SolutionUtils.removeEmptyVehicles(solutionNew);
-                instance.solutionEvaluation(solutionNew); // Update the solution cost
-
+                alns_tc.performIteration(iteration);
                 detailedStatistics.s_best_TC = solutionBest.totalCost;
                 detailedStatistics.s_best_NV = solutionBest.tours.size();
-                detailedStatistics.s_current_TC = solution.totalCost;
-                detailedStatistics.s_current_NV = solution.tours.size();
-                detailedStatistics.s_new_TC = solutionNew.totalCost;
-                detailedStatistics.s_new_NV = solutionNew.tours.size();
-
-                int solutionHash = SolutionUtils.getHash(solutionNew);
-                if (!hashNumber.contains(solutionHash)) { // If not know solution on TABU-list
-                    hashNumber.add(solutionHash);
-                    if (accept(solutionNew, solution)) { // if accept(S', S) then
-                        if (instance.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                            solutionNew = applyImprovement(solutionNew); // Apply improvement (Section 3.4) to S'
-                            updateBest(solutionNew); // S_best <- S <- S'
-                            // Increase the scores of io and ro by sigma1
-                            updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
-                            detailedStatistics.bsfAcceptCount++;
-                        } else if (instance.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
-                            // Increase the scores of the ro and io by sigma2
-                            updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
-                            detailedStatistics.currentAcceptCount++;
-                        } else {
-                            // Increase the scores of the ro and io by sigma3
-                            updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
-                            detailedStatistics.worstAcceptCount++;
-                        }
-                        solution = solutionNew; // S <- S'
-                    }
-                }
-
-                /*
-                 * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
-                 * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
-                 * allow worse solutions to be more easily accepted and increase the diversity.
-                 */
-                T = T * coolingRate;
-                if (T < minT) {
-                    resetWeights();
-                    T = initialT;
-                }
-                if (endOfSegment()) { // if end of a segment of 𝛿 iterations then
-                    updateWeights(); // Update weights and reset scores of operators
-                    solution = applyImprovement(solution); // Apply improvement to S
-                    //printIterationStatus();
-                    updateBest(solution);
-                }
+                updateBest(alns_tc.getSolutionBest(), false);
             }
 
             // Check moving vehicle
             if (movingVehicle != null) {
                 if (movingVehicle.moveVehicle(solutionBest, iteration)) {
-                    solution = SolutionUtils.copy(solutionBest);
+                    initialSolution = SolutionUtils.copy(solutionBest);
                 }
             }
 
@@ -318,15 +203,16 @@ public class ALNS implements Runnable {
                 iterationStatistic.setIteration(iteration);
                 iterationStatistic.setBestSoFar(solutionBest.totalCost);
                 iterationStatistic.setBestSoFarNV(solutionBest.tours.size());
-                iterationStatistic.setIterationBest(solution.totalCost);
-                iterationStatistic.setIterationBestNV(solution.tours.size());
-                iterationStatistic.setFeasible(solution.feasible ? 1.0 : 0.0);
+                iterationStatistic.setIterationBest(initialSolution.totalCost);
+                iterationStatistic.setIterationBestNV(initialSolution.tours.size());
+                iterationStatistic.setFeasible(initialSolution.feasible ? 1.0 : 0.0);
                 iterationStatistics.add(iterationStatistic);
                 logInFile(iterationStatistic.toStringCsv());
             }
-
-            detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
-            logDetailedStatistics();
+            if (generateDetailedStatistics) {
+                detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
+            }
+            alns_tc.logDetailedStatistics(iteration);
             iteration++;
         }
         globalStatistics.endTimer("Algorithm");
@@ -334,27 +220,6 @@ public class ALNS implements Runnable {
         endTime = System.currentTimeMillis();
         dynamicHandler.rollbackOriginalInformation(solutionBest);
         printFinalRoute();
-    }
-
-    private void resetWeights() {
-        /*
-         * The score of the operators are initially set to 0.
-         */
-        // Init for removal
-        for (int i = 0; i < roWeights.length; i++) {
-            roWeights[i] = minWeight;
-        }
-        roProbsSum = updateWeightsProbabilities(roWeights, roProbs);
-        // Init for insertion
-        for (int i = 0; i < riWeights.length; i++) {
-            riWeights[i] = minWeight;
-        }
-        riProbsSum = updateWeightsProbabilities(riWeights, riProbs);
-        // Init noise
-        for (int i = 0; i < noiseWeights.length; i++) {
-            noiseWeights[i] = minWeight;
-        }
-        noiseProbsSum = updateWeightsProbabilities(noiseWeights, noiseProbs);
     }
 
     private void log(String msg) {
@@ -375,120 +240,34 @@ public class ALNS implements Runnable {
         }
     }
 
-    private void logDetailedStatistics() {
-        if (generateDetailedStatistics) {
-            detailedStatistics.costEvaluationCount = instance.getCostEvaluationCount();
-            detailedStatistics.partialEvaluationCount = instance.getPartialEvaluationCount();
-            detailedStatistics.fullEvaluationCount = instance.getFullEvaluationCount();
-            detailedStatistics.hash_solution_count = hashNumber.size();
-            detailedStatistics.noise_false = noiseWeights[0];
-            detailedStatistics.noise_true = noiseWeights[1];
-            detailedStatistics.insert_greedy = riWeights[InsertionMethod.Greedy.ordinal()];
-            detailedStatistics.insert_regret3 = riWeights[InsertionMethod.Regret3.ordinal()];
-            detailedStatistics.insert_regret3Noise = riWeights[InsertionMethod.Regret3Noise.ordinal()];
-            detailedStatistics.insert_regretM = riWeights[InsertionMethod.RegretM.ordinal()];
-            detailedStatistics.insert_regretMNoise = riWeights[InsertionMethod.RegretMNoise.ordinal()];
-            detailedStatistics.removal_expensiveNode = roWeights[RemovalMethod.ExpensiveNode.ordinal()];
-            detailedStatistics.removal_expensiveRequest = roWeights[RemovalMethod.ExpensiveRequest.ordinal()];
-            detailedStatistics.removal_random = roWeights[RemovalMethod.Random.ordinal()];
-            detailedStatistics.removal_shaw = roWeights[RemovalMethod.Shaw.ordinal()];
-            detailedStatistics.temperature = T;
-            try {
-                StringBuilder text = new StringBuilder();
-                Field[] fields = DetailedStatistics.class.getFields();
-                // Log file header
-                if (iteration == 1) {
-                    String[] fieldNames = new String[fields.length];
-                    for (int i = 0; i < fields.length; i++) {
-                        fieldNames[i] = fields[i].getName();
-                    }
-                    text.append(StringUtils.join(fieldNames, ';')).append('\n');
-                }
-                String[] values = new String[fields.length];
-                for (int i = 0; i < fields.length; i++) {
-                    values[i] = String.valueOf(fields[i].get(detailedStatistics)).replaceAll(",", ".");
-                }
-                text.append(StringUtils.join(values, ';')).append('\n');
-                FileUtils.writeStringToFile(new File("C:\\Temp\\detailed-" + instance.getFileName().replaceAll(".txt", ".csv")), text.toString(), "UTF-8", true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void updateParameters() {
-        initialCost = solution.totalCost;
-        initialT = getInitialT();
-        T = initialT;
-        minT = initialT * Math.pow(coolingRate, 30000);
-    }
-
-    private void updateBest(Solution solution) {
-        updateBest(solution, false);
-    }
-
-    private void updateBest(Solution solution, boolean force) {
-        if (force || (solution.feasible && solution.totalCost < solutionBest.totalCost)) {
+    protected void updateBest(Solution solution, boolean force) {
+        if (force || (solution.feasible && instance.getBest(solutionBest, solution) == solution)) {
             solutionBest = SolutionUtils.copy(solution);
             String msg = "NEW BEST = Iter " + iteration + " Sol = " + solution.toString();
             log(msg);
         }
     }
 
-    private void updateWeights() {
-        // Update for removal operators
-        updateWeight(roWeights, roUsages, roScores);
-        roProbsSum = updateWeightsProbabilities(roWeights, roProbs);
-        // Update for insertion operators
-        updateWeight(riWeights, riUsages, riScores);
-        riProbsSum = updateWeightsProbabilities(riWeights, riProbs);
-        // Update for noise
-        updateWeight(noiseWeights, noiseUsages, noiseScores);
-        noiseProbsSum = updateWeightsProbabilities(noiseWeights, noiseProbs);
-    }
+    private void setAlnsTcParameters() {
+        initialCost = solutionBest.totalCost;
+        double initialT = getInitialT();
+        double T = initialT;
+        double minT = initialT * Math.pow(coolingRate, 30000);
 
-    private void updateWeight(double weight[], double usage[], double scores[]) {
-        double maxWeight = 0.0;
-        for (int r = 0; r < weight.length; r++) {
-            weight[r] = (1.0 - rho) * weight[r] + rho * (scores[r] / Math.max(usage[r], 1.0));
-            maxWeight = Math.max(weight[r], maxWeight);
-            scores[r] = 0.0;
-            usage[r] = 0.0;
-        }
-        double minWeight = maxWeight * 0.05;
-        for (int r = 0; r < weight.length; r++) {
-            if (weight[r] < minWeight) {
-                weight[r] += minWeight;
-            }
-        }
-    }
-
-    private boolean endOfSegment() {
-        return iteration % segment == 0;
-    }
-
-    /*
-     * The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
-     * with a probability e^-(f(S')-f(S))/T.
-     */
-    private boolean accept(Solution newSolution, Solution oldSolution) {
-        if (instance.getBest(oldSolution, newSolution) == newSolution) {
-            return true;
-        } else if ("SA".equals(acceptMethod)) {
-            double difference = newSolution.totalCost - oldSolution.totalCost;
-            return random.nextDouble() < Math.exp(-1.0 * difference / T);
-        } else if ("TA".equals(acceptMethod)) {
-            double difference = newSolution.totalCost - oldSolution.totalCost;
-            return difference < T;
-        } else {
-            return false;
-        }
-    }
-
-    private void updateScores(int ro, int ri, int useNoise, double sigma) {
-        roScores[ro] = roScores[ro] + sigma;
-        riScores[ri] = riScores[ri] + sigma;
-        noiseScores[useNoise] = noiseScores[useNoise] + sigma;
+        alns_tc.setNoiseControl(noiseControl);
+        alns_tc.setRho(rho);
+        alns_tc.setCoolingRate(coolingRate);
+        alns_tc.setdMax(this::dMax);
+        alns_tc.setdMin(this::dMin);
+        alns_tc.setInitialCost(initialCost);
+        alns_tc.setMinT(minT);
+        alns_tc.setSegment(segment);
+        alns_tc.setSigma1(sigma1);
+        alns_tc.setSigma2(sigma2);
+        alns_tc.setSigma3(sigma3);
+        alns_tc.setT(T);
+        alns_tc.resetWeights();
+        alns_tc.setGlobalSolution(solutionBest);
     }
 
     private Solution applyImprovement(Solution solution) {
@@ -514,104 +293,6 @@ public class ALNS implements Runnable {
 
     private boolean stopCriteriaMeet() {
         return iteration > numIterations;
-    }
-
-    private void insertRequests(Solution solution, int ri, int useNoise) {
-        ArrayList<Req> removedRequests = new ArrayList<>();
-        for (int i = 0; i < solution.visitedRequests.length; i++) {
-            if (!solution.visitedRequests[i]) {
-                removedRequests.add(new Req(findVehicle(i, solution), i));
-            }
-        }
-        InsertionMethod insertionMethod = InsertionMethod.values()[ri];
-        // Use random pickup method
-        switch (insertionMethod) {
-            case Greedy:
-                insertionOperator.insertGreedyRequests(solution, removedRequests, PickupMethod.Random, useNoise);
-                break;
-            case Regret3Noise:
-            case Regret3:
-                insertionOperator.insertRegretRequests(solution, removedRequests, 3, insertionMethod, PickupMethod.Random, useNoise);
-                break;
-            case RegretMNoise:
-            case RegretM:
-                insertionOperator.insertRegretRequests(solution, removedRequests, solution.tours.size(), insertionMethod, PickupMethod.Random, useNoise);
-                break;
-        }
-    }
-
-    private int findVehicle(Integer reqId, Solution solution) {
-        for (int k = 0; k < solution.requests.size(); k++) {
-            if (solution.requests.get(k).contains(reqId)) {
-                return k;
-            }
-        }
-        return -1;
-    }
-
-    private void removeRequests(Solution solution, int ro, int q) {
-        List<Req> removedRequests = null;
-        RemovalMethod removalMethod = RemovalMethod.values()[ro];
-        switch (removalMethod) {
-            case Random:
-                removedRequests = removalOperator.removeRandomRequest(solution.tours, solution.requests, q);
-                break;
-            case Shaw:
-                removedRequests = removalOperator.removeShawRequests(solution, q);
-                break;
-            case ExpensiveRequest:
-                removedRequests = removalOperator.removeExpensiveRequests(solution.tours, solution.requests, q);
-                break;
-            case ExpensiveNode:
-                removedRequests = removalOperator.removeMostExpensiveNodes(solution.tours, solution.requests, q);
-                break;
-            case RandomVehicle:
-                removedRequests = removalOperator.removeRandomVehicle(solution.tours, solution.requests);
-                break;
-        }
-        for (Req req : removedRequests) {
-            solution.visitedRequests[req.requestId] = false;
-            for (Request pickup : instance.getPickups(req.requestId)) {
-                solution.visited[pickup.nodeId] = false;
-            }
-            solution.visited[instance.getDelivery(req.requestId).nodeId] = false;
-        }
-    }
-
-    /*
-     * Based on experiments evaluated by Naccache (2018) (Table 3).
-     */
-    private int generateRandomQ() {
-        int min = dMin(instance.getNumReq());
-        int max = dMax(instance.getNumReq());
-        return min + (int) (random.nextDouble() * (max - min));
-    }
-
-    /*
-     * Given h operators with weights w_i, operator j will be selected with probability w_j / sum_{i=1}_{h} w_i
-     */
-    private int getNextRouletteWheelOperator(double sum, double[] probs) {
-        if (sum == 0.0) {
-            return (int) (random.nextDouble() * probs.length);
-        } else {
-            int count = 0;
-            double partialSum = probs[count];
-            double rand = random.nextDouble() * sum;
-            while (partialSum <= rand) {
-                count++;
-                partialSum = probs[count];
-            }
-            return count;
-        }
-    }
-
-    private double updateWeightsProbabilities(double[] weights, double[] probs) {
-        double sum = 0.0;
-        for (int i = 0; i < weights.length; i++) {
-            probs[i] = sum + weights[i];
-            sum = probs[i];
-        }
-        return sum;
     }
 
     private void printFinalRoute() {
