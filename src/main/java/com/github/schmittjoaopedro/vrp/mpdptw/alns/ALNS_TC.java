@@ -19,10 +19,10 @@ public class ALNS_TC extends ALNS_BASE {
     public void init() {
         this.setInsertionOperators(new InsertionOperator[]{
                 new GreedyInsertion(instance, random),
-                new RegretInsertion(instance, random, () -> 3, 0.0),
-                new RegretInsertion(instance, random, () -> solutionNew.tours.size(), 0.0),
-                new RegretInsertion(instance, random, () -> 3, 1.0),
-                new RegretInsertion(instance, random, () -> solutionNew.tours.size(), 1.0)
+                new RegretInsertion(instance, random, "3", 0.0),
+                new RegretInsertion(instance, random, "k", 0.0),
+                new RegretInsertion(instance, random, "3", 1.0),
+                new RegretInsertion(instance, random, "k", 1.0)
         });
         this.setRemovalOperators(new RemovalOperator[]{
                 new RandomRemoval(random, instance),
@@ -31,6 +31,10 @@ public class ALNS_TC extends ALNS_BASE {
                 new ExpensiveRequestRemoval(random, instance),
                 new RandomVehicleRemoval(random, instance)
         });
+        noiseScores = new double[2];
+        noiseWeights = new double[2];
+        noiseUsages = new double[2];
+        noiseProbs = new double[2];
     }
 
     public void performIteration(int iteration) {
@@ -103,7 +107,6 @@ public class ALNS_TC extends ALNS_BASE {
             }
             //printIterationStatus();
             updateBest(solution);
-            System.out.println(iteration + " -> " + solution);
         }
     }
 

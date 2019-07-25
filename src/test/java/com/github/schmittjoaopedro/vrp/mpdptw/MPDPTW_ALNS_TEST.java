@@ -135,26 +135,25 @@ public class MPDPTW_ALNS_TEST {
         assertThat(log.get(1)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 7, TC = 7689.0]");
         assertThat(log.get(2)).isEqualTo("NEW BEST = Iter 5 Sol = [F = true, NV = 7, TC = 7636.2]");
         assertThat(log.get(3)).isEqualTo("NEW BEST = Iter 8 Sol = [F = true, NV = 7, TC = 7631.97]");
-        assertThat(log.get(4)).isEqualTo("NEW BEST = Iter 100 Sol = [F = true, NV = 7, TC = 7631.97]");
-        assertThat(log.get(5)).contains("Instance = n_8_50_1.txt\n" +
+        assertThat(log.get(4)).contains("Instance = n_8_50_1.txt\n" +
                 "Best solution feasibility = true\n" +
                 "Routes\n" +
-                "0 36 35 37 39 38 40 41 0\n" +
-                "0 22 11 19 18 12 17 20 21 23 0\n" +
-                "0 5 8 6 3 4 1 9 2 7 10 0\n" +
-                "0 25 26 24 27 0\n" +
-                "0 42 43 49 47 45 44 46 50 48 0\n" +
                 "0 29 33 31 32 28 30 34 0\n" +
+                "0 5 8 6 3 4 1 9 2 7 10 0\n" +
+                "0 22 11 19 18 12 17 20 21 23 0\n" +
+                "0 25 26 24 27 0\n" +
+                "0 36 35 37 39 38 40 41 0\n" +
+                "0 42 43 49 47 45 44 46 50 48 0\n" +
                 "0 15 13 14 16 0\n" +
                 "Requests\n" +
-                "7\n" +
-                "2 4\n" +
-                "1 0\n" +
-                "5\n" +
-                "8 9\n" +
                 "6\n" +
+                "1 0\n" +
+                "4 2\n" +
+                "5\n" +
+                "7\n" +
+                "8 9\n" +
                 "3\n" +
-                "Cost = 7631.96600391507\n" +
+                "Cost = 7631.966003915072\n" +
                 "Num. vehicles = 7");
     }
 

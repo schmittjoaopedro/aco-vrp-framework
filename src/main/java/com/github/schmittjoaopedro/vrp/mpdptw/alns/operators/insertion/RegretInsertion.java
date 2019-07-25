@@ -1,25 +1,30 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Req;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod.PickupMethod;
-import com.github.schmittjoaopedro.vrp.mpdptw.Req;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Supplier;
 
 public class RegretInsertion extends InsertionOperator {
 
-    private Supplier<Integer> regretLevel;
+    private String regret;
 
-    public RegretInsertion(ProblemInstance instance, Random random, Supplier<Integer> regretLevel, double useNoiseAtHeuristic) {
+    public RegretInsertion(ProblemInstance instance, Random random, double useNoiseAtHeuristic) {
         super(instance, random);
-        this.regretLevel = regretLevel;
         this.useNoiseAtHeuristic = useNoiseAtHeuristic;
+        this.insertionMethod.setUseNoiseAtBestPosition(useNoiseAtHeuristic);
+        this.regret = "k";
+    }
+
+    public RegretInsertion(ProblemInstance instance, Random random, String regret, double useNoiseAtHeuristic) {
+        this(instance, random, useNoiseAtHeuristic);
+        this.regret = regret;
     }
 
     /*
@@ -33,7 +38,12 @@ public class RegretInsertion extends InsertionOperator {
      * Regret-m, with noise: similarly, we use a regret-m criterion to which insertion noise is added.
      */
     public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, int useNoise) {
-        int q = requestsToInsert.size();
+        int regretLevel;
+        if (regret.equals("k")) {
+            regretLevel = solution.tours.size();
+        } else {
+            regretLevel = Integer.valueOf(regret);
+        }
         // Cache already processed routes to evict over processing
         RouteCache originalRoutesCache = new RouteCache();
         RouteCache newRoutesCache = new RouteCache();
@@ -77,8 +87,8 @@ public class RegretInsertion extends InsertionOperator {
                         // Sort the vector in ascending order, from the best to worst
                         feasibleRoutes.sort(Comparator.comparing(InsertRequest::getCost));
                         // Get the best request based on regret criterion
-                        requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel.get()));
-                        if (feasibleRoutes.size() < regretLevel.get()) {
+                        requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel));
+                        if (feasibleRoutes.size() < regretLevel) {
                             isLessAvailableVehicles = true;
                         }
                     }
@@ -86,7 +96,7 @@ public class RegretInsertion extends InsertionOperator {
                     int k = requestsToInsert.get(r).vehicleId;
                     instance.solutionEvaluation(solution, k);
                     feasibleRoutes.add(new InsertRequest(solution.tourCosts.get(k), k, requestId, new ArrayList<>(solution.tours.get(k))));
-                    requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel.get()));
+                    requestsRegret.add(getRegretRequestValue(feasibleRoutes, regretLevel));
                 }
             }
             if (requestsRegret.isEmpty()) { // No found position for the remaining requests

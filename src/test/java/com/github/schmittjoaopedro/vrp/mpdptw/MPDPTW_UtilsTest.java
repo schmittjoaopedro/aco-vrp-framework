@@ -913,7 +913,7 @@ public class MPDPTW_UtilsTest {
         removedRequests.add(new Req(2, 3, 0));
         removedRequests.add(new Req(1, 6, 0));
 
-        RegretInsertion insertionOperator = new RegretInsertion(problemInstance, new Random(1), () -> 3, 0.0);
+        RegretInsertion insertionOperator = new RegretInsertion(problemInstance, new Random(1), "3", 0.0);
         problemInstance.solutionEvaluation(ant);
         insertionOperator.insertRequests(ant, removedRequests, PickupMethod.Simple, 0);
 

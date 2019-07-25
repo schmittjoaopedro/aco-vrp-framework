@@ -242,7 +242,7 @@ public class InsertionMethod {
             }
             if (feasible) {
                 // NewCost <- C_prev,i + C_i,next - C_prev,next + generateRandomNoise()
-                newCost = instance.dist(prev, node) + instance.dist(node, next) - instance.dist(prev, next) + (generateRandomNoise() * useNoiseAtBestPosition);
+                newCost = instance.dist(prev, node) + instance.dist(node, next) - instance.dist(prev, next) + generateRandomNoise();
                 if (newCost < deltaBestCost) {
                     route.add(currIdx, node); // Insert i after prev in the current solution S'
                     if (instance.restrictionsEvaluation(route).feasible) { // If S' is feasible then
@@ -303,11 +303,22 @@ public class InsertionMethod {
     }
 
     protected double generateRandomNoise() {
-        return (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
+        if (useNoiseAtBestPosition > 0.0) {
+            return (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
+        } else {
+            return 0.0;
+        }
     }
 
     public enum PickupMethod {
         Simple, Random, Cheapest, Expensive
     }
 
+    public double getUseNoiseAtBestPosition() {
+        return useNoiseAtBestPosition;
+    }
+
+    public void setUseNoiseAtBestPosition(double useNoiseAtBestPosition) {
+        this.useNoiseAtBestPosition = useNoiseAtBestPosition;
+    }
 }

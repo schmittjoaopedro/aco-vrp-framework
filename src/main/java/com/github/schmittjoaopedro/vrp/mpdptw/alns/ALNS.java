@@ -126,19 +126,17 @@ public class ALNS implements Runnable {
 
     private ALNS_TC alns_tc;
 
-    public ALNS(ProblemInstance instance, Random random) {
-        this(instance, DEFAULT_MAX_ITERATIONS, random);
-    }
-
     public ALNS(ProblemInstance instance, int numIterations, Random random) {
-        this.alns_tc = new ALNS_TC(instance, random);
-        this.alns_tc.init();
         this.instance = instance;
         this.random = random;
         this.numIterations = numIterations;
 
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
+
+        this.alns_tc = new ALNS_TC(instance, random);
+        this.alns_tc.init();
+        this.alns_tc.setApplyImprovement(this::applyImprovement);
 
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
@@ -161,26 +159,27 @@ public class ALNS implements Runnable {
         instance.solutionEvaluation(initialSolution);
         solutionBest = SolutionUtils.copy(initialSolution);
         setAlnsTcParameters();
+        setBaseParameters();
         globalStatistics.endTimer("Initialization");
         startTime = System.currentTimeMillis();
 
         globalStatistics.startTimer();
         while (!stopCriteriaMeet()) {
-
             Long iterationTime = System.currentTimeMillis();
 
             // Process new requests
             List<Integer> newRequestIds = dynamicHandler.processDynamism(iteration);
             if (!newRequestIds.isEmpty()) {
                 log("New requests add: " + StringUtils.join(newRequestIds));
+                Solution solution = SolutionUtils.copy(alns_tc.getSolution());
                 for (int req : newRequestIds) {
-                    instance.solutionEvaluation(solutionBest);
-                    insertionHeuristic.addRequest(solutionBest, req);
+                    instance.solutionEvaluation(solution);
+                    insertionHeuristic.addRequest(solution, req);
                 }
-                instance.solutionEvaluation(solutionBest);
-                solutionBest = applyImprovement(solutionBest);
-                instance.solutionEvaluation(solutionBest);
-                updateBest(solutionBest, true);
+                instance.solutionEvaluation(solution);
+                solution = applyImprovement(solution);
+                instance.solutionEvaluation(solution);
+                updateBest(solution, true);
                 setAlnsTcParameters();
             }
 
@@ -188,13 +187,14 @@ public class ALNS implements Runnable {
                 alns_tc.performIteration(iteration);
                 detailedStatistics.s_best_TC = solutionBest.totalCost;
                 detailedStatistics.s_best_NV = solutionBest.tours.size();
-                updateBest(alns_tc.getSolutionBest(), false);
+                updateBest(alns_tc.getGlobalSolution(), false);
             }
 
             // Check moving vehicle
             if (movingVehicle != null) {
                 if (movingVehicle.moveVehicle(solutionBest, iteration)) {
                     initialSolution = SolutionUtils.copy(solutionBest);
+                    alns_tc.setGlobalSolution(solutionBest);
                 }
             }
 
@@ -211,8 +211,8 @@ public class ALNS implements Runnable {
             }
             if (generateDetailedStatistics) {
                 detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
+                alns_tc.logDetailedStatistics(iteration);
             }
-            alns_tc.logDetailedStatistics(iteration);
             iteration++;
         }
         globalStatistics.endTimer("Algorithm");
@@ -254,20 +254,26 @@ public class ALNS implements Runnable {
         double T = initialT;
         double minT = initialT * Math.pow(coolingRate, 30000);
 
+        alns_tc.setT(T);
+        alns_tc.setInitialT(initialT);
+        alns_tc.setMinT(minT);
+        alns_tc.setGlobalSolution(solutionBest);
+    }
+
+    private void setBaseParameters() {
         alns_tc.setNoiseControl(noiseControl);
         alns_tc.setRho(rho);
         alns_tc.setCoolingRate(coolingRate);
         alns_tc.setdMax(this::dMax);
         alns_tc.setdMin(this::dMin);
         alns_tc.setInitialCost(initialCost);
-        alns_tc.setMinT(minT);
         alns_tc.setSegment(segment);
         alns_tc.setSigma1(sigma1);
         alns_tc.setSigma2(sigma2);
         alns_tc.setSigma3(sigma3);
-        alns_tc.setT(T);
+        alns_tc.setMinWeight(minWeight);
         alns_tc.resetWeights();
-        alns_tc.setGlobalSolution(solutionBest);
+        alns_tc.setAcceptMethod("SA");
     }
 
     private Solution applyImprovement(Solution solution) {

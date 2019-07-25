@@ -92,15 +92,10 @@ public abstract class ALNS_BASE {
     public ALNS_BASE(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
-        this.insertionOperators = new InsertionOperator[5];
-        noiseScores = new double[2];
-        noiseWeights = new double[2];
-        noiseUsages = new double[2];
-        noiseProbs = new double[2];
     }
 
-    public Solution getSolutionBest() {
-        return solutionBest;
+    public Solution getGlobalSolution() {
+        return SolutionUtils.copy(solutionBest);
     }
 
     public Solution getSolutionNew() {
@@ -108,7 +103,8 @@ public abstract class ALNS_BASE {
     }
 
     public void setGlobalSolution(Solution solution) {
-        this.solutionBest = this.solution = solution;
+        this.solution = SolutionUtils.copy(solution);
+        this.solutionBest = SolutionUtils.copy(solution);
     }
 
     /*
@@ -140,9 +136,6 @@ public abstract class ALNS_BASE {
 
     public void setInsertionOperators(InsertionOperator[] insertionOperators) {
         this.insertionOperators = insertionOperators;
-        for (InsertionOperator insertionOperator : insertionOperators) {
-            insertionOperator.setUseNoiseAtHeuristic(noiseControl);
-        }
         riScores = new double[insertionOperators.length];
         riWeights = new double[insertionOperators.length];
         riUsages = new double[insertionOperators.length];
@@ -336,6 +329,9 @@ public abstract class ALNS_BASE {
 
     public void setNoiseControl(double noiseControl) {
         this.noiseControl = noiseControl;
+        for (InsertionOperator insertionOperator : insertionOperators) {
+            insertionOperator.setUseNoiseAtHeuristic(noiseControl);
+        }
     }
 
     public void setSegment(int segment) {
@@ -358,4 +354,43 @@ public abstract class ALNS_BASE {
         this.dMax = dMax;
     }
 
+    public Function<Solution, Solution> getApplyImprovement() {
+        return applyImprovement;
+    }
+
+    public void setApplyImprovement(Function<Solution, Solution> applyImprovement) {
+        this.applyImprovement = applyImprovement;
+    }
+
+    public double getMinWeight() {
+        return minWeight;
+    }
+
+    public void setMinWeight(double minWeight) {
+        this.minWeight = minWeight;
+    }
+
+    public String getAcceptMethod() {
+        return acceptMethod;
+    }
+
+    public void setAcceptMethod(String acceptMethod) {
+        this.acceptMethod = acceptMethod;
+    }
+
+    public double getInitialT() {
+        return initialT;
+    }
+
+    public void setInitialT(double initialT) {
+        this.initialT = initialT;
+    }
+
+    public Solution getSolution() {
+        return solution;
+    }
+
+    public void setSolution(Solution solution) {
+        this.solution = solution;
+    }
 }

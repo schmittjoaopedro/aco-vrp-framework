@@ -1,7 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.InsertionOperator;
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.RandomRemoval;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.GreedyInsertion;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.ExpensiveRequestRemoval;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.ExchangeRequestOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateNodeOperator;
@@ -16,7 +16,7 @@ public class LocalSearch {
 
     private Random random;
 
-    private InsertionOperator insertionOperator;
+    private GreedyInsertion greedyInsertion;
 
     private RelocateNodeOperator relocateNodeOperator;
 
@@ -27,7 +27,7 @@ public class LocalSearch {
     public LocalSearch(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
-        this.insertionOperator = new InsertionOperator(instance, random);
+        this.greedyInsertion = new GreedyInsertion(instance, random);
         this.relocateRequestOperator = new RelocateRequestOperator(instance, random);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
         this.exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
@@ -61,8 +61,8 @@ public class LocalSearch {
         boolean improvement = true;
         boolean improved = false;
         while (improvement) {
-            List<Req> removedRequests = new RandomRemoval(random, instance).removeRequests(tempAnt, generateNoRemovalRequests());
-            insertionOperator.insertRequests(tempAnt, removedRequests, InsertionMethod.PickupMethod.Random, 0);
+            List<Req> removedRequests = new ExpensiveRequestRemoval(random, instance).removeRequests(tempAnt, generateNoRemovalRequests());
+            greedyInsertion.insertRequests(tempAnt, removedRequests, InsertionMethod.PickupMethod.Random, 0);
             instance.solutionEvaluation(tempAnt);
             SolutionUtils.removeEmptyVehicles(tempAnt);
             improvement = instance.getBest(improvedAnt, tempAnt) == tempAnt;

@@ -395,7 +395,6 @@ public class DPDPTW_ALNS_TEST {
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 551 Sol = [F = true, NV = 9, TC = 523.2]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [12]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 615 Sol = [F = true, NV = 10, TC = 640.34]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 800 Sol = [F = true, NV = 10, TC = 640.34]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [13]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 939 Sol = [F = true, NV = 10, TC = 644.73]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [14]");
@@ -419,7 +418,6 @@ public class DPDPTW_ALNS_TEST {
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1753 Sol = [F = true, NV = 10, TC = 716.53]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1764 Sol = [F = true, NV = 10, TC = 738.78]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1900 Sol = [F = true, NV = 10, TC = 738.78]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [26]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 2379 Sol = [F = true, NV = 10, TC = 741.71]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
@@ -948,7 +946,6 @@ public class DPDPTW_ALNS_TEST {
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6238 Sol = [F = true, NV = 9, TC = 935.81]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [25]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6250 Sol = [F = true, NV = 9, TC = 964.86]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6300 Sol = [F = true, NV = 9, TC = 964.86]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6322 Sol = [F = true, NV = 9, TC = 964.55]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6400 Sol = [F = true, NV = 9, TC = 952.96]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6500 Sol = [F = true, NV = 9, TC = 940.07]");
@@ -1137,18 +1134,15 @@ public class DPDPTW_ALNS_TEST {
         assertThat(logs.get(i++)).isEqualTo("New requests add: [27]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6917 Sol = [F = true, NV = 9, TC = 1011.37]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 6985 Sol = [F = true, NV = 9, TC = 927.23]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7100 Sol = [F = true, NV = 9, TC = 927.23]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [28]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7334 Sol = [F = true, NV = 10, TC = 945.8]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [29]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7667 Sol = [F = true, NV = 10, TC = 1071.17]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7668 Sol = [F = true, NV = 10, TC = 968.68]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7700 Sol = [F = true, NV = 10, TC = 968.68]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [30]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7750 Sol = [F = true, NV = 10, TC = 993.27]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [31]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7834 Sol = [F = true, NV = 10, TC = 1006.01]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 7900 Sol = [F = true, NV = 10, TC = 1006.01]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [32]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8084 Sol = [F = true, NV = 10, TC = 1132.1]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 8090 Sol = [F = true, NV = 10, TC = 1110.28]");
@@ -1264,7 +1258,6 @@ public class DPDPTW_ALNS_TEST {
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 1 Sol = [F = true, NV = 8, TC = 802.33]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 5 Sol = [F = true, NV = 7, TC = 760.57]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 100 Sol = [F = true, NV = 7, TC = 756.14]");
-        assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 800 Sol = [F = true, NV = 7, TC = 756.14]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 827 Sol = [F = true, NV = 7, TC = 755.48]");
         assertThat(logs.get(i++)).isEqualTo("New requests add: [23]");
         assertThat(logs.get(i++)).isEqualTo("NEW BEST = Iter 4084 Sol = [F = true, NV = 7, TC = 768.9]");
