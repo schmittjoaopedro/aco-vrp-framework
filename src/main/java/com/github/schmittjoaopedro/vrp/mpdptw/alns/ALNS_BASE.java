@@ -1,8 +1,10 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.GreedyInsertion;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.InsertionOperator;
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.RemovalOperator;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.RegretInsertion;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -183,6 +185,49 @@ public abstract class ALNS_BASE {
                 weight[r] += minWeight;
             }
         }
+    }
+
+    /*
+     * The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
+     * with a probability e^-(f(S')-f(S))/T.
+     */
+    protected boolean accept(Solution newSolution, Solution oldSolution) {
+        if (instance.getBest(oldSolution, newSolution) == newSolution) {
+            return true;
+        } else if ("SA".equals(parameters.acceptMethod)) {
+            double difference = newSolution.totalCost - oldSolution.totalCost;
+            return random.nextDouble() < Math.exp(-1.0 * difference / T);
+        } else if ("TA".equals(parameters.acceptMethod)) {
+            double difference = newSolution.totalCost - oldSolution.totalCost;
+            return difference < T;
+        } else {
+            return false;
+        }
+    }
+
+    public void init() {
+        this.setInsertionOperators(new InsertionOperator[]{
+                new GreedyInsertion(instance, random),
+                new RegretInsertion(instance, random, "3", 0.0),
+                new RegretInsertion(instance, random, "k", 0.0),
+                new RegretInsertion(instance, random, "3", 1.0),
+                new RegretInsertion(instance, random, "k", 1.0)
+        });
+        this.setRemovalOperators(new RemovalOperator[]{
+                new RandomRemoval(random, instance),
+                new ShawRemoval(random, instance),
+                new ExpensiveNodeRemoval(random, instance),
+                new ExpensiveRequestRemoval(random, instance),
+                new RandomVehicleRemoval(random, instance)
+        });
+        for (InsertionOperator insertionOperator : insertionOperators) {
+            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
+        }
+        noiseScores = new double[2];
+        noiseWeights = new double[2];
+        noiseUsages = new double[2];
+        noiseProbs = new double[2];
+        resetWeights();
     }
 
     protected void removeRequests(Solution solution, int ro, int q) {

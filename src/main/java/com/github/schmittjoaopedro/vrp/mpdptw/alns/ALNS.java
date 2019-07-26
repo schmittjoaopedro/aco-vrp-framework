@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
 import com.github.schmittjoaopedro.statistic.GlobalStatistics;
 import com.github.schmittjoaopedro.statistic.IterationStatistic;
+import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.ExchangeRequestOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.RelocateRequestOperator;
@@ -122,6 +123,8 @@ public class ALNS implements Runnable {
 
     private ALNS_TC alns_tc;
 
+    private ALNS_NV alns_nv;
+
     public ALNS(ProblemInstance instance, int numIterations, Random random) {
         this.instance = instance;
         this.random = random;
@@ -134,6 +137,10 @@ public class ALNS implements Runnable {
         this.alns_tc = new ALNS_TC(instance, random, parameters);
         this.alns_tc.init();
 
+        if (instance.isMinimizeVehicles()) {
+            this.alns_nv = new ALNS_NV(instance, random, parameters);
+            this.alns_nv.init();
+        }
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
         iterationStatistics = new ArrayList<>(numIterations);
@@ -179,9 +186,20 @@ public class ALNS implements Runnable {
 
             if (instance.getNumReq() > 0) {
                 alns_tc.performIteration(iteration);
+                if (instance.isMinimizeVehicles()) {
+                    alns_nv.performIteration(iteration);
+                }
                 detailedStatistics.s_best_TC = solutionBest.totalCost;
                 detailedStatistics.s_best_NV = solutionBest.tours.size();
                 updateBest(alns_tc.getGlobalSolution(), false);
+                if (instance.isMinimizeVehicles()) {
+                    Solution nvSolution = alns_nv.getGlobalSolution();
+                    if (nvSolution.feasible && nvSolution.tours.size() < solutionBest.tours.size()) {
+                        alns_tc.setGlobalSolution(nvSolution);
+                        updateBest(nvSolution, false);
+                        setAlnsTcParameters();
+                    }
+                }
             }
 
             // Check moving vehicle
@@ -189,6 +207,9 @@ public class ALNS implements Runnable {
                 if (movingVehicle.moveVehicle(solutionBest, iteration)) {
                     initialSolution = SolutionUtils.copy(solutionBest);
                     alns_tc.setGlobalSolution(solutionBest);
+                    if (instance.isMinimizeVehicles()) {
+                        alns_nv.setGlobalSolution(solutionBest);
+                    }
                 }
             }
 
@@ -206,6 +227,7 @@ public class ALNS implements Runnable {
             if (generateDetailedStatistics) {
                 detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
                 alns_tc.logDetailedStatistics(iteration);
+                alns_nv.logDetailedStatistics(iteration);
             }
             iteration++;
         }
@@ -252,6 +274,12 @@ public class ALNS implements Runnable {
         alns_tc.parameters.initialT = initialT;
         alns_tc.parameters.minT = minT;
         alns_tc.setGlobalSolution(solutionBest);
+
+        alns_nv.setT(T);
+        alns_nv.parameters.initialCost = initialCost;
+        alns_nv.parameters.initialT = initialT;
+        alns_nv.parameters.minT = minT;
+        alns_nv.setGlobalSolution(solutionBest);
     }
 
     private ALNS_BASE.Parameters createParameters() {
@@ -316,7 +344,7 @@ public class ALNS implements Runnable {
         for (ArrayList requests : solution.requests) {
             msg += "\n" + StringUtils.join(requests, " ");
         }
-        msg += "\nCost = " + solution.totalCost;
+        msg += "\nCost = " + Maths.round(solution.totalCost, 2);
         msg += "\nNum. vehicles = " + solution.tours.size();
         Set<Integer> processedNodes = new HashSet<>();
         for (int k = 0; k < solutionBest.tours.size(); k++) {

@@ -16,31 +16,6 @@ public class ALNS_TC extends ALNS_BASE {
         super(instance, random, parameters);
     }
 
-    public void init() {
-        this.setInsertionOperators(new InsertionOperator[]{
-                new GreedyInsertion(instance, random),
-                new RegretInsertion(instance, random, "3", 0.0),
-                new RegretInsertion(instance, random, "k", 0.0),
-                new RegretInsertion(instance, random, "3", 1.0),
-                new RegretInsertion(instance, random, "k", 1.0)
-        });
-        this.setRemovalOperators(new RemovalOperator[]{
-                new RandomRemoval(random, instance),
-                new ShawRemoval(random, instance),
-                new ExpensiveNodeRemoval(random, instance),
-                new ExpensiveRequestRemoval(random, instance),
-                new RandomVehicleRemoval(random, instance)
-        });
-        for (InsertionOperator insertionOperator : insertionOperators) {
-            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
-        }
-        noiseScores = new double[2];
-        noiseWeights = new double[2];
-        noiseUsages = new double[2];
-        noiseProbs = new double[2];
-        resetWeights();
-    }
-
     public void performIteration(int iteration) {
         solutionNew = SolutionUtils.copy(solution); // S' <- S
         int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
@@ -111,24 +86,6 @@ public class ALNS_TC extends ALNS_BASE {
             }
             //printIterationStatus();
             updateBest(solution);
-        }
-    }
-
-    /*
-     * The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
-     * with a probability e^-(f(S')-f(S))/T.
-     */
-    private boolean accept(Solution newSolution, Solution oldSolution) {
-        if (instance.getBest(oldSolution, newSolution) == newSolution) {
-            return true;
-        } else if ("SA".equals(parameters.acceptMethod)) {
-            double difference = newSolution.totalCost - oldSolution.totalCost;
-            return random.nextDouble() < Math.exp(-1.0 * difference / T);
-        } else if ("TA".equals(parameters.acceptMethod)) {
-            double difference = newSolution.totalCost - oldSolution.totalCost;
-            return difference < T;
-        } else {
-            return false;
         }
     }
 
