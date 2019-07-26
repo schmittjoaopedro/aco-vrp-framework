@@ -120,10 +120,6 @@ public class ALNS implements Runnable {
 
     private boolean showLog = false;
 
-    private long endTime;
-
-    private long startTime;
-
     private ALNS_TC alns_tc;
 
     public ALNS(ProblemInstance instance, int numIterations, Random random) {
@@ -134,9 +130,9 @@ public class ALNS implements Runnable {
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
 
-        this.alns_tc = new ALNS_TC(instance, random);
+        ALNS_BASE.Parameters parameters = createParameters();
+        this.alns_tc = new ALNS_TC(instance, random, parameters);
         this.alns_tc.init();
-        this.alns_tc.setApplyImprovement(this::applyImprovement);
 
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
@@ -159,9 +155,7 @@ public class ALNS implements Runnable {
         instance.solutionEvaluation(initialSolution);
         solutionBest = SolutionUtils.copy(initialSolution);
         setAlnsTcParameters();
-        setBaseParameters();
         globalStatistics.endTimer("Initialization");
-        startTime = System.currentTimeMillis();
 
         globalStatistics.startTimer();
         while (!stopCriteriaMeet()) {
@@ -217,7 +211,6 @@ public class ALNS implements Runnable {
         }
         globalStatistics.endTimer("Algorithm");
 
-        endTime = System.currentTimeMillis();
         dynamicHandler.rollbackOriginalInformation(solutionBest);
         printFinalRoute();
     }
@@ -255,25 +248,27 @@ public class ALNS implements Runnable {
         double minT = initialT * Math.pow(coolingRate, 30000);
 
         alns_tc.setT(T);
-        alns_tc.setInitialT(initialT);
-        alns_tc.setMinT(minT);
+        alns_tc.parameters.initialCost = initialCost;
+        alns_tc.parameters.initialT = initialT;
+        alns_tc.parameters.minT = minT;
         alns_tc.setGlobalSolution(solutionBest);
     }
 
-    private void setBaseParameters() {
-        alns_tc.setNoiseControl(noiseControl);
-        alns_tc.setRho(rho);
-        alns_tc.setCoolingRate(coolingRate);
-        alns_tc.setdMax(this::dMax);
-        alns_tc.setdMin(this::dMin);
-        alns_tc.setInitialCost(initialCost);
-        alns_tc.setSegment(segment);
-        alns_tc.setSigma1(sigma1);
-        alns_tc.setSigma2(sigma2);
-        alns_tc.setSigma3(sigma3);
-        alns_tc.setMinWeight(minWeight);
-        alns_tc.resetWeights();
-        alns_tc.setAcceptMethod("SA");
+    private ALNS_BASE.Parameters createParameters() {
+        ALNS_BASE.Parameters parameters = new ALNS_BASE.Parameters();
+        parameters.noiseControl = noiseControl;
+        parameters.rho = rho;
+        parameters.coolingRate = coolingRate;
+        parameters.dMax = this::dMax;
+        parameters.dMin = this::dMin;
+        parameters.applyImprovement = this::applyImprovement;
+        parameters.segment = segment;
+        parameters.sigma1 = sigma1;
+        parameters.sigma2 = sigma2;
+        parameters.sigma3 = sigma3;
+        parameters.minWeight = minWeight;
+        parameters.acceptMethod = acceptMethod;
+        return parameters;
     }
 
     private Solution applyImprovement(Solution solution) {

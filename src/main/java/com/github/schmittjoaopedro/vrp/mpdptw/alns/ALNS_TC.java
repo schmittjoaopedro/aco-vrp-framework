@@ -12,8 +12,8 @@ import java.util.Random;
 
 public class ALNS_TC extends ALNS_BASE {
 
-    public ALNS_TC(ProblemInstance instance, Random random) {
-        super(instance, random);
+    public ALNS_TC(ProblemInstance instance, Random random, Parameters parameters) {
+        super(instance, random, parameters);
     }
 
     public void init() {
@@ -31,10 +31,14 @@ public class ALNS_TC extends ALNS_BASE {
                 new ExpensiveRequestRemoval(random, instance),
                 new RandomVehicleRemoval(random, instance)
         });
+        for (InsertionOperator insertionOperator : insertionOperators) {
+            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
+        }
         noiseScores = new double[2];
         noiseWeights = new double[2];
         noiseUsages = new double[2];
         noiseProbs = new double[2];
+        resetWeights();
     }
 
     public void performIteration(int iteration) {
@@ -70,20 +74,20 @@ public class ALNS_TC extends ALNS_BASE {
             hashNumber.add(solutionHash);
             if (accept(solutionNew, solution)) { // if accept(S', S) then
                 if (instance.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                    if (applyImprovement != null) {
-                        solutionNew = applyImprovement.apply(solutionNew); // Apply improvement (Section 3.4) to S'
+                    if (parameters.applyImprovement != null) {
+                        solutionNew = parameters.applyImprovement.apply(solutionNew); // Apply improvement (Section 3.4) to S'
                     }
                     updateBest(solutionNew); // S_best <- S <- S'
                     // Increase the scores of io and ro by sigma1
-                    updateScores(ro, ri, useNoise, sigma1); // Increment by sigma1 if the new solution is a new best one
+                    updateScores(ro, ri, useNoise, parameters.sigma1); // Increment by sigma1 if the new solution is a new best one
                     detailedStatistics.bsfAcceptCount++;
                 } else if (instance.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
                     // Increase the scores of the ro and io by sigma2
-                    updateScores(ro, ri, useNoise, sigma2);  // Increment by sigma2 if the new solution is better than the previous one
+                    updateScores(ro, ri, useNoise, parameters.sigma2);  // Increment by sigma2 if the new solution is better than the previous one
                     detailedStatistics.currentAcceptCount++;
                 } else {
                     // Increase the scores of the ro and io by sigma3
-                    updateScores(ro, ri, useNoise, sigma3); // Increment by sigma3 if the new solution is not better but still accepted
+                    updateScores(ro, ri, useNoise, parameters.sigma3); // Increment by sigma3 if the new solution is not better but still accepted
                     detailedStatistics.worstAcceptCount++;
                 }
                 solution = solutionNew; // S <- S'
@@ -95,15 +99,15 @@ public class ALNS_TC extends ALNS_BASE {
          * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
          * allow worse solutions to be more easily accepted and increase the diversity.
          */
-        T = T * coolingRate;
-        if (T < minT) {
+        T = T * parameters.coolingRate;
+        if (T < parameters.minT) {
             resetWeights();
-            T = initialT;
+            T = parameters.initialT;
         }
         if (endOfSegment(iteration)) { // if end of a segment of 𝛿 iterations then
             updateWeights(); // Update weights and reset scores of operators
-            if (applyImprovement != null) {
-                solution = applyImprovement.apply(solution); // Apply improvement to S
+            if (parameters.applyImprovement != null) {
+                solution = parameters.applyImprovement.apply(solution); // Apply improvement to S
             }
             //printIterationStatus();
             updateBest(solution);
@@ -117,10 +121,10 @@ public class ALNS_TC extends ALNS_BASE {
     private boolean accept(Solution newSolution, Solution oldSolution) {
         if (instance.getBest(oldSolution, newSolution) == newSolution) {
             return true;
-        } else if ("SA".equals(acceptMethod)) {
+        } else if ("SA".equals(parameters.acceptMethod)) {
             double difference = newSolution.totalCost - oldSolution.totalCost;
             return random.nextDouble() < Math.exp(-1.0 * difference / T);
-        } else if ("TA".equals(acceptMethod)) {
+        } else if ("TA".equals(parameters.acceptMethod)) {
             double difference = newSolution.totalCost - oldSolution.totalCost;
             return difference < T;
         } else {

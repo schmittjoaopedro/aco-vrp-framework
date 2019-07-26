@@ -14,10 +14,6 @@ import java.util.function.Function;
 
 public abstract class ALNS_BASE {
 
-    protected double initialT;
-
-    protected double minT;
-
     protected Solution solution;
 
     protected Solution solutionNew;
@@ -28,31 +24,11 @@ public abstract class ALNS_BASE {
 
     protected ProblemInstance instance;
 
-    protected static final int DEFAULT_MAX_ITERATIONS = 100000;
-
-    protected double sigma1;
-
-    protected double sigma2;
-
-    protected double sigma3;
-
-    protected double rho;
-
-    protected String acceptMethod;
-
-    protected double minWeight;
-
-    protected double noiseControl;
-
-    protected int segment;
-
-    protected double initialCost;
-
-    protected double coolingRate;
-
     protected InsertionOperator[] insertionOperators;
 
     protected RemovalOperator[] removalOperators;
+
+    protected Parameters parameters;
 
     // Probabilities calculated for ro's and ri's
     protected double[] roProbs;
@@ -79,19 +55,14 @@ public abstract class ALNS_BASE {
 
     protected Random random;
 
-    protected Function<Integer, Integer> dMin;
-
-    protected Function<Integer, Integer> dMax;
-
     protected Set<Integer> hashNumber = new HashSet<>();
-
-    protected Function<Solution, Solution> applyImprovement;
 
     protected DetailedStatistics detailedStatistics = new DetailedStatistics();
 
-    public ALNS_BASE(ProblemInstance instance, Random random) {
+    public ALNS_BASE(ProblemInstance instance, Random random, Parameters parameters) {
         this.instance = instance;
         this.random = random;
+        this.parameters = parameters;
     }
 
     public Solution getGlobalSolution() {
@@ -111,8 +82,8 @@ public abstract class ALNS_BASE {
      * Based on experiments evaluated by Naccache (2018) (Table 3).
      */
     protected int generateRandomQ() {
-        int min = dMin.apply(instance.getNumReq());
-        int max = dMax.apply(instance.getNumReq());
+        int min = parameters.dMin.apply(instance.getNumReq());
+        int max = parameters.dMax.apply(instance.getNumReq());
         return min + (int) (random.nextDouble() * (max - min));
     }
 
@@ -156,17 +127,17 @@ public abstract class ALNS_BASE {
          */
         // Init for removal
         for (int i = 0; i < roWeights.length; i++) {
-            roWeights[i] = minWeight;
+            roWeights[i] = parameters.minWeight;
         }
         roProbsSum = updateWeightsProbabilities(roWeights, roProbs);
         // Init for insertion
         for (int i = 0; i < riWeights.length; i++) {
-            riWeights[i] = minWeight;
+            riWeights[i] = parameters.minWeight;
         }
         riProbsSum = updateWeightsProbabilities(riWeights, riProbs);
         // Init noise
         for (int i = 0; i < noiseWeights.length; i++) {
-            noiseWeights[i] = minWeight;
+            noiseWeights[i] = parameters.minWeight;
         }
         noiseProbsSum = updateWeightsProbabilities(noiseWeights, noiseProbs);
     }
@@ -201,7 +172,7 @@ public abstract class ALNS_BASE {
     private void updateWeight(double weight[], double usage[], double scores[]) {
         double maxWeight = 0.0;
         for (int r = 0; r < weight.length; r++) {
-            weight[r] = (1.0 - rho) * weight[r] + rho * (scores[r] / Math.max(usage[r], 1.0));
+            weight[r] = (1.0 - parameters.rho) * weight[r] + parameters.rho * (scores[r] / Math.max(usage[r], 1.0));
             maxWeight = Math.max(weight[r], maxWeight);
             scores[r] = 0.0;
             usage[r] = 0.0;
@@ -256,7 +227,7 @@ public abstract class ALNS_BASE {
     }
 
     protected boolean endOfSegment(int iteration) {
-        return iteration % segment == 0;
+        return iteration % parameters.segment == 0;
     }
 
 
@@ -307,90 +278,44 @@ public abstract class ALNS_BASE {
         T = t;
     }
 
-    public void setMinT(double minT) {
-        this.minT = minT;
-    }
-
-    public void setSigma1(double sigma1) {
-        this.sigma1 = sigma1;
-    }
-
-    public void setSigma2(double sigma2) {
-        this.sigma2 = sigma2;
-    }
-
-    public void setSigma3(double sigma3) {
-        this.sigma3 = sigma3;
-    }
-
-    public void setRho(double rho) {
-        this.rho = rho;
-    }
-
-    public void setNoiseControl(double noiseControl) {
-        this.noiseControl = noiseControl;
-        for (InsertionOperator insertionOperator : insertionOperators) {
-            insertionOperator.setUseNoiseAtHeuristic(noiseControl);
-        }
-    }
-
-    public void setSegment(int segment) {
-        this.segment = segment;
-    }
-
-    public void setInitialCost(double initialCost) {
-        this.initialCost = initialCost;
-    }
-
-    public void setCoolingRate(double coolingRate) {
-        this.coolingRate = coolingRate;
-    }
-
-    public void setdMin(Function<Integer, Integer> dMin) {
-        this.dMin = dMin;
-    }
-
-    public void setdMax(Function<Integer, Integer> dMax) {
-        this.dMax = dMax;
-    }
-
-    public Function<Solution, Solution> getApplyImprovement() {
-        return applyImprovement;
-    }
-
-    public void setApplyImprovement(Function<Solution, Solution> applyImprovement) {
-        this.applyImprovement = applyImprovement;
-    }
-
-    public double getMinWeight() {
-        return minWeight;
-    }
-
-    public void setMinWeight(double minWeight) {
-        this.minWeight = minWeight;
-    }
-
-    public String getAcceptMethod() {
-        return acceptMethod;
-    }
-
-    public void setAcceptMethod(String acceptMethod) {
-        this.acceptMethod = acceptMethod;
-    }
-
-    public double getInitialT() {
-        return initialT;
-    }
-
-    public void setInitialT(double initialT) {
-        this.initialT = initialT;
-    }
-
     public Solution getSolution() {
         return solution;
     }
 
     public void setSolution(Solution solution) {
         this.solution = solution;
+    }
+
+    public static class Parameters {
+
+        protected double minT;
+
+        protected double initialT;
+
+        protected double sigma1;
+
+        protected double sigma2;
+
+        protected double sigma3;
+
+        protected double rho;
+
+        protected String acceptMethod;
+
+        protected double minWeight;
+
+        protected double noiseControl;
+
+        protected int segment;
+
+        protected double initialCost;
+
+        protected double coolingRate;
+
+        protected Function<Integer, Integer> dMin;
+
+        protected Function<Integer, Integer> dMax;
+
+        protected Function<Solution, Solution> applyImprovement;
     }
 }
