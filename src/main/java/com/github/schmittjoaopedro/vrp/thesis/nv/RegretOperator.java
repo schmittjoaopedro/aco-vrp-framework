@@ -125,6 +125,7 @@ public class RegretOperator {
         solution.tours.get(vehicle).add(insertPosition.deliveryPos, deliveryNode);
         solution.visited[node] = true;
         solution.visited[deliveryNode] = true;
+        solution.requestIds.get(vehicle).add(instance.getTask(node).requestId);
     }
 
     // Calculate max delay for 1 route

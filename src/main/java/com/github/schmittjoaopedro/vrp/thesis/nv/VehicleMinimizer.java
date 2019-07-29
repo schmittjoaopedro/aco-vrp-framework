@@ -45,6 +45,7 @@ public class VehicleMinimizer {
         visitedList.clear();
         solutionBest = SolutionUtils.createSolution(instance);
         regretOperator.regretInsert(solutionBest, 1, 0);
+        SolutionUtils.removeEmptyVehicles(solutionBest);
         instance.solutionEvaluation(solutionBest);
         System.out.println("Initial solution = " + solutionBest);
     }

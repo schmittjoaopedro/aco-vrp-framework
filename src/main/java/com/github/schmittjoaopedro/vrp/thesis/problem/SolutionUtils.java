@@ -68,4 +68,15 @@ public class SolutionUtils {
         }
     }
 
+    public static void removeEmptyVehicles(Solution solution) {
+        int v = solution.tours.size() - 1;
+        while (v >= 0) {
+            if (solution.tours.get(v).size() == 2) {
+                solution.tours.remove(v);
+                solution.requestIds.remove(v);
+            }
+            v--;
+        }
+    }
+
 }

@@ -53,8 +53,8 @@ public class Solver {
         for (ArrayList requests : solutionBest.requestIds) {
             msg += "\n" + StringUtils.join(requests, " ");
         }
-        msg += "\nCost = " + solutionBest.totalCost;
         msg += "\nNum. vehicles = " + solutionBest.tours.size();
+        msg += "\nTotal cost = " + solutionBest.totalCost;
         Set<Integer> processedNodes = new HashSet<>();
         for (int k = 0; k < solutionBest.tours.size(); k++) {
             for (int i = 1; i < solutionBest.tours.get(k).size() - 1; i++) {
@@ -65,7 +65,7 @@ public class Solver {
                 }
             }
         }
-        System.out.println(msg);
+        System.out.print(msg);
     }
 
     public Solution getSolutionBest() {
