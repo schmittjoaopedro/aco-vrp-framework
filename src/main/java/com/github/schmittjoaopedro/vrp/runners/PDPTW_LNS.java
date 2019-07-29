@@ -23,7 +23,6 @@ public class PDPTW_LNS {
         executeProblemSolver(pdptw100Directory, "lc101");
         executeProblemSolver(pdptw100Directory, "lc102");
         executeProblemSolver(pdptw100Directory, "lc103");
-        executeProblemSolver(pdptw100Directory, "lc101");
         executeProblemSolver(pdptw100Directory, "lc104");
         executeProblemSolver(pdptw100Directory, "lc105");
         executeProblemSolver(pdptw100Directory, "lc106");
@@ -209,4 +208,11 @@ public class PDPTW_LNS {
         Solver solver = new Solver(directory, problem + ".txt", 1);
         solver.run();
     }
+
+    public static void main(String[] args) throws Exception {
+        //new PDPTW_LNS().pdptw_100_tasks_test();
+        Solver solver = new Solver(pdptw100Directory, ".txt", 1);
+        solver.run();
+    }
+
 }

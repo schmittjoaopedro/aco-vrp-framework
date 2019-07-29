@@ -12,8 +12,69 @@ import java.util.Random;
 
 public class ALNS_TC extends ALNS_BASE {
 
-    public ALNS_TC(ProblemInstance instance, Random random, Parameters parameters) {
-        super(instance, random, parameters);
+    public ALNS_TC(ProblemInstance instance, Random random) {
+        super(instance, random);
+    }
+
+    public void init() {
+        this.setInsertionOperators(new InsertionOperator[]{
+                new GreedyInsertion(instance, random),
+                new RegretInsertion(instance, random, "3", 0.0),
+                new RegretInsertion(instance, random, "k", 0.0),
+                new RegretInsertion(instance, random, "3", 1.0),
+                new RegretInsertion(instance, random, "k", 1.0)
+        });
+        this.setRemovalOperators(new RemovalOperator[]{
+                new RandomRemoval(random, instance),
+                new ShawRemoval(random, instance),
+                new ExpensiveNodeRemoval(random, instance),
+                new ExpensiveRequestRemoval(random, instance),
+                new RandomVehicleRemoval(random, instance)
+        });
+        noiseScores = new double[2];
+        noiseWeights = new double[2];
+        noiseUsages = new double[2];
+        noiseProbs = new double[2];
+
+        parameters = new Parameters();
+        parameters.noiseControl = 0.025;
+        parameters.rho = 0.1;
+        parameters.coolingRate = 0.9995;
+        parameters.segment = 100;
+        parameters.sigma1 = 33;
+        parameters.sigma2 = 20;
+        parameters.sigma3 = 13;
+        parameters.minWeight = 1.0;
+        parameters.acceptMethod = "SA";
+        parameters.tolerance = 0.05;
+
+        resetWeights();
+        for (InsertionOperator insertionOperator : insertionOperators) {
+            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
+        }
+    }
+
+    public void setTemperature(Solution solutionBest) {
+        parameters.initialCost = solutionBest.totalCost;
+        parameters.initialT = (parameters.initialCost * parameters.tolerance) / Math.log(2);
+        setT(parameters.initialT);
+        parameters.minT = parameters.initialT * Math.pow(parameters.coolingRate, 30000);
+        setGlobalSolution(solutionBest);
+    }
+
+    protected int generateRandomQ() {
+        // Based on experiments evaluated by Naccache (2018) (Table 3).
+        int min = dMin(instance.getNumReq());
+        int max = dMax(instance.getNumReq());
+        return min + (int) (random.nextDouble() * (max - min));
+    }
+
+    protected int dMin(double n) {
+        return (int) Math.max(1, Math.min(6, 0.15 * n));
+    }
+
+    protected int dMax(double n) {
+        return (int) Math.min(18, 0.4 * n);
     }
 
     public void performIteration(int iteration) {
@@ -49,8 +110,8 @@ public class ALNS_TC extends ALNS_BASE {
             hashNumber.add(solutionHash);
             if (accept(solutionNew, solution)) { // if accept(S', S) then
                 if (instance.getBest(solutionBest, solutionNew) == solutionNew) { // If f(S') < f(S_best) then
-                    if (parameters.applyImprovement != null) {
-                        solutionNew = parameters.applyImprovement.apply(solutionNew); // Apply improvement (Section 3.4) to S'
+                    if (localSearch != null) {
+                        solutionNew = localSearch.apply(solutionNew); // Apply improvement (Section 3.4) to S'
                     }
                     updateBest(solutionNew); // S_best <- S <- S'
                     // Increase the scores of io and ro by sigma1
@@ -81,10 +142,9 @@ public class ALNS_TC extends ALNS_BASE {
         }
         if (endOfSegment(iteration)) { // if end of a segment of 𝛿 iterations then
             updateWeights(); // Update weights and reset scores of operators
-            if (parameters.applyImprovement != null) {
-                solution = parameters.applyImprovement.apply(solution); // Apply improvement to S
+            if (localSearch != null) {
+                solution = localSearch.apply(solution); // Apply improvement to S
             }
-            //printIterationStatus();
             updateBest(solution);
         }
     }

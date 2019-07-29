@@ -28,7 +28,7 @@ public class PDPTW_ALNS_TEST {
 
     @Test
     public void pdptw_lc103_test() throws IOException {
-        String problem = "lc103.txt";
+        String problem = "lr112.txt";
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(pdptw100Directory, problem).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
         alns.setShowLog(true);

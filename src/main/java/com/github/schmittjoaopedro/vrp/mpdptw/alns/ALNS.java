@@ -32,72 +32,7 @@ public class ALNS implements Runnable {
 
     private DetailedStatistics detailedStatistics = new DetailedStatistics();
 
-    /*
-     * Parameters section.
-     *
-     * (sigma1 > sigma2 > sigma3)
-     */
-
-    // Ropke and Pisinger
-    /*private static final int DEFAULT_MAX_ITERATIONS = 25000;
-    private double tolerance = 0.05; // (w)
-    private double coolingRate = 0.99975; // reduction factor of acceptance methods (c)
-    private double sigma1 = 33; // reward for finding a new global best solution
-    private double sigma2 = 9; // reward for finding an improving, not global best, solution
-    private double sigma3 = 13; // reward for finding an accepted non-improving solution
-    private double rho = 0.1; // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance. (p)
-    private int dMin(double n) { return (int) Math.min(30.0, 0.1 * n); }
-    private int dMax(double n) { return (int) Math.min(60.0, 0.4 * n); }
-    private double getInitialT() { return (initialCost * tolerance) / Math.log(2); }
-    private String acceptMethod = "SA";
-    private double minWeight = 1.0;
-    private double noiseControl = 0.025;*/
-
-    // Lutz
-    /*private static final int DEFAULT_MAX_ITERATIONS = 10000;
-    private double tolerance = 0.01; // (w)
-    private double coolingRate = 0.9997; // reduction factor of acceptance methods (c)
-    private double sigma1 = 135; // reward for finding a new global best solution
-    private double sigma2 = 70; // reward for finding an improving, not global best, solution
-    private double sigma3 = 25; // reward for finding an accepted non-improving solution
-    private double rho = 0.35; // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance. (p)
-    private int dMin(double n) { return (int) (0.075 * n); }
-    private int dMax(double n) { return (int) (0.275 * n); }
-    private double getInitialT() { return (initialCost * tolerance) / Math.log(2); }
-    private String acceptMethod = "TA";
-    private double minWeight = 1.0;
-    private double noiseControl = 0.43;*/
-
-    // Coelho
-    private static final int DEFAULT_MAX_ITERATIONS = 100000;
-    private double tolerance = 0.05; // (w)
-    private double coolingRate = 0.9995; // reduction factor of acceptance methods (c)
-    private double sigma1 = 33; // reward for finding a new global best solution
-    private double sigma2 = 20; // reward for finding an improving, not global best, solution
-    private double sigma3 = 13; // reward for finding an accepted non-improving solution
-    private double rho = 0.1; // Reaction factor, controls how quickly the weight adjustment reacts to changes in the operators performance. (p)
-    private String acceptMethod = "SA";
-    private double minWeight = 1.0;
-    private double noiseControl = 0.025;
-
-    private int dMin(double n) {
-        return (int) Math.max(1, Math.min(6, 0.15 * n));
-    }
-
-    private int dMax(double n) {
-        return (int) Math.min(18, 0.4 * n);
-    }
-
-    //private double getInitialT() { return (1.0 + tolerance) * initialCost; }
-    private double getInitialT() {
-        return (initialCost * tolerance) / Math.log(2);
-    }
-
     private int numIterations;
-
-    private int segment = 100;
-
-    private double initialCost; // initial cost
 
     private Random random;
 
@@ -133,13 +68,14 @@ public class ALNS implements Runnable {
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
 
-        ALNS_BASE.Parameters parameters = createParameters();
-        this.alns_tc = new ALNS_TC(instance, random, parameters);
-        this.alns_tc.init();
+        alns_tc = new ALNS_TC(instance, random);
+        alns_tc.setLocalSearch(this::applyImprovement);
+        alns_tc.init();
 
         if (instance.isMinimizeVehicles()) {
-            this.alns_nv = new ALNS_NV(instance, random, parameters);
-            this.alns_nv.init();
+            alns_nv = new ALNS_NV(instance, random);
+            alns_nv.setLocalSearch(this::applyImprovement);
+            alns_nv.init();
         }
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
@@ -161,7 +97,10 @@ public class ALNS implements Runnable {
         initialSolution = applyImprovement(initialSolution);
         instance.solutionEvaluation(initialSolution);
         solutionBest = SolutionUtils.copy(initialSolution);
-        setAlnsTcParameters();
+        alns_tc.setTemperature(solutionBest);
+        if (instance.isMinimizeVehicles()) {
+            alns_nv.setTemperature(solutionBest);
+        }
         globalStatistics.endTimer("Initialization");
 
         globalStatistics.startTimer();
@@ -181,7 +120,10 @@ public class ALNS implements Runnable {
                 solution = applyImprovement(solution);
                 instance.solutionEvaluation(solution);
                 updateBest(solution, true);
-                setAlnsTcParameters();
+                alns_tc.setTemperature(solutionBest);
+                if (instance.isMinimizeVehicles()) {
+                    alns_nv.setTemperature(solutionBest);
+                }
             }
 
             if (instance.getNumReq() > 0) {
@@ -197,7 +139,7 @@ public class ALNS implements Runnable {
                     if (nvSolution.feasible && nvSolution.tours.size() < solutionBest.tours.size()) {
                         alns_tc.setGlobalSolution(nvSolution);
                         updateBest(nvSolution, false);
-                        setAlnsTcParameters();
+                        alns_tc.setTemperature(solutionBest);
                     }
                 }
             }
@@ -261,42 +203,6 @@ public class ALNS implements Runnable {
             String msg = "NEW BEST = Iter " + iteration + " Sol = " + solution.toString();
             log(msg);
         }
-    }
-
-    private void setAlnsTcParameters() {
-        initialCost = solutionBest.totalCost;
-        double initialT = getInitialT();
-        double T = initialT;
-        double minT = initialT * Math.pow(coolingRate, 30000);
-
-        alns_tc.setT(T);
-        alns_tc.parameters.initialCost = initialCost;
-        alns_tc.parameters.initialT = initialT;
-        alns_tc.parameters.minT = minT;
-        alns_tc.setGlobalSolution(solutionBest);
-
-        alns_nv.setT(T);
-        alns_nv.parameters.initialCost = initialCost;
-        alns_nv.parameters.initialT = initialT;
-        alns_nv.parameters.minT = minT;
-        alns_nv.setGlobalSolution(solutionBest);
-    }
-
-    private ALNS_BASE.Parameters createParameters() {
-        ALNS_BASE.Parameters parameters = new ALNS_BASE.Parameters();
-        parameters.noiseControl = noiseControl;
-        parameters.rho = rho;
-        parameters.coolingRate = coolingRate;
-        parameters.dMax = this::dMax;
-        parameters.dMin = this::dMin;
-        parameters.applyImprovement = this::applyImprovement;
-        parameters.segment = segment;
-        parameters.sigma1 = sigma1;
-        parameters.sigma2 = sigma2;
-        parameters.sigma3 = sigma3;
-        parameters.minWeight = minWeight;
-        parameters.acceptMethod = acceptMethod;
-        return parameters;
     }
 
     private Solution applyImprovement(Solution solution) {

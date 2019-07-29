@@ -1,10 +1,8 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.*;
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.GreedyInsertion;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.InsertionOperator;
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.RegretInsertion;
-import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.*;
+import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +29,8 @@ public abstract class ALNS_BASE {
     protected RemovalOperator[] removalOperators;
 
     protected Parameters parameters;
+
+    protected Function<Solution, Solution> localSearch;
 
     // Probabilities calculated for ro's and ri's
     protected double[] roProbs;
@@ -61,18 +61,13 @@ public abstract class ALNS_BASE {
 
     protected DetailedStatistics detailedStatistics = new DetailedStatistics();
 
-    public ALNS_BASE(ProblemInstance instance, Random random, Parameters parameters) {
+    public ALNS_BASE(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
-        this.parameters = parameters;
     }
 
     public Solution getGlobalSolution() {
         return SolutionUtils.copy(solutionBest);
-    }
-
-    public Solution getSolutionNew() {
-        return solutionNew;
     }
 
     public void setGlobalSolution(Solution solution) {
@@ -80,19 +75,8 @@ public abstract class ALNS_BASE {
         this.solutionBest = SolutionUtils.copy(solution);
     }
 
-    /*
-     * Based on experiments evaluated by Naccache (2018) (Table 3).
-     */
-    protected int generateRandomQ() {
-        int min = parameters.dMin.apply(instance.getNumReq());
-        int max = parameters.dMax.apply(instance.getNumReq());
-        return min + (int) (random.nextDouble() * (max - min));
-    }
-
-    /*
-     * Given h operators with weights w_i, operator j will be selected with probability w_j / sum_{i=1}_{h} w_i
-     */
     protected int getNextRouletteWheelOperator(double sum, double[] probs) {
+        // Given h operators with weights w_i, operator j will be selected with probability w_j / sum_{i=1}_{h} w_i
         if (sum == 0.0) {
             return (int) (random.nextDouble() * probs.length);
         } else {
@@ -187,14 +171,12 @@ public abstract class ALNS_BASE {
         }
     }
 
-    /*
-     * The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
-     * with a probability e^-(f(S')-f(S))/T.
-     */
     protected boolean accept(Solution newSolution, Solution oldSolution) {
         if (instance.getBest(oldSolution, newSolution) == newSolution) {
             return true;
         } else if ("SA".equals(parameters.acceptMethod)) {
+            // The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
+            // with a probability e^-(f(S')-f(S))/T.
             double difference = newSolution.totalCost - oldSolution.totalCost;
             return random.nextDouble() < Math.exp(-1.0 * difference / T);
         } else if ("TA".equals(parameters.acceptMethod)) {
@@ -203,31 +185,6 @@ public abstract class ALNS_BASE {
         } else {
             return false;
         }
-    }
-
-    public void init() {
-        this.setInsertionOperators(new InsertionOperator[]{
-                new GreedyInsertion(instance, random),
-                new RegretInsertion(instance, random, "3", 0.0),
-                new RegretInsertion(instance, random, "k", 0.0),
-                new RegretInsertion(instance, random, "3", 1.0),
-                new RegretInsertion(instance, random, "k", 1.0)
-        });
-        this.setRemovalOperators(new RemovalOperator[]{
-                new RandomRemoval(random, instance),
-                new ShawRemoval(random, instance),
-                new ExpensiveNodeRemoval(random, instance),
-                new ExpensiveRequestRemoval(random, instance),
-                new RandomVehicleRemoval(random, instance)
-        });
-        for (InsertionOperator insertionOperator : insertionOperators) {
-            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
-        }
-        noiseScores = new double[2];
-        noiseWeights = new double[2];
-        noiseUsages = new double[2];
-        noiseProbs = new double[2];
-        resetWeights();
     }
 
     protected void removeRequests(Solution solution, int ro, int q) {
@@ -275,7 +232,6 @@ public abstract class ALNS_BASE {
         return iteration % parameters.segment == 0;
     }
 
-
     public void logDetailedStatistics(int iteration) {
         detailedStatistics.costEvaluationCount = instance.getCostEvaluationCount();
         detailedStatistics.partialEvaluationCount = instance.getPartialEvaluationCount();
@@ -318,7 +274,6 @@ public abstract class ALNS_BASE {
         }
     }
 
-
     public void setT(double t) {
         T = t;
     }
@@ -331,36 +286,12 @@ public abstract class ALNS_BASE {
         this.solution = solution;
     }
 
-    public static class Parameters {
-
-        protected double minT;
-
-        protected double initialT;
-
-        protected double sigma1;
-
-        protected double sigma2;
-
-        protected double sigma3;
-
-        protected double rho;
-
-        protected String acceptMethod;
-
-        protected double minWeight;
-
-        protected double noiseControl;
-
-        protected int segment;
-
-        protected double initialCost;
-
-        protected double coolingRate;
-
-        protected Function<Integer, Integer> dMin;
-
-        protected Function<Integer, Integer> dMax;
-
-        protected Function<Solution, Solution> applyImprovement;
+    public Function<Solution, Solution> getLocalSearch() {
+        return localSearch;
     }
+
+    public void setLocalSearch(Function<Solution, Solution> localSearch) {
+        this.localSearch = localSearch;
+    }
+
 }
