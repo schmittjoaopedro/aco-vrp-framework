@@ -177,20 +177,6 @@ public abstract class ALNS_BASE {
         }
     }
 
-    protected boolean accept(Solution newSolution, Solution oldSolution) {
-        if (instance.getBest(oldSolution, newSolution) == newSolution) {
-            return true;
-        } else if ("SA".equals(parameters.acceptMethod)) {
-            // The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
-            // with a probability e^-(f(S')-f(S))/T.
-            return random.nextDouble() <= Math.exp((oldSolution.totalCost - newSolution.totalCost) / T);
-        } else if ("TA".equals(parameters.acceptMethod)) {
-            return (newSolution.totalCost - oldSolution.totalCost) < T;
-        } else {
-            return false;
-        }
-    }
-
     protected void removeRequests(Solution solution, int ro, int q) {
         List<Req> removedRequests = removalOperators[ro].removeRequests(solution, q);
         for (Req req : removedRequests) {
@@ -210,6 +196,7 @@ public abstract class ALNS_BASE {
             }
         }
         // Use random pickup method
+        Collections.shuffle(removedRequests, random);
         insertionOperators[ri].insertRequests(solution, removedRequests, InsertionMethod.PickupMethod.Random, useNoise == 1 ? parameters.noiseControl : 0.0);
     }
 
@@ -227,7 +214,7 @@ public abstract class ALNS_BASE {
     }
 
     protected void updateBest(Solution solution, boolean force) {
-        if (force || (solution.feasible && solution.totalCost < solutionBest.totalCost)) {
+        if (force || (solution.feasible && instance.getBest(solutionBest, solution) == solution)) {
             solutionBest = SolutionUtils.copy(solution);
         }
     }

@@ -217,7 +217,7 @@ public class PDPTW_LNS {
 
     public static void main(String[] args) throws Exception {
         //new PDPTW_LNS().pdptw_100_tasks_test();
-        Solver solver = new Solver(pdptw800Directory, "lc1_8_2.txt", 1);
+        Solver solver = new Solver(pdptw200Directory, "lc1_2_8.txt", 1);
         solver.run();
     }
 

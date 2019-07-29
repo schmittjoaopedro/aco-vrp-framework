@@ -1,13 +1,17 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Req;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.GreedyInsertion;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion.RegretInsertion;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.removal.*;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class ALNS_NV extends ALNS_BASE {
@@ -19,18 +23,29 @@ public class ALNS_NV extends ALNS_BASE {
     }
 
     public void init() {
-        this.setInsertionOperators(new InsertionOperator[]{
-                new GreedyInsertion(instance, random),
+        /*this.setInsertionOperators(new InsertionOperator[]{
+                new GreedyInsertion(instance, random, true),
                 new RegretInsertion(instance, random, "2", false),
                 new RegretInsertion(instance, random, "3", false),
                 new RegretInsertion(instance, random, "4", false),
                 new RegretInsertion(instance, random, "k", false)
+        });*/
+        this.setInsertionOperators(new InsertionOperator[]{
+                new GreedyInsertion(instance, random, true),
+                new RegretInsertion(instance, random, "2", false),
+                new RegretInsertion(instance, random, "3", false),
+                new RegretInsertion(instance, random, "k", false),
+                new RegretInsertion(instance, random, "2", true),
+                new RegretInsertion(instance, random, "3", true),
+                new RegretInsertion(instance, random, "k", true)
         });
         this.setRemovalOperators(new RemovalOperator[]{
                 new RandomRemoval(random, instance),
                 new ShawRemoval(random, instance),
                 new ExpensiveNodeRemoval(random, instance),
-                new ExpensiveRequestRemoval(random, instance)
+                new ExpensiveRequestRemoval(random, instance),
+                new RandomVehicleRemoval(random, instance),
+                new ExpensiveVehicleRemoval(random, instance)
         });
         noiseScores = new double[2];
         noiseWeights = new double[2];
@@ -52,12 +67,11 @@ public class ALNS_NV extends ALNS_BASE {
         resetWeights();
     }
 
-    public void setTemperature(Solution solutionBest) {
-        parameters.initialCost = solutionBest.totalCost;
+    public void setTemperature(Solution initialSolution) {
+        parameters.initialCost = initialSolution.totalCost;
         parameters.initialT = (parameters.initialCost * parameters.tolerance) / Math.log(2);
         setT(parameters.initialT);
         parameters.minT = parameters.initialT * Math.pow(parameters.coolingRate, 30000);
-        setGlobalSolution(solutionBest);
     }
 
     protected int generateRandomQ() {
@@ -66,10 +80,10 @@ public class ALNS_NV extends ALNS_BASE {
 
     public void performIteration(int iteration) {
         solutionNew = SolutionUtils.copy(solution); // S' <- S
-        int q;
-        do {
+        int q = 0;
+        while (q < 4) {
             q = generateRandomQ(); // q <- Generate a Random number of requests to remove
-        } while (q < 4);
+        }
 
         /*
          * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
@@ -84,6 +98,7 @@ public class ALNS_NV extends ALNS_BASE {
         noiseUsages[useNoise] = noiseUsages[useNoise] + 1;
 
         removeRequests(solutionNew, ro, q); // Remove q requests from S' using ro
+        instance.solutionEvaluation(solutionNew);
         insertRequests(solutionNew, ri, useNoise); // Insert removed requests into S' by applying io using a random pickup insertion method (Section 3.3.1)
         SolutionUtils.removeEmptyVehicles(solutionNew);
         instance.solutionEvaluation(solutionNew); // Update the solution cost
@@ -107,7 +122,7 @@ public class ALNS_NV extends ALNS_BASE {
                     // Increase the scores of io and ro by sigma1
                     updateScores(ro, ri, useNoise, parameters.sigma1); // Increment by sigma1 if the new solution is a new best one
                     detailedStatistics.bsfAcceptCount++;
-                } else if (instance.getBest(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
+                } else if (instance.getBestNv(solution, solutionNew) == solutionNew) { // Else if f(S') < f(S) then
                     // Increase the scores of the ro and io by sigma2
                     updateScores(ro, ri, useNoise, parameters.sigma2);  // Increment by sigma2 if the new solution is better than the previous one
                     detailedStatistics.currentAcceptCount++;
@@ -118,8 +133,17 @@ public class ALNS_NV extends ALNS_BASE {
                 }
                 solution = solutionNew; // S <- S'
             }
-        }
 
+            //System.out.println("q = " + q + ", ro = " + ro + ", ri = " + ri + ", ns = " + useNoise);
+            ArrayList<Integer> removedRequests = new ArrayList<>();
+            for (int i = 0; i < solution.visitedRequests.length; i++) {
+                if (!solution.visitedRequests[i]) {
+                    removedRequests.add(i);
+                }
+            }
+            System.out.println(iteration + " |sigma| = " + solution.tours.size() + ", |r|^2 = " + instance.getTourSquare(solution) + ", t(r) = " + Maths.round(solution.totalCost, 2) + ", BSF " + solution + " T = " + Maths.round(T, 1) + "->" + Maths.round(parameters.minT, 1) + " Reqs -> " + StringUtils.join(removedRequests));
+
+        }
         /*
          * T is the temperature that decreases at each iteration according to a standard exponential cooling rate.
          * When the temperature reaches a minimum threshold, it is set to it's initial value (reheating). This process
@@ -145,6 +169,22 @@ public class ALNS_NV extends ALNS_BASE {
             solution.requests.get(vehicle).clear();
             SolutionUtils.removeEmptyVehicles(solution);
             instance.solutionEvaluation(solution);
+            setTemperature(solution);
+        }
+    }
+
+
+    protected boolean accept(Solution newSolution, Solution oldSolution) {
+        if (instance.getBestNv(oldSolution, newSolution) == newSolution) {
+            return true;
+        } else if ("SA".equals(parameters.acceptMethod)) {
+            // The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
+            // with a probability e^-(f(S')-f(S))/T.
+            return random.nextDouble() <= Math.exp(instance.getNvDiff(oldSolution, newSolution) / T);
+        } else if ("TA".equals(parameters.acceptMethod)) {
+            return instance.getNvDiff(oldSolution, newSolution) < T;
+        } else {
+            return false;
         }
     }
 

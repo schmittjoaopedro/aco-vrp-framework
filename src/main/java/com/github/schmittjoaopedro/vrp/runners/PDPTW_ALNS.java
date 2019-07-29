@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class PDPTW_ALNS {
 
-    private static int maxIterations = 25000;
+    private static int maxIterations = 100000;
 
     private static final String pdptw100Directory;
 

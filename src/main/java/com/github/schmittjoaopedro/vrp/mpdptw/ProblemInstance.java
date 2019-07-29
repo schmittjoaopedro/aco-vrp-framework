@@ -277,6 +277,7 @@ public class ProblemInstance {
     public void solutionEvaluation(Solution solution) {
         solution.tourCosts = new ArrayList<>(solution.tours.size());
         solution.capacity = new double[getNumNodes()];
+        solution.visitTime = new double[getNumNodes()];
         solution.departureTime = new ArrayList<>(solution.tours.size());
         solution.arrivalTime = new ArrayList<>(solution.tours.size());
         solution.departureSlackTimes = new ArrayList<>(solution.tours.size());
@@ -288,6 +289,7 @@ public class ProblemInstance {
         solution.feasible = true;
         solution.timeWindowPenalty = 0.0;
         solution.capacityPenalty = 0.0;
+        solution.maxTime = 0.0;
         solution.visited = new boolean[getNumNodes()];
         solution.visitedRequests = new boolean[getNumReq()];
         int[] numNodesByRequest = new int[getNumReq()];
@@ -320,6 +322,7 @@ public class ProblemInstance {
                 solution.arrivalTime.get(k)[i + 1] = currentTime;
                 solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
                 currentTime = Math.max(currentTime, twStart(next));
+                solution.visitTime[next] = curr;
                 if (next != getDepot().nodeId) {
                     solution.maxTime = Math.max(solution.maxTime, currentTime);
                 }
@@ -392,13 +395,28 @@ public class ProblemInstance {
         if (solution.tours.size() > numMaxVehicles) {
             solution.feasible = false;
         }
+        solution.totalCost += getNotAttendedRequestsNumber(solution) * Objective.Attendance.getValue();
+        fullEvaluationCount++;
+    }
+
+    public double getNotAttendedRequestsNumber(Solution solution) {
+        double num = 0.0;
         // Calculate requests attendance
         for (int i = 0; i < solution.visitedRequests.length; i++) {
             if (!solution.visitedRequests[i]) {
-                solution.totalCost += Objective.Attendance.getValue();
+                num += 1;
             }
         }
-        fullEvaluationCount++;
+        return num;
+    }
+
+    // Calculated accordingly: A Two-Stage Hybrid Algorithm for Pickup and Delivery Vehicle Routing Problem
+    public double getTourSquare(Solution solution) {
+        double tourSquare = 0.0;
+        for (int i = 0; i < solution.requests.size(); i++) {
+            tourSquare += Math.pow(solution.requests.get(i).size(), 2.0);
+        }
+        return -1.0 * tourSquare;
     }
 
     public void solutionEvaluation(Solution solution, int k) {
@@ -805,10 +823,10 @@ public class ProblemInstance {
         if (isMinimizeVehicles()) {
             boolean minimizedVehicles = newSol.tours.size() < oldSol.tours.size();
             boolean minimizedDistance = newSol.tours.size() == oldSol.tours.size() &&
-                    Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
+                    Maths.round(newSol.totalCost) < Maths.round(oldSol.totalCost);
             isBetterCost = minimizedVehicles || minimizedDistance;
         } else {
-            boolean minimizedDistance = Maths.round(newSol.totalCost + newSol.timeWindowPenalty) < Maths.round(oldSol.totalCost + oldSol.timeWindowPenalty);
+            boolean minimizedDistance = Maths.round(newSol.totalCost) < Maths.round(oldSol.totalCost);
             isBetterCost = minimizedDistance;
         }
         if (oldSol.feasible) {
@@ -816,11 +834,24 @@ public class ProblemInstance {
         } else {
             return isBetterCost ? newSol : oldSol;
         }
+    }
 
+    public Solution getBestNv(Solution oldSol, Solution newSol) {
+        return getNvDiff(oldSol, newSol) > 0 ? newSol : oldSol;
+    }
+
+    public double getNvDiff(Solution oldSol, Solution newSol) {
+        double oldSolCost = oldSol.tours.size() * Objective.Vehicles.getValue() +
+                getTourSquare(oldSol) * Objective.RouteSquare.getValue() +
+                oldSol.totalCost;
+        double newSolCost = newSol.tours.size() * Objective.Vehicles.getValue() +
+                getTourSquare(newSol) * Objective.RouteSquare.getValue() +
+                newSol.totalCost;
+        return oldSolCost - newSolCost;
     }
 
     public enum Objective {
-        Distance(1.0), Vehicles(100000.0), Attendance(100000.0);
+        Distance(1.0), Vehicles(100000.0), Attendance(100000.0), RouteSquare(50000.0);
 
         private double value;
 

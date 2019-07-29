@@ -31,6 +31,8 @@ public class Solution {
 
     public boolean[] visitedRequests;
 
+    public double[] visitTime;
+
     public int toVisit;
 
     public double totalCost;

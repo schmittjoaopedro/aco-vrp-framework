@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod.PickupMethod;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 

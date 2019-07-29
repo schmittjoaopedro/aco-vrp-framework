@@ -56,7 +56,7 @@ public class ALNS implements Runnable {
 
     private boolean showLog = false;
 
-    private ALNS_TC alns_tc;
+    //private ALNS_TC alns_tc;
 
     private ALNS_NV alns_nv;
 
@@ -69,12 +69,13 @@ public class ALNS implements Runnable {
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
 
-        alns_tc = new ALNS_TC(instance, random);
-        alns_tc.setLocalSearch(this::applyLocalSearch);
-        alns_tc.init();
+        //alns_tc = new ALNS_TC(instance, random);
+        //alns_tc.setLocalSearch(this::applyLocalSearch);
+        //alns_tc.init();
 
         if (instance.isMinimizeVehicles()) {
             alns_nv = new ALNS_NV(instance, random);
+            //alns_nv.setLocalSearch(this::applyLocalSearch);
             alns_nv.init();
         }
 
@@ -112,7 +113,7 @@ public class ALNS implements Runnable {
             List<Integer> newRequestIds = dynamicHandler.getNewDynamicRequests(iteration);
             if (!newRequestIds.isEmpty()) {
                 log("New requests add: " + StringUtils.join(newRequestIds));
-                Solution solution = SolutionUtils.copy(alns_tc.getSolution());
+                Solution solution = SolutionUtils.copy(solutionBest);
                 for (int req : newRequestIds) {
                     insertionHeuristic.addRequest(solution, req);
                 }
@@ -129,14 +130,14 @@ public class ALNS implements Runnable {
                     Solution nvSolution = alns_nv.getGlobalSolution();
                     if (nvSolution.feasible && nvSolution.tours.size() < solutionBest.tours.size()) {
                         updateBest(nvSolution, false);
-                        alns_tc.setTemperature(nvSolution);
-                        alns_tc.setGlobalSolution(nvSolution);
+                        //alns_tc.setTemperature(nvSolution);
+                        //alns_tc.setGlobalSolution(nvSolution);
                     }
                 }
 
                 // Minimize costs
-                alns_tc.performIteration(iteration);
-                updateBest(alns_tc.getGlobalSolution(), false);
+                //alns_tc.performIteration(iteration);
+                //updateBest(alns_tc.getGlobalSolution(), false);
 
                 detailedStatistics.s_best_TC = solutionBest.totalCost;
                 detailedStatistics.s_best_NV = solutionBest.tours.size();
@@ -146,7 +147,7 @@ public class ALNS implements Runnable {
             if (movingVehicle != null) {
                 if (movingVehicle.moveVehicle(solutionBest, iteration)) {
                     initialSolution = SolutionUtils.copy(solutionBest);
-                    alns_tc.setGlobalSolution(solutionBest);
+                    //alns_tc.setGlobalSolution(solutionBest);
                     if (instance.isMinimizeVehicles()) {
                         alns_nv.setGlobalSolution(solutionBest);
                     }
@@ -167,7 +168,7 @@ public class ALNS implements Runnable {
 
             if (generateDetailedStatistics) {
                 detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
-                alns_tc.logDetailedStatistics(iteration);
+                //alns_tc.logDetailedStatistics(iteration);
                 alns_nv.logDetailedStatistics(iteration);
             }
 
@@ -185,8 +186,9 @@ public class ALNS implements Runnable {
     }
 
     private void updateTemperature(Solution initialSolution) {
-        alns_tc.setTemperature(initialSolution);
+        //alns_tc.setTemperature(initialSolution);
         if (instance.isMinimizeVehicles()) {
+            alns_nv.setGlobalSolution(initialSolution);
             alns_nv.setTemperature(initialSolution);
         }
     }

@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.mpdptw;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.stat.descriptive.summary.SumOfLogs;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,6 +15,7 @@ public class SolutionUtils {
     }
 
     public static void copyFromTo(Solution from, Solution to) {
+        to.maxTime = from.maxTime;
         to.tours = new ArrayList<>();
         to.requests = new ArrayList<>();
         to.tourCosts = new ArrayList<>();
@@ -38,6 +40,7 @@ public class SolutionUtils {
         }
         to.visited = from.visited.clone();
         to.capacity = from.capacity.clone();
+        to.visitTime = from.visitTime.clone();
         to.visitedRequests = from.visitedRequests.clone();
         to.toVisit = from.toVisit;
         to.totalCost = from.totalCost;
@@ -47,6 +50,7 @@ public class SolutionUtils {
     }
 
     public static void clearSolution(Solution solution, ProblemInstance instance) {
+        solution.maxTime = 0.0;
         solution.tours = new ArrayList<>();
         solution.requests = new ArrayList<>();
         solution.tourCosts = new ArrayList<>();
@@ -59,6 +63,7 @@ public class SolutionUtils {
         solution.visited = new boolean[instance.getNumNodes()];
         solution.capacity = new double[instance.getNumNodes()];
         solution.visitedRequests = new boolean[instance.getNumReq()];
+        solution.visitTime = new double[instance.getNumReq()];
         solution.toVisit = instance.getNumNodes();
         solution.totalCost = Double.MAX_VALUE;
         solution.feasible = true;

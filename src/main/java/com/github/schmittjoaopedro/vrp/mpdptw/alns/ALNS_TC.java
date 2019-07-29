@@ -147,4 +147,17 @@ public class ALNS_TC extends ALNS_BASE {
         }
     }
 
+    protected boolean accept(Solution newSolution, Solution oldSolution) {
+        if (instance.getBest(oldSolution, newSolution) == newSolution) {
+            return true;
+        } else if ("SA".equals(parameters.acceptMethod)) {
+            // The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
+            // with a probability e^-(f(S')-f(S))/T.
+            return random.nextDouble() <= Math.exp((oldSolution.totalCost - newSolution.totalCost) / T);
+        } else if ("TA".equals(parameters.acceptMethod)) {
+            return (newSolution.totalCost - oldSolution.totalCost) < T;
+        } else {
+            return false;
+        }
+    }
 }

@@ -11,6 +11,8 @@ public class ShawRemoval extends RemovalOperator {
 
     private static double D = 6; // According Coelho paper
 
+    double[] relateWeight = {9, 3, 2};
+
     private RelateMethod relateMethod = RelateMethod.Coelho;
 
     public ShawRemoval(Random random, ProblemInstance instance) {
@@ -65,12 +67,19 @@ public class ShawRemoval extends RemovalOperator {
                     if (RelateMethod.Coelho.equals(relateMethod)) {
                         // Get the distance between the delivery points between the request parameter and the current request r of vehicle k (coelho)
                         relate = instance.dist(reqI.nodeId, reqJ.nodeId);
-                    } else if (RelateMethod.RopkeCoelho.equals(relateMethod)) {
+                    } else if (RelateMethod.Ropke.equals(relateMethod)) {
                         // Relate distance based on Ropke and Coelho
                         double relateDeliveryDist = instance.dist(reqI.nodeId, reqJ.nodeId) / instance.getMaxDistance();
                         double relateTw = Math.abs(reqI.twStart - reqJ.twStart) / solution.maxTime;
                         double relateDemand = Math.abs(reqI.demand - reqJ.demand) / instance.getMaxDemand();
                         relate = 9.0 * relateDeliveryDist + 3.0 * relateTw + 2.0 * relateDemand;
+                    } else if (RelateMethod.GitHub.equals(relateMethod)) {
+                        Request reqA = instance.getPickups(reqI.requestId).get(0);
+                        Request reqB = instance.getPickups(reqJ.requestId).get(0);
+                        double relateDeliveryDist = relateWeight[0] * (instance.dist(reqA.nodeId, reqB.nodeId) + instance.dist(reqI.nodeId, reqJ.nodeId)) / instance.getMaxDistance();
+                        double relateVisitTime = relateWeight[1] * (Math.abs(solution.visitTime[reqA.nodeId] - solution.visitTime[reqB.nodeId]) + Math.abs(solution.visitTime[reqI.nodeId] - solution.visitTime[reqJ.nodeId])) / solution.maxTime;
+                        double relateDemand = relateWeight[2] * Math.abs(reqA.demand - reqB.demand) / instance.getMaxDemand();
+                        relate = relateDeliveryDist + relateVisitTime + relateDemand;
                     }
                     assignedRequests.add(new Req(k, reqJ.requestId, relate)); // Add the request with the related cost to the list of assigned requests
                 }
@@ -86,7 +95,7 @@ public class ShawRemoval extends RemovalOperator {
     }
 
     public enum RelateMethod {
-        Coelho, RopkeCoelho
+        Coelho, Ropke, GitHub
     }
 
     public void setRelateMethod(RelateMethod relateMethod) {
