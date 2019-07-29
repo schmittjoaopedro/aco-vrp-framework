@@ -34,13 +34,12 @@ public class RegretOperator {
     public void regretInsert(Solution solution, int k, int useNoise) {
         Task pickupTask;
         InsertPosition[][] insertionCosts = new InsertPosition[instance.numRequests][solution.tours.size()]; // Insertion of Request x Vehicles costs
-        // Initialize request/vehicle structures
+        // Initialize request/vehicle structure
         for (int i = 0; i < insertionCosts.length; i++) {
             for (int j = 0; j < insertionCosts[i].length; j++) {
                 insertionCosts[i][j] = new InsertPosition();
             }
         }
-
         // Calculate insertion cost of each request x vehicle
         ArrayList<Double> startTime = new ArrayList<>();
         ArrayList<Double> waitingTime = new ArrayList<>();
@@ -81,19 +80,17 @@ public class RegretOperator {
                     int minRoute = heap.peek().getRight();
                     heap.poll();
                     double kCost = minCost;
-                    int kRoute;
-                    for (int z = 1; z < k; ++z) // Obtain the k-position to calculate regret cost
+                    for (int z = 1; z < k; ++z) { // Obtain the k-position to calculate regret cost
                         if (!heap.isEmpty()) {
                             kCost = heap.peek().getLeft();
-                            kRoute = heap.peek().getRight();
                             if (kCost < Double.MAX_VALUE) ++possibleRoute;
                             heap.poll();
                         }
+                    }
                     double regretCost = kCost - minCost;
                     if (possibleRoute < minPossible // Prioritize minimum vehicles number
                             || (possibleRoute == minPossible && (regretCost > maxRegret // If the number of vehicles is the same and the regret cost is greater
                             || (regretCost == maxRegret && minCost < insertCost)))) { // If the greedy strategy (same regret costs, but is a better insertion cost)
-
                         minPossible = possibleRoute;
                         maxRegret = regretCost;
                         insertNode = pickupTask.nodeId;
@@ -135,16 +132,20 @@ public class RegretOperator {
         startTime.clear();
         waitingTime.clear();
         maxDelay.clear();
+        // Depot times
         for (int i = 0; i < route.size(); i++) {
             startTime.add(0.0);
             waitingTime.add(0.0);
             maxDelay.add(0.0);
         }
+        // Node times
         double time = 0;
         for (int j = 1; j < route.size(); ++j) {
-            time += instance.dist(route.get(j), route.get(j - 1)) / instance.vehicleSpeed + instance.serviceTime(route.get(j - 1));
+            int prev = route.get(j - 1);
+            int curr = route.get(j);
+            time += instance.dist(prev, curr) / instance.vehicleSpeed + instance.serviceTime(prev);
             double visitedTime = time;
-            time = Math.max(time, instance.twStart(route.get(j)));
+            time = Math.max(time, instance.twStart(curr));
             startTime.set(j, time);
             waitingTime.set(j, Math.max(0., time - visitedTime));
             maxDelay.set(j, 0.0);
@@ -153,8 +154,7 @@ public class RegretOperator {
         maxDelay.set(route.size() - 1, instance.twEnd(p) - startTime.get(route.size() - 1));
         for (int i = route.size() - 2; i > 0; --i) {
             p = route.get(i);
-            maxDelay.set(i, Math.min(maxDelay.get(i + 1) + waitingTime.get(i + 1),
-                    instance.twEnd(p) - startTime.get(i)));
+            maxDelay.set(i, Math.min(maxDelay.get(i + 1) + waitingTime.get(i + 1), instance.twEnd(p) - startTime.get(i)));
         }
     }
 
@@ -179,23 +179,23 @@ public class RegretOperator {
             double waitTime = Math.max(0.0, instance.twStart(pickupNode) - arrivalTime);
             double delay = cost + waitTime + instance.serviceTime(pickupNode);
             if (cost <= minRouteCost) {
-                if (totalAmount + instance.demand(pickupNode) <= instance.vehiclesCapacity) {
-                    if (arrivalTime <= instance.twEnd(pickupNode)) {
-                        if (delay <= waitingTime.get(i) + maxDelay.get(i) + ep) {
-                            Pair<Integer, Integer> tmpPos = Pair.of(0, 0);
-                            calcMaxDelay(newRoute, newStartTime, newWaitingTime, newMaxDelay);
-                            int deliveryNode = instance.deliveryTasks[instance.getTask(pickupNode).requestId].nodeId;
-                            Pair<Double, Pair<Integer, Integer>> ret = insertingCost(newRoute, deliveryNode, tmpPos, i + 1, totalAmount + instance.demand(pickupNode), newStartTime, newWaitingTime, newMaxDelay);
-                            tmpPos = ret.getRight();
-                            if (cost + ret.getLeft() < minRouteCost) {
-                                minRouteCost = cost + ret.getLeft();
-                                insertPosition.cost = minRouteCost;
-                                insertPosition.pickupPos = i;
-                                insertPosition.deliveryPos = tmpPos.getLeft();
-                            }
-                        }
-                    } else {
+                boolean isValidCapacity = totalAmount + instance.demand(pickupNode) <= instance.vehiclesCapacity;
+                if (isValidCapacity) {
+                    boolean isValidTimeWindow = arrivalTime <= instance.twEnd(pickupNode);
+                    if (!isValidTimeWindow) {
                         break;
+                    }
+                    boolean isValidSlackTime = delay <= waitingTime.get(i) + maxDelay.get(i) + ep;
+                    if (isValidSlackTime) {
+                        calcMaxDelay(newRoute, newStartTime, newWaitingTime, newMaxDelay);
+                        int deliveryNode = instance.deliveryTasks[instance.getTask(pickupNode).requestId].nodeId;
+                        InsertPosition deliveryPosition = insertingDeliveryCost(newRoute, deliveryNode, i + 1, totalAmount + instance.demand(pickupNode), newStartTime, newWaitingTime, newMaxDelay);
+                        if (cost + deliveryPosition.cost < minRouteCost) {
+                            minRouteCost = cost + deliveryPosition.cost;
+                            insertPosition.cost = minRouteCost;
+                            insertPosition.pickupPos = i;
+                            insertPosition.deliveryPos = deliveryPosition.deliveryPos;
+                        }
                     }
                 }
             }
@@ -208,29 +208,34 @@ public class RegretOperator {
     }
 
     // Calculate min cost to insert a delivery node to route
-    Pair<Double, Pair<Integer, Integer>> insertingCost(ArrayList<Integer> route, int node, Pair<Integer, Integer> pos, int startPos, double totalAmount, ArrayList<Double> startTime, ArrayList<Double> waitingTime, ArrayList<Double> maxDelay) {
+    private InsertPosition insertingDeliveryCost(ArrayList<Integer> route, int node, int startPos, double totalAmount, ArrayList<Double> startTime, ArrayList<Double> waitingTime, ArrayList<Double> maxDelay) {
+        InsertPosition insertPosition = new InsertPosition();
         double minRouteCost = Double.MAX_VALUE;
+        insertPosition.cost = minRouteCost;
         for (int i = startPos; i < route.size(); ++i) {
             double cost = instance.dist(node, route.get(i - 1)) + instance.dist(node, route.get(i)) - instance.dist(route.get(i), route.get(i - 1));
             double arrivalTime = startTime.get(i - 1) + instance.dist(node, route.get(i - 1)) + instance.serviceTime(route.get(i - 1));
             double waitTime = Math.max(0., instance.twStart(node) - arrivalTime);
             double delay = cost + waitTime + instance.serviceTime(node);
             if (cost <= minRouteCost) {
-                if (totalAmount + instance.demand(node) <= instance.vehiclesCapacity) {
-                    if (arrivalTime <= instance.twEnd(node)) {
-                        if (delay <= waitingTime.get(i) + maxDelay.get(i) + ep) {
-                            if (cost < minRouteCost) {
-                                minRouteCost = cost;
-                                pos = Pair.of(i, 0);
-                            }
-                        }
-                    } else break;
+                boolean isValidCapacity = totalAmount + instance.demand(node) <= instance.vehiclesCapacity;
+                if (isValidCapacity) {
+                    boolean isValidTimeWindow = arrivalTime <= instance.twEnd(node);
+                    if (!isValidTimeWindow) {
+                        break;
+                    }
+                    boolean isValidSlackTime = delay <= waitingTime.get(i) + maxDelay.get(i) + ep;
+                    if (isValidSlackTime && cost < minRouteCost) {
+                        minRouteCost = cost;
+                        insertPosition.cost = minRouteCost;
+                        insertPosition.deliveryPos = i;
+                    }
                 }
             }
             totalAmount += instance.demand(route.get(i));
             if (totalAmount > instance.vehiclesCapacity) break;
         }
-        return Pair.of(minRouteCost, pos);
+        return insertPosition;
     }
 
     private void swap(ArrayList<Integer> route, int i1, int i2) {
