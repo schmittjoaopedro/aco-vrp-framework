@@ -19,6 +19,8 @@ public class Runner {
 
     private static int maxIterations = 25000;
 
+    private static int trials = 1;
+
     public static void main(String[] args) throws Exception {
         String inputFolder = args[0];
         String outputFolder = args[1];
@@ -36,7 +38,6 @@ public class Runner {
     }
 
     private static void executeInstance(ExperimentResultWriter resultWriter, File file, String outputFolder) throws Exception {
-        int trials = 10;
         List<Runnable> algs = new ArrayList<>();
         for (int i = 0; i < trials; i++) {
             ProblemInstance instance = DataReader.getPdptwInstance(file);

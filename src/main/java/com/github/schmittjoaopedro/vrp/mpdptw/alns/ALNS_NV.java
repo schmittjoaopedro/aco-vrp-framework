@@ -12,6 +12,8 @@ import java.util.Random;
 
 public class ALNS_NV extends ALNS_BASE {
 
+    double removeControl = 0.4;
+
     public ALNS_NV(ProblemInstance instance, Random random) {
         super(instance, random);
     }
@@ -19,17 +21,16 @@ public class ALNS_NV extends ALNS_BASE {
     public void init() {
         this.setInsertionOperators(new InsertionOperator[]{
                 new GreedyInsertion(instance, random),
-                new RegretInsertion(instance, random, "3", 0.0),
-                new RegretInsertion(instance, random, "k", 0.0),
-                new RegretInsertion(instance, random, "3", 1.0),
-                new RegretInsertion(instance, random, "k", 1.0)
+                new RegretInsertion(instance, random, "2", false),
+                new RegretInsertion(instance, random, "3", false),
+                new RegretInsertion(instance, random, "4", false),
+                new RegretInsertion(instance, random, "k", false)
         });
         this.setRemovalOperators(new RemovalOperator[]{
                 new RandomRemoval(random, instance),
                 new ShawRemoval(random, instance),
                 new ExpensiveNodeRemoval(random, instance),
-                new ExpensiveRequestRemoval(random, instance),
-                new RandomVehicleRemoval(random, instance)
+                new ExpensiveRequestRemoval(random, instance)
         });
         noiseScores = new double[2];
         noiseWeights = new double[2];
@@ -39,19 +40,16 @@ public class ALNS_NV extends ALNS_BASE {
         parameters = new Parameters();
         parameters.noiseControl = 0.025;
         parameters.rho = 0.1;
-        parameters.coolingRate = 0.9995;
+        parameters.coolingRate = 0.9999;
         parameters.segment = 100;
         parameters.sigma1 = 33;
         parameters.sigma2 = 20;
         parameters.sigma3 = 13;
         parameters.minWeight = 1.0;
         parameters.acceptMethod = "SA";
-        parameters.tolerance = 0.05;
+        parameters.tolerance = 0.35;
 
         resetWeights();
-        for (InsertionOperator insertionOperator : insertionOperators) {
-            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
-        }
     }
 
     public void setTemperature(Solution solutionBest) {
@@ -63,23 +61,15 @@ public class ALNS_NV extends ALNS_BASE {
     }
 
     protected int generateRandomQ() {
-        // Based on experiments evaluated by Naccache (2018) (Table 3).
-        int min = dMin(instance.getNumReq());
-        int max = dMax(instance.getNumReq());
-        return min + (int) (random.nextDouble() * (max - min));
-    }
-
-    protected int dMin(double n) {
-        return (int) Math.max(1, Math.min(6, 0.15 * n));
-    }
-
-    protected int dMax(double n) {
-        return (int) Math.min(18, 0.4 * n);
+        return (int) (random.nextDouble() * Math.min(100, (int) (removeControl * (instance.getNumReq() / 2))));
     }
 
     public void performIteration(int iteration) {
         solutionNew = SolutionUtils.copy(solution); // S' <- S
-        int q = generateRandomQ(); // q <- Generate a Random number of requests to remove
+        int q;
+        do {
+            q = generateRandomQ(); // q <- Generate a Random number of requests to remove
+        } while (q < 4);
 
         /*
          * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent

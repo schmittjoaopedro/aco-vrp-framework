@@ -15,15 +15,13 @@ public class RegretInsertion extends InsertionOperator {
 
     private String regret;
 
-    public RegretInsertion(ProblemInstance instance, Random random, double useNoiseAtHeuristic) {
-        super(instance, random);
-        this.useNoiseAtHeuristic = useNoiseAtHeuristic;
-        this.insertionMethod.setUseNoiseAtBestPosition(useNoiseAtHeuristic);
+    public RegretInsertion(ProblemInstance instance, Random random, boolean insertionNoise) {
+        super(instance, random, insertionNoise);
         this.regret = "k";
     }
 
-    public RegretInsertion(ProblemInstance instance, Random random, String regret, double useNoiseAtHeuristic) {
-        this(instance, random, useNoiseAtHeuristic);
+    public RegretInsertion(ProblemInstance instance, Random random, String regret, boolean insertionNoise) {
+        this(instance, random, insertionNoise);
         this.regret = regret;
     }
 
@@ -37,10 +35,11 @@ public class RegretInsertion extends InsertionOperator {
      * regret-3 computation.
      * Regret-m, with noise: similarly, we use a regret-m criterion to which insertion noise is added.
      */
-    public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, int useNoise) {
+    @Override
+    public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, double heuristicNoiseControl) {
         int regretLevel;
         if (regret.equals("k")) {
-            regretLevel = solution.tours.size();
+            regretLevel = solution.requests.size();
         } else {
             regretLevel = Integer.valueOf(regret);
         }
@@ -71,7 +70,7 @@ public class RegretInsertion extends InsertionOperator {
                                 newRoutesCache.setCacheCost(k, requestId, solution.tours.get(k));
                                 double newCost = newRoutesCache.getCacheCost(k, requestId);
                                 double costIncrease = newCost - originalCost;
-                                costIncrease += useNoise + (generateRandomNoise() * useNoiseAtHeuristic);
+                                costIncrease += generateRandomNoise(heuristicNoiseControl);
                                 feasibleRoutes.add(new InsertRequest(costIncrease, k, requestId, solution.tours.get(k)));
                                 solution.tours.set(k, originalRoute);
                                 instance.solutionEvaluation(solution, k);

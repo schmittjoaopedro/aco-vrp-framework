@@ -13,11 +13,12 @@ public class InsertionMethod {
 
     protected Random random;
 
-    protected double useNoiseAtBestPosition = 0.0;
+    protected boolean insertionNoise;
 
-    public InsertionMethod(ProblemInstance instance, Random random) {
+    public InsertionMethod(ProblemInstance instance, Random random, boolean insertionNoise) {
         this.instance = instance;
         this.random = random;
+        this.insertionNoise = insertionNoise;
     }
 
     /*
@@ -303,8 +304,8 @@ public class InsertionMethod {
     }
 
     protected double generateRandomNoise() {
-        if (useNoiseAtBestPosition > 0.0) {
-            return (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
+        if (insertionNoise) {
+            return (2.0 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
         } else {
             return 0.0;
         }
@@ -312,13 +313,5 @@ public class InsertionMethod {
 
     public enum PickupMethod {
         Simple, Random, Cheapest, Expensive
-    }
-
-    public double getUseNoiseAtBestPosition() {
-        return useNoiseAtBestPosition;
-    }
-
-    public void setUseNoiseAtBestPosition(double useNoiseAtBestPosition) {
-        this.useNoiseAtBestPosition = useNoiseAtBestPosition;
     }
 }

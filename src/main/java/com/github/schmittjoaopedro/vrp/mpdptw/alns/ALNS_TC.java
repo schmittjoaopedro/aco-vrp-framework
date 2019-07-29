@@ -12,24 +12,25 @@ import java.util.Random;
 
 public class ALNS_TC extends ALNS_BASE {
 
+    double removeControl = 0.4;
+
     public ALNS_TC(ProblemInstance instance, Random random) {
         super(instance, random);
     }
 
     public void init() {
         this.setInsertionOperators(new InsertionOperator[]{
-                new GreedyInsertion(instance, random),
-                new RegretInsertion(instance, random, "3", 0.0),
-                new RegretInsertion(instance, random, "k", 0.0),
-                new RegretInsertion(instance, random, "3", 1.0),
-                new RegretInsertion(instance, random, "k", 1.0)
+                new GreedyInsertion(instance, random, true),
+                new RegretInsertion(instance, random, "3", false),
+                new RegretInsertion(instance, random, "k", false),
+                new RegretInsertion(instance, random, "3", true),
+                new RegretInsertion(instance, random, "k", true)
         });
         this.setRemovalOperators(new RemovalOperator[]{
                 new RandomRemoval(random, instance),
                 new ShawRemoval(random, instance),
                 new ExpensiveNodeRemoval(random, instance),
-                new ExpensiveRequestRemoval(random, instance),
-                new RandomVehicleRemoval(random, instance)
+                new ExpensiveRequestRemoval(random, instance)
         });
         noiseScores = new double[2];
         noiseWeights = new double[2];
@@ -49,9 +50,6 @@ public class ALNS_TC extends ALNS_BASE {
         parameters.tolerance = 0.05;
 
         resetWeights();
-        for (InsertionOperator insertionOperator : insertionOperators) {
-            insertionOperator.setUseNoiseAtHeuristic(parameters.noiseControl);
-        }
     }
 
     public void setTemperature(Solution solutionBest) {
@@ -85,9 +83,9 @@ public class ALNS_TC extends ALNS_BASE {
          * Request removal and insertion operators ro and io are randomly inserted from set RO and IO using independent
          * roulette wheels based on the score of each operator.
          */
+        int useNoise = getNextRouletteWheelOperator(noiseProbsSum, noiseProbs);
         int ro = getNextRouletteWheelOperator(roProbsSum, roProbs); // ro <- Select and operator from RO (Section 3.2) using a roulette wheel based on the weight of the operators.
         int ri = getNextRouletteWheelOperator(riProbsSum, riProbs); // ri <- Select and operator from IO (Section 3.3) using a roulette wheel based on the weight of the operators.
-        int useNoise = getNextRouletteWheelOperator(noiseProbsSum, noiseProbs);
 
         roUsages[ro] = roUsages[ro] + 1;
         riUsages[ri] = riUsages[ri] + 1;

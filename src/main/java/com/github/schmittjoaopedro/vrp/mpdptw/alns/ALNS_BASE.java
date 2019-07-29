@@ -114,16 +114,22 @@ public abstract class ALNS_BASE {
         // Init for removal
         for (int i = 0; i < roWeights.length; i++) {
             roWeights[i] = parameters.minWeight;
+            roUsages[i] = 0.0;
+            roScores[i] = 0.0;
         }
         roProbsSum = updateWeightsProbabilities(roWeights, roProbs);
         // Init for insertion
         for (int i = 0; i < riWeights.length; i++) {
             riWeights[i] = parameters.minWeight;
+            riUsages[i] = 0.0;
+            riScores[i] = 0.0;
         }
         riProbsSum = updateWeightsProbabilities(riWeights, riProbs);
         // Init noise
         for (int i = 0; i < noiseWeights.length; i++) {
             noiseWeights[i] = parameters.minWeight;
+            noiseUsages[i] = 0.0;
+            noiseScores[i] = 0.0;
         }
         noiseProbsSum = updateWeightsProbabilities(noiseWeights, noiseProbs);
     }
@@ -177,11 +183,9 @@ public abstract class ALNS_BASE {
         } else if ("SA".equals(parameters.acceptMethod)) {
             // The acceptance criterion is such as that a candidate solution S' is accepted given the current solution S
             // with a probability e^-(f(S')-f(S))/T.
-            double difference = newSolution.totalCost - oldSolution.totalCost;
-            return random.nextDouble() < Math.exp(-1.0 * difference / T);
+            return random.nextDouble() <= Math.exp((oldSolution.totalCost - newSolution.totalCost) / T);
         } else if ("TA".equals(parameters.acceptMethod)) {
-            double difference = newSolution.totalCost - oldSolution.totalCost;
-            return difference < T;
+            return (newSolution.totalCost - oldSolution.totalCost) < T;
         } else {
             return false;
         }
@@ -206,7 +210,7 @@ public abstract class ALNS_BASE {
             }
         }
         // Use random pickup method
-        insertionOperators[ri].insertRequests(solution, removedRequests, InsertionMethod.PickupMethod.Random, useNoise);
+        insertionOperators[ri].insertRequests(solution, removedRequests, InsertionMethod.PickupMethod.Random, useNoise == 1 ? parameters.noiseControl : 0.0);
     }
 
     protected int findVehicle(Integer reqId, Solution solution) {

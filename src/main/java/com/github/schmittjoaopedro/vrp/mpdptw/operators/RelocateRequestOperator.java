@@ -21,7 +21,7 @@ public class RelocateRequestOperator {
 
     public RelocateRequestOperator(ProblemInstance instance, Random random) {
         this.instance = instance;
-        this.insertionMethod = new InsertionMethod(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random, true);
     }
 
     public Solution relocate(Solution solution) {

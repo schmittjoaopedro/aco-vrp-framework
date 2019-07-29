@@ -15,28 +15,18 @@ public class InsertionOperator {
 
     protected Random random;
 
-    protected double useNoiseAtHeuristic = 0.0;
-
-    public InsertionOperator(ProblemInstance instance, Random random) {
+    public InsertionOperator(ProblemInstance instance, Random random, boolean insertionNoise) {
         this.instance = instance;
         this.random = random;
-        this.insertionMethod = new InsertionMethod(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random, insertionNoise);
     }
 
-    public void insertRequests(Solution solution, List<Req> requestsToInsert, InsertionMethod.PickupMethod pickupMethod, int useNoise) {
+    public void insertRequests(Solution solution, List<Req> requestsToInsert, InsertionMethod.PickupMethod pickupMethod, double heuristicNoiseControl) {
         throw new RuntimeException("Not implemented yet");
     }
 
-    protected double generateRandomNoise() {
-        return (2 * random.nextDouble() * instance.getMaxDistance()) - instance.getMaxDistance();
-    }
-
-    public double getUseNoiseAtHeuristic() {
-        return useNoiseAtHeuristic;
-    }
-
-    public void setUseNoiseAtHeuristic(double useNoiseAtHeuristic) {
-        this.useNoiseAtHeuristic = useNoiseAtHeuristic;
+    protected double generateRandomNoise(double noiseControl) {
+        return (random.nextDouble() - 0.5) * (noiseControl * instance.getMaxDistance()) * 2;
     }
 
     protected class RouteCache {

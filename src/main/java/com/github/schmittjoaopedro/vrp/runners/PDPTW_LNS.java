@@ -13,10 +13,16 @@ public class PDPTW_LNS {
 
     private static final String pdptw400Directory;
 
+    private static final String pdptw600Directory;
+
+    private static final String pdptw800Directory;
+
     static {
         pdptw100Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
         pdptw200Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
         pdptw400Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
+        pdptw600Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
+        pdptw800Directory = Paths.get(PDPTW_LNS.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
     }
 
     public void pdptw_100_tasks_test() throws IOException {
@@ -211,7 +217,7 @@ public class PDPTW_LNS {
 
     public static void main(String[] args) throws Exception {
         //new PDPTW_LNS().pdptw_100_tasks_test();
-        Solver solver = new Solver(pdptw100Directory, ".txt", 1);
+        Solver solver = new Solver(pdptw800Directory, "lc1_8_2.txt", 1);
         solver.run();
     }
 

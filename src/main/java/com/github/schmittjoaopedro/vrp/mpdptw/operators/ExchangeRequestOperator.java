@@ -22,7 +22,7 @@ public class ExchangeRequestOperator {
 
     public ExchangeRequestOperator(ProblemInstance instance, Random random) {
         this.instance = instance;
-        this.insertionMethod = new InsertionMethod(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random, true);
     }
 
     public Solution exchange(Solution solution) {

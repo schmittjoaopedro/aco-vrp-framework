@@ -64,43 +64,44 @@ public class ALNS implements Runnable {
         this.instance = instance;
         this.random = random;
         this.numIterations = numIterations;
+        iterationStatistics = new ArrayList<>(numIterations);
 
         dynamicHandler = new DynamicHandler(instance, 0.0, numIterations);
         dynamicHandler.adaptDynamicVersion();
 
         alns_tc = new ALNS_TC(instance, random);
-        alns_tc.setLocalSearch(this::applyImprovement);
+        alns_tc.setLocalSearch(this::applyLocalSearch);
         alns_tc.init();
 
         if (instance.isMinimizeVehicles()) {
             alns_nv = new ALNS_NV(instance, random);
-            alns_nv.setLocalSearch(this::applyImprovement);
             alns_nv.init();
         }
+
         relocateRequestOperator = new RelocateRequestOperator(instance, random);
         exchangeRequestOperator = new ExchangeRequestOperator(instance, random);
-        iterationStatistics = new ArrayList<>(numIterations);
+        insertionHeuristic = new InsertionHeuristic(instance, random);
     }
 
     @Override
     public void run() {
 
+        globalStatistics.startTimer();
+
         /*
+         * Create initial solution.
+         *
          * An initial solution S is generated through a construction heuristic in which requests are progressively
          * inserted within an available vehicle, at its minimum insertion cost position. After all requests have been
          * inserted, solution S is improved by our local search operator.
          */
-        globalStatistics.startTimer();
-        insertionHeuristic = new InsertionHeuristic(instance, random);
         Solution initialSolution = insertionHeuristic.createInitialSolution();
-        instance.solutionEvaluation(initialSolution);
-        initialSolution = applyImprovement(initialSolution);
-        instance.solutionEvaluation(initialSolution);
+        initialSolution = applyLocalSearch(initialSolution);
         solutionBest = SolutionUtils.copy(initialSolution);
-        alns_tc.setTemperature(solutionBest);
-        if (instance.isMinimizeVehicles()) {
-            alns_nv.setTemperature(solutionBest);
-        }
+
+        // Update algorithms temperature
+        updateTemperature(initialSolution);
+
         globalStatistics.endTimer("Initialization");
 
         globalStatistics.startTimer();
@@ -108,40 +109,37 @@ public class ALNS implements Runnable {
             Long iterationTime = System.currentTimeMillis();
 
             // Process new requests
-            List<Integer> newRequestIds = dynamicHandler.processDynamism(iteration);
+            List<Integer> newRequestIds = dynamicHandler.getNewDynamicRequests(iteration);
             if (!newRequestIds.isEmpty()) {
                 log("New requests add: " + StringUtils.join(newRequestIds));
                 Solution solution = SolutionUtils.copy(alns_tc.getSolution());
                 for (int req : newRequestIds) {
-                    instance.solutionEvaluation(solution);
                     insertionHeuristic.addRequest(solution, req);
                 }
-                instance.solutionEvaluation(solution);
-                solution = applyImprovement(solution);
-                instance.solutionEvaluation(solution);
+                solution = applyLocalSearch(solution);
                 updateBest(solution, true);
-                alns_tc.setTemperature(solutionBest);
-                if (instance.isMinimizeVehicles()) {
-                    alns_nv.setTemperature(solutionBest);
-                }
+                updateTemperature(solutionBest);
             }
 
             if (instance.getNumReq() > 0) {
-                alns_tc.performIteration(iteration);
+
+                // Minimize vehicles
                 if (instance.isMinimizeVehicles()) {
                     alns_nv.performIteration(iteration);
-                }
-                detailedStatistics.s_best_TC = solutionBest.totalCost;
-                detailedStatistics.s_best_NV = solutionBest.tours.size();
-                updateBest(alns_tc.getGlobalSolution(), false);
-                if (instance.isMinimizeVehicles()) {
                     Solution nvSolution = alns_nv.getGlobalSolution();
                     if (nvSolution.feasible && nvSolution.tours.size() < solutionBest.tours.size()) {
-                        alns_tc.setGlobalSolution(nvSolution);
                         updateBest(nvSolution, false);
-                        alns_tc.setTemperature(solutionBest);
+                        alns_tc.setTemperature(nvSolution);
+                        alns_tc.setGlobalSolution(nvSolution);
                     }
                 }
+
+                // Minimize costs
+                alns_tc.performIteration(iteration);
+                updateBest(alns_tc.getGlobalSolution(), false);
+
+                detailedStatistics.s_best_TC = solutionBest.totalCost;
+                detailedStatistics.s_best_NV = solutionBest.tours.size();
             }
 
             // Check moving vehicle
@@ -166,17 +164,31 @@ public class ALNS implements Runnable {
                 iterationStatistics.add(iterationStatistic);
                 logInFile(iterationStatistic.toStringCsv());
             }
+
             if (generateDetailedStatistics) {
                 detailedStatistics.iterationTime = System.currentTimeMillis() - iterationTime;
                 alns_tc.logDetailedStatistics(iteration);
                 alns_nv.logDetailedStatistics(iteration);
             }
+
+            if (iteration % 1000 == 0) {
+                String msg = iteration + " -> Sol = " + solutionBest.toString();
+                System.out.println(msg);
+            }
+
             iteration++;
         }
         globalStatistics.endTimer("Algorithm");
 
         dynamicHandler.rollbackOriginalInformation(solutionBest);
         printFinalRoute();
+    }
+
+    private void updateTemperature(Solution initialSolution) {
+        alns_tc.setTemperature(initialSolution);
+        if (instance.isMinimizeVehicles()) {
+            alns_nv.setTemperature(initialSolution);
+        }
     }
 
     private void log(String msg) {
@@ -205,8 +217,9 @@ public class ALNS implements Runnable {
         }
     }
 
-    private Solution applyImprovement(Solution solution) {
-        boolean improvement = true, foundImprovement = false;
+    private Solution applyLocalSearch(Solution solution) {
+        boolean improvement = true;
+        boolean foundImprovement = false;
         Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;
         while (improvement) {

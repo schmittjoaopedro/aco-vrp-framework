@@ -23,7 +23,7 @@ public class InfeasibleRequestsPairs {
     public InfeasibleRequestsPairs(ProblemInstance instance, Random random) {
         this.instance = instance;
         this.random = random;
-        this.insertionOperator = new InsertionOperator(instance, random);
+        this.insertionOperator = new InsertionOperator(instance, random, false);
         this.relocateNodeOperator = new RelocateNodeOperator(instance);
     }
 

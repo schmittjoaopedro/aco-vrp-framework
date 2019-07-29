@@ -11,11 +11,8 @@ import java.util.Random;
 
 public class InsertionHeuristic extends InsertionOperator {
 
-    private InsertionMethod insertionMethod;
-
     public InsertionHeuristic(ProblemInstance instance, Random random) {
-        super(instance, random);
-        this.insertionMethod = new InsertionMethod(instance, random);
+        super(instance, random, false);
     }
 
     public Solution createInitialSolution() {
@@ -23,7 +20,6 @@ public class InsertionHeuristic extends InsertionOperator {
         for (int r = 0; r < instance.getNumReq(); r++) {
             addRequest(solution, r);
         }
-        instance.solutionEvaluation(solution);
         return solution;
     }
 
@@ -47,8 +43,8 @@ public class InsertionHeuristic extends InsertionOperator {
                 solution.tours.get(lastK).add(optimalRequestSolver.getBestRoute()[i]);
             }
             solution.requests.get(lastK).add(r);
-            instance.solutionEvaluation(solution, lastK);
         }
+        instance.solutionEvaluation(solution);
     }
 
 }

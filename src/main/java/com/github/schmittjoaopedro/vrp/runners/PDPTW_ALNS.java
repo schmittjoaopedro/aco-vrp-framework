@@ -47,7 +47,6 @@ public class PDPTW_ALNS {
         executeProblemSolver(pdptw100Directory, "lc101");
         executeProblemSolver(pdptw100Directory, "lc102");
         executeProblemSolver(pdptw100Directory, "lc103");
-        executeProblemSolver(pdptw100Directory, "lc101");
         executeProblemSolver(pdptw100Directory, "lc104");
         executeProblemSolver(pdptw100Directory, "lc105");
         executeProblemSolver(pdptw100Directory, "lc106");
@@ -293,15 +292,8 @@ public class PDPTW_ALNS {
     }
 
     public static void main(String[] args) throws Exception {
-        executeProblemSolver(pdptw100Directory, "lc101");
-        executeProblemSolver(pdptw100Directory, "lr101");
-        executeProblemSolver(pdptw100Directory, "lrc101");
-        //executeProblemSolver(dpdptw100Directory, "lrc101_a_0.5");
-        //executeProblemSolver(pdptw100Directory, "lrc101_q_0_0.5");
-//        executeProblemSolver(pdptw400Directory, "LRC1_4_1");
-//        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_a_0.5");
-//        executeProblemSolver(dpdptw400Directory, "LRC1_4_1_q_0_0.5");
-        //executeProblemSolver(pdptw1000Directory, "LRC1_10_1");
+        executeProblemSolver(pdptw200Directory, "lc1_2_8");
+//        new PDPTW_ALNS().pdptw_100_tasks_test();
     }
 
     private static void executeProblemSolver(String root, String problem) throws IOException {
@@ -309,7 +301,7 @@ public class PDPTW_ALNS {
         ProblemInstance instance = DataReader.getPdptwInstance(Paths.get(root, fileName).toFile());
         ALNS alns = new ALNS(instance, maxIterations, new Random(1));
         alns.setGenerateDetailedStatistics(false);
-        alns.setGenerateFile(true);
+        alns.setGenerateFile(false);
         alns.setShowLog(true);
         alns.run();
     }

@@ -32,7 +32,7 @@ public class SequentialFeasiblePDPTW implements SolutionBuilder {
     public void init(ProblemInstance instance, Random random, MMAS mmas) {
         this.instance = instance;
         this.mmas = mmas;
-        this.insertionMethod = new InsertionMethod(instance, random);
+        this.insertionMethod = new InsertionMethod(instance, random, false);
         updateParameters();
     }
 

@@ -72,7 +72,7 @@ public class DynamicHandler {
     /*
      * Add new requests to the problem based on the announce time compared with the current execution time.
      */
-    public List<Integer> processDynamism(double currentTime) {
+    public List<Integer> getNewDynamicRequests(double currentTime) {
         // Check for new available requests based on the passing time.
         List<Integer> newRequestIds = new ArrayList<>();
         List<Request> newRequestNodes = new ArrayList<>();

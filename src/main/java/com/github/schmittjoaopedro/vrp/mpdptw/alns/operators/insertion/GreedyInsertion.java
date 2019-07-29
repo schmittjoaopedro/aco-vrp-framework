@@ -1,10 +1,10 @@
 package com.github.schmittjoaopedro.vrp.mpdptw.alns.operators.insertion;
 
 import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
+import com.github.schmittjoaopedro.vrp.mpdptw.Req;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import com.github.schmittjoaopedro.vrp.mpdptw.SolutionUtils;
 import com.github.schmittjoaopedro.vrp.mpdptw.operators.InsertionMethod.PickupMethod;
-import com.github.schmittjoaopedro.vrp.mpdptw.Req;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +13,19 @@ import java.util.Random;
 public class GreedyInsertion extends InsertionOperator {
 
     public GreedyInsertion(ProblemInstance instance, Random random) {
-        super(instance, random);
+        super(instance, random, false);
+    }
+
+    public GreedyInsertion(ProblemInstance instance, Random random, boolean insertionNoise) {
+        super(instance, random, insertionNoise);
     }
 
     /*
      * Greedy insertion: select a remaining request and inserted it based on a greedy criterion, namely in the position
      * yielding the lowest increase in the objective function.
      */
-    public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, int useNoise) {
+    @Override
+    public void insertRequests(Solution solution, List<Req> requestsToInsert, PickupMethod pickupMethod, double heuristicNoiseControl) {
         while (!requestsToInsert.isEmpty()) {
             InsertionOperator.InsertRequest bestRequest = null;
             for (int r = 0; r < requestsToInsert.size(); r++) { // For each request r in requests to insert
@@ -36,7 +41,7 @@ public class GreedyInsertion extends InsertionOperator {
                         ArrayList<Integer> originalRoute = new ArrayList<>(solution.tours.get(k)); // Clone the route from vehicle k to evict update the original one
                         if (insertionMethod.insertRequestOnVehicle(solution, k, currReq.requestId, pickupMethod)) { // If the request insertion is feasible
                             double costIncrease = (solution.tourCosts.get(k) - prevCost); // Calculate the lost of insert request r in vehicle k
-                            costIncrease += useNoise + (generateRandomNoise() * useNoiseAtHeuristic); //TODO: FIX to multiplication
+                            costIncrease += generateRandomNoise(heuristicNoiseControl);
                             // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
                             if (insertRequest == null || costIncrease < insertRequest.cost) {
                                 insertRequest = new InsertionOperator.InsertRequest(costIncrease, k, currReq.requestId, solution.tours.get(k));
@@ -56,7 +61,7 @@ public class GreedyInsertion extends InsertionOperator {
                     ArrayList<Integer> originalRoute = new ArrayList<>(solution.tours.get(currReq.vehicleId));
                     if (insertionMethod.improveRequestOnVehicle(solution, currReq.vehicleId, currReq.requestId, pickupMethod)) { // If the request insertion is feasible
                         double costIncrease = (solution.tourCosts.get(currReq.vehicleId) - prevCost); // Calculate the lost of insert request r in vehicle k
-                        costIncrease += useNoise + (generateRandomNoise() * useNoiseAtHeuristic); //TODO: FIX to multiplication
+                        costIncrease += generateRandomNoise(heuristicNoiseControl);
                         // If a new best insertion was found, hold this reference (request yielding the lowest increase in the objective function)
                         if (insertRequest == null || costIncrease < insertRequest.cost) {
                             insertRequest = new InsertionOperator.InsertRequest(costIncrease, currReq.vehicleId, currReq.requestId, solution.tours.get(currReq.vehicleId));
