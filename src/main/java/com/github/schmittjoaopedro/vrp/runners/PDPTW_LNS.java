@@ -205,6 +205,10 @@ public class PDPTW_LNS {
         executeProblemSolver(pdptw400Directory, "LRC2_4_10");
     }
 
+    public static void main(String[] args) {
+        new PDPTW_LNS().executeProblemSolver(pdptw200Directory, "lr1_2_10");
+    }
+
     private void executeProblemSolver(String directory, String problem) {
         Solver solver = new Solver(directory, problem + ".txt", 1);
         solver.run();
