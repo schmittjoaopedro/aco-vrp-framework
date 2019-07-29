@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.thesis.nv;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
+import com.github.schmittjoaopedro.vrp.thesis.problem.Task;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -24,49 +25,50 @@ public class RegretOperator {
         this.instance = instance;
     }
 
+    public static class InsertPosition {
+        protected double cost = Double.MAX_VALUE;
+        protected int pickupPos = 0;
+        protected int deliveryPos = 0;
+    }
+
     public void regretInsert(Solution solution, int k, int useNoise) {
-        ArrayList<Double> C[] = new ArrayList[instance.numNodes];
-        ArrayList<Boolean> calculated[] = new ArrayList[instance.numNodes];
-        ArrayList<Pair<Integer, Integer>> pos[] = new ArrayList[instance.numNodes];
+        Task pickupTask;
+        InsertPosition[][] insertionCosts = new InsertPosition[instance.numRequests][solution.tours.size()]; // Insertion of Request x Vehicles costs
+        // Initialize request/vehicle structures
+        for (int i = 0; i < insertionCosts.length; i++) {
+            for (int j = 0; j < insertionCosts[i].length; j++) {
+                insertionCosts[i][j] = new InsertPosition();
+            }
+        }
+
+        // Calculate insertion cost of each request x vehicle
         ArrayList<Double> startTime = new ArrayList<>();
         ArrayList<Double> waitingTime = new ArrayList<>();
         ArrayList<Double> maxDelay = new ArrayList<>();
-        // Initialize request/vehicle structures
-        for (int i = 1; i < instance.numNodes; ++i) {
-            if (!solution.visited[i] && (instance.demand(i) > 0)) {
-                C[i] = new ArrayList<>();
-                calculated[i] = new ArrayList<>(solution.tours.size());
-                pos[i] = new ArrayList<>(solution.tours.size());
-                for (int j = 0; j < solution.tours.size(); j++) {
-                    C[i].add(0.0);
-                    calculated[i].add(false);
-                    pos[i].add(Pair.of(0, 0));
-                }
-            }
-        }
         for (int j = 0; j < solution.tours.size(); ++j) {
             calcMaxDelay(solution.tours.get(j), startTime, waitingTime, maxDelay);
-            for (int i = 1; i < instance.numTasks; ++i) {
-                if (!solution.visited[i] && instance.demand(i) > 0) {
-                    Pair<Double, Pair<Integer, Integer>> ret = insertingCost(solution.tours.get(j), i, pos[i].get(j), startTime, waitingTime, maxDelay);
-                    C[i].set(j, ret.getLeft()); // Calculate the cost to insert request i on vehicle j
-                    pos[i].set(j, ret.getRight()); // Hold the insertion position of request i on vehicle j
+            for (int i = 0; i < insertionCosts.length; i++) {
+                pickupTask = instance.pickupTasks[i];
+                if (solution.visited[pickupTask.nodeId] == false) {
+                    insertionCosts[i][j] = insertingPickupCost(solution.tours.get(j), pickupTask, startTime, waitingTime, maxDelay);
                 }
             }
         }
+
+        // Choose Node and Route to insert
         while (true) {
-            // Choose Node and Route to insert
             int minPossible = k;
             double maxRegret = 0;
-            int insertRequest = 0;
-            int insertRoute = 0;
+            int insertNode = 0;
+            int insertVehicle = 0;
             double insertCost = Double.MAX_VALUE;
-            Pair<Integer, Integer> insertPos = null;
-            for (int i = 1; i < instance.numNodes; ++i) {
-                if (!solution.visited[i] && instance.demand(i) > 0) { // For each pickup not visited
+            InsertPosition insertPos = null;
+            for (int i = 0; i < insertionCosts.length; i++) {
+                pickupTask = instance.pickupTasks[i];
+                if (solution.visited[pickupTask.nodeId] == false) {
                     Queue<Pair<Double, Integer>> heap = new PriorityQueue<>(); // Create a heap to hold the best vehicle to insert the request
-                    for (int j = 0; j < solution.tours.size(); ++j) {
-                        double cost = C[i].get(j);
+                    for (int j = 0; j < insertionCosts[i].length; j++) {
+                        double cost = insertionCosts[i][j].cost;
                         if (cost < Double.MAX_VALUE) {
                             cost += useNoise * generateNoise(); // Generate noise to increase diversity
                         }
@@ -94,24 +96,23 @@ public class RegretOperator {
 
                         minPossible = possibleRoute;
                         maxRegret = regretCost;
-                        insertRequest = i;
-                        insertRoute = minRoute;
-                        insertPos = pos[i].get(minRoute);
+                        insertNode = pickupTask.nodeId;
+                        insertVehicle = minRoute;
+                        insertPos = insertionCosts[i][minRoute];
                         insertCost = minCost;
                     }
                 }
             }
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
-
-            insert(solution, instance, insertRequest, insertRoute, insertPos);
-            calcMaxDelay(solution.tours.get(insertRoute), startTime, waitingTime, maxDelay); // Update inserted vehicle
-            for (int i = 1; i < instance.numNodes; ++i)
-                if (!solution.visited[i] && (instance.demand(i) > 0) && C[i].get(insertRoute) < Double.MAX_VALUE) {
-                    Pair<Double, Pair<Integer, Integer>> ret = insertingCost(solution.tours.get(insertRoute), i, pos[i].get(insertRoute), startTime, waitingTime, maxDelay);
-                    C[i].set(insertRoute, ret.getLeft());
-                    pos[i].set(insertRoute, ret.getRight());
+            insert(solution, instance, insertNode, insertVehicle, insertPos);
+            calcMaxDelay(solution.tours.get(insertVehicle), startTime, waitingTime, maxDelay); // Update inserted vehicle
+            for (int i = 0; i < insertionCosts.length; i++) {
+                pickupTask = instance.pickupTasks[i];
+                if (solution.visited[pickupTask.nodeId] == false && insertionCosts[i][insertVehicle].cost < Double.MAX_VALUE) {
+                    insertionCosts[i][insertVehicle] = insertingPickupCost(solution.tours.get(insertVehicle), pickupTask, startTime, waitingTime, maxDelay);
                 }
+            }
         }
     }
 
@@ -121,10 +122,10 @@ public class RegretOperator {
     }
 
     // Insert 2 nodes to route at pos
-    void insert(Solution solution, Instance instance, int node, int route, Pair<Integer, Integer> pos) {
-        solution.tours.get(route).add(solution.tours.get(route).get(0) + pos.getLeft(), node);
+    void insert(Solution solution, Instance instance, int node, int vehicle, InsertPosition insertPosition) {
+        solution.tours.get(vehicle).add(insertPosition.pickupPos, node);
         int deliveryNode = instance.deliveryTasks[instance.getTask(node).requestId].nodeId;
-        solution.tours.get(route).add(solution.tours.get(route).get(0) + pos.getRight(), deliveryNode);
+        solution.tours.get(vehicle).add(insertPosition.deliveryPos, deliveryNode);
         solution.visited[node] = true;
         solution.visited[deliveryNode] = true;
     }
@@ -158,49 +159,60 @@ public class RegretOperator {
     }
 
     // Calculate min cost to insert a pickup node to route
-    Pair<Double, Pair<Integer, Integer>> insertingCost(ArrayList<Integer> route, int node, Pair<Integer, Integer> pos, ArrayList<Double> startTime, ArrayList<Double> waitingTime, ArrayList<Double> maxDelay) {
+    protected InsertPosition insertingPickupCost(ArrayList<Integer> route, Task pickupTask, ArrayList<Double> startTime, ArrayList<Double> waitingTime, ArrayList<Double> maxDelay) {
+        InsertPosition insertPosition = new InsertPosition();
         double minRouteCost = Double.MAX_VALUE;
+        insertPosition.cost = minRouteCost;
         double totalAmount = 0;
+        int pickupNode = pickupTask.nodeId;
         ArrayList<Integer> newRoute = new ArrayList<>(route);
         ArrayList<Double> newStartTime = new ArrayList<>();
         ArrayList<Double> newWaitingTime = new ArrayList<>();
         ArrayList<Double> newMaxDelay = new ArrayList<>();
-        newRoute.add(newRoute.get(0), node);
-        for (int i = 1; i < route.size(); ++i) {
-            swap(newRoute, i, i - 1);
-            double cost = instance.dist(node, route.get(i - 1)) + instance.dist(node,route.get(i)) - instance.dist(route.get(i), route.get(i - 1));
-            double arrivalTime = startTime.get(i - 1) + instance.dist(node,route.get(i - 1)) + instance.serviceTime(route.get(i - 1));
-            double waitTime = Math.max(0.0, instance.twStart(node) - arrivalTime);
-            double delay = cost + waitTime + instance.serviceTime(node);
+        newRoute.add(newRoute.get(0), pickupNode);
+        for (int i = 1; i < route.size(); ++i) { // Ignore depot
+            swap(newRoute, i, i - 1); // Advance current pickup one position
+            int prevNode = route.get(i - 1);
+            int currNode = route.get(i);
+            double cost = instance.dist(prevNode, pickupNode) + instance.dist(pickupNode, currNode) - instance.dist(prevNode, currNode);
+            double arrivalTime = startTime.get(i - 1) + instance.dist(prevNode, pickupNode) + instance.serviceTime(prevNode);
+            double waitTime = Math.max(0.0, instance.twStart(pickupNode) - arrivalTime);
+            double delay = cost + waitTime + instance.serviceTime(pickupNode);
             if (cost <= minRouteCost) {
-                if (totalAmount + instance.demand(node) <= instance.vehiclesCapacity) {
-                    if (arrivalTime <= instance.twEnd(node)) {
+                if (totalAmount + instance.demand(pickupNode) <= instance.vehiclesCapacity) {
+                    if (arrivalTime <= instance.twEnd(pickupNode)) {
                         if (delay <= waitingTime.get(i) + maxDelay.get(i) + ep) {
                             Pair<Integer, Integer> tmpPos = Pair.of(0, 0);
                             calcMaxDelay(newRoute, newStartTime, newWaitingTime, newMaxDelay);
-                            int deliveryNode = instance.deliveryTasks[instance.getTask(node).requestId].nodeId;
-                            Pair<Double, Pair<Integer, Integer>> ret = insertingCost(newRoute, deliveryNode, tmpPos, i + 1, totalAmount + instance.demand(node), newStartTime, newWaitingTime, newMaxDelay);
+                            int deliveryNode = instance.deliveryTasks[instance.getTask(pickupNode).requestId].nodeId;
+                            Pair<Double, Pair<Integer, Integer>> ret = insertingCost(newRoute, deliveryNode, tmpPos, i + 1, totalAmount + instance.demand(pickupNode), newStartTime, newWaitingTime, newMaxDelay);
                             tmpPos = ret.getRight();
                             if (cost + ret.getLeft() < minRouteCost) {
                                 minRouteCost = cost + ret.getLeft();
-                                pos = Pair.of(i, tmpPos.getLeft());
+                                insertPosition.cost = minRouteCost;
+                                insertPosition.pickupPos = i;
+                                insertPosition.deliveryPos = tmpPos.getLeft();
                             }
                         }
-                    } else break;
+                    } else {
+                        break;
+                    }
                 }
             }
             totalAmount += instance.demand(route.get(i));
-            if (totalAmount > instance.vehiclesCapacity) break;
+            if (totalAmount > instance.vehiclesCapacity) {
+                break;
+            }
         }
-        return Pair.of(minRouteCost, pos);
+        return insertPosition;
     }
 
     // Calculate min cost to insert a delivery node to route
     Pair<Double, Pair<Integer, Integer>> insertingCost(ArrayList<Integer> route, int node, Pair<Integer, Integer> pos, int startPos, double totalAmount, ArrayList<Double> startTime, ArrayList<Double> waitingTime, ArrayList<Double> maxDelay) {
         double minRouteCost = Double.MAX_VALUE;
         for (int i = startPos; i < route.size(); ++i) {
-            double cost = instance.dist(node,route.get(i - 1)) + instance.dist(node,route.get(i)) - instance.dist(route.get(i),route.get(i - 1));
-            double arrivalTime = startTime.get(i - 1) + instance.dist(node,route.get(i - 1)) + instance.serviceTime(route.get(i - 1));
+            double cost = instance.dist(node, route.get(i - 1)) + instance.dist(node, route.get(i)) - instance.dist(route.get(i), route.get(i - 1));
+            double arrivalTime = startTime.get(i - 1) + instance.dist(node, route.get(i - 1)) + instance.serviceTime(route.get(i - 1));
             double waitTime = Math.max(0., instance.twStart(node) - arrivalTime);
             double delay = cost + waitTime + instance.serviceTime(node);
             if (cost <= minRouteCost) {

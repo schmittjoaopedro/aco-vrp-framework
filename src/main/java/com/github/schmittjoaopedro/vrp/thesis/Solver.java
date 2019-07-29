@@ -43,7 +43,7 @@ public class Solver {
         printSolutionBest();
     }
 
-    private void printSolutionBest() {
+    public void printSolutionBest() {
         String msg = "\nInstance = " + instance.name;
         msg += "\nBest solution feasibility = " + solutionBest.feasible + "\nRoutes";
         for (ArrayList route : solutionBest.tours) {

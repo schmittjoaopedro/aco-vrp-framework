@@ -27,6 +27,7 @@ public class SolverTest {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations);
         solver.init();
+        solver.printSolutionBest();
         Solution solutionBest = solver.getSolutionBest();
         assertThat(solutionBest.totalCost).isEqualTo(5070.736543598931);
         assertThat(solutionBest.tours.size()).isEqualTo(50);
