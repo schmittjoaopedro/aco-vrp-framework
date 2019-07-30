@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
 
 public class SolutionUtils {
@@ -30,6 +32,10 @@ public class SolutionUtils {
         to.capacity = from.capacity.clone();
         to.visited = from.visited.clone();
         to.visitedRequests = from.visitedRequests.clone();
+        to.nodeVehicle = from.nodeVehicle.clone();
+        to.visitedTime = from.visitedTime.clone();
+        to.waitingTime = from.waitingTime.clone();
+        to.startTime = from.startTime.clone();
         to.totalCost = from.totalCost;
         to.feasible = from.feasible;
         to.maxTime = from.maxTime;
@@ -40,6 +46,12 @@ public class SolutionUtils {
         Solution solution = new Solution();
         clearSolution(solution, instance);
         return solution;
+    }
+
+    public static Solution copy(Solution solution) {
+        Solution solutionNew = new Solution();
+        copyFromTo(solution, solutionNew);
+        return solutionNew;
     }
 
     public static void clearSolution(Solution solution, Instance instance) {
@@ -55,6 +67,10 @@ public class SolutionUtils {
         solution.capacity = new double[instance.numNodes];
         solution.visited = new boolean[instance.numNodes];
         solution.visitedRequests = new boolean[instance.numRequests];
+        solution.nodeVehicle = new Pair[instance.numNodes];
+        solution.visitedTime = new double[instance.numNodes];
+        solution.startTime = new double[instance.numNodes];
+        solution.waitingTime = new double[instance.numNodes];
         solution.totalCost = 0.0;
         solution.feasible = false;
         solution.maxTime = 0.0;

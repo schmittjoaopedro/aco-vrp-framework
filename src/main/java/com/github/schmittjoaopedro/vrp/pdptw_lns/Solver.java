@@ -136,7 +136,9 @@ public class Solver {
 
             // Remove and insert
             int removeHeuristic = requestRemove(sNew, q, removalWeight, worstRandomDegree, ShawRandomDegree);
+//            log("-: " + sNew.usedVehicle(instance) + " Best Solution: " + sNew.objFunction(instance));
             int insertHeuristic = requestInsert(sNew, q, insertingWeight, useNoise);
+//            log("-: " + sNew.usedVehicle(instance) + " Best Solution: " + sNew.objFunction(instance));
 
             // Calculate Score for each heuristic
             ++removalCount[removeHeuristic];
@@ -265,7 +267,7 @@ public class Solver {
                 int p = s.vehicleRoute[removeRoute].get(i);
                 if (instance.requestList[p].amount > 0) {
                     Pair<Integer, Integer> pos = Pair.of(s.route[p].getRight(), s.route[instance.requestList[p].delivery].getRight());
-                    C[i] = removeCost(pos, s.vehicleRoute[removeRoute]);
+                    C[p] = removeCost(pos, s.vehicleRoute[removeRoute]);
                 }
             }
         }

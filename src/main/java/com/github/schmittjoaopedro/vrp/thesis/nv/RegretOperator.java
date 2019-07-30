@@ -102,7 +102,7 @@ public class RegretOperator {
             }
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
-            insert(solution, instance, insertNode, insertVehicle, insertPos);
+            solution.insert(instance, insertNode, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
             calcMaxDelay(solution.tours.get(insertVehicle), startTime, waitingTime, maxDelay); // Update inserted vehicle
             for (int i = 0; i < insertionCosts.length; i++) {
                 pickupTask = instance.pickupTasks[i];
@@ -116,16 +116,6 @@ public class RegretOperator {
     // Add noise factor
     double generateNoise() {
         return (random.nextDouble() - 0.5) * (noiseControl * instance.maxDistance) * 2;
-    }
-
-    // Insert 2 nodes to route at pos
-    void insert(Solution solution, Instance instance, int node, int vehicle, InsertPosition insertPosition) {
-        solution.tours.get(vehicle).add(insertPosition.pickupPos, node);
-        int deliveryNode = instance.deliveryTasks[instance.getTask(node).requestId].nodeId;
-        solution.tours.get(vehicle).add(insertPosition.deliveryPos, deliveryNode);
-        solution.visited[node] = true;
-        solution.visited[deliveryNode] = true;
-        solution.requestIds.get(vehicle).add(instance.getTask(node).requestId);
     }
 
     // Calculate max delay for 1 route

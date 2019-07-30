@@ -36,6 +36,8 @@ public class Instance {
 
     public Task[] deliveryTasks;
 
+    public double[] objWeight = {1.0, 0.0, 100000.0};
+
     public double dist(int i, int j) {
         return distances[i][j];
     }
@@ -123,9 +125,6 @@ public class Instance {
                 solution.arrivalTime.get(k)[i + 1] = currentTime;
                 solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
                 currentTime = Math.max(currentTime, twStart(next));
-                if (next != depot.nodeId) {
-                    solution.maxTime = Math.max(solution.maxTime, currentTime);
-                }
                 capacity += demand(next);
                 solution.capacity[next] = capacity;
                 // For precedence and attendance restrictions
@@ -192,5 +191,23 @@ public class Instance {
         if (solution.tours.size() > numVehicles) {
             solution.feasible = false;
         }
+    }
+
+    // Calculate cost of 1 route
+    public double calcRouteCost(ArrayList<Integer> route) {
+        double sumDist = 0, sumTime = 0;
+        double currentCapacity = 0;
+        for (int i = 1; i < route.size(); ++i) {
+            currentCapacity += demand(route.get(i));
+            if (currentCapacity > vehiclesCapacity) return Double.MAX_VALUE;
+            sumDist += distances[route.get(i)][route.get(i - 1)];
+            sumTime = sumTime + distances[route.get(i)][route.get(i - 1)] / vehicleSpeed;
+            sumTime = Math.max(sumTime, twStart(route.get(i)));
+            if (sumTime > twEnd(route.get(i))) {
+                return Double.MAX_VALUE;
+            }
+            sumTime += serviceTime(route.get(i));
+        }
+        return objWeight[0] * sumDist + objWeight[1] * sumTime;
     }
 }

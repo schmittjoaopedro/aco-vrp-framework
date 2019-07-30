@@ -1,8 +1,13 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Solution {
 
@@ -24,11 +29,19 @@ public class Solution {
 
     public ArrayList<double[]> delays;
 
+    public double[] visitedTime;
+
+    public double[] startTime;
+
+    public double[] waitingTime;
+
     public double[] capacity;
 
     public boolean[] visited;
 
     public boolean[] visitedRequests;
+
+    public Pair<Integer, Integer>[] nodeVehicle;
 
     public double totalCost;
 
@@ -37,6 +50,108 @@ public class Solution {
     public double maxTime;
 
     public int toVisit;
+
+    private double[] relateWeight = {9, 3, 2, 5};
+
+    // Insert 2 nodes to route at pos
+    public void insert(Instance instance, int node, int vehicle, int pickupPos, int deliveryPos) {
+        tours.get(vehicle).add(pickupPos, node);
+        int deliveryNode = instance.deliveryTasks[instance.getTask(node).requestId].nodeId;
+        tours.get(vehicle).add(deliveryPos, deliveryNode);
+        visited[node] = true;
+        visited[deliveryNode] = true;
+        requestIds.get(vehicle).add(instance.getTask(node).requestId);
+    }
+
+    // Remove all node from removeList to request bank
+    public void remove(List<Integer> removeRequestsList, Instance instance) {
+        for (int i = 0; i < removeRequestsList.size(); ++i) {
+            int requestId = removeRequestsList.get(i);
+            int pickupNode = instance.pickupTasks[requestId].nodeId;
+            int deliveryNode = instance.deliveryTasks[requestId].nodeId;
+            visited[pickupNode] = false;
+            visited[deliveryNode] = false;
+        }
+        for (int i = 0; i < tours.size(); ++i) {
+            ArrayList<Integer> newRoute = new ArrayList<>();
+            for (int j = 0; j < tours.get(i).size(); ++j) {
+                if (visited[tours.get(i).get(j)]) {
+                    newRoute.add(tours.get(i).get(j));
+                }
+            }
+            tours.set(i, newRoute);
+        }
+        for (Integer i : removeRequestsList) {
+            for (int j = 0; j < requestIds.size(); j++) {
+                if (requestIds.get(j).contains(i)) {
+                    requestIds.get(j).remove(i);
+                }
+            }
+        }
+    }
+
+    // Find position of node i in solution
+    public void findRoute(int i) {
+        for (int j = 1; j < tours.get(i).size() - 1; ++j) {
+            nodeVehicle[tours.get(i).get(j)] = Pair.of(i, j);
+        }
+    }
+
+    // Calculate time visiting each node
+    public void findVisitedTime(Instance instance, int r) {
+        double time = 0;
+        int startPos = 1;
+        visitedTime[0] = 0;
+        for (int j = startPos; j < tours.get(r).size() - 1; ++j) {
+            time += instance.dist(tours.get(r).get(j - 1), tours.get(r).get(j)) / instance.vehicleSpeed + instance.serviceTime(tours.get(r).get(j - 1));
+            visitedTime[tours.get(r).get(j)] = time;
+            startTime[tours.get(r).get(j)] = Math.max(time, instance.twStart(tours.get(r).get(j)));
+            time = startTime[tours.get(r).get(j)];
+            waitingTime[tours.get(r).get(j)] = Math.max(0., time - visitedTime[tours.get(r).get(j)]);
+            maxTime = Math.max(maxTime, time);
+        }
+    }
+
+    // Calculate relateness of 2 nodes in the solution
+    public double relatedness(Instance instance, Request reqA, Request reqB) {
+        double ret = relateWeight[0] * (instance.dist(reqA.pickupTask.nodeId, reqB.pickupTask.nodeId) + instance.dist(reqA.deliveryTask.nodeId, reqB.deliveryTask.nodeId)) / instance.maxDistance;
+        ret += relateWeight[1] * (Math.abs(visitedTime[reqA.pickupTask.nodeId] - visitedTime[reqB.pickupTask.nodeId]) + Math.abs(visitedTime[reqA.deliveryTask.nodeId] - visitedTime[reqB.deliveryTask.nodeId])) / maxTime;
+        ret += relateWeight[2] * Math.abs(reqA.pickupTask.demand - reqB.pickupTask.demand) / instance.maxDemand;
+        return ret;
+    }
+
+    // Number of unvisited customers
+    public int requestBankSize(Instance instance) {
+        int ret = 0;
+        for (int i = 0; i < instance.numRequests; ++i)
+            if (!visited[i]) ++ret;
+        return ret;
+    }
+
+    // Total Objective value of the solution
+    public double objFunction(Instance instance) {
+        double ret = 0;
+        for (int i = 0; i < tours.size(); ++i) {
+            ret += instance.calcRouteCost(tours.get(i));
+        }
+        for (int i = 1; i < instance.numNodes; ++i) {
+            if (!visited[i]) ret += instance.objWeight[2];
+        }
+        return ret;
+    }
+
+    public BigInteger getHash() {
+        BigInteger ret = BigInteger.ZERO;
+        Collections.sort(tours, Comparator.comparing(ArrayList::size));
+        for (int i = 0; i < tours.size(); ++i) {
+            for (int j = 1; j < tours.get(i).size() - 1; ++j) {
+                ret = ret.multiply(BigInteger.valueOf(1009L));
+                ret = ret.add(BigInteger.valueOf(tours.get(i).get(j)));
+            }
+        }
+        return ret;
+    }
+
 
     @Override
     public String toString() {
