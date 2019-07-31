@@ -1,9 +1,9 @@
 package com.github.schmittjoaopedro.vrp.thesis.nv;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.math.BigInteger;
 import java.util.*;
 
 public class VehicleMinimizer {
@@ -22,7 +22,7 @@ public class VehicleMinimizer {
 
     private double removeControl = 0.4;
 
-    private Set<BigInteger> visitedList = new HashSet<>();
+    private Set<Integer> visitedList = new HashSet<>();
 
     private Solution feasibleSolutionBest;
 
@@ -92,7 +92,7 @@ public class VehicleMinimizer {
         ++insertingCount[insertHeuristic];
         ++noiseCount[useNoise];
         if (accept(sNew, solution, T)) {
-            BigInteger hashNb = sNew.getHash();
+            Integer hashNb = sNew.getHash();
             if (!visitedList.contains(hashNb)) {
                 visitedList.add(hashNb);
                 if (sNew.objFunction(instance) < solutionBest.objFunction(instance)) {

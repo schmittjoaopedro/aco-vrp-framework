@@ -1,9 +1,12 @@
 package com.github.schmittjoaopedro.vrp.pdptw_lns;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class Solution {
 
@@ -108,16 +111,13 @@ public class Solution {
         return ret;
     }
 
-    BigInteger getHash(Instance instance) {
-        BigInteger ret = BigInteger.ZERO;
-        Arrays.sort(vehicleRoute, Comparator.comparing(ArrayList::size));
-        for (int i = 0; i < instance.vehicleNumber; ++i) {
-            for (int j = 1; j < vehicleRoute[i].size() - 1; ++j) {
-                ret = ret.multiply(BigInteger.valueOf(1009L));
-                ret = ret.add(BigInteger.valueOf(vehicleRoute[i].get(j)));
-            }
+    int getHash() {
+        ArrayList<ArrayList<Integer>> clonedRoutes = new ArrayList();
+        for (int i = 0; i < vehicleRoute.length; i++) {
+            clonedRoutes.add(new ArrayList<>(this.vehicleRoute[i]));
         }
-        return ret;
+        clonedRoutes.sort(Comparator.<ArrayList<Integer>, Integer>comparing(a -> a.size()).thenComparing(b -> b.get(1)));
+        return StringUtils.join(clonedRoutes).hashCode();
     }
 
     // Remove all node from removeList to request bank

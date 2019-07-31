@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.math.BigInteger;
@@ -85,6 +86,7 @@ public class Solution {
             for (int j = 0; j < requestIds.size(); j++) {
                 if (requestIds.get(j).contains(i)) {
                     requestIds.get(j).remove(i);
+                    break;
                 }
             }
         }
@@ -140,16 +142,10 @@ public class Solution {
         return ret;
     }
 
-    public BigInteger getHash() {
-        BigInteger ret = BigInteger.ZERO;
-        Collections.sort(tours, Comparator.comparing(ArrayList::size));
-        for (int i = 0; i < tours.size(); ++i) {
-            for (int j = 1; j < tours.get(i).size() - 1; ++j) {
-                ret = ret.multiply(BigInteger.valueOf(1009L));
-                ret = ret.add(BigInteger.valueOf(tours.get(i).get(j)));
-            }
-        }
-        return ret;
+    public int getHash() {
+        ArrayList<ArrayList<Integer>> clone = new ArrayList<>(tours);
+        clone.sort(Comparator.<ArrayList<Integer>, Integer>comparing(a -> a.size()).thenComparing(b -> b.get(1)));
+        return StringUtils.join(clone).hashCode();
     }
 
 

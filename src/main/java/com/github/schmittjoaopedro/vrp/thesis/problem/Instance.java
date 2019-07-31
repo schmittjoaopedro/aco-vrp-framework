@@ -152,6 +152,10 @@ public class Instance {
                 }
                 currentTime += serviceTime(next);
                 solution.departureTime.get(k)[i + 1] = currentTime;
+                // Check if nodes and requests lists are consistent
+                if (curr != 0 && !solution.requestIds.get(k).contains(getTask(curr).requestId)) {
+                    solution.feasible = false;
+                }
             }
             for (Integer requestId : attendedRequests) {
                 // Check if all nodes of each request is attended by the same vehicle

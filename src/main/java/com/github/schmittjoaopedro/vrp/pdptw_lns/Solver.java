@@ -40,7 +40,7 @@ public class Solver {
     int[] removalCount;
     int[] insertingCount;
     int[] noiseCount;
-    Set<BigInteger> visitedList = new HashSet<>();
+    Set<Integer> visitedList = new HashSet<>();
 
     String problem;
     List<String> logs = new ArrayList<>();
@@ -145,7 +145,7 @@ public class Solver {
             ++insertingCount[insertHeuristic];
             ++noiseCount[useNoise];
             if (accept(sNew, s, temp)) {
-                BigInteger hashNb = sNew.getHash(instance);
+                Integer hashNb = sNew.getHash();
                 if (!visitedList.contains(hashNb)) {
                     visitedList.add(hashNb);
                     if (sNew.objFunction(instance) < sBest.objFunction(instance)) {
