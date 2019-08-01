@@ -22,7 +22,7 @@ public class Runner {
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
         solver.init();
         solver.run();
     }

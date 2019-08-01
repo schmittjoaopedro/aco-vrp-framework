@@ -4,7 +4,9 @@ import com.github.schmittjoaopedro.vrp.thesis.nv.VehicleMinimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
+import com.github.schmittjoaopedro.vrp.thesis.tc.CostMinimizer;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -18,38 +20,68 @@ public class Solver {
 
     private VehicleMinimizer vehicleMinimizer;
 
+    private CostMinimizer costMinimizer;
+
     private Solution solutionBest;
 
     private LinkedList<String> logs = new LinkedList<>();
 
-    public Solver(Instance instance, Random random, int maxIterations) {
+    public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this.instance = instance;
         this.random = random;
         this.maxIterations = maxIterations;
+        // Create vehicle minimizer
+        if (minimizeNv == true) {
+            vehicleMinimizer = new VehicleMinimizer(instance, random);
+        }
+        // Create cost minimizer
+        if (minimizeTc == true) {
+            costMinimizer = new CostMinimizer(instance, random);
+        }
     }
 
     public void init() {
-        vehicleMinimizer = new VehicleMinimizer(instance, random);
-        vehicleMinimizer.init();
-        solutionBest = vehicleMinimizer.getFeasibleSolutionBest();
+        // Init both algorithms
+        Optional.ofNullable(vehicleMinimizer).ifPresent(VehicleMinimizer::init);
+        Optional.ofNullable(costMinimizer).ifPresent(CostMinimizer::init);
+        // Create initial solution for both
+        Solution initNv = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
+        Solution initTc = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
+        // Select best initial solution
+        solutionBest = getBestSolution(initNv, initTc);
         log("Initial solution = " + solutionBest);
     }
 
     public void run() {
         int iteration = 1;
         while (iteration < maxIterations) {
-            vehicleMinimizer.optimize(iteration);
-            updateBest(vehicleMinimizer.getFeasibleSolutionBest());
+            final int i = iteration;
+            // Minimize NV
+            Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(i));
+            Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
+            // Minimize TC
+            Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.optimize(i));
+            Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
+            // Use best solution from both NV and TC
+            Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(this::updateBest);
             iteration++;
         }
         printSolutionBest();
     }
 
+    @NotNull
+    private Solution getBestSolution(Solution initNv, Solution initTc) {
+        return SolutionUtils.copy(Optional.ofNullable(initNv)
+                .map(nv -> Optional.ofNullable(initTc)
+                        .map(tc -> SolutionUtils.getBest(nv, tc))
+                        .orElse(nv))
+                .orElse(initTc));
+    }
+
     public void updateBest(Solution solution) {
-        boolean isNVMinimized = solution.tours.size() < solutionBest.tours.size();
-        boolean isTCMinimized = solution.tours.size() == solutionBest.tours.size() && MathUtils.round(solution.totalCost) < MathUtils.round(solutionBest.totalCost);
-        if (solution.feasible && (isNVMinimized || isTCMinimized)) {
-            solutionBest = SolutionUtils.copy(solution);
+        Solution bestSol = SolutionUtils.getBest(solutionBest, solution);
+        if (bestSol != null && bestSol != solutionBest) {
+            solutionBest = SolutionUtils.copy(bestSol);
             log("New best = " + solutionBest);
         }
     }

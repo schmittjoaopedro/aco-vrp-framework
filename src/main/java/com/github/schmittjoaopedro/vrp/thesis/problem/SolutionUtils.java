@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
+import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -93,6 +94,24 @@ public class SolutionUtils {
             }
             v--;
         }
+    }
+
+    public static Solution getBest(Solution sol1, Solution sol2) {
+        Solution bestSol = null;
+        boolean isNV1Minimized = sol1.tours.size() < sol2.tours.size();
+        boolean isTC1Minimized = sol1.tours.size() == sol2.tours.size() && MathUtils.round(sol1.totalCost) < MathUtils.round(sol2.totalCost);
+        boolean isNV2Minimized = sol1.tours.size() > sol2.tours.size();
+        boolean isTC2Minimized = sol1.tours.size() == sol2.tours.size() && MathUtils.round(sol1.totalCost) > MathUtils.round(sol2.totalCost);
+        if (!sol1.feasible && sol2.feasible) {
+            bestSol = sol2;
+        } else if (sol1.feasible && !sol2.feasible) {
+            bestSol = sol1;
+        } else if (isNV1Minimized || isTC1Minimized) {
+            bestSol = sol1;
+        } else if (isNV2Minimized || isTC2Minimized) {
+            bestSol = sol2;
+        }
+        return bestSol;
     }
 
 }

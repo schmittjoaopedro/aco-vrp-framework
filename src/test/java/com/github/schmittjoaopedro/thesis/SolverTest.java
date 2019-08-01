@@ -3,7 +3,6 @@ package com.github.schmittjoaopedro.thesis;
 import com.github.schmittjoaopedro.vrp.thesis.Solver;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
-import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -26,7 +25,7 @@ public class SolverTest {
     @Test
     public void initialSolutionTest() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, false);
         solver.init();
         Solution solutionBest = solver.getSolutionBest();
         assertThat(solutionBest.totalCost).isEqualTo(5070.736543598931);
@@ -70,7 +69,7 @@ public class SolverTest {
     @Test
     public void minimizeVehicles_lc1_2_3_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_3.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, false);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -122,7 +121,7 @@ public class SolverTest {
     @Test
     public void minimizeVehicles_lr1_2_10_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, false);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
