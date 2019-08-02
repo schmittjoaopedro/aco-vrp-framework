@@ -4,9 +4,7 @@ import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -55,13 +53,13 @@ public class Solution {
     private double[] relateWeight = {9, 3, 2, 5};
 
     // Insert 2 nodes to route at pos
-    public void insert(Instance instance, int node, int vehicle, int pickupPos, int deliveryPos) {
-        tours.get(vehicle).add(pickupPos, node);
-        int deliveryNode = instance.deliveryTasks[instance.getTask(node).requestId].nodeId;
-        tours.get(vehicle).add(deliveryPos, deliveryNode);
-        visited[node] = true;
-        visited[deliveryNode] = true;
-        requestIds.get(vehicle).add(instance.getTask(node).requestId);
+    public void insert(Instance instance, int requestId, int vehicle, int pickupPos, int deliveryPos) {
+        Request request = instance.requests[requestId];
+        tours.get(vehicle).add(pickupPos, request.pickupTask.nodeId);
+        tours.get(vehicle).add(deliveryPos, request.deliveryTask.nodeId);
+        visited[request.pickupTask.nodeId] = true;
+        visited[request.deliveryTask.nodeId] = true;
+        requestIds.get(vehicle).add(requestId);
     }
 
     // Remove all node from removeList to request bank

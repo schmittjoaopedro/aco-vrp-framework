@@ -23,7 +23,7 @@ public class SolverTest {
     }
 
     @Test
-    public void initialSolutionTest() throws Exception {
+    public void minimizeVehicles_initial_solution() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, false);
         solver.init();
@@ -160,4 +160,56 @@ public class SolverTest {
         assertThat(StringUtils.join(solutionBest.requestIds.get(10), " ")).isEqualTo("83 0 69 13 88 55 37 90 64 63");
     }
 
+    @Test
+    public void minimizeCost_initial_solution() throws Exception {
+        Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
+        Solver solver = new Solver(instance, new Random(1), maxIterations, false, true);
+        solver.init();
+        solver.printSolutionBest();
+        Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.totalCost).isEqualTo(8113.433717539745);
+        assertThat(solutionBest.tours.size()).isEqualTo(20);
+        // Check tours
+        assertThat(StringUtils.join(solutionBest.tours.get(0), " ")).isEqualTo("0 4 7 5 1 25 201 126 134 203 9 190 110 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(1), " ")).isEqualTo("0 15 153 12 32 38 104 207 100 159 6 47 22 174 83 108 97 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(2), " ")).isEqualTo("0 18 50 26 123 21 131 66 11 79 40 200 119 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(3), " ")).isEqualTo("0 149 81 35 30 20 34 62 136 90 204 39 208 17 192 52 105 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(4), " ")).isEqualTo("0 67 36 44 137 41 60 56 37 96 65 29 43 70 59 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(5), " ")).isEqualTo("0 46 48 8 76 205 138 58 49 206 45 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(6), " ")).isEqualTo("0 55 157 54 85 84 69 31 128 102 10 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(7), " ")).isEqualTo("0 63 3 57 95 19 181 103 154 24 77 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(8), " ")).isEqualTo("0 72 147 93 68 117 195 180 80 109 172 116 61 27 28 75 197 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(9), " ")).isEqualTo("0 87 73 152 13 98 2 189 88 198 74 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(10), " ")).isEqualTo("0 112 94 89 106 146 121 101 82 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(11), " ")).isEqualTo("0 132 120 92 16 113 124 114 127 179 202 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(12), " ")).isEqualTo("0 140 135 133 151 125 178 141 129 164 191 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(13), " ")).isEqualTo("0 145 150 143 165 169 139 185 78 156 91 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(14), " ")).isEqualTo("0 188 155 14 158 86 160 130 33 144 186 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(15), " ")).isEqualTo("0 161 168 187 162 115 171 170 122 53 148 111 42 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(16), " ")).isEqualTo("0 184 196 173 99 163 177 23 167 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(17), " ")).isEqualTo("0 166 193 71 182 175 107 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(18), " ")).isEqualTo("0 176 51 194 142 183 118 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(19), " ")).isEqualTo("0 199 64 0");
+        // Check requests
+        assertThat(StringUtils.join(solutionBest.requestIds.get(0), " ")).isEqualTo("0 1 2 4 12 64");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(1), " ")).isEqualTo("3 6 7 11 15 19 51 52");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(2), " ")).isEqualTo("5 9 13 21 27 60");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(3), " ")).isEqualTo("8 10 14 16 20 32 44 73");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(4), " ")).isEqualTo("17 18 22 23 31 34 35");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(5), " ")).isEqualTo("24 25 26 40 66");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(6), " ")).isEqualTo("28 29 37 41 49");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(7), " ")).isEqualTo("30 33 47 50 92");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(8), " ")).isEqualTo("36 38 53 57 58 72 88 100");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(9), " ")).isEqualTo("39 42 48 76 102");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(10), " ")).isEqualTo("43 46 54 59");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(11), " ")).isEqualTo("45 55 56 63 91");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(12), " ")).isEqualTo("61 62 65 68 75");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(13), " ")).isEqualTo("67 69 71 74 83");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(14), " ")).isEqualTo("70 77 78 79 97");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(15), " ")).isEqualTo("80 81 85 86 87 96");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(16), " ")).isEqualTo("82 89 95 101");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(17), " ")).isEqualTo("84 93 98");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(18), " ")).isEqualTo("90 94 99");
+        assertThat(StringUtils.join(solutionBest.requestIds.get(19), " ")).isEqualTo("103");
+    }
 }

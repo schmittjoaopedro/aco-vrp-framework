@@ -58,7 +58,7 @@ public class RegretOperator {
         while (true) {
             int minPossible = k;
             double maxRegret = 0;
-            int insertNode = 0;
+            int insertRequest = 0;
             int insertVehicle = 0;
             double insertCost = Double.MAX_VALUE;
             InsertPosition insertPos = null;
@@ -93,7 +93,7 @@ public class RegretOperator {
                             || (regretCost == maxRegret && minCost < insertCost)))) { // If the greedy strategy (same regret costs, but is a better insertion cost)
                         minPossible = possibleRoute;
                         maxRegret = regretCost;
-                        insertNode = pickupTask.nodeId;
+                        insertRequest = pickupTask.requestId;
                         insertVehicle = minRoute;
                         insertPos = insertionCosts[i][minRoute];
                         insertCost = minCost;
@@ -102,7 +102,7 @@ public class RegretOperator {
             }
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
-            solution.insert(instance, insertNode, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
+            solution.insert(instance, insertRequest, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
             calcMaxDelay(solution.tours.get(insertVehicle), startTime, waitingTime, maxDelay); // Update inserted vehicle
             for (int i = 0; i < insertionCosts.length; i++) {
                 pickupTask = instance.pickupTasks[i];

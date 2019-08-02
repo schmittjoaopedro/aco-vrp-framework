@@ -197,6 +197,28 @@ public class Instance {
         }
     }
 
+    public boolean isFeasibleTour(List<Integer> tour) {
+        boolean feasible = true;
+        double currentTime = 0.0;
+        double capacity = 0.0;
+        int curr, next;
+        for (int i = 0; i < tour.size() - 1; i++) {
+            curr = tour.get(i);
+            next = tour.get(i + 1);
+            currentTime += distances[curr][next];
+            currentTime = Math.max(currentTime, twStart(next));
+            capacity += demand(next);
+            if (currentTime > twEnd(next)) {
+                feasible = false;
+            }
+            if (capacity > vehiclesCapacity) {
+                feasible = false;
+            }
+            currentTime += serviceTime(next);
+        }
+        return feasible;
+    }
+
     // Calculate cost of 1 route
     public double calcRouteCost(ArrayList<Integer> route) {
         double sumDist = 0, sumTime = 0;
