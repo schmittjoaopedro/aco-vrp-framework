@@ -28,6 +28,7 @@ public class SolverTest {
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, false);
         solver.init();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(5070.736543598931);
         assertThat(solutionBest.tours.size()).isEqualTo(16);
         // Check tours
@@ -78,6 +79,7 @@ public class SolverTest {
         assertThat(solver.getLogs().get(2)).isEqualTo("New best = [F = true, NV = 18, TC = 4133.07]");
         assertThat(solver.getLogs().get(3)).isEqualTo("New best = [F = true, NV = 17, TC = 3640.98]");
 
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(3640.9778334906696);
         assertThat(solutionBest.tours.size()).isEqualTo(17);
         // Check tours
@@ -132,6 +134,7 @@ public class SolverTest {
         assertThat(solver.getLogs().get(4)).isEqualTo("New best = [F = true, NV = 12, TC = 4091.96]");
         assertThat(solver.getLogs().get(5)).isEqualTo("New best = [F = true, NV = 11, TC = 3924.43]");
 
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(3924.4295378737456);
         assertThat(solutionBest.tours.size()).isEqualTo(11);
         // Check tours
@@ -167,6 +170,7 @@ public class SolverTest {
         solver.init();
         solver.printSolutionBest();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(8113.433717539745);
         assertThat(solutionBest.tours.size()).isEqualTo(20);
         // Check tours
@@ -211,5 +215,18 @@ public class SolverTest {
         assertThat(StringUtils.join(solutionBest.requestIds.get(17), " ")).isEqualTo("84 93 98");
         assertThat(StringUtils.join(solutionBest.requestIds.get(18), " ")).isEqualTo("90 94 99");
         assertThat(StringUtils.join(solutionBest.requestIds.get(19), " ")).isEqualTo("103");
+    }
+
+    @Test
+    public void minimizeCost_lc1_2_3_Test() throws Exception {
+        Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_3.txt").toFile());
+        Solver solver = new Solver(instance, new Random(1), maxIterations, false, true);
+        solver.init();
+        solver.run();
+        Solution solutionBest = solver.getSolutionBest();
+
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(3640.9778334906696);
+        assertThat(solutionBest.tours.size()).isEqualTo(17);
     }
 }

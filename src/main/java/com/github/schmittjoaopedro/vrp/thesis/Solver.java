@@ -49,6 +49,7 @@ public class Solver {
         Solution initTc = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
         // Select best initial solution
         solutionBest = getBestSolution(initNv, initTc);
+        instance.solutionEvaluation(solutionBest);
         log("Initial solution = " + solutionBest);
     }
 
@@ -66,6 +67,7 @@ public class Solver {
             Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(this::updateBest);
             iteration++;
         }
+        instance.solutionEvaluation(solutionBest);
         printSolutionBest();
     }
 
