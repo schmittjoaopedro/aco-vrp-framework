@@ -64,8 +64,15 @@ public class Solver {
             Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.optimize(i));
             Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
             // Use best solution from both NV and TC
-            Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(this::updateBest);
+            Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(solution -> updateBest(solution, i));
+            // Communicate NV to TC
+            if (vehicleMinimizer != null && costMinimizer != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
+                costMinimizer.setNewBaseSolution(feasibleNV);
+            }
             iteration++;
+            if (iteration % 500 == 0) {
+                log(iteration + " -> New best = " + solutionBest);
+            }
         }
         instance.solutionEvaluation(solutionBest);
         printSolutionBest();
@@ -80,11 +87,11 @@ public class Solver {
                 .orElse(initTc));
     }
 
-    public void updateBest(Solution solution) {
+    public void updateBest(Solution solution, int iteration) {
         Solution bestSol = SolutionUtils.getBest(solutionBest, solution);
         if (bestSol != null && bestSol != solutionBest) {
             solutionBest = SolutionUtils.copy(bestSol);
-            log("New best = " + solutionBest);
+            log(iteration + " -> New best = " + solutionBest);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.nv;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.*;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -82,9 +81,7 @@ public class VehicleMinimizer {
         // Noise, remove and insert
         int useNoise = rouletteSelection(noiseWeight);
         int removeHeuristic = requestRemove(sNew, q, removalWeight, worstRandomDegree, ShawRandomDegree);
-//        System.out.println("-: " + sNew.tours.size() + " Best Solution: " + sNew.objFunction(instance));
         int insertHeuristic = requestInsert(sNew, q, insertingWeight, useNoise);
-//        System.out.println("-: " + sNew.tours.size() + " Best Solution: " + sNew.objFunction(instance));
         instance.solutionEvaluation(sNew);
 
         // Calculate Score for each heuristic

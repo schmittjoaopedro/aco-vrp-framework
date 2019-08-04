@@ -53,13 +53,23 @@ public class Solution {
     private double[] relateWeight = {9, 3, 2, 5};
 
     // Insert 2 nodes to route at pos
-    public void insert(Instance instance, int requestId, int vehicle, int pickupPos, int deliveryPos) {
+    public void insertRequest(Instance instance, int requestId, int vehicle, int pickupPos, int deliveryPos) {
         Request request = instance.requests[requestId];
         tours.get(vehicle).add(pickupPos, request.pickupTask.nodeId);
         tours.get(vehicle).add(deliveryPos, request.deliveryTask.nodeId);
         visited[request.pickupTask.nodeId] = true;
         visited[request.deliveryTask.nodeId] = true;
         requestIds.get(vehicle).add(requestId);
+    }
+
+    public void removeRequest(int vehicle, Request request) {
+        // TODO: Dynamic checking
+        removeItem(tours.get(vehicle), request.pickupTask.nodeId);
+        removeItem(tours.get(vehicle), request.deliveryTask.nodeId);
+        removeItem(requestIds.get(vehicle), request.requestId);
+        visited[request.pickupTask.nodeId] = false;
+        visited[request.deliveryTask.nodeId] = false;
+        visitedRequests[request.requestId] = false;
     }
 
     // Remove all node from removeList to request bank
@@ -146,6 +156,9 @@ public class Solution {
         return StringUtils.join(clone).hashCode();
     }
 
+    private void removeItem(List<Integer> array, Integer node) {
+        array.remove(node);
+    }
 
     @Override
     public String toString() {

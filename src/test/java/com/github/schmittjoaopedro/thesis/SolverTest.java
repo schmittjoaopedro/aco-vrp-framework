@@ -229,4 +229,17 @@ public class SolverTest {
         assertThat(solutionBest.totalCost).isEqualTo(3640.9778334906696);
         assertThat(solutionBest.tours.size()).isEqualTo(17);
     }
+
+    @Test
+    public void minimizeVehiclesAndCost_lc1_2_3_Test() throws Exception {
+        Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_3.txt").toFile());
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        solver.init();
+        solver.run();
+        Solution solutionBest = solver.getSolutionBest();
+
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(3640.9778334906696);
+        assertThat(solutionBest.tours.size()).isEqualTo(17);
+    }
 }

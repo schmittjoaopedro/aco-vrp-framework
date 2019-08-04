@@ -114,4 +114,15 @@ public class SolutionUtils {
         return bestSol;
     }
 
+    public static int findRequestVehicleOwner(Solution solution, Integer requestId) {
+        int vehicle = -1;
+        for (int k = 0; k < solution.requestIds.size(); k++) {
+            if (solution.requestIds.get(k).contains(requestId)) {
+                vehicle = k;
+                break;
+            }
+        }
+        return vehicle;
+    }
+
 }

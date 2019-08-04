@@ -25,7 +25,7 @@ public class InsertionHeuristic {
             for (int k = 0; k < kMax; k++) {
                 Position position = insertionMethod.calculateInsertion(request, solution, k);
                 if (position.cost < Double.MAX_VALUE) {
-                    solution.insert(instance, request.requestId, k, position.pickupPos, position.deliveryPos);
+                    solution.insertRequest(instance, request.requestId, k, position.pickupPos, position.deliveryPos);
                     instance.solutionEvaluation(solution);
                     break;
                 }

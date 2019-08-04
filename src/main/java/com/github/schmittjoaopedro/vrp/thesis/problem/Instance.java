@@ -197,6 +197,52 @@ public class Instance {
         }
     }
 
+    public void solutionEvaluation(Solution solution, int k) {
+        solution.totalCost -= solution.tourCosts.get(k);
+        int tourSize = solution.tours.get(k).size();
+        List<Integer> tour = solution.tours.get(k);
+        solution.arrivalTime.set(k, new double[tourSize]);
+        solution.departureTime.set(k, new double[tourSize]);
+        solution.waitingTimes.set(k, new double[tourSize]);
+        solution.delays.set(k, new double[tourSize]);
+        Double currentTime = depot.twStart;
+        Double tourCost = 0.0;
+        Double capacity = 0.0;
+        Double routePenalty = 0.0;
+        int curr, next;
+        Task task;
+        solution.waitingTimes.get(k)[0] = 0.0;
+        solution.delays.get(k)[0] = 0.0;
+        solution.arrivalTime.get(k)[0] = currentTime;
+        solution.departureTime.get(k)[0] = currentTime;
+        for (int i = 0; i < tourSize - 1; i++) {
+            curr = tour.get(i);
+            next = tour.get(i + 1);
+            tourCost += dist(curr, next);
+            currentTime += dist(curr, next);
+            solution.arrivalTime.get(k)[i + 1] = currentTime;
+            solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
+            currentTime = Math.max(currentTime, twStart(next));
+            capacity += demand(next);
+            solution.capacity[next] = capacity;
+            solution.delays.get(k)[i + 1] = Math.max(0.0, currentTime - twEnd(next));
+            currentTime += serviceTime(next);
+            solution.departureTime.get(k)[i + 1] = currentTime;
+        }
+        Double slackTime = Double.MAX_VALUE;
+        solution.departureSlackTimes.set(k, new double[tour.size()]);
+        solution.arrivalSlackTimes.set(k, new double[tour.size()]);
+        for (int i = tour.size() - 1; i >= 0; i--) {
+            curr = tour.get(i);
+            slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k)[i] + serviceTime(curr));
+            solution.departureSlackTimes.get(k)[i] = slackTime;
+            slackTime += solution.waitingTimes.get(k)[i];
+            solution.arrivalSlackTimes.get(k)[i] = slackTime;
+        }
+        solution.tourCosts.set(k, tourCost);
+        solution.totalCost += tourCost;
+    }
+
     public boolean isFeasibleTour(List<Integer> tour) {
         boolean feasible = true;
         double currentTime = 0.0;
@@ -217,6 +263,54 @@ public class Instance {
             currentTime += serviceTime(next);
         }
         return feasible;
+    }
+
+    public double costEvaluation(List<Integer> tour) {
+        double cost = 0.0;
+        for (int i = 0; i < tour.size() - 1; i++) {
+            cost += distances[tour.get(i)][tour.get(i + 1)];
+        }
+        return cost;
+    }
+
+    public double costEvaluation(List<Integer> tour, Integer requestToIgnore) {
+        double cost = 0.0;
+        int from, to;
+        int i = 0;
+        while (i < tour.size()) {
+            from = tour.get(i);
+            i++;
+            to = tour.get(i);
+            while (to != depot.nodeId && getTask(to).requestId == requestToIgnore) {
+                i++;
+                to = tour.get(i);
+            }
+            cost += distances[from][to];
+            if (to == depot.nodeId) {
+                break;
+            }
+        }
+        return cost;
+    }
+
+    public double costEvaluation(List<Integer> tour, Integer requestToIgnore, int nodeToIgnore) {
+        double cost = 0.0;
+        int from, to;
+        int i = 0;
+        while (i < tour.size()) {
+            from = tour.get(i);
+            i++;
+            to = tour.get(i);
+            while (to != depot.nodeId && getTask(to).requestId == requestToIgnore && to == nodeToIgnore) {
+                i++;
+                to = tour.get(i);
+            }
+            cost += distances[from][to];
+            if (to == depot.nodeId) {
+                break;
+            }
+        }
+        return cost;
     }
 
     // Calculate cost of 1 route

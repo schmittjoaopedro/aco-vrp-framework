@@ -102,7 +102,7 @@ public class RegretOperator {
             }
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
-            solution.insert(instance, insertRequest, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
+            solution.insertRequest(instance, insertRequest, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
             calcMaxDelay(solution.tours.get(insertVehicle), startTime, waitingTime, maxDelay); // Update inserted vehicle
             for (int i = 0; i < insertionCosts.length; i++) {
                 pickupTask = instance.pickupTasks[i];
@@ -114,7 +114,7 @@ public class RegretOperator {
     }
 
     // Add noise factor
-    double generateNoise() {
+    private double generateNoise() {
         return (random.nextDouble() - 0.5) * (noiseControl * instance.maxDistance) * 2;
     }
 
