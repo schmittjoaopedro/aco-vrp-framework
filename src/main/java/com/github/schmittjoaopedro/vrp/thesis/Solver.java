@@ -67,6 +67,9 @@ public class Solver {
                 costMinimizer.resetToInitialSolution(feasibleNV);
             }
             iteration++;
+            if (iteration % 1000 == 0) {
+                log(iteration + " -> New best = " + solutionBest);
+            }
         }
         instance.solutionEvaluation(solutionBest);
         printSolutionBest();

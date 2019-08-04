@@ -165,7 +165,7 @@ public class SolverTest {
 
     @Test
     public void minimizeCost_lc1_2_3_Test() throws Exception {
-        Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_3.txt").toFile());
+        Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_2.txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
         solver.init();
         solver.run();
