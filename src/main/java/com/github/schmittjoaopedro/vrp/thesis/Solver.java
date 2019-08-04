@@ -14,8 +14,6 @@ public class Solver {
 
     private Instance instance;
 
-    private Random random;
-
     private int maxIterations;
 
     private VehicleMinimizer vehicleMinimizer;
@@ -28,7 +26,6 @@ public class Solver {
 
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this.instance = instance;
-        this.random = random;
         this.maxIterations = maxIterations;
         // Create vehicle minimizer
         if (minimizeNv == true) {
@@ -65,10 +62,22 @@ public class Solver {
             Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
             // Use best solution from both NV and TC
             Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(this::updateBest);
+            // Synchronize algorithm objectives
+            if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
+                costMinimizer.resetToInitialSolution(feasibleNV);
+            }
             iteration++;
         }
         instance.solutionEvaluation(solutionBest);
         printSolutionBest();
+    }
+
+    public void updateBest(Solution solution) {
+        Solution bestSol = SolutionUtils.getBest(solutionBest, solution);
+        if (bestSol != null && bestSol != solutionBest) {
+            solutionBest = SolutionUtils.copy(bestSol);
+            log("New best = " + solutionBest);
+        }
     }
 
     @NotNull
@@ -78,14 +87,6 @@ public class Solver {
                         .map(tc -> SolutionUtils.getBest(nv, tc))
                         .orElse(nv))
                 .orElse(initTc));
-    }
-
-    public void updateBest(Solution solution) {
-        Solution bestSol = SolutionUtils.getBest(solutionBest, solution);
-        if (bestSol != null && bestSol != solutionBest) {
-            solutionBest = SolutionUtils.copy(bestSol);
-            log("New best = " + solutionBest);
-        }
     }
 
     public void printSolutionBest() {
