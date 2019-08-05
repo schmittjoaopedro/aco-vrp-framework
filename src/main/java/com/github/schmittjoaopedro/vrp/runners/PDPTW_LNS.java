@@ -206,7 +206,7 @@ public class PDPTW_LNS {
     }
 
     public static void main(String[] args) {
-        new PDPTW_LNS().executeProblemSolver(pdptw200Directory, "lc1_2_1");
+        new PDPTW_LNS().executeProblemSolver(pdptw200Directory, "lr2_2_7");
     }
 
     private void executeProblemSolver(String directory, String problem) {
