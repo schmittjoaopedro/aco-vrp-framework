@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.thesis.tc;
+package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;

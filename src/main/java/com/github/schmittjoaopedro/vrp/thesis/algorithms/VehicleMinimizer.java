@@ -1,19 +1,20 @@
-package com.github.schmittjoaopedro.vrp.thesis.tc;
+package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.RegretOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
-public class CostMinimizer {
+public class VehicleMinimizer {
 
     private Instance instance;
 
     private Random random;
 
-    private double tolerance = 0.05;
+    private double tolerance = 0.35;
 
-    private double coolingRate = 0.99975;
+    private double coolingRate = 0.9999;
 
     private double worstRandomDegree = 3;
 
@@ -47,7 +48,7 @@ public class CostMinimizer {
 
     private double T;
 
-    public CostMinimizer(Instance instance, Random random) {
+    public VehicleMinimizer(Instance instance, Random random) {
         this.instance = instance;
         this.random = random;
     }
@@ -59,11 +60,13 @@ public class CostMinimizer {
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
-        solutionBest = SolutionUtils.copy(solution);
 
         resetAdaptiveWeight();
         visitedList.clear();
-        T = calcTemp(solution.totalCost);
+        decreaseVehicleNumber(solution);
+        instance.solutionEvaluation(solution);
+        T = ALNS.calcTemp(solution.totalCost, tolerance);
+        solutionBest = SolutionUtils.copy(solution);
     }
 
     public void optimize(int iteration) {
@@ -77,7 +80,7 @@ public class CostMinimizer {
         }
 
         // Noise, remove and insert
-        int useNoise = rouletteSelection(noiseWeight);
+        int useNoise = ALNS.rouletteSelection(noiseWeight, random);
         int removeHeuristic = requestRemove(sNew, q, removalWeight, worstRandomDegree, ShawRandomDegree);
         int insertHeuristic = requestInsert(sNew, q, insertingWeight, useNoise);
         instance.solutionEvaluation(sNew);
@@ -86,15 +89,11 @@ public class CostMinimizer {
         ++removalCount[removeHeuristic];
         ++insertingCount[insertHeuristic];
         ++noiseCount[useNoise];
-        if (accept(sNew, solution, T)) {
+        if (ALNS.accept(sNew, solution, T, instance, random)) {
             Integer hashNb = sNew.getHash();
             if (!visitedList.contains(hashNb)) {
                 visitedList.add(hashNb);
                 if (sNew.objFunction(instance) < solutionBest.objFunction(instance)) {
-                    if (sNew.feasible) {
-                        SolutionUtils.removeEmptyVehicles(sNew);
-                        feasibleSolutionBest = SolutionUtils.copy(sNew);
-                    }
                     solutionBest = SolutionUtils.copy(sNew);
                     removalScore[removeHeuristic] += scoreWeight[0];
                     insertingScore[insertHeuristic] += scoreWeight[0];
@@ -114,35 +113,19 @@ public class CostMinimizer {
         T = T * coolingRate;
         if (iteration % 100 == 0) {
             //printWeights(temp, sBest);
-            updateAdaptiveWeight(removalWeight, removalScore, removalCount, reactionFactor);
-            updateAdaptiveWeight(insertingWeight, insertingScore, insertingCount, reactionFactor);
-            updateAdaptiveWeight(noiseWeight, noiseScore, noiseCount, reactionFactor);
+            ALNS.updateAdaptiveWeight(removalWeight, removalScore, removalCount, reactionFactor);
+            ALNS.updateAdaptiveWeight(insertingWeight, insertingScore, insertingCount, reactionFactor);
+            ALNS.updateAdaptiveWeight(noiseWeight, noiseScore, noiseCount, reactionFactor);
         }
-    }
 
-    public void resetToInitialSolution(Solution solution) {
-        this.solutionBest = SolutionUtils.copy(solution);
-        this.feasibleSolutionBest = SolutionUtils.copy(solution);
-        this.solution = SolutionUtils.copy(solution);
-        calcTemp(solution.totalCost);
-    }
-
-    // Update Weights of each heuristic after a segment
-    private void updateAdaptiveWeight(double[] weight, double[] score, int[] nb, double reactionFactor) {
-        for (int i = 0; i < weight.length; ++i) {
-            weight[i] = weight[i] * (1 - reactionFactor) + reactionFactor * (score[i] / Math.max(nb[i], 1));
-            score[i] = 0;
-            nb[i] = 0;
+        if (solution.feasible) {
+            feasibleSolutionBest = SolutionUtils.copy(solution);
+            decreaseVehicleNumber(solution);
+            instance.solutionEvaluation(solution);
+            solutionBest = SolutionUtils.copy(solution);
+            T = ALNS.calcTemp(solution.totalCost, tolerance);
         }
-    }
 
-    // Check if the new Solution is Accepted
-    private boolean accept(Solution sNew, Solution s, double temp) {
-        double obj = s.objFunction(instance);
-        double objNew = sNew.objFunction(instance);
-        if (objNew <= obj) return true;
-        double probability = Math.exp((obj - objNew) / temp);
-        return (random.nextDouble() <= probability);
     }
 
     public void decreaseVehicleNumber(Solution solution) {
@@ -164,33 +147,13 @@ public class CostMinimizer {
         noiseCount = new int[]{0, 0};
     }
 
-    // Calculate Starting Temperature
-    double calcTemp(double objValue) {
-        return objValue * tolerance / Math.log(2);
-    }
-
     public Solution getFeasibleSolutionBest() {
         return feasibleSolutionBest;
     }
 
-    // Select a number using Roulette Wheel Selection
-    private int rouletteSelection(double[] weight) {
-        double[] sumWeight = new double[weight.length];
-        double randomNumber = random.nextDouble();
-        sumWeight[0] = weight[0];
-        for (int i = 1; i < weight.length; ++i) {
-            sumWeight[i] = sumWeight[i - 1] + weight[i];
-        }
-        randomNumber = randomNumber * sumWeight[weight.length - 1];
-        for (int i = 0; i < weight.length; ++i) {
-            if (randomNumber < sumWeight[i]) return i;
-        }
-        return weight.length - 1;
-    }
-
     // Insert unvisited requests from solution and return used heuristic
     int requestInsert(Solution s, int q, double[] insertingWeight, int useNoise) {
-        int insertHeuristic = rouletteSelection(insertingWeight);
+        int insertHeuristic = ALNS.rouletteSelection(insertingWeight, random);
         if (insertHeuristic == 0) regretOperator.regretInsert(s, 1, useNoise); // Basic Greedy insert
         else if (insertHeuristic == 1) regretOperator.regretInsert(s, 2, useNoise);
         else if (insertHeuristic == 2) regretOperator.regretInsert(s, 3, useNoise);
@@ -201,7 +164,7 @@ public class CostMinimizer {
 
     // Remove requests from solution and return used heuristic
     private int requestRemove(Solution solution, int q, double[] removalWeight, double worstRandomDegree, double ShawRandomDegree) {
-        int removeHeuristic = rouletteSelection(removalWeight);
+        int removeHeuristic = ALNS.rouletteSelection(removalWeight, random);
         if (removeHeuristic == 0) randomRemoval(solution, q);
         else if (removeHeuristic == 1) worstRemoval(solution, q, worstRandomDegree);
         else ShawRemoval(solution, q, ShawRandomDegree);
