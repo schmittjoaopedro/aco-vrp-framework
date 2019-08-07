@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Task;
@@ -9,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class RandomRemoval {
+public class RandomRemoval extends RemovalOperator {
 
     private Instance instance;
 
@@ -20,7 +21,7 @@ public class RandomRemoval {
         this.random = random;
     }
 
-    // Remove a number of random Customer
+    @Override
     public void remove(Solution s, int q) {
         List<Integer> removeList = new ArrayList<>();
         for (Task pickupTask : instance.pickupTasks) {

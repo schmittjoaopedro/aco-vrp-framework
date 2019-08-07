@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
 
-public class ShawRemoval {
+public class ShawRemoval extends RemovalOperator {
 
     private Instance instance;
 
@@ -22,7 +23,7 @@ public class ShawRemoval {
         this.random = random;
     }
 
-    // Remove Customer base on relatedness
+    @Override
     public void remove(Solution solution, int q) {
         ArrayList<Integer> allRequest = new ArrayList<>();
         ArrayList<Integer> removeList = new ArrayList<>();

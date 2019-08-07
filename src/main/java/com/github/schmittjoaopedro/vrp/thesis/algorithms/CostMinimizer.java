@@ -1,16 +1,11 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.RandomRemoval;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.RegretInsertion;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.ShawRemoval;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.WorstRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.*;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class CostMinimizer {
 
@@ -24,7 +19,7 @@ public class CostMinimizer {
 
     private double removeControl = 0.4;
 
-    private Set<Integer> visitedList = new HashSet<>();
+    private final Set<Integer> TABU_LIST = new HashSet<>();
 
     private Solution feasibleSolutionBest;
 
@@ -32,29 +27,19 @@ public class CostMinimizer {
 
     private Solution solution;
 
-    private RegretInsertion regretInsertion;
-
-    private RandomRemoval randomRemoval;
-
-    private WorstRemoval worstRemoval;
-
-    private ShawRemoval shawRemoval;
+    private RegretInsertion greedyInsertion;
 
     private double[] scoreWeight = {33, 9, 13};
 
     private double reactionFactor = 0.1;
 
-    private double[] removalWeight;
-    private double[] insertingWeight;
-    private double[] noiseWeight;
-    private double[] removalScore;
-    private double[] insertingScore;
-    private double[] noiseScore;
-    private int[] removalCount;
-    private int[] insertingCount;
-    private int[] noiseCount;
-
     private double T;
+
+    private List<Operator> noiseOperators = new ArrayList<>();
+
+    private List<Operator> insertionOperators = new ArrayList<>();
+
+    private List<Operator> removalOperators = new ArrayList<>();
 
     public CostMinimizer(Instance instance, Random random) {
         this.instance = instance;
@@ -62,20 +47,32 @@ public class CostMinimizer {
     }
 
     public void init() {
-        regretInsertion = new RegretInsertion(random, instance);
+        // Create initial solution
+        greedyInsertion = new RegretInsertion(random, instance, (solution, instance) -> 1);
         solution = SolutionUtils.createSolution(instance);
-        regretInsertion.regretInsert(solution, 1, 0);
+        greedyInsertion.insert(solution, 0);
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
         solutionBest = SolutionUtils.copy(solution);
 
-        randomRemoval = new RandomRemoval(instance, random);
-        worstRemoval = new WorstRemoval(instance, random);
-        shawRemoval = new ShawRemoval(instance, random);
+        // Add insertion heuristics
+        insertionOperators.add(greedyInsertion);
+        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> 2));
+        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> 3));
+        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> 4));
+        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> solution.requestBankSize(instance)));
+        // Add removal heuristics
+        removalOperators.add(new RandomRemoval(instance, random));
+        removalOperators.add(new WorstRemoval(instance, random));
+        removalOperators.add(new ShawRemoval(instance, random));
+        // Add noise heuristics
+        noiseOperators.add(new NoiseOperator(0));
+        noiseOperators.add(new NoiseOperator(1));
 
+        // Prepare algorithm structures and initial parameters
         resetAdaptiveWeight();
-        visitedList.clear();
+        TABU_LIST.clear();
         T = ALNS.calcTemp(solution.totalCost, tolerance);
     }
 
@@ -90,46 +87,45 @@ public class CostMinimizer {
         }
 
         // Noise, remove and insert
-        int useNoise = ALNS.rouletteSelection(noiseWeight, random);
-        int removeHeuristic = requestRemove(sNew, q, removalWeight);
-        int insertHeuristic = requestInsert(sNew, q, insertingWeight, useNoise);
+        int noiseHeuristic = ALNS.rouletteSelection(noiseOperators, random);
+        int removeHeuristic = requestRemove(sNew, q);
+        int insertHeuristic = requestInsert(sNew, noiseHeuristic);
         instance.solutionEvaluation(sNew);
 
         // Calculate Score for each heuristic
-        ++removalCount[removeHeuristic];
-        ++insertingCount[insertHeuristic];
-        ++noiseCount[useNoise];
+        removalOperators.get(removeHeuristic).increaseCount();
+        insertionOperators.get(insertHeuristic).increaseCount();
+        noiseOperators.get(noiseHeuristic).increaseCount();
         if (ALNS.accept(sNew, solution, T, instance, random)) {
             Integer hashNb = sNew.getHash();
-            if (!visitedList.contains(hashNb)) {
-                visitedList.add(hashNb);
+            if (!TABU_LIST.contains(hashNb)) {
+                TABU_LIST.add(hashNb);
                 if (sNew.objFunction(instance) < solutionBest.objFunction(instance)) {
                     if (sNew.feasible) {
                         SolutionUtils.removeEmptyVehicles(sNew);
                         feasibleSolutionBest = SolutionUtils.copy(sNew);
                     }
                     solutionBest = SolutionUtils.copy(sNew);
-                    removalScore[removeHeuristic] += scoreWeight[0];
-                    insertingScore[insertHeuristic] += scoreWeight[0];
-                    noiseScore[useNoise] += scoreWeight[0];
+                    removalOperators.get(removeHeuristic).addScore(scoreWeight[0]);
+                    insertionOperators.get(insertHeuristic).addScore(scoreWeight[0]);
+                    noiseOperators.get(noiseHeuristic).addScore(scoreWeight[0]);
                 } else if (sNew.objFunction(instance) < solution.objFunction(instance)) {
-                    removalScore[removeHeuristic] += scoreWeight[1];
-                    insertingScore[insertHeuristic] += scoreWeight[1];
-                    noiseScore[useNoise] += scoreWeight[1];
+                    removalOperators.get(removeHeuristic).addScore(scoreWeight[1]);
+                    insertionOperators.get(insertHeuristic).addScore(scoreWeight[1]);
+                    noiseOperators.get(noiseHeuristic).addScore(scoreWeight[1]);
                 } else {
-                    removalScore[removeHeuristic] += scoreWeight[2];
-                    insertingScore[insertHeuristic] += scoreWeight[2];
-                    noiseScore[useNoise] += scoreWeight[2];
+                    removalOperators.get(removeHeuristic).addScore(scoreWeight[2]);
+                    insertionOperators.get(insertHeuristic).addScore(scoreWeight[2]);
+                    noiseOperators.get(noiseHeuristic).addScore(scoreWeight[2]);
                 }
             }
             solution = sNew;
         }
         T = T * coolingRate;
         if (iteration % 100 == 0) {
-            //printWeights(temp, sBest);
-            ALNS.updateAdaptiveWeight(removalWeight, removalScore, removalCount, reactionFactor);
-            ALNS.updateAdaptiveWeight(insertingWeight, insertingScore, insertingCount, reactionFactor);
-            ALNS.updateAdaptiveWeight(noiseWeight, noiseScore, noiseCount, reactionFactor);
+            ALNS.updateAdaptiveWeight(removalOperators, reactionFactor);
+            ALNS.updateAdaptiveWeight(insertionOperators, reactionFactor);
+            ALNS.updateAdaptiveWeight(noiseOperators, reactionFactor);
         }
     }
 
@@ -141,38 +137,25 @@ public class CostMinimizer {
     }
 
     private void resetAdaptiveWeight() {
-        removalWeight = new double[]{1, 1, 1};
-        insertingWeight = new double[]{1, 1, 1, 1, 1};
-        noiseWeight = new double[]{1, 1};
-        removalScore = new double[]{0, 0, 0};
-        insertingScore = new double[]{0, 0, 0, 0, 0};
-        noiseScore = new double[]{0, 0};
-        removalCount = new int[]{0, 0, 0};
-        insertingCount = new int[]{0, 0, 0, 0, 0};
-        noiseCount = new int[]{0, 0};
+        noiseOperators.forEach(Operator::resetOperator);
+        removalOperators.forEach(Operator::resetOperator);
+        insertionOperators.forEach(Operator::resetOperator);
     }
 
     public Solution getFeasibleSolutionBest() {
         return feasibleSolutionBest;
     }
 
-    // Insert unvisited requests from solution and return used heuristic
-    int requestInsert(Solution s, int q, double[] insertingWeight, int useNoise) {
-        int insertHeuristic = ALNS.rouletteSelection(insertingWeight, random);
-        if (insertHeuristic == 0) regretInsertion.regretInsert(s, 1, useNoise); // Basic Greedy insert
-        else if (insertHeuristic == 1) regretInsertion.regretInsert(s, 2, useNoise);
-        else if (insertHeuristic == 2) regretInsertion.regretInsert(s, 3, useNoise);
-        else if (insertHeuristic == 3) regretInsertion.regretInsert(s, 4, useNoise);
-        else regretInsertion.regretInsert(s, s.requestBankSize(instance), useNoise); // Regret-m insert
+    private int requestInsert(Solution solution, int noiseHeuristic) {
+        int insertHeuristic = ALNS.rouletteSelection(insertionOperators, random);
+        int useNoise = ((NoiseOperator) noiseOperators.get(noiseHeuristic)).getUseNoise();
+        ((InsertionOperator) insertionOperators.get(insertHeuristic)).insert(solution, useNoise);
         return insertHeuristic;
     }
 
-    // Remove requests from solution and return used heuristic
-    private int requestRemove(Solution solution, int q, double[] removalWeight) {
-        int removeHeuristic = ALNS.rouletteSelection(removalWeight, random);
-        if (removeHeuristic == 0) randomRemoval.remove(solution, q);
-        else if (removeHeuristic == 1) worstRemoval.remove(solution, q);
-        else shawRemoval.remove(solution, q);
+    private int requestRemove(Solution solution, int q) {
+        int removeHeuristic = ALNS.rouletteSelection(removalOperators, random);
+        ((RemovalOperator) removalOperators.get(removeHeuristic)).remove(solution, q);
         return removeHeuristic;
     }
 

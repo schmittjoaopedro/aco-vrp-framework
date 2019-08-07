@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -10,7 +11,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-public class WorstRemoval {
+public class WorstRemoval extends RemovalOperator {
 
     private Instance instance;
 
@@ -23,7 +24,7 @@ public class WorstRemoval {
         this.random = random;
     }
 
-    // Remove Customer base on Cost
+    @Override
     public void remove(Solution solution, int q) {
         for (int i = 0; i < solution.tours.size(); ++i) {
             solution.findRoute(i);

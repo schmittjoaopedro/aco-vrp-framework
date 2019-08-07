@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Task;
@@ -10,7 +11,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-public class RegretInsertion {
+public class RegretInsertion extends InsertionOperator {
 
     private double ep = 0.00000001;
 
@@ -20,9 +21,12 @@ public class RegretInsertion {
 
     private Instance instance;
 
-    public RegretInsertion(Random random, Instance instance) {
+    private RegretNumber regretNumber;
+
+    public RegretInsertion(Random random, Instance instance, RegretNumber regretNumber) {
         this.random = random;
         this.instance = instance;
+        this.regretNumber = regretNumber;
     }
 
     public static class InsertPosition {
@@ -31,7 +35,9 @@ public class RegretInsertion {
         protected int deliveryPos = 0;
     }
 
-    public void regretInsert(Solution solution, int k, int useNoise) {
+    @Override
+    public void insert(Solution solution, int useNoise) {
+        int regretK = regretNumber.getK(solution, instance);
         Task pickupTask;
         InsertPosition[][] insertionCosts = new InsertPosition[instance.numRequests][solution.tours.size()]; // Insertion of Request x Vehicles costs
         // Initialize request/vehicle structure
@@ -56,7 +62,7 @@ public class RegretInsertion {
 
         // Choose Node and Route to insert
         while (true) {
-            int minPossible = k;
+            int minPossible = regretK;
             double maxRegret = 0;
             int insertRequest = 0;
             int insertVehicle = 0;
@@ -80,7 +86,7 @@ public class RegretInsertion {
                     int minRoute = heap.peek().getRight();
                     heap.poll();
                     double kCost = minCost;
-                    for (int z = 1; z < k; ++z) { // Obtain the k-position to calculate regret cost
+                    for (int z = 1; z < regretK; ++z) { // Obtain the k-position to calculate regret cost
                         if (!heap.isEmpty()) {
                             kCost = heap.peek().getLeft();
                             if (kCost < Double.MAX_VALUE) ++possibleRoute;
@@ -233,5 +239,12 @@ public class RegretInsertion {
         Integer aux = route.get(i1);
         route.set(i1, route.get(i2));
         route.set(i2, aux);
+    }
+
+    @FunctionalInterface
+    public interface RegretNumber {
+
+        int getK(Solution solution, Instance instance);
+
     }
 }
