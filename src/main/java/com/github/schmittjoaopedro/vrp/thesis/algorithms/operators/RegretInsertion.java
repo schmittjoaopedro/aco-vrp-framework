@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.thesis.algorithms;
+package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 
-public class RegretOperator {
+public class RegretInsertion {
 
     private double ep = 0.00000001;
 
@@ -20,7 +20,7 @@ public class RegretOperator {
 
     private Instance instance;
 
-    public RegretOperator(Random random, Instance instance) {
+    public RegretInsertion(Random random, Instance instance) {
         this.random = random;
         this.instance = instance;
     }

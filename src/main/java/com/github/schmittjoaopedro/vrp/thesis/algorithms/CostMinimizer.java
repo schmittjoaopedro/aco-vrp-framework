@@ -1,10 +1,16 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.RegretOperator;
-import com.github.schmittjoaopedro.vrp.thesis.problem.*;
-import org.apache.commons.lang3.tuple.Pair;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.RandomRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.RegretInsertion;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.ShawRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.WorstRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
+import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
+import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 public class CostMinimizer {
 
@@ -16,10 +22,6 @@ public class CostMinimizer {
 
     private double coolingRate = 0.99975;
 
-    private double worstRandomDegree = 3;
-
-    private double ShawRandomDegree = 6;
-
     private double removeControl = 0.4;
 
     private Set<Integer> visitedList = new HashSet<>();
@@ -30,7 +32,13 @@ public class CostMinimizer {
 
     private Solution solution;
 
-    private RegretOperator regretOperator;
+    private RegretInsertion regretInsertion;
+
+    private RandomRemoval randomRemoval;
+
+    private WorstRemoval worstRemoval;
+
+    private ShawRemoval shawRemoval;
 
     private double[] scoreWeight = {33, 9, 13};
 
@@ -54,13 +62,17 @@ public class CostMinimizer {
     }
 
     public void init() {
-        regretOperator = new RegretOperator(random, instance);
+        regretInsertion = new RegretInsertion(random, instance);
         solution = SolutionUtils.createSolution(instance);
-        regretOperator.regretInsert(solution, 1, 0);
+        regretInsertion.regretInsert(solution, 1, 0);
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
         solutionBest = SolutionUtils.copy(solution);
+
+        randomRemoval = new RandomRemoval(instance, random);
+        worstRemoval = new WorstRemoval(instance, random);
+        shawRemoval = new ShawRemoval(instance, random);
 
         resetAdaptiveWeight();
         visitedList.clear();
@@ -79,7 +91,7 @@ public class CostMinimizer {
 
         // Noise, remove and insert
         int useNoise = ALNS.rouletteSelection(noiseWeight, random);
-        int removeHeuristic = requestRemove(sNew, q, removalWeight, worstRandomDegree, ShawRandomDegree);
+        int removeHeuristic = requestRemove(sNew, q, removalWeight);
         int insertHeuristic = requestInsert(sNew, q, insertingWeight, useNoise);
         instance.solutionEvaluation(sNew);
 
@@ -147,147 +159,21 @@ public class CostMinimizer {
     // Insert unvisited requests from solution and return used heuristic
     int requestInsert(Solution s, int q, double[] insertingWeight, int useNoise) {
         int insertHeuristic = ALNS.rouletteSelection(insertingWeight, random);
-        if (insertHeuristic == 0) regretOperator.regretInsert(s, 1, useNoise); // Basic Greedy insert
-        else if (insertHeuristic == 1) regretOperator.regretInsert(s, 2, useNoise);
-        else if (insertHeuristic == 2) regretOperator.regretInsert(s, 3, useNoise);
-        else if (insertHeuristic == 3) regretOperator.regretInsert(s, 4, useNoise);
-        else regretOperator.regretInsert(s, s.requestBankSize(instance), useNoise); // Regret-m insert
+        if (insertHeuristic == 0) regretInsertion.regretInsert(s, 1, useNoise); // Basic Greedy insert
+        else if (insertHeuristic == 1) regretInsertion.regretInsert(s, 2, useNoise);
+        else if (insertHeuristic == 2) regretInsertion.regretInsert(s, 3, useNoise);
+        else if (insertHeuristic == 3) regretInsertion.regretInsert(s, 4, useNoise);
+        else regretInsertion.regretInsert(s, s.requestBankSize(instance), useNoise); // Regret-m insert
         return insertHeuristic;
     }
 
     // Remove requests from solution and return used heuristic
-    private int requestRemove(Solution solution, int q, double[] removalWeight, double worstRandomDegree, double ShawRandomDegree) {
+    private int requestRemove(Solution solution, int q, double[] removalWeight) {
         int removeHeuristic = ALNS.rouletteSelection(removalWeight, random);
-        if (removeHeuristic == 0) randomRemoval(solution, q);
-        else if (removeHeuristic == 1) worstRemoval(solution, q, worstRandomDegree);
-        else ShawRemoval(solution, q, ShawRandomDegree);
+        if (removeHeuristic == 0) randomRemoval.remove(solution, q);
+        else if (removeHeuristic == 1) worstRemoval.remove(solution, q);
+        else shawRemoval.remove(solution, q);
         return removeHeuristic;
-    }
-
-    // Remove a number of random Customer
-    void randomRemoval(Solution s, int q) {
-        List<Integer> removeList = new ArrayList<>();
-        for (Task pickupTask : instance.pickupTasks) {
-            if (s.visited[pickupTask.nodeId]) removeList.add(pickupTask.requestId);
-        }
-        Collections.shuffle(removeList, random);
-        if (removeList.size() > q) removeList = removeList.subList(0, q);
-        s.remove(removeList, instance);
-    }
-
-    // Remove Customer base on Cost
-    private void worstRemoval(Solution solution, int q, double worstRandomDegree) {
-        for (int i = 0; i < solution.tours.size(); ++i) {
-            solution.findRoute(i);
-        }
-        // Calculates the cost difference for each route for each request removed
-        double[] costs = new double[instance.numRequests];
-        for (int i = 0; i < instance.numRequests; i++) {
-            Request request = instance.requests[i];
-            if (solution.visited[request.pickupTask.nodeId]) {
-                int removeRoute = solution.nodeVehicle[request.pickupTask.nodeId].getLeft();
-                Pair<Integer, Integer> pos = Pair.of(solution.nodeVehicle[request.pickupTask.nodeId].getRight(), solution.nodeVehicle[request.deliveryTask.nodeId].getRight());
-                costs[request.requestId] = removeCost(pos, solution.tours.get(removeRoute));
-            }
-        }
-        while (q > 0) { // While there are requests to remove
-            // Create a heap to hold requests with expensive costs in front
-            Queue<Pair<Double, Integer>> heap = new PriorityQueue<>();
-            for (int i = 0; i < instance.numRequests; ++i) {
-                Request request = instance.requests[i];
-                if (solution.visited[request.pickupTask.nodeId]) {
-                    heap.add(Pair.of(-costs[request.requestId], -request.pickupTask.nodeId));
-                }
-            }
-            if (heap.isEmpty()) break;
-            double y = random.nextDouble();
-            y = Math.pow(y, worstRandomDegree);
-            int toRemove = (int) (y * (double) heap.size());
-            int removePickupNode = -1;
-            for (int i = 0; i <= toRemove; ++i) {
-                removePickupNode = -heap.peek().getRight();
-                heap.poll();
-            }
-            Integer requestId = instance.getTask(removePickupNode).requestId;
-            int removeDeliveryNode = instance.requests[requestId].deliveryTask.nodeId;
-            int removeRoute = solution.nodeVehicle[removePickupNode].getLeft();
-            int pickupIdx = solution.nodeVehicle[removePickupNode].getRight();
-            int deliveryIdx = solution.nodeVehicle[removeDeliveryNode].getRight();
-            solution.visited[removePickupNode] = false;
-            solution.visited[removeDeliveryNode] = false;
-            solution.tours.get(removeRoute).remove(deliveryIdx);
-            solution.tours.get(removeRoute).remove(pickupIdx);
-            solution.requestIds.get(removeRoute).remove(requestId);
-            --q;
-            solution.findRoute(removeRoute);
-            for (int i = 1; i < solution.tours.get(removeRoute).size() - 1; ++i) {
-                int p = solution.tours.get(removeRoute).get(i);
-                if (instance.getTask(p).isPickup) {
-                    Request request = instance.requests[instance.getTask(p).requestId];
-                    removeDeliveryNode = request.deliveryTask.nodeId;
-                    Pair<Integer, Integer> pos = Pair.of(solution.nodeVehicle[p].getRight(), solution.nodeVehicle[removeDeliveryNode].getRight());
-                    costs[request.requestId] = removeCost(pos, solution.tours.get(removeRoute));
-                }
-            }
-        }
-    }
-
-    // Remove Customer base on relatedness
-    void ShawRemoval(Solution solution, int q, double ShawRandomDegree) {
-        ArrayList<Integer> allRequest = new ArrayList<>();
-        ArrayList<Integer> removeList = new ArrayList<>();
-        for (int i = 0; i < solution.tours.size(); ++i) {
-            solution.findVisitedTime(instance, i);
-        }
-        ArrayList<Double>[] relate = new ArrayList[instance.numRequests];
-        for (int i = 0; i < instance.numRequests; ++i) {
-            Request reqA = instance.requests[i];
-            if (solution.visited[reqA.pickupTask.nodeId]) {
-                allRequest.add(i);
-                relate[i] = new ArrayList<>(instance.numRequests);
-                for (int j = 0; j < instance.numRequests; ++j) {
-                    relate[i].add(0.0);
-                    Request reqB = instance.requests[j];
-                    if (solution.visited[instance.requests[j].pickupTask.nodeId]) {
-                        relate[i].set(j, solution.relatedness(instance, reqA, reqB));
-                    }
-                }
-            }
-        }
-        int r = (int) (random.nextDouble() * (double) allRequest.size());
-
-        removeList.add(allRequest.get(r));
-        allRequest.remove(r);
-        while (removeList.size() < q && allRequest.size() > 0) {
-            r = (int) (random.nextDouble() % (double) removeList.size());
-            PriorityQueue<Pair<Double, Integer>> heap = new PriorityQueue<>();
-            for (int i = 0; i < allRequest.size(); ++i) {
-                heap.add(Pair.of(relate[allRequest.get(i)].get(removeList.get(r)), -i));
-            }
-            double y = random.nextDouble();
-            y = Math.pow(y, ShawRandomDegree);
-            int toRemove = (int) (y * (double) allRequest.size());
-            int removePos = -1;
-            for (int i = 0; i <= toRemove; ++i) {
-                removePos = -heap.peek().getRight();
-                heap.poll();
-            }
-            removeList.add(allRequest.get(removePos));
-            allRequest.remove(removePos);
-        }
-        solution.remove(removeList, instance);
-    }
-
-    // Calculate cost to remove customer from route
-    private double removeCost(Pair<Integer, Integer> pos, ArrayList<Integer> route) {
-        double oldCost = instance.calcRouteCost(route);
-        ArrayList<Integer> newRoute = new ArrayList<>(route);
-        int delPos = pos.getRight();
-        newRoute.remove(delPos);
-        delPos = pos.getLeft();
-        newRoute.remove(delPos);
-        double cost = instance.calcRouteCost(newRoute);
-        return oldCost - cost;
     }
 
 }
