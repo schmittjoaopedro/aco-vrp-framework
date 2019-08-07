@@ -91,10 +91,11 @@ public class CostMinimizer {
             if (!visitedList.contains(hashNb)) {
                 visitedList.add(hashNb);
                 if (sNew.objFunction(instance) < solutionBest.objFunction(instance)) {
-                    solutionBest = SolutionUtils.copy(sNew);
-                    if (solutionBest.feasible) {
-                        feasibleSolutionBest = SolutionUtils.copy(solutionBest);
+                    if (sNew.feasible) {
+                        SolutionUtils.removeEmptyVehicles(sNew);
+                        feasibleSolutionBest = SolutionUtils.copy(sNew);
                     }
+                    solutionBest = SolutionUtils.copy(sNew);
                     removalScore[removeHeuristic] += scoreWeight[0];
                     insertingScore[insertHeuristic] += scoreWeight[0];
                     noiseScore[useNoise] += scoreWeight[0];

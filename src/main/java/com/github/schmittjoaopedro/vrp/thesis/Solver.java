@@ -47,7 +47,7 @@ public class Solver {
         // Select best initial solution
         solutionBest = getBestSolution(initNv, initTc);
         instance.solutionEvaluation(solutionBest);
-        //log("Initial solution = " + solutionBest);
+        log("Initial solution = " + solutionBest);
     }
 
     public void run() {
@@ -69,14 +69,14 @@ public class Solver {
             iteration++;
         }
         instance.solutionEvaluation(solutionBest);
-        //printSolutionBest();
+        printSolutionBest();
     }
 
     public void updateBest(Solution solution) {
         Solution bestSol = SolutionUtils.getBest(solutionBest, solution);
         if (bestSol != null && bestSol != solutionBest) {
             solutionBest = SolutionUtils.copy(bestSol);
-            //log("New best = " + solutionBest);
+            log("New best = " + solutionBest);
         }
     }
 

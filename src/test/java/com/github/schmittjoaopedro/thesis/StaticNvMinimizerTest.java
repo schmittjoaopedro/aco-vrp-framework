@@ -12,14 +12,14 @@ import java.util.Random;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class SolverTest {
+public class StaticNvMinimizerTest {
 
     private static int maxIterations = 25000;
 
     private static final String pdptw200Directory;
 
     static {
-        pdptw200Directory = Paths.get(SolverTest.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+        pdptw200Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
     }
 
     @Test
@@ -163,16 +163,4 @@ public class SolverTest {
         assertThat(StringUtils.join(solutionBest.requestIds.get(10), " ")).isEqualTo("83 0 69 13 88 55 37 90 64 63");
     }
 
-    @Test
-    public void minimizeCost_lc1_2_3_Test() throws Exception {
-        Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lrc2_2_1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3640.9778334906696);
-        assertThat(solutionBest.tours.size()).isEqualTo(17);
-    }
 }
