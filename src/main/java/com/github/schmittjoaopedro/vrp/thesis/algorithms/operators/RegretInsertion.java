@@ -29,21 +29,15 @@ public class RegretInsertion extends InsertionOperator {
         this.regretNumber = regretNumber;
     }
 
-    public static class InsertPosition {
-        protected double cost = Double.MAX_VALUE;
-        protected int pickupPos = 0;
-        protected int deliveryPos = 0;
-    }
-
     @Override
     public void insert(Solution solution, int useNoise) {
         int regretK = regretNumber.getK(solution, instance);
         Task pickupTask;
         InsertPosition[][] insertionCosts = new InsertPosition[instance.numRequests][solution.tours.size()]; // Insertion of Request x Vehicles costs
         // Initialize request/vehicle structure
-        for (int i = 0; i < insertionCosts.length; i++) {
-            for (int j = 0; j < insertionCosts[i].length; j++) {
-                insertionCosts[i][j] = new InsertPosition();
+        for (int r = 0; r < insertionCosts.length; r++) { // requests
+            for (int k = 0; k < insertionCosts[r].length; k++) { // vehicles
+                insertionCosts[r][k] = new InsertPosition();
             }
         }
         // Calculate insertion cost of each request x vehicle
@@ -168,7 +162,7 @@ public class RegretInsertion extends InsertionOperator {
         ArrayList<Double> newMaxDelay = new ArrayList<>();
         newRoute.add(newRoute.get(0), pickupNode);
         for (int i = 1; i < route.size(); ++i) { // Ignore depot
-            swap(newRoute, i, i - 1); // Advance current pickup one position
+            swapPositions(newRoute, i, i - 1); // Advance current pickup one position
             int prevNode = route.get(i - 1);
             int currNode = route.get(i);
             double cost = instance.dist(prevNode, pickupNode) + instance.dist(pickupNode, currNode) - instance.dist(prevNode, currNode);
@@ -235,10 +229,16 @@ public class RegretInsertion extends InsertionOperator {
         return insertPosition;
     }
 
-    private void swap(ArrayList<Integer> route, int i1, int i2) {
+    private void swapPositions(ArrayList<Integer> route, int i1, int i2) {
         Integer aux = route.get(i1);
         route.set(i1, route.get(i2));
         route.set(i2, aux);
+    }
+
+    protected class InsertPosition {
+        protected double cost = Double.MAX_VALUE;
+        protected int pickupPos = 0;
+        protected int deliveryPos = 0;
     }
 
     @FunctionalInterface

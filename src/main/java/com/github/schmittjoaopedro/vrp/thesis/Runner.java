@@ -15,6 +15,7 @@ public class Runner {
     private static final String pdptw200Directory;
     private static final String pdptw400Directory;
     private static final String pdptw600Directory;
+    private static final String pdptw800Directory;
 
     private static String[] instances_100 = {
             "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
@@ -52,16 +53,26 @@ public class Runner {
             "lrc2_6_1", "lrc2_6_2", "lrc2_6_3", "lrc2_6_4", "lrc2_6_5", "lrc2_6_6", "lrc2_6_7", "lrc2_6_8", "lrc2_6_9", "lrc2_6_10"
     };
 
+    private static String[] instances_800 = {
+            "lc1_8_1", "lc1_8_2", "lc1_8_3", "lc1_8_4", "lc1_8_5", "lc1_8_6", "lc1_8_7", "lc1_8_8", "lc1_8_9", "lc1_8_10",
+            "lc2_8_1", "lc2_8_2", "lc2_8_3", "lc2_8_4", "lc2_8_5", "lc2_8_6", "lc2_8_7", "lc2_8_8", "lc2_8_9", "lc2_8_10",
+            "lr1_8_1", "lr1_8_2", "lr1_8_3", "lr1_8_4", "lr1_8_5", "lr1_8_6", "lr1_8_7", "lr1_8_8", "lr1_8_9", "lr1_8_10",
+            "lr2_8_1", "lr2_8_2", "lr2_8_3", "lr2_8_4", "lr2_8_5", "lr2_8_6", "lr2_8_7", "lr2_8_8", "lr2_8_9", "lr2_8_10",
+            "lrc1_8_1", "lrc1_8_2", "lrc1_8_3", "lrc1_8_4", "lrc1_8_5", "lrc1_8_6", "lrc1_8_7", "lrc1_8_8", "lrc1_8_9", "lrc1_8_10",
+            "lrc2_8_1", "lrc2_8_2", "lrc2_8_3", "lrc2_8_4", "lrc2_8_5", "lrc2_8_6", "lrc2_8_7", "lrc2_8_8", "lrc2_8_9", "lrc2_8_10"
+    };
+
     static {
         pdptw100Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
         pdptw200Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
         pdptw400Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
         pdptw600Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
+        pdptw800Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
     }
 
     public static void main(String[] args) throws Exception {
-        for (String instance : instances_600) {
-            executeProblemSolver(pdptw600Directory, instance);
+        for (String instance : instances_800) {
+            executeProblemSolver(pdptw800Directory, instance);
         }
     }
 
