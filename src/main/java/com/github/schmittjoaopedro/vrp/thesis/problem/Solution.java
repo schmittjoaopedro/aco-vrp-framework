@@ -129,7 +129,7 @@ public class Solution {
     }
 
     // Total Objective value of the solution
-    public double objFunction(Instance instance) {
+    public double calculateObjective(Instance instance) {
         double ret = 0;
         for (int i = 0; i < tours.size(); ++i) {
             ret += instance.calcRouteCost(tours.get(i));

@@ -12,6 +12,8 @@ import java.util.*;
 
 public class Solver {
 
+    private boolean printConsole = true;
+
     private Instance instance;
 
     private int maxIterations;
@@ -115,7 +117,9 @@ public class Solver {
     }
 
     public void log(String msg) {
-        System.out.println(msg);
+        if (printConsole) {
+            System.out.println(msg);
+        }
         logs.add(msg);
     }
 
@@ -125,5 +129,13 @@ public class Solver {
 
     public Solution getSolutionBest() {
         return solutionBest;
+    }
+
+    public boolean isPrintConsole() {
+        return printConsole;
+    }
+
+    public void setPrintConsole(boolean printConsole) {
+        this.printConsole = printConsole;
     }
 }

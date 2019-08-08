@@ -14,6 +14,7 @@ public class Runner {
     private static final String pdptw100Directory;
     private static final String pdptw200Directory;
     private static final String pdptw400Directory;
+    private static final String pdptw600Directory;
 
     private static String[] instances_100 = {
             "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
@@ -42,21 +43,32 @@ public class Runner {
             "lrc2_4_1", "lrc2_4_2", "lrc2_4_3", "lrc2_4_4", "lrc2_4_5", "lrc2_4_6", "lrc2_4_7", "lrc2_4_8", "lrc2_4_9", "lrc2_4_10"
     };
 
+    private static String[] instances_600 = {
+            "lc1_6_1", "lc1_6_2", "lc1_6_3", "lc1_6_4", "lc1_6_5", "lc1_6_6", "lc1_6_7", "lc1_6_8", "lc1_6_9", "lc1_6_10",
+            "lc2_6_1", "lc2_6_2", "lc2_6_3", "lc2_6_4", "lc2_6_5", "lc2_6_6", "lc2_6_7", "lc2_6_8", "lc2_6_9", "lc2_6_10",
+            "lr1_6_1", "lr1_6_2", "lr1_6_3", "lr1_6_4", "lr1_6_5", "lr1_6_6", "lr1_6_7", "lr1_6_8", "lr1_6_9", "lr1_6_10",
+            "lr2_6_1", "lr2_6_2", "lr2_6_3", "lr2_6_4", "lr2_6_5", "lr2_6_6", "lr2_6_7", "lr2_6_8", "lr2_6_9", "lr2_6_10",
+            "lrc1_6_1", "lrc1_6_2", "lrc1_6_3", "lrc1_6_4", "lrc1_6_5", "lrc1_6_6", "lrc1_6_7", "lrc1_6_8", "lrc1_6_9", "lrc1_6_10",
+            "lrc2_6_1", "lrc2_6_2", "lrc2_6_3", "lrc2_6_4", "lrc2_6_5", "lrc2_6_6", "lrc2_6_7", "lrc2_6_8", "lrc2_6_9", "lrc2_6_10"
+    };
+
     static {
         pdptw100Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
         pdptw200Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
         pdptw400Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
+        pdptw600Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
     }
 
     public static void main(String[] args) throws Exception {
-        for (String instance : instances_400) {
-            executeProblemSolver(pdptw400Directory, instance);
+        for (String instance : instances_600) {
+            executeProblemSolver(pdptw600Directory, instance);
         }
     }
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        solver.setPrintConsole(false);
         solver.init();
         solver.run();
         Solution solution = solver.getSolutionBest();

@@ -12,7 +12,7 @@ import java.util.Random;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class TcMinimizerTest {
+public class StaticTcMinimizerTest {
 
     private static int maxIterations = 25000;
 
