@@ -31,8 +31,9 @@ public class RegretInsertion extends InsertionOperator {
 
     @Override
     public void insert(Solution solution, int useNoise) {
-        int regretK = regretValue.getK(solution, instance);
         Task pickupTask;
+        RouteTimes routeTimes;
+        int regretK = regretValue.getK(solution, instance);
         InsertPosition[][] insertionCosts = new InsertPosition[instance.numRequests][solution.tours.size()]; // Insertion of Request x Vehicles costs
         // Initialize request/vehicle structure
         for (int r = 0; r < insertionCosts.length; r++) { // requests
@@ -41,13 +42,13 @@ public class RegretInsertion extends InsertionOperator {
             }
         }
         // Calculate insertion cost of each request x vehicle
-        RouteTimes routeTimes;
-        for (int j = 0; j < solution.tours.size(); ++j) {
-            routeTimes = calculateRouteTimes(solution.tours.get(j));
+        for (int k = 0; k < solution.tours.size(); ++k) {
+            routeTimes = new RouteTimes(solution.tours.get(k).size());
+            calculateRouteTimes(solution.tours.get(k), routeTimes);
             for (int i = 0; i < insertionCosts.length; i++) {
                 pickupTask = instance.pickupTasks[i];
                 if (solution.visited[pickupTask.nodeId] == false) {
-                    insertionCosts[i][j] = insertingPickupCost(solution.tours.get(j), pickupTask, routeTimes);
+                    insertionCosts[i][k] = insertingPickupCost(solution.tours.get(k), pickupTask, routeTimes);
                 }
             }
         }
@@ -101,7 +102,8 @@ public class RegretInsertion extends InsertionOperator {
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
             solution.insert(instance, insertRequest, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
-            routeTimes = calculateRouteTimes(solution.tours.get(insertVehicle)); // Update inserted vehicle
+            routeTimes = new RouteTimes(solution.tours.get(insertVehicle).size());
+            calculateRouteTimes(solution.tours.get(insertVehicle), routeTimes); // Update inserted vehicle
             for (int i = 0; i < insertionCosts.length; i++) {
                 pickupTask = instance.pickupTasks[i];
                 if (solution.visited[pickupTask.nodeId] == false && insertionCosts[i][insertVehicle].cost < Double.MAX_VALUE) {
@@ -111,17 +113,11 @@ public class RegretInsertion extends InsertionOperator {
         }
     }
 
-    // Add noise factor
-    double generateNoise() {
-        return (random.nextDouble() - 0.5) * (noiseControl * instance.maxDistance) * 2;
+    private double generateNoise() {
+        return (random.nextDouble() - 0.5) * noiseControl * instance.maxDistance * 2;
     }
 
-    // Calculate max delay for 1 route
-    private RouteTimes calculateRouteTimes(ArrayList<Integer> route) {
-        RouteTimes routeTimes = new RouteTimes();
-        routeTimes.startTime = new double[route.size()];
-        routeTimes.waitingTime = new double[route.size()];
-        routeTimes.slackTime = new double[route.size()];
+    private void calculateRouteTimes(ArrayList<Integer> route, RouteTimes routeTimes) {
         // Depot times
         routeTimes.startTime[0] = 0.0;
         routeTimes.waitingTime[0] = 0.0;
@@ -144,7 +140,6 @@ public class RegretInsertion extends InsertionOperator {
             p = route.get(i);
             routeTimes.slackTime[i] = Math.min(routeTimes.slackTime[i + 1] + routeTimes.waitingTime[i + 1], instance.twEnd(p) - routeTimes.startTime[i]);
         }
-        return routeTimes;
     }
 
     // Calculate min cost to insert a pickup node to route
@@ -155,8 +150,8 @@ public class RegretInsertion extends InsertionOperator {
         double totalAmount = 0;
         int pickupNode = pickupTask.nodeId;
         ArrayList<Integer> newRoute = new ArrayList<>(route);
-        RouteTimes newRouteTimes;
         newRoute.add(newRoute.get(0), pickupNode);
+        RouteTimes newRouteTimes = new RouteTimes(newRoute.size());
         for (int i = 1; i < route.size(); ++i) { // Ignore depot
             swapPositions(newRoute, i, i - 1); // Advance current pickup one position
             int prevNode = route.get(i - 1);
@@ -174,7 +169,7 @@ public class RegretInsertion extends InsertionOperator {
                     }
                     boolean isValidSlackTime = delay <= routeTimes.waitingTime[i] + routeTimes.slackTime[i] + ep;
                     if (isValidSlackTime) {
-                        newRouteTimes = calculateRouteTimes(newRoute);
+                        calculateRouteTimes(newRoute, newRouteTimes);
                         int deliveryNode = instance.deliveryTasks[instance.getTask(pickupNode).requestId].nodeId;
                         InsertPosition deliveryPosition = insertingDeliveryCost(newRoute, deliveryNode, i + 1, totalAmount + instance.demand(pickupNode), newRouteTimes);
                         if (cost + deliveryPosition.cost < minRouteCost) {
@@ -231,12 +226,6 @@ public class RegretInsertion extends InsertionOperator {
         route.set(i2, aux);
     }
 
-    protected class InsertPosition {
-        protected double cost = Double.MAX_VALUE;
-        protected int pickupPos = 0;
-        protected int deliveryPos = 0;
-    }
-
     @FunctionalInterface
     public interface RegretValue {
 
@@ -244,7 +233,23 @@ public class RegretInsertion extends InsertionOperator {
 
     }
 
+    protected class InsertPosition {
+
+        protected double cost = Double.MAX_VALUE;
+
+        protected int pickupPos = 0;
+
+        protected int deliveryPos = 0;
+
+    }
+
     protected class RouteTimes {
+
+        public RouteTimes(int size) {
+            startTime = new double[size];
+            waitingTime = new double[size];
+            slackTime = new double[size];
+        }
 
         protected double[] startTime;
 
@@ -253,4 +258,5 @@ public class RegretInsertion extends InsertionOperator {
         protected double[] slackTime;
 
     }
+
 }
