@@ -4,7 +4,6 @@ import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Task;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -52,93 +51,65 @@ public class RegretInsertion extends InsertionOperator {
                 }
             }
         }
-
         // Choose Node and Route to insert
         while (true) {
-            int minPossible = regretK;
-            double maxRegret = 0;
-            int insertRequest = 0;
-            int insertVehicle = 0;
+            int minPossibleVehicles = regretK;
+            double maxRegretCost = 0;
+            int insertRequestId = 0;
+            int insertRoute = 0;
             double insertCost = Double.MAX_VALUE;
             InsertPosition insertPos = null;
-            for (int i = 0; i < insertionCosts.length; i++) {
-                pickupTask = instance.pickupTasks[i];
+            for (int r = 0; r < insertionCosts.length; r++) {
+                pickupTask = instance.pickupTasks[r];
                 if (solution.visited[pickupTask.nodeId] == false) {
-                    Queue<Pair<Double, Integer>> heap = new PriorityQueue<>(); // Create a heap to hold the best vehicle to insert the request
-                    for (int j = 0; j < insertionCosts[i].length; j++) {
-                        double cost = insertionCosts[i][j].cost;
+                    Queue<InsertVehicle> heap = new PriorityQueue<>(); // Create a heap to hold the best vehicle to insert the request
+                    for (int k = 0; k < insertionCosts[r].length; k++) {
+                        double cost = insertionCosts[r][k].cost;
                         if (cost < Double.MAX_VALUE) {
                             cost += useNoise * generateNoise(); // Generate noise to increase diversity
                         }
-                        heap.add(Pair.of(cost, j));
+                        heap.add(new InsertVehicle(cost, k));
                     }
-                    double minCost = heap.peek().getLeft();
-                    if (minCost == Double.MAX_VALUE) continue;
-                    int possibleRoute = 0;
-                    if (minCost < Double.MAX_VALUE) ++possibleRoute;
-                    int minRoute = heap.peek().getRight();
+                    InsertVehicle insertionVehicle = heap.peek();
+                    if (insertionVehicle.cost == Double.MAX_VALUE) continue;
+                    int curPossibleVehicles = 0;
+                    if (insertionVehicle.cost < Double.MAX_VALUE) ++curPossibleVehicles;
+                    int minRoute = insertionVehicle.routeIndex;
                     heap.poll();
-                    double kCost = minCost;
+                    double kCost = insertionVehicle.cost;
                     for (int z = 1; z < regretK; ++z) { // Obtain the k-position to calculate regret cost
                         if (!heap.isEmpty()) {
-                            kCost = heap.peek().getLeft();
-                            if (kCost < Double.MAX_VALUE) ++possibleRoute;
+                            kCost = heap.peek().cost;
+                            if (kCost < Double.MAX_VALUE) ++curPossibleVehicles;
                             heap.poll();
                         }
                     }
-                    double regretCost = kCost - minCost;
-                    if (possibleRoute < minPossible // Prioritize minimum vehicles number
-                            || (possibleRoute == minPossible && (regretCost > maxRegret // If the number of vehicles is the same and the regret cost is greater
-                            || (regretCost == maxRegret && minCost < insertCost)))) { // If the greedy strategy (same regret costs, but is a better insertion cost)
-                        minPossible = possibleRoute;
-                        maxRegret = regretCost;
-                        insertRequest = pickupTask.requestId;
-                        insertVehicle = minRoute;
-                        insertPos = insertionCosts[i][minRoute];
-                        insertCost = minCost;
+                    double regretCost = kCost - insertionVehicle.cost;
+                    boolean isLessVehiclesNumber = curPossibleVehicles < minPossibleVehicles;
+                    boolean isSameVehiclesNumber = curPossibleVehicles == minPossibleVehicles;
+                    boolean isGreaterRegret = regretCost > maxRegretCost;
+                    boolean isGreedyInsertion = regretCost == maxRegretCost && insertionVehicle.cost < insertCost;
+                    if (isLessVehiclesNumber || (isSameVehiclesNumber && (isGreaterRegret || isGreedyInsertion))) {
+                        minPossibleVehicles = curPossibleVehicles;
+                        maxRegretCost = regretCost;
+                        insertRequestId = pickupTask.requestId;
+                        insertRoute = minRoute;
+                        insertPos = insertionCosts[r][minRoute];
+                        insertCost = insertionVehicle.cost;
                     }
                 }
             }
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
-            solution.insert(instance, insertRequest, insertVehicle, insertPos.pickupPos, insertPos.deliveryPos);
-            routeTimes = new RouteTimes(solution.tours.get(insertVehicle).size());
-            calculateRouteTimes(solution.tours.get(insertVehicle), routeTimes); // Update inserted vehicle
+            solution.insert(instance, insertRequestId, insertRoute, insertPos.pickupPos, insertPos.deliveryPos);
+            routeTimes = new RouteTimes(solution.tours.get(insertRoute).size());
+            calculateRouteTimes(solution.tours.get(insertRoute), routeTimes); // Update the vehicle costs
             for (int i = 0; i < insertionCosts.length; i++) {
                 pickupTask = instance.pickupTasks[i];
-                if (solution.visited[pickupTask.nodeId] == false && insertionCosts[i][insertVehicle].cost < Double.MAX_VALUE) {
-                    insertionCosts[i][insertVehicle] = insertingPickupCost(solution.tours.get(insertVehicle), pickupTask, routeTimes);
+                if (solution.visited[pickupTask.nodeId] == false && insertionCosts[i][insertRoute].cost < Double.MAX_VALUE) {
+                    insertionCosts[i][insertRoute] = insertingPickupCost(solution.tours.get(insertRoute), pickupTask, routeTimes);
                 }
             }
-        }
-    }
-
-    private double generateNoise() {
-        return (random.nextDouble() - 0.5) * noiseControl * instance.maxDistance * 2;
-    }
-
-    private void calculateRouteTimes(ArrayList<Integer> route, RouteTimes routeTimes) {
-        // Depot times
-        routeTimes.startTime[0] = 0.0;
-        routeTimes.waitingTime[0] = 0.0;
-        routeTimes.slackTime[0] = 0.0;
-        // Node times
-        double time = 0;
-        for (int j = 1; j < route.size(); ++j) {
-            int prev = route.get(j - 1);
-            int curr = route.get(j);
-            time += instance.dist(prev, curr) / instance.vehicleSpeed + instance.serviceTime(prev);
-            double visitedTime = time;
-            time = Math.max(time, instance.twStart(curr));
-            routeTimes.startTime[j] = time;
-            routeTimes.waitingTime[j] = Math.max(0., time - visitedTime);
-            routeTimes.slackTime[0] = 0.0;
-        }
-        int p = route.get(route.size() - 1);
-        routeTimes.slackTime[route.size() - 1] = instance.twEnd(p) - routeTimes.startTime[route.size() - 1];
-        for (int i = route.size() - 2; i > 0; --i) {
-            p = route.get(i);
-            routeTimes.slackTime[i] = Math.min(routeTimes.slackTime[i + 1] + routeTimes.waitingTime[i + 1], instance.twEnd(p) - routeTimes.startTime[i]);
         }
     }
 
@@ -220,6 +191,36 @@ public class RegretInsertion extends InsertionOperator {
         return insertPosition;
     }
 
+    private void calculateRouteTimes(ArrayList<Integer> route, RouteTimes routeTimes) {
+        // Depot times
+        routeTimes.startTime[0] = 0.0;
+        routeTimes.waitingTime[0] = 0.0;
+        routeTimes.slackTime[0] = 0.0;
+        // Node times
+        double time = 0;
+        for (int j = 1; j < route.size(); ++j) {
+            int prev = route.get(j - 1);
+            int curr = route.get(j);
+            time += instance.dist(prev, curr) / instance.vehicleSpeed + instance.serviceTime(prev);
+            double visitedTime = time;
+            time = Math.max(time, instance.twStart(curr));
+            routeTimes.startTime[j] = time;
+            routeTimes.waitingTime[j] = Math.max(0., time - visitedTime);
+            routeTimes.slackTime[0] = 0.0;
+        }
+        // Slack times
+        int p = route.get(route.size() - 1);
+        routeTimes.slackTime[route.size() - 1] = instance.twEnd(p) - routeTimes.startTime[route.size() - 1];
+        for (int i = route.size() - 2; i > 0; --i) {
+            p = route.get(i);
+            routeTimes.slackTime[i] = Math.min(routeTimes.slackTime[i + 1] + routeTimes.waitingTime[i + 1], instance.twEnd(p) - routeTimes.startTime[i]);
+        }
+    }
+
+    private double generateNoise() {
+        return (random.nextDouble() - 0.5) * noiseControl * instance.maxDistance * 2;
+    }
+
     private void swapPositions(ArrayList<Integer> route, int i1, int i2) {
         Integer aux = route.get(i1);
         route.set(i1, route.get(i2));
@@ -243,19 +244,36 @@ public class RegretInsertion extends InsertionOperator {
 
     }
 
-    protected class RouteTimes {
+    protected class InsertVehicle implements Comparable<InsertVehicle> {
 
-        public RouteTimes(int size) {
-            startTime = new double[size];
-            waitingTime = new double[size];
-            slackTime = new double[size];
+        protected double cost;
+
+        protected int routeIndex;
+
+        public InsertVehicle(double cost, int routeIndex) {
+            this.cost = cost;
+            this.routeIndex = routeIndex;
         }
+
+        @Override
+        public int compareTo(InsertVehicle other) {
+            return Double.compare(cost, other.cost);
+        }
+    }
+
+    protected class RouteTimes {
 
         protected double[] startTime;
 
         protected double[] waitingTime;
 
         protected double[] slackTime;
+
+        public RouteTimes(int size) {
+            startTime = new double[size];
+            waitingTime = new double[size];
+            slackTime = new double[size];
+        }
 
     }
 
