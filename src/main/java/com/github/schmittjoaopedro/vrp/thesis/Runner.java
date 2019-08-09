@@ -16,6 +16,7 @@ public class Runner {
     private static final String pdptw400Directory;
     private static final String pdptw600Directory;
     private static final String pdptw800Directory;
+    private static final String pdptw1000Directory;
 
     private static String[] instances_100 = {
             "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
@@ -62,17 +63,27 @@ public class Runner {
             "lrc2_8_1", "lrc2_8_2", "lrc2_8_3", "lrc2_8_4", "lrc2_8_5", "lrc2_8_6", "lrc2_8_7", "lrc2_8_8", "lrc2_8_9", "lrc2_8_10"
     };
 
+    private static String[] instances_1000 = {
+            "LC1_10_1", "LC1_10_2", "LC1_10_3", "LC1_10_4", "LC1_10_5", "LC1_10_6", "LC1_10_7", "LC1_10_8", "LC1_10_9", "LC1_10_10",
+            "LC2_10_1", "LC2_10_2", "LC2_10_3", "LC2_10_4", "LC2_10_5", "LC2_10_6", "LC2_10_7", "LC2_10_8", "LC2_10_9", "LC2_10_10",
+            "LR1_10_1", "LR1_10_2", "LR1_10_3", "LR1_10_4", "LR1_10_5", "LR1_10_6", "LR1_10_7", "LR1_10_8", "LR1_10_9", "LR1_10_10",
+            "LR2_10_1", "LR2_10_2", "LR2_10_3", "LR2_10_4", "LR2_10_5", "LR2_10_6", "LR2_10_7", "LR2_10_8", "LR2_10_9", "LR2_10_10",
+            "LRC1_10_1", "LRC1_10_2", "LRC1_10_3", "LRC1_10_4", "LRC1_10_5", "LRC1_10_6", "LRC1_10_7", "LRC1_10_8", "LRC1_10_9", "LRC1_10_10",
+            "LRC2_10_1", "LRC2_10_2", "LRC2_10_3", "LRC2_10_4", "LRC2_10_5", "LRC2_10_6", "LRC2_10_7", "LRC2_10_10"
+    };
+
     static {
         pdptw100Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
         pdptw200Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
         pdptw400Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
         pdptw600Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
         pdptw800Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
+        pdptw1000Directory = Paths.get(Runner.class.getClassLoader().getResource("pdptw1000").getFile().substring(1)).toString();
     }
 
     public static void main(String[] args) throws Exception {
-        for (String instance : instances_800) {
-            executeProblemSolver(pdptw800Directory, instance);
+        for (String instance : instances_1000) {
+            executeProblemSolver(pdptw1000Directory, instance);
         }
     }
 
