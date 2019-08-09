@@ -16,18 +16,6 @@ public class Solution {
 
     public ArrayList<Double> tourCosts;
 
-    public ArrayList<double[]> departureTime;
-
-    public ArrayList<double[]> arrivalTime;
-
-    public ArrayList<double[]> departureSlackTimes;
-
-    public ArrayList<double[]> arrivalSlackTimes;
-
-    public ArrayList<double[]> waitingTimes;
-
-    public ArrayList<double[]> delays;
-
     public double[] visitedTime;
 
     public double[] startTime;

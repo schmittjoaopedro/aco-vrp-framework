@@ -84,12 +84,6 @@ public class Instance {
 
     public void solutionEvaluation(Solution solution) {
         solution.tourCosts = new ArrayList<>(solution.tours.size());
-        solution.departureTime = new ArrayList<>(solution.tours.size());
-        solution.arrivalTime = new ArrayList<>(solution.tours.size());
-        solution.departureSlackTimes = new ArrayList<>(solution.tours.size());
-        solution.arrivalSlackTimes = new ArrayList<>(solution.tours.size());
-        solution.waitingTimes = new ArrayList<>(solution.tours.size());
-        solution.delays = new ArrayList<>(solution.tours.size());
         solution.toVisit = numTasks;
         solution.totalCost = 0.0;
         solution.feasible = true;
@@ -102,28 +96,18 @@ public class Instance {
         // For each vehicle
         for (int k = 0; k < solution.tours.size(); k++) {
             List<Integer> tour = solution.tours.get(k);
-            solution.arrivalTime.add(new double[tour.size()]);
-            solution.departureTime.add(new double[tour.size()]);
-            solution.waitingTimes.add(new double[tour.size()]);
-            solution.delays.add(new double[tour.size()]);
             Double currentTime = depot.twStart;
             Double tourCost = 0.0;
             Double capacity = 0.0;
             int curr, next;
             Task task;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
-            solution.waitingTimes.get(k)[0] = 0.0;
-            solution.delays.get(k)[0] = 0.0;
-            solution.arrivalTime.get(k)[0] = currentTime;
-            solution.departureTime.get(k)[0] = currentTime;
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
                 solution.visited[curr] = true;
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
-                solution.arrivalTime.get(k)[i + 1] = currentTime;
-                solution.waitingTimes.get(k)[i + 1] = Math.max(0, twStart(next) - solution.arrivalTime.get(k)[i + 1]);
                 currentTime = Math.max(currentTime, twStart(next));
                 capacity += demand(next);
                 solution.capacity[next] = capacity;
@@ -141,17 +125,13 @@ public class Instance {
                 }
                 // Check time windows feasibility
                 if (currentTime > twEnd(next)) {
-                    solution.delays.get(k)[i + 1] = currentTime - twEnd(next);
                     solution.feasible = false;
-                } else {
-                    solution.delays.get(k)[i + 1] = 0.0;
                 }
                 // Check capacity feasibility
                 if (capacity > vehiclesCapacity) {
                     solution.feasible = false;
                 }
                 currentTime += serviceTime(next);
-                solution.departureTime.get(k)[i + 1] = currentTime;
                 // Check if nodes and requests lists are consistent
                 if (curr != 0 && !solution.requestIds.get(k).contains(getTask(curr).requestId)) {
                     solution.feasible = false;
@@ -171,18 +151,6 @@ public class Instance {
                 } else {
                     solution.toVisit--;
                 }
-            }
-            // Calculate slack times accordingly: Savelsbergh MW. The vehicle routing problem with time windows: Minimizing
-            // route duration. ORSA journal on computing. 1992 May;4(2):146-54.
-            Double slackTime = Double.MAX_VALUE;
-            solution.departureSlackTimes.add(new double[tour.size()]);
-            solution.arrivalSlackTimes.add(new double[tour.size()]);
-            for (int i = tour.size() - 1; i >= 0; i--) {
-                curr = tour.get(i);
-                slackTime = Math.min(slackTime, twEnd(curr) - solution.departureTime.get(k)[i] + serviceTime(curr));
-                solution.departureSlackTimes.get(k)[i] = slackTime;
-                slackTime += solution.waitingTimes.get(k)[i];
-                solution.arrivalSlackTimes.get(k)[i] = slackTime;
             }
             solution.tourCosts.add(tourCost);
             solution.totalCost += tourCost;

@@ -11,24 +11,10 @@ public class SolutionUtils {
         to.tours = new ArrayList<>();
         to.requestIds = new ArrayList<>();
         to.tourCosts = new ArrayList<>();
-        to.departureTime = new ArrayList<>();
-        to.arrivalTime = new ArrayList<>();
-        to.departureSlackTimes = new ArrayList<>();
-        to.arrivalSlackTimes = new ArrayList<>();
-        to.waitingTimes = new ArrayList<>();
-        to.delays = new ArrayList<>();
         for (int i = 0; i < from.tours.size(); i++) {
             to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
             to.requestIds.add(i, (ArrayList<Integer>) from.requestIds.get(i).clone());
             to.tourCosts.add(i, from.tourCosts.get(i));
-            if (from.departureTime.size() > 0) {
-                to.departureTime.add(i, from.departureTime.get(i).clone());
-                to.arrivalTime.add(i, from.arrivalTime.get(i).clone());
-                to.departureSlackTimes.add(i, from.departureSlackTimes.get(i).clone());
-                to.arrivalSlackTimes.add(i, from.arrivalSlackTimes.get(i).clone());
-                to.waitingTimes.add(i, from.waitingTimes.get(i).clone());
-                to.delays.add(i, from.delays.get(i).clone());
-            }
         }
         to.capacity = from.capacity.clone();
         to.visited = from.visited.clone();
@@ -59,12 +45,6 @@ public class SolutionUtils {
         solution.tours = new ArrayList<>();
         solution.requestIds = new ArrayList<>();
         solution.tourCosts = new ArrayList<>();
-        solution.departureTime = new ArrayList<>();
-        solution.arrivalTime = new ArrayList<>();
-        solution.departureSlackTimes = new ArrayList<>();
-        solution.arrivalSlackTimes = new ArrayList<>();
-        solution.waitingTimes = new ArrayList<>();
-        solution.delays = new ArrayList<>();
         solution.capacity = new double[instance.numNodes];
         solution.visited = new boolean[instance.numNodes];
         solution.visitedRequests = new boolean[instance.numRequests];
