@@ -1,10 +1,10 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.CostMinimizer;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.VehicleMinimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.CostMinimizer;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 

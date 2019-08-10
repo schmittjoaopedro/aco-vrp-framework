@@ -92,7 +92,7 @@ public class Runner {
         Long time = System.currentTimeMillis();
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
-        solver.setPrintConsole(true);
+        solver.setPrintConsole(false);
         solver.init();
         solver.run();
         Solution solution = solver.getSolutionBest();

@@ -22,13 +22,15 @@ public class RandomRemoval extends RemovalOperator {
     }
 
     @Override
-    public void remove(Solution s, int q) {
-        List<Integer> removeList = new ArrayList<>();
+    public void remove(Solution solution, int q) {
+        List<Integer> requestIds = new ArrayList<>();
         for (Task pickupTask : instance.pickupTasks) {
-            if (s.visited[pickupTask.nodeId]) removeList.add(pickupTask.requestId);
+            if (solution.visited[pickupTask.nodeId]) {
+                requestIds.add(pickupTask.requestId);
+            }
         }
-        Collections.shuffle(removeList, random);
-        if (removeList.size() > q) removeList = removeList.subList(0, q);
-        s.remove(removeList, instance);
+        Collections.shuffle(requestIds, random);
+        if (requestIds.size() > q) requestIds = requestIds.subList(0, q);
+        solution.remove(requestIds, instance);
     }
 }
