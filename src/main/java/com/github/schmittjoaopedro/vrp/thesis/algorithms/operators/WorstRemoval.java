@@ -1,13 +1,10 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
-import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
@@ -38,38 +35,35 @@ public class WorstRemoval extends RemovalOperator {
                 requestsCosts[request.requestId] = calculateRequestRemovalGain(solution, request);
             }
         }
-        while (q > 0) { // While there are requests to remove
-            // Create a heap to hold requests with expensive costs in front
-            Queue<Pair<Double, Integer>> heap = new PriorityQueue<>();
+        while (q > 0) {
+            Queue<RequestRemoval> heap = new PriorityQueue<>();
             for (int i = 0; i < instance.numRequests; ++i) {
                 Request request = instance.requests[i];
                 if (solution.visited[request.pickupTask.nodeId]) {
-                    heap.add(Pair.of(-requestsCosts[request.requestId], -request.pickupTask.nodeId));
+                    heap.add(new RequestRemoval(-requestsCosts[request.requestId], -request.pickupTask.nodeId));
                 }
             }
             if (heap.isEmpty()) break;
-            double y = random.nextDouble();
-            y = Math.pow(y, randomDegree);
+            double y = Math.pow(random.nextDouble(), randomDegree);
             int toRemove = (int) (y * (double) heap.size());
             int removePickupNode = -1;
             for (int i = 0; i <= toRemove; ++i) {
-                removePickupNode = -heap.peek().getRight();
+                removePickupNode = -heap.peek().pickupNodeId;
                 heap.poll();
             }
             Integer requestId = instance.getTask(removePickupNode).requestId;
             int removeDeliveryNode = instance.requests[requestId].deliveryTask.nodeId;
-            int removeRoute = solution.getVehicle(removePickupNode);
-            int pickupIdx = solution.getTourPosition(removePickupNode);
-            int deliveryIdx = solution.getTourPosition(removeDeliveryNode);
+            int vehicle = solution.getVehicle(removePickupNode);
             solution.visited[removePickupNode] = false;
             solution.visited[removeDeliveryNode] = false;
-            solution.tours.get(removeRoute).remove(deliveryIdx);
-            solution.tours.get(removeRoute).remove(pickupIdx);
-            solution.requestIds.get(removeRoute).remove(requestId);
+            // First remove delivery because pickup will un-synchronize the indexes
+            solution.tours.get(vehicle).remove(solution.getTourPosition(removeDeliveryNode));
+            solution.tours.get(vehicle).remove(solution.getTourPosition(removePickupNode));
+            solution.requestIds.get(vehicle).remove(requestId);
             --q;
-            solution.indexVehicle(removeRoute);
-            for (int i = 1; i < solution.tours.get(removeRoute).size() - 1; ++i) {
-                int p = solution.tours.get(removeRoute).get(i);
+            solution.indexVehicle(vehicle);
+            for (int i = 1; i < solution.tours.get(vehicle).size() - 1; ++i) {
+                int p = solution.tours.get(vehicle).get(i);
                 if (instance.getTask(p).isPickup) {
                     Request request = instance.requests[instance.getTask(p).requestId];
                     requestsCosts[request.requestId] = calculateRequestRemovalGain(solution, request);
@@ -102,6 +96,27 @@ public class WorstRemoval extends RemovalOperator {
                     instance.dist(prevDeliveryNode, nextDeliveryNode);
         }
         return requestCost;
+    }
+
+    protected class RequestRemoval implements Comparable<RequestRemoval> {
+
+        protected double cost;
+
+        protected int pickupNodeId;
+
+        public RequestRemoval(double cost, int pickupNodeId) {
+            this.cost = cost;
+            this.pickupNodeId = pickupNodeId;
+        }
+
+        @Override
+        public int compareTo(RequestRemoval other) {
+            int compare = Double.compare(cost, other.cost);
+            if (compare == 0) {
+                compare = Integer.compare(pickupNodeId, other.pickupNodeId);
+            }
+            return compare;
+        }
     }
 
 }
