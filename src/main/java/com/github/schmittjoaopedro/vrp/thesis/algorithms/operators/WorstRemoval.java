@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
 
+import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
@@ -17,7 +18,7 @@ public class WorstRemoval extends RemovalOperator {
 
     private Random random;
 
-    private double worstRandomDegree = 3;
+    private double randomDegree = 3;
 
     public WorstRemoval(Instance instance, Random random) {
         this.instance = instance;
@@ -26,17 +27,15 @@ public class WorstRemoval extends RemovalOperator {
 
     @Override
     public void remove(Solution solution, int q) {
-        for (int i = 0; i < solution.tours.size(); ++i) {
-            solution.findRoute(i);
+        for (int k = 0; k < solution.tours.size(); ++k) {
+            solution.indexVehicle(k);
         }
-        // Calculates the cost difference for each route for each request removed
-        double[] costs = new double[instance.numRequests];
-        for (int i = 0; i < instance.numRequests; i++) {
-            Request request = instance.requests[i];
+        // Calculates the cost difference for each request removed
+        double[] requestsCosts = new double[instance.numRequests];
+        for (int r = 0; r < instance.numRequests; r++) {
+            Request request = instance.requests[r];
             if (solution.visited[request.pickupTask.nodeId]) {
-                int removeRoute = solution.nodeVehicle[request.pickupTask.nodeId].getLeft();
-                Pair<Integer, Integer> pos = Pair.of(solution.nodeVehicle[request.pickupTask.nodeId].getRight(), solution.nodeVehicle[request.deliveryTask.nodeId].getRight());
-                costs[request.requestId] = removeCost(pos, solution.tours.get(removeRoute));
+                requestsCosts[request.requestId] = calculateRequestRemovalGain(solution, request);
             }
         }
         while (q > 0) { // While there are requests to remove
@@ -45,12 +44,12 @@ public class WorstRemoval extends RemovalOperator {
             for (int i = 0; i < instance.numRequests; ++i) {
                 Request request = instance.requests[i];
                 if (solution.visited[request.pickupTask.nodeId]) {
-                    heap.add(Pair.of(-costs[request.requestId], -request.pickupTask.nodeId));
+                    heap.add(Pair.of(-requestsCosts[request.requestId], -request.pickupTask.nodeId));
                 }
             }
             if (heap.isEmpty()) break;
             double y = random.nextDouble();
-            y = Math.pow(y, worstRandomDegree);
+            y = Math.pow(y, randomDegree);
             int toRemove = (int) (y * (double) heap.size());
             int removePickupNode = -1;
             for (int i = 0; i <= toRemove; ++i) {
@@ -59,38 +58,50 @@ public class WorstRemoval extends RemovalOperator {
             }
             Integer requestId = instance.getTask(removePickupNode).requestId;
             int removeDeliveryNode = instance.requests[requestId].deliveryTask.nodeId;
-            int removeRoute = solution.nodeVehicle[removePickupNode].getLeft();
-            int pickupIdx = solution.nodeVehicle[removePickupNode].getRight();
-            int deliveryIdx = solution.nodeVehicle[removeDeliveryNode].getRight();
+            int removeRoute = solution.getVehicle(removePickupNode);
+            int pickupIdx = solution.getTourPosition(removePickupNode);
+            int deliveryIdx = solution.getTourPosition(removeDeliveryNode);
             solution.visited[removePickupNode] = false;
             solution.visited[removeDeliveryNode] = false;
             solution.tours.get(removeRoute).remove(deliveryIdx);
             solution.tours.get(removeRoute).remove(pickupIdx);
             solution.requestIds.get(removeRoute).remove(requestId);
             --q;
-            solution.findRoute(removeRoute);
+            solution.indexVehicle(removeRoute);
             for (int i = 1; i < solution.tours.get(removeRoute).size() - 1; ++i) {
                 int p = solution.tours.get(removeRoute).get(i);
                 if (instance.getTask(p).isPickup) {
                     Request request = instance.requests[instance.getTask(p).requestId];
-                    removeDeliveryNode = request.deliveryTask.nodeId;
-                    Pair<Integer, Integer> pos = Pair.of(solution.nodeVehicle[p].getRight(), solution.nodeVehicle[removeDeliveryNode].getRight());
-                    costs[request.requestId] = removeCost(pos, solution.tours.get(removeRoute));
+                    requestsCosts[request.requestId] = calculateRequestRemovalGain(solution, request);
                 }
             }
         }
     }
 
-    // Calculate cost to remove customer from route
-    private double removeCost(Pair<Integer, Integer> pos, ArrayList<Integer> route) {
-        double oldCost = instance.calcRouteCost(route);
-        ArrayList<Integer> newRoute = new ArrayList<>(route);
-        int delPos = pos.getRight();
-        newRoute.remove(delPos);
-        delPos = pos.getLeft();
-        newRoute.remove(delPos);
-        double cost = instance.calcRouteCost(newRoute);
-        return oldCost - cost;
+    private double calculateRequestRemovalGain(Solution solution, Request request) {
+        int vehicle = solution.getVehicle(request.pickupTask.nodeId);
+        int pickupPos = solution.getTourPosition(request.pickupTask.nodeId);
+        int prevPickupNode = solution.tours.get(vehicle).get(pickupPos - 1);
+        int nextPickupNode = solution.tours.get(vehicle).get(pickupPos + 1);
+        int deliveryPos = solution.getTourPosition(request.deliveryTask.nodeId);
+        int prevDeliveryNode = solution.tours.get(vehicle).get(deliveryPos - 1);
+        int nextDeliveryNode = solution.tours.get(vehicle).get(deliveryPos + 1);
+        double requestCost;
+        boolean adjacentNodes = nextPickupNode == request.deliveryTask.nodeId;
+        if (adjacentNodes) {
+            requestCost = instance.dist(prevPickupNode, request.pickupTask.nodeId) +
+                    instance.dist(request.pickupTask.nodeId, request.deliveryTask.nodeId) +
+                    instance.dist(request.deliveryTask.nodeId, nextDeliveryNode) -
+                    instance.dist(prevPickupNode, nextDeliveryNode);
+        } else {
+            requestCost = instance.dist(prevPickupNode, request.pickupTask.nodeId) +
+                    instance.dist(request.pickupTask.nodeId, nextPickupNode) -
+                    instance.dist(prevPickupNode, nextPickupNode) +
+                    instance.dist(prevDeliveryNode, request.deliveryTask.nodeId) +
+                    instance.dist(request.deliveryTask.nodeId, nextDeliveryNode) -
+                    instance.dist(prevDeliveryNode, nextDeliveryNode);
+        }
+        return requestCost;
     }
 
 }

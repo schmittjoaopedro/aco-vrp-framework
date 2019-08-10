@@ -165,43 +165,22 @@ public class Instance {
         }
     }
 
-    public boolean isFeasibleTour(List<Integer> tour) {
-        boolean feasible = true;
-        double currentTime = 0.0;
-        double capacity = 0.0;
-        int curr, next;
-        for (int i = 0; i < tour.size() - 1; i++) {
+    public double calculateTotalDistance(ArrayList<Integer> tour) {
+        double totalDistance = 0, totalTime = 0, currentCapacity = 0;
+        int prev, curr;
+        for (int i = 1; i < tour.size(); ++i) {
+            prev = tour.get(i - 1);
             curr = tour.get(i);
-            next = tour.get(i + 1);
-            currentTime += distances[curr][next];
-            currentTime = Math.max(currentTime, twStart(next));
-            capacity += demand(next);
-            if (currentTime > twEnd(next)) {
-                feasible = false;
-            }
-            if (capacity > vehiclesCapacity) {
-                feasible = false;
-            }
-            currentTime += serviceTime(next);
-        }
-        return feasible;
-    }
-
-    // Calculate cost of 1 route
-    public double calcRouteCost(ArrayList<Integer> route) {
-        double sumDist = 0, sumTime = 0;
-        double currentCapacity = 0;
-        for (int i = 1; i < route.size(); ++i) {
-            currentCapacity += demand(route.get(i));
+            currentCapacity += demand(curr);
             if (currentCapacity > vehiclesCapacity) return Double.MAX_VALUE;
-            sumDist += distances[route.get(i)][route.get(i - 1)];
-            sumTime = sumTime + distances[route.get(i)][route.get(i - 1)] / vehicleSpeed;
-            sumTime = Math.max(sumTime, twStart(route.get(i)));
-            if (sumTime > twEnd(route.get(i))) {
+            totalDistance += distances[prev][curr];
+            totalTime = totalTime + distances[prev][curr] / vehicleSpeed;
+            totalTime = Math.max(totalTime, twStart(curr));
+            if (totalTime > twEnd(curr)) {
                 return Double.MAX_VALUE;
             }
-            sumTime += serviceTime(route.get(i));
+            totalTime += serviceTime(curr);
         }
-        return objWeight[0] * sumDist + objWeight[1] * sumTime;
+        return totalDistance;
     }
 }

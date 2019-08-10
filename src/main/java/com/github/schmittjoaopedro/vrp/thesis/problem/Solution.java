@@ -2,7 +2,6 @@ package com.github.schmittjoaopedro.vrp.thesis.problem;
 
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,8 +27,6 @@ public class Solution {
 
     public boolean[] visitedRequests;
 
-    public Pair<Integer, Integer>[] nodeVehicle;
-
     public double totalCost;
 
     public boolean feasible;
@@ -37,6 +34,8 @@ public class Solution {
     public double maxTime;
 
     public int toVisit;
+
+    public NodeIndex[] nodeIndexes;
 
     private double[] relateWeight = {9, 3, 2, 5};
 
@@ -78,13 +77,6 @@ public class Solution {
         }
     }
 
-    // Find position of node i in solution
-    public void findRoute(int i) {
-        for (int j = 1; j < tours.get(i).size() - 1; ++j) {
-            nodeVehicle[tours.get(i).get(j)] = Pair.of(i, j);
-        }
-    }
-
     // Calculate time visiting each node
     public void findVisitedTime(Instance instance, int r) {
         double time = 0;
@@ -120,7 +112,7 @@ public class Solution {
     public double calculateObjective(Instance instance) {
         double ret = 0;
         for (int i = 0; i < tours.size(); ++i) {
-            ret += instance.calcRouteCost(tours.get(i));
+            ret += instance.calculateTotalDistance(tours.get(i));
         }
         for (int i = 1; i < instance.numNodes; ++i) {
             if (!visited[i]) ret += instance.objWeight[2];
@@ -134,9 +126,36 @@ public class Solution {
         return StringUtils.join(clone).hashCode();
     }
 
+    public void indexVehicle(int vehicle) {
+        int node;
+        for (int routeIndex = 1; routeIndex < tours.get(vehicle).size() - 1; ++routeIndex) {
+            node = tours.get(vehicle).get(routeIndex);
+            nodeIndexes[node] = new NodeIndex(vehicle, routeIndex);
+        }
+    }
+
+    public int getVehicle(int nodeId) {
+        return nodeIndexes[nodeId].vehicle;
+    }
+
+    public int getTourPosition(int nodeId) {
+        return nodeIndexes[nodeId].tourPosition;
+    }
 
     @Override
     public String toString() {
         return "[F = " + feasible + ", NV = " + tours.size() + ", TC = " + MathUtils.round(totalCost) + "]";
+    }
+
+    protected class NodeIndex {
+
+        protected int vehicle;
+
+        protected int tourPosition;
+
+        public NodeIndex(int vehicle, int tourPosition) {
+            this.vehicle = vehicle;
+            this.tourPosition = tourPosition;
+        }
     }
 }

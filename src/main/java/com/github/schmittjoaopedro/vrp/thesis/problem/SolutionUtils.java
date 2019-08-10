@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 
@@ -19,7 +18,7 @@ public class SolutionUtils {
         to.capacity = from.capacity.clone();
         to.visited = from.visited.clone();
         to.visitedRequests = from.visitedRequests.clone();
-        to.nodeVehicle = from.nodeVehicle.clone();
+        to.nodeIndexes = from.nodeIndexes.clone();
         to.visitedTime = from.visitedTime.clone();
         to.waitingTime = from.waitingTime.clone();
         to.startTime = from.startTime.clone();
@@ -48,7 +47,7 @@ public class SolutionUtils {
         solution.capacity = new double[instance.numNodes];
         solution.visited = new boolean[instance.numNodes];
         solution.visitedRequests = new boolean[instance.numRequests];
-        solution.nodeVehicle = new Pair[instance.numNodes];
+        solution.nodeIndexes = new Solution.NodeIndex[instance.numNodes];
         solution.visitedTime = new double[instance.numNodes];
         solution.startTime = new double[instance.numNodes];
         solution.waitingTime = new double[instance.numNodes];
