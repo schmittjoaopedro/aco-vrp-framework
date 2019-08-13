@@ -40,7 +40,7 @@ public class ShawRemoval extends RemovalOperator {
                     relate[i].add(0.0);
                     Request reqB = instance.requests[j];
                     if (solution.visited[instance.requests[j].pickupTask.nodeId]) {
-                        relate[i].set(j, relatedness(routeTimes, reqA, reqB));
+                        relate[i].set(j, relatedness(solution, routeTimes, reqA, reqB));
                     }
                 }
             }
@@ -86,19 +86,19 @@ public class ShawRemoval extends RemovalOperator {
                 routeTimes.startTime[curr] = Math.max(time, instance.twStart(curr));
                 time = routeTimes.startTime[curr];
                 routeTimes.waitTime[curr] = Math.max(0.0, time - routeTimes.visitedTime[curr]);
-                routeTimes.maxTime = Math.max(routeTimes.maxTime, time);
+                solution.maxTime = Math.max(solution.maxTime, time);
             }
         }
         return routeTimes;
     }
 
-    protected double relatedness(RouteTimes routeTimes, Request reqA, Request reqB) {
+    protected double relatedness(Solution solution, RouteTimes routeTimes, Request reqA, Request reqB) {
         int rAP = reqA.pickupTask.nodeId;
         int rAD = reqA.deliveryTask.nodeId;
         int rBP = reqB.pickupTask.nodeId;
         int rBD = reqB.deliveryTask.nodeId;
         double ret = relateWeight[0] * (instance.dist(rAP, rBP) + instance.dist(rAD, rBD)) / instance.maxDistance;
-        ret += relateWeight[1] * (Math.abs(routeTimes.visitedTime[rAP] - routeTimes.visitedTime[rBP]) + Math.abs(routeTimes.visitedTime[rAD] - routeTimes.visitedTime[rBD])) / routeTimes.maxTime;
+        ret += relateWeight[1] * (Math.abs(routeTimes.visitedTime[rAP] - routeTimes.visitedTime[rBP]) + Math.abs(routeTimes.visitedTime[rAD] - routeTimes.visitedTime[rBD])) / solution.maxTime;
         ret += relateWeight[2] * Math.abs(reqA.pickupTask.demand - reqB.pickupTask.demand) / instance.maxDemand;
         return ret;
     }
@@ -111,6 +111,5 @@ public class ShawRemoval extends RemovalOperator {
 
         protected double[] waitTime;
 
-        protected double maxTime;
     }
 }
