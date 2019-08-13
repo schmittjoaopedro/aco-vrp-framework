@@ -82,10 +82,27 @@ public class Runner {
     }
 
     public static void main(String[] args) throws Exception {
-        for (String instance : instances_1000) {
-//            executeProblemSolver(pdptw1000Directory, instance);
+        System.out.println("pdp100");
+        for (String instance : instances_100) {
+            executeProblemSolver(pdptw100Directory, instance);
         }
-        executeProblemSolver(pdptw1000Directory, "LR2_10_4");
+        System.out.println("pdp200");
+        for (String instance : instances_200) {
+            executeProblemSolver(pdptw200Directory, instance);
+        }
+        System.out.println("pdp400");
+        for (String instance : instances_400) {
+            executeProblemSolver(pdptw400Directory, instance);
+        }
+        System.out.println("pdp600");
+        for (String instance : instances_600) {
+            executeProblemSolver(pdptw600Directory, instance);
+        }
+        System.out.println("pdp800");
+        for (String instance : instances_800) {
+            executeProblemSolver(pdptw800Directory, instance);
+        }
+//        executeProblemSolver(pdptw1000Directory, "LR2_10_4");
     }
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {
@@ -97,7 +114,7 @@ public class Runner {
         solver.run();
         Solution solution = solver.getSolutionBest();
         time = System.currentTimeMillis() - time;
-        time /= 1000;
-        System.out.println(instance.name + " = " + solution + " time = " + time);
+        Double timeMinutes = time / (1000.0 * 60.0);
+        System.out.println(instance.name + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
     }
 }

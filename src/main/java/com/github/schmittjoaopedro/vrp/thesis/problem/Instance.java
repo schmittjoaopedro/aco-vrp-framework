@@ -87,7 +87,6 @@ public class Instance {
         solution.toVisit = numTasks;
         solution.totalCost = 0.0;
         solution.feasible = true;
-        solution.capacity = new double[numNodes];
         solution.visited = new boolean[numNodes];
         solution.visitedRequests = new boolean[numRequests];
         int[] numNodesByRequest = new int[numRequests];
@@ -110,7 +109,6 @@ public class Instance {
                 currentTime += dist(curr, next);
                 currentTime = Math.max(currentTime, twStart(next));
                 capacity += demand(next);
-                solution.capacity[next] = capacity;
                 // For precedence and attendance restrictions
                 task = getTask(next);
                 if (task != null) { // Ignore node depot

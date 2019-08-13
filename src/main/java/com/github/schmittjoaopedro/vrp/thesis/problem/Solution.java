@@ -15,14 +15,6 @@ public class Solution {
 
     public ArrayList<Double> tourCosts;
 
-    public double[] visitedTime;
-
-    public double[] startTime;
-
-    public double[] waitingTime;
-
-    public double[] capacity;
-
     public boolean[] visited;
 
     public boolean[] visitedRequests;
@@ -36,8 +28,6 @@ public class Solution {
     public int toVisit;
 
     public NodeIndex[] nodeIndexes;
-
-    private double[] relateWeight = {9, 3, 2, 5};
 
     // Insert 2 nodes to route at pos
     public void insert(Instance instance, int requestId, int vehicle, int pickupPos, int deliveryPos) {
@@ -75,29 +65,6 @@ public class Solution {
                 }
             }
         }
-    }
-
-    // Calculate time visiting each node
-    public void findVisitedTime(Instance instance, int r) {
-        double time = 0;
-        int startPos = 1;
-        visitedTime[0] = 0;
-        for (int j = startPos; j < tours.get(r).size() - 1; ++j) {
-            time += instance.dist(tours.get(r).get(j - 1), tours.get(r).get(j)) / instance.vehicleSpeed + instance.serviceTime(tours.get(r).get(j - 1));
-            visitedTime[tours.get(r).get(j)] = time;
-            startTime[tours.get(r).get(j)] = Math.max(time, instance.twStart(tours.get(r).get(j)));
-            time = startTime[tours.get(r).get(j)];
-            waitingTime[tours.get(r).get(j)] = Math.max(0., time - visitedTime[tours.get(r).get(j)]);
-            maxTime = Math.max(maxTime, time);
-        }
-    }
-
-    // Calculate relateness of 2 nodes in the solution
-    public double relatedness(Instance instance, Request reqA, Request reqB) {
-        double ret = relateWeight[0] * (instance.dist(reqA.pickupTask.nodeId, reqB.pickupTask.nodeId) + instance.dist(reqA.deliveryTask.nodeId, reqB.deliveryTask.nodeId)) / instance.maxDistance;
-        ret += relateWeight[1] * (Math.abs(visitedTime[reqA.pickupTask.nodeId] - visitedTime[reqB.pickupTask.nodeId]) + Math.abs(visitedTime[reqA.deliveryTask.nodeId] - visitedTime[reqB.deliveryTask.nodeId])) / maxTime;
-        ret += relateWeight[2] * Math.abs(reqA.pickupTask.demand - reqB.pickupTask.demand) / instance.maxDemand;
-        return ret;
     }
 
     // Number of unvisited customers

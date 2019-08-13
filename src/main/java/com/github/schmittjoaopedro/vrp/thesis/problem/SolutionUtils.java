@@ -15,13 +15,9 @@ public class SolutionUtils {
             to.requestIds.add(i, (ArrayList<Integer>) from.requestIds.get(i).clone());
             to.tourCosts.add(i, from.tourCosts.get(i));
         }
-        to.capacity = from.capacity.clone();
         to.visited = from.visited.clone();
         to.visitedRequests = from.visitedRequests.clone();
         to.nodeIndexes = from.nodeIndexes.clone();
-        to.visitedTime = from.visitedTime.clone();
-        to.waitingTime = from.waitingTime.clone();
-        to.startTime = from.startTime.clone();
         to.totalCost = from.totalCost;
         to.feasible = from.feasible;
         to.maxTime = from.maxTime;
@@ -44,13 +40,9 @@ public class SolutionUtils {
         solution.tours = new ArrayList<>();
         solution.requestIds = new ArrayList<>();
         solution.tourCosts = new ArrayList<>();
-        solution.capacity = new double[instance.numNodes];
         solution.visited = new boolean[instance.numNodes];
         solution.visitedRequests = new boolean[instance.numRequests];
         solution.nodeIndexes = new Solution.NodeIndex[instance.numNodes];
-        solution.visitedTime = new double[instance.numNodes];
-        solution.startTime = new double[instance.numNodes];
-        solution.waitingTime = new double[instance.numNodes];
         solution.totalCost = 0.0;
         solution.feasible = false;
         solution.maxTime = 0.0;
