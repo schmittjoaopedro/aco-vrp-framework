@@ -4,7 +4,6 @@ import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -27,46 +26,44 @@ public class ShawRemoval extends RemovalOperator {
 
     @Override
     public void remove(Solution solution, int q) {
-        ArrayList<Integer> allRequest = new ArrayList<>();
-        ArrayList<Integer> removeList = new ArrayList<>();
+        ArrayList<Integer> attendedRequests = new ArrayList<>(instance.numRequests);
+        ArrayList<Integer> removeRequests = new ArrayList<>(q);
         RouteTimes routeTimes = calculateRouteTimes(solution);
-        ArrayList<Double>[] relate = new ArrayList[instance.numRequests];
+        double[][] requestsRelatedness = new double[instance.numRequests][instance.numRequests]; // R x R relatedness matrix
         for (int i = 0; i < instance.numRequests; ++i) {
             Request reqA = instance.requests[i];
             if (solution.visited[reqA.pickupTask.nodeId]) {
-                allRequest.add(i);
-                relate[i] = new ArrayList<>(instance.numRequests);
+                attendedRequests.add(i);
                 for (int j = 0; j < instance.numRequests; ++j) {
-                    relate[i].add(0.0);
+                    requestsRelatedness[i][j] = 0.0;
                     Request reqB = instance.requests[j];
                     if (solution.visited[instance.requests[j].pickupTask.nodeId]) {
-                        relate[i].set(j, relatedness(solution, routeTimes, reqA, reqB));
+                        requestsRelatedness[i][j] = relatedness(solution, routeTimes, reqA, reqB);
                     }
                 }
             }
         }
-        int r = (int) (random.nextDouble() * (double) allRequest.size());
-
-        removeList.add(allRequest.get(r));
-        allRequest.remove(r);
-        while (removeList.size() < q && allRequest.size() > 0) {
-            r = (int) (random.nextDouble() % (double) removeList.size());
-            PriorityQueue<Pair<Double, Integer>> heap = new PriorityQueue<>();
-            for (int i = 0; i < allRequest.size(); ++i) {
-                heap.add(Pair.of(relate[allRequest.get(i)].get(removeList.get(r)), -i));
+        int r = (int) (random.nextDouble() * (double) attendedRequests.size());
+        removeRequests.add(attendedRequests.get(r));
+        attendedRequests.remove(r); // Remove at position r
+        while (removeRequests.size() < q && attendedRequests.size() > 0) {
+            r = (int) (random.nextDouble() % (double) removeRequests.size());
+            PriorityQueue<RemovalRequest> heap = new PriorityQueue<>();
+            for (int i = 0; i < attendedRequests.size(); ++i) {
+                heap.add(new RemovalRequest(requestsRelatedness[attendedRequests.get(i)][removeRequests.get(r)], -i));
             }
             double y = random.nextDouble();
             y = Math.pow(y, shawRandomDegree);
-            int toRemove = (int) (y * (double) allRequest.size());
+            int toRemove = (int) (y * (double) attendedRequests.size());
             int removePos = -1;
             for (int i = 0; i <= toRemove; ++i) {
-                removePos = -heap.peek().getRight();
+                removePos = -heap.peek().position;
                 heap.poll();
             }
-            removeList.add(allRequest.get(removePos));
-            allRequest.remove(removePos);
+            removeRequests.add(attendedRequests.get(removePos));
+            attendedRequests.remove(removePos);
         }
-        solution.remove(removeList, instance);
+        solution.remove(removeRequests, instance);
     }
 
     protected RouteTimes calculateRouteTimes(Solution solution) {
@@ -83,8 +80,8 @@ public class ShawRemoval extends RemovalOperator {
                 curr = solution.tours.get(r).get(j);
                 time += instance.dist(prev, curr) / instance.vehicleSpeed + instance.serviceTime(prev);
                 routeTimes.visitedTime[curr] = time;
-                routeTimes.startTime[curr] = Math.max(time, instance.twStart(curr));
-                time = routeTimes.startTime[curr];
+                time = Math.max(time, instance.twStart(curr));
+                routeTimes.startTime[curr] = time;
                 routeTimes.waitTime[curr] = Math.max(0.0, time - routeTimes.visitedTime[curr]);
                 solution.maxTime = Math.max(solution.maxTime, time);
             }
@@ -93,14 +90,9 @@ public class ShawRemoval extends RemovalOperator {
     }
 
     protected double relatedness(Solution solution, RouteTimes routeTimes, Request reqA, Request reqB) {
-        int rAP = reqA.pickupTask.nodeId;
-        int rAD = reqA.deliveryTask.nodeId;
-        int rBP = reqB.pickupTask.nodeId;
-        int rBD = reqB.deliveryTask.nodeId;
-        double ret = relateWeight[0] * (instance.dist(rAP, rBP) + instance.dist(rAD, rBD)) / instance.maxDistance;
-        ret += relateWeight[1] * (Math.abs(routeTimes.visitedTime[rAP] - routeTimes.visitedTime[rBP]) + Math.abs(routeTimes.visitedTime[rAD] - routeTimes.visitedTime[rBD])) / solution.maxTime;
-        ret += relateWeight[2] * Math.abs(reqA.pickupTask.demand - reqB.pickupTask.demand) / instance.maxDemand;
-        return ret;
+        return relateWeight[0] * (instance.dist(reqA.pickupTask.nodeId, reqB.pickupTask.nodeId) + instance.dist(reqA.deliveryTask.nodeId, reqB.deliveryTask.nodeId)) / instance.maxDistance
+                + relateWeight[1] * (Math.abs(routeTimes.visitedTime[reqA.pickupTask.nodeId] - routeTimes.visitedTime[reqB.pickupTask.nodeId]) + Math.abs(routeTimes.visitedTime[reqA.deliveryTask.nodeId] - routeTimes.visitedTime[reqB.deliveryTask.nodeId])) / solution.maxTime
+                + relateWeight[2] * Math.abs(reqA.pickupTask.demand - reqB.pickupTask.demand) / instance.maxDemand;
     }
 
     protected class RouteTimes {
@@ -111,5 +103,26 @@ public class ShawRemoval extends RemovalOperator {
 
         protected double[] waitTime;
 
+    }
+
+    protected class RemovalRequest implements Comparable<RemovalRequest> {
+
+        protected double cost;
+
+        private int position;
+
+        public RemovalRequest(double cost, int position) {
+            this.cost = cost;
+            this.position = position;
+        }
+
+        @Override
+        public int compareTo(RemovalRequest request) {
+            int compare = Double.compare(cost, request.cost);
+            if (compare == 0) {
+                compare = Integer.compare(position, request.position);
+            }
+            return compare;
+        }
     }
 }
