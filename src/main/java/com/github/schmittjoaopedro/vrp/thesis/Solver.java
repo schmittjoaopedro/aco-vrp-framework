@@ -63,7 +63,7 @@ public class Solver {
             Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.optimize(i));
             Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
             // Use best solution from both NV and TC
-            Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(this::updateBest);
+            Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(best -> updateBest(best, i));
             // Synchronize algorithm objectives
             if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
                 costMinimizer.resetToInitialSolution(feasibleNV);
@@ -74,11 +74,11 @@ public class Solver {
         printSolutionBest();
     }
 
-    public void updateBest(Solution solution) {
+    public void updateBest(Solution solution, int iteration) {
         Solution bestSol = SolutionUtils.getBest(solutionBest, solution);
         if (bestSol != null && bestSol != solutionBest) {
             solutionBest = SolutionUtils.copy(bestSol);
-            log("New best = " + solutionBest);
+            log("New best = " + solutionBest + " at iteration " + iteration);
         }
     }
 

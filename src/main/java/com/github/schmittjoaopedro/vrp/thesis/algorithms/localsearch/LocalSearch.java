@@ -8,8 +8,11 @@ public class LocalSearch {
 
     private RelocateRequests relocateRequests;
 
+    private ExchangeRequests exchangeRequests;
+
     public LocalSearch(Instance instance) {
         relocateRequests = new RelocateRequests(instance);
+        exchangeRequests = new ExchangeRequests(instance);
     }
 
     public Solution applyImprovement(Solution solution) {
@@ -19,7 +22,7 @@ public class LocalSearch {
         while (improvement) {
             improvement = false;
             tempSolution = relocateRequests.relocate(tempSolution);
-            //tempSolution = exchangeRequestOperator.exchange(tempSolution);
+            tempSolution = exchangeRequests.exchange(tempSolution);
             if (SolutionUtils.getBest(improved, tempSolution) == tempSolution) {
                 improved = SolutionUtils.copy(tempSolution);
                 improvement = true;

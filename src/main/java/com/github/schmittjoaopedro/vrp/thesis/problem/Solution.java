@@ -3,11 +3,22 @@ package com.github.schmittjoaopedro.vrp.thesis.problem;
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class Solution {
+
+    private static final DecimalFormat COST_FORMAT;
+
+    static {
+        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols(Locale.US);
+        formatSymbols.setDecimalSeparator('.');
+        COST_FORMAT = new DecimalFormat("#.00", formatSymbols);
+    }
 
     public ArrayList<ArrayList<Integer>> tours;
 
@@ -149,7 +160,7 @@ public class Solution {
 
     @Override
     public String toString() {
-        return "[F = " + feasible + ", NV = " + tours.size() + ", TC = " + MathUtils.round(totalCost) + "]";
+        return "[F = " + feasible + ", NV = " + tours.size() + ", TC = " + COST_FORMAT.format(MathUtils.round(totalCost)) + "]";
     }
 
     protected class NodeIndex {

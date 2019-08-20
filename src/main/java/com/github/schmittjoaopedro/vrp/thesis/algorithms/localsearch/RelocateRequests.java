@@ -28,7 +28,7 @@ public class RelocateRequests {
         int bestVehicle = -1;
         Request request;
         InsertPosition bestInsertion, insertPosition;
-        Set<Integer> hashCosts = new HashSet<>();
+        Set<Integer> solutionHashes = new HashSet<>();
         Solution tempSol = SolutionUtils.createSolution(instance);
         SolutionUtils.copyFromTo(solution, tempSol);
         RouteTimes[] routeTimes = new RouteTimes[tempSol.tours.size()];
@@ -55,8 +55,8 @@ public class RelocateRequests {
                 }
                 if (bestInsertion.cost < Double.MAX_VALUE) {
                     int hash = getHashCost(bestInsertion, bestVehicle);
-                    if (!hashCosts.contains(hash)) {
-                        hashCosts.add(hash);
+                    if (!solutionHashes.contains(hash)) {
+                        solutionHashes.add(hash);
                         double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
                         if (bestInsertion.cost < removalGain) {
                             // Remove request from old vehicle
@@ -80,7 +80,7 @@ public class RelocateRequests {
     }
 
     public int getHashCost(InsertPosition insertPosition, Integer vehicle) {
-        return ("hash-" + vehicle +
+        return ("-" + vehicle +
                 "-" + MathUtils.round(insertPosition.cost) +
                 "-" + insertPosition.deliveryPos +
                 "-" + insertPosition.pickupPos).hashCode();
