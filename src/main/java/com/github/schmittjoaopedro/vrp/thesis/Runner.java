@@ -102,7 +102,10 @@ public class Runner {
         for (String instance : instances_800) {
             executeProblemSolver(pdptw800Directory, instance);
         }
-//        executeProblemSolver(pdptw1000Directory, "LR2_10_4");
+        System.out.println("pdp1000");
+        for (String instance : instances_1000) {
+            executeProblemSolver(pdptw1000Directory, instance);
+        }
     }
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {

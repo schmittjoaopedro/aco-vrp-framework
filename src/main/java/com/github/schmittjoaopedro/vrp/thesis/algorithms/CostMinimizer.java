@@ -38,9 +38,9 @@ public class CostMinimizer extends ALNS {
         greedyInsertion.insert(solution, 0);
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
-        executeLocalSearch(solution);
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
+        executeLocalSearch(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
         solutionBest = SolutionUtils.copy(solution);
 
@@ -81,6 +81,7 @@ public class CostMinimizer extends ALNS {
                 if (solutionNew.calculateObjective(instance) < solutionBest.calculateObjective(instance)) {
                     if (solutionNew.feasible) {
                         SolutionUtils.removeEmptyVehicles(solutionNew);
+                        executeLocalSearch(solutionNew);
                         feasibleSolutionBest = SolutionUtils.copy(solutionNew);
                     }
                     solutionBest = SolutionUtils.copy(solutionNew);

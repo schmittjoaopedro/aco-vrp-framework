@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch;
 
+import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertPosition;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertionService;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
@@ -9,6 +10,8 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class RelocateRequests {
 
@@ -25,6 +28,7 @@ public class RelocateRequests {
         int bestVehicle = -1;
         Request request;
         InsertPosition bestInsertion, insertPosition;
+        Set<Integer> hashCosts = new HashSet<>();
         Solution tempSol = SolutionUtils.createSolution(instance);
         SolutionUtils.copyFromTo(solution, tempSol);
         RouteTimes[] routeTimes = new RouteTimes[tempSol.tours.size()];
@@ -50,24 +54,35 @@ public class RelocateRequests {
                     }
                 }
                 if (bestInsertion.cost < Double.MAX_VALUE) {
-                    double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
-                    if (bestInsertion.cost < removalGain) {
-                        // Remove request from old vehicle
-                        tempSol.remove(Arrays.asList(requestId), instance);
-                        routeTimes[vehicle] = new RouteTimes(tempSol.tours.get(vehicle).size());
-                        insertionService.calculateRouteTimes(tempSol.tours.get(vehicle), routeTimes[vehicle]);
-                        tempSol.indexVehicle(vehicle);
-                        // Insert request on new vehicle
-                        tempSol.insert(instance, requestId, bestVehicle, bestInsertion.pickupPos, bestInsertion.deliveryPos);
-                        routeTimes[bestVehicle] = new RouteTimes(tempSol.tours.get(bestVehicle).size());
-                        insertionService.calculateRouteTimes(tempSol.tours.get(bestVehicle), routeTimes[bestVehicle]);
-                        tempSol.indexVehicle(bestVehicle);
-                        improvement = true;
+                    int hash = getHashCost(bestInsertion, bestVehicle);
+                    if (!hashCosts.contains(hash)) {
+                        hashCosts.add(hash);
+                        double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
+                        if (bestInsertion.cost < removalGain) {
+                            // Remove request from old vehicle
+                            tempSol.remove(Arrays.asList(requestId), instance);
+                            routeTimes[vehicle] = new RouteTimes(tempSol.tours.get(vehicle).size());
+                            insertionService.calculateRouteTimes(tempSol.tours.get(vehicle), routeTimes[vehicle]);
+                            tempSol.indexVehicle(vehicle);
+                            // Insert request on new vehicle
+                            tempSol.insert(instance, requestId, bestVehicle, bestInsertion.pickupPos, bestInsertion.deliveryPos);
+                            routeTimes[bestVehicle] = new RouteTimes(tempSol.tours.get(bestVehicle).size());
+                            insertionService.calculateRouteTimes(tempSol.tours.get(bestVehicle), routeTimes[bestVehicle]);
+                            tempSol.indexVehicle(bestVehicle);
+                            improvement = true;
+                        }
                     }
                 }
             }
         }
         instance.solutionEvaluation(tempSol);
         return tempSol;
+    }
+
+    public int getHashCost(InsertPosition insertPosition, Integer vehicle) {
+        return ("hash-" + vehicle +
+                "-" + MathUtils.round(insertPosition.cost) +
+                "-" + insertPosition.deliveryPos +
+                "-" + insertPosition.pickupPos).hashCode();
     }
 }
