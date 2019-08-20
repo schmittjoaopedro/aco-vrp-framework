@@ -110,6 +110,7 @@ public class Runner {
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
         solver.setPrintConsole(false);
+        solver.enableLocalSearch();
         solver.init();
         solver.run();
         Solution solution = solver.getSolutionBest();

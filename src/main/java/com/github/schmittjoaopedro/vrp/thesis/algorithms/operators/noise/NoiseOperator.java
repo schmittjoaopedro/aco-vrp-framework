@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
+package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.noise;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.Operator;
 

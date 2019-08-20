@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators;
+package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.RemovalOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;

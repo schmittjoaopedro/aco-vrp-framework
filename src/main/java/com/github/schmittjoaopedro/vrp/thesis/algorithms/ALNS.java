@@ -1,8 +1,10 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.NoiseOperator;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch.LocalSearch;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.noise.NoiseOperator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
+import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
 import java.util.*;
 
@@ -28,9 +30,14 @@ public abstract class ALNS {
 
     protected List<Operator> removalOperators = new ArrayList<>();
 
+    protected LocalSearch localSearch;
+
+    protected boolean useLocalSearch = false;
+
     public ALNS(Instance instance, Random random) {
         this.instance = instance;
         this.random = random;
+        this.localSearch = new LocalSearch(instance);
     }
 
     public Solution getFeasibleSolutionBest() {
@@ -124,4 +131,18 @@ public abstract class ALNS {
         }
         return selectedOperator;
     }
+
+    protected void executeLocalSearch(Solution solution) {
+        if (useLocalSearch) {
+            Solution newSolution = localSearch.applyImprovement(solution);
+            if (SolutionUtils.getBest(solution, newSolution) == newSolution) {
+                SolutionUtils.copyFromTo(newSolution, solution);
+            }
+        }
+    }
+
+    public void setUseLocalSearch(boolean useLocalSearch) {
+        this.useLocalSearch = useLocalSearch;
+    }
+
 }

@@ -138,4 +138,8 @@ public class Solver {
     public void setPrintConsole(boolean printConsole) {
         this.printConsole = printConsole;
     }
+
+    public void enableLocalSearch() {
+        Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.setUseLocalSearch(true));
+    }
 }

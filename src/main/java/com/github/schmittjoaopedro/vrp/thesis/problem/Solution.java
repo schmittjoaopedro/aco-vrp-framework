@@ -47,6 +47,7 @@ public class Solution {
             int deliveryNode = instance.deliveryTasks[requestId].nodeId;
             visited[pickupNode] = false;
             visited[deliveryNode] = false;
+            visitedRequests[requestId] = false;
         }
         for (int i = 0; i < tours.size(); ++i) {
             ArrayList<Integer> newRoute = new ArrayList<>();
@@ -99,6 +100,43 @@ public class Solution {
             node = tours.get(vehicle).get(routeIndex);
             nodeIndexes[node] = new NodeIndex(vehicle, routeIndex);
         }
+    }
+
+    public int findRequestVehicleOwner(Integer requestId) {
+        int vehicle = 0;
+        for (int k = 0; k < requestIds.size(); k++) {
+            if (requestIds.get(k).contains(requestId)) {
+                vehicle = k;
+                break;
+            }
+        }
+        return vehicle;
+    }
+
+    public double calculateRequestRemovalGain(Instance instance, Request request) {
+        int vehicle = getVehicle(request.pickupTask.nodeId);
+        int pickupPos = getTourPosition(request.pickupTask.nodeId);
+        int prevPickupNode = tours.get(vehicle).get(pickupPos - 1);
+        int nextPickupNode = tours.get(vehicle).get(pickupPos + 1);
+        int deliveryPos = getTourPosition(request.deliveryTask.nodeId);
+        int prevDeliveryNode = tours.get(vehicle).get(deliveryPos - 1);
+        int nextDeliveryNode = tours.get(vehicle).get(deliveryPos + 1);
+        double requestCost;
+        boolean adjacentNodes = nextPickupNode == request.deliveryTask.nodeId;
+        if (adjacentNodes) {
+            requestCost = instance.dist(prevPickupNode, request.pickupTask.nodeId) +
+                    instance.dist(request.pickupTask.nodeId, request.deliveryTask.nodeId) +
+                    instance.dist(request.deliveryTask.nodeId, nextDeliveryNode) -
+                    instance.dist(prevPickupNode, nextDeliveryNode);
+        } else {
+            requestCost = instance.dist(prevPickupNode, request.pickupTask.nodeId) +
+                    instance.dist(request.pickupTask.nodeId, nextPickupNode) -
+                    instance.dist(prevPickupNode, nextPickupNode) +
+                    instance.dist(prevDeliveryNode, request.deliveryTask.nodeId) +
+                    instance.dist(request.deliveryTask.nodeId, nextDeliveryNode) -
+                    instance.dist(prevDeliveryNode, nextDeliveryNode);
+        }
+        return requestCost;
     }
 
     public int getVehicle(int nodeId) {

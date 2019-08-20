@@ -1,6 +1,10 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.*;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.noise.NoiseOperator;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal.RandomRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal.ShawRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal.WorstRemoval;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -75,6 +79,7 @@ public class VehicleMinimizer extends ALNS {
                 TABU_LIST.add(hash);
                 if (solutionNew.calculateObjective(instance) < solutionBest.calculateObjective(instance)) {
                     solutionBest = SolutionUtils.copy(solutionNew);
+                    executeLocalSearch(solutionBest);
                     increaseOperatorsScore(removeHeuristic, insertHeuristic, noiseHeuristic, sigmas[0]);
                 } else if (solutionNew.calculateObjective(instance) < solution.calculateObjective(instance)) {
                     increaseOperatorsScore(removeHeuristic, insertHeuristic, noiseHeuristic, sigmas[1]);

@@ -1,6 +1,10 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.*;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.noise.NoiseOperator;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal.RandomRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal.ShawRemoval;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.removal.WorstRemoval;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -32,6 +36,9 @@ public class CostMinimizer extends ALNS {
         greedyInsertion = new RegretInsertion(random, instance, (solution, instance) -> 1);
         solution = SolutionUtils.createSolution(instance);
         greedyInsertion.insert(solution, 0);
+        SolutionUtils.removeEmptyVehicles(solution);
+        instance.solutionEvaluation(solution);
+        executeLocalSearch(solution);
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
