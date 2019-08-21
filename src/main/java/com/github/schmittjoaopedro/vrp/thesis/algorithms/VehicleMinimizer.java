@@ -38,7 +38,6 @@ public class VehicleMinimizer extends ALNS {
         greedyInsertion.insert(solution, 0);
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
-        executeLocalSearch(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
 
         // Add insertion heuristics
@@ -79,7 +78,6 @@ public class VehicleMinimizer extends ALNS {
             if (!TABU_LIST.contains(hash)) {
                 TABU_LIST.add(hash);
                 if (solutionNew.calculateObjective(instance) < solutionBest.calculateObjective(instance)) {
-                    executeLocalSearch(solutionNew);
                     solutionBest = SolutionUtils.copy(solutionNew);
                     increaseOperatorsScore(removeHeuristic, insertHeuristic, noiseHeuristic, sigmas[0]);
                 } else if (solutionNew.calculateObjective(instance) < solution.calculateObjective(instance)) {
