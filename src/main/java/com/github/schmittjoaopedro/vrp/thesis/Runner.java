@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.thesis;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Paths;
 import java.util.Random;
@@ -119,6 +120,6 @@ public class Runner {
         Solution solution = solver.getSolutionBest();
         time = System.currentTimeMillis() - time;
         Double timeMinutes = time / (1000.0 * 60.0);
-        System.out.println(instance.name + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
+        System.out.println(StringUtils.rightPad(instance.name, 10) + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
     }
 }
