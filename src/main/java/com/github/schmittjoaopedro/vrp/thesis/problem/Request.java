@@ -10,4 +10,12 @@ public class Request {
 
     public double announceTime;
 
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public double getAnnounceTime() {
+        return announceTime;
+    }
+
 }

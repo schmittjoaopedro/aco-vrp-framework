@@ -47,6 +47,7 @@ public class Solution {
         tours.get(vehicle).add(deliveryPos, request.deliveryTask.nodeId);
         visited[request.pickupTask.nodeId] = true;
         visited[request.deliveryTask.nodeId] = true;
+        visitedRequests[requestId] = true;
         requestIds.get(vehicle).add(requestId);
     }
 
@@ -83,7 +84,7 @@ public class Solution {
     public int requestBankSize(Instance instance) {
         int ret = 0;
         for (int i = 0; i < instance.numRequests; ++i)
-            if (!visited[i]) ++ret;
+            if (!visitedRequests[i]) ++ret;
         return ret;
     }
 
@@ -111,17 +112,6 @@ public class Solution {
             node = tours.get(vehicle).get(routeIndex);
             nodeIndexes[node] = new NodeIndex(vehicle, routeIndex);
         }
-    }
-
-    public int findRequestVehicleOwner(Integer requestId) {
-        int vehicle = 0;
-        for (int k = 0; k < requestIds.size(); k++) {
-            if (requestIds.get(k).contains(requestId)) {
-                vehicle = k;
-                break;
-            }
-        }
-        return vehicle;
     }
 
     public double calculateRequestRemovalGain(Instance instance, Request request) {

@@ -31,40 +31,7 @@ public class StaticTcMinimizerTest {
         assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(5070.736543598931);
         assertThat(solutionBest.tours.size()).isEqualTo(16);
-        // Check tours
-        assertThat(StringUtils.join(solutionBest.tours.get(0), " ")).isEqualTo("0 149 81 35 196 60 152 104 207 62 88 99 138 90 204 39 208 37 96 108 97 45 52 59 105 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(1), " ")).isEqualTo("0 132 155 67 7 137 14 120 113 69 134 203 165 31 185 124 103 181 154 24 198 74 110 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(2), " ")).isEqualTo("0 55 41 157 188 4 89 106 125 151 56 33 141 191 43 129 70 164 190 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(3), " ")).isEqualTo("0 73 145 112 30 13 34 121 76 205 146 169 101 172 49 206 197 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(4), " ")).isEqualTo("0 63 150 36 44 68 3 117 25 201 116 80 109 180 27 75 91 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(5), " ")).isEqualTo("0 87 92 16 2 32 38 84 100 159 194 142 183 118 128 40 200 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(6), " ")).isEqualTo("0 18 50 66 131 5 182 175 9 65 29 179 202 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(7), " ")).isEqualTo("0 140 46 94 57 173 114 12 19 178 23 127 58 47 82 22 174 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(8), " ")).isEqualTo("0 147 184 54 85 193 144 186 167 28 107 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(9), " ")).isEqualTo("0 123 48 161 187 171 8 170 122 53 42 17 192 111 119 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(10), " ")).isEqualTo("0 1 143 26 176 51 168 139 21 126 156 78 148 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(11), " ")).isEqualTo("0 72 135 93 199 133 64 195 160 130 11 79 61 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(12), " ")).isEqualTo("0 15 166 71 153 95 6 77 83 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(13), " ")).isEqualTo("0 20 98 163 136 177 189 102 10 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(14), " ")).isEqualTo("0 158 86 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(15), " ")).isEqualTo("0 162 115 0");
-        // Check requests
-        assertThat(StringUtils.join(solutionBest.requestIds.get(0), " ")).isEqualTo("73 52 20 66 44 16 31 76 101 32 51 18");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(1), " ")).isEqualTo("64 50 37 83 77 63 55 35 92 4 102");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(2), " ")).isEqualTo("43 61 62 23 75 29 22 97 1");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(3), " ")).isEqualTo("59 54 71 40 14 39 88 26");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(4), " ")).isEqualTo("74 12 17 33 58 53 36 57");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(5), " ")).isEqualTo("94 99 15 19 41 21 42 45");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(6), " ")).isEqualTo("93 2 9 27 34 91");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(7), " ")).isEqualTo("11 30 68 89 56 6 24 46");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(8), " ")).isEqualTo("28 98 70 95 72");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(9), " ")).isEqualTo("80 25 8 87 86 60 96");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(10), " ")).isEqualTo("69 90 0 13 85 67");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(11), " ")).isEqualTo("38 103 65 100 79 5");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(12), " ")).isEqualTo("7 84 47 3");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(13), " ")).isEqualTo("10 49 82 48");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(14), " ")).isEqualTo("78");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(15), " ")).isEqualTo("81");
+        assertThat(solutionBest.requestIds.size()).isEqualTo(16);
     }
 
     @Test
@@ -102,52 +69,13 @@ public class StaticTcMinimizerTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2842.43] at iteration 223");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2789.07] at iteration 527");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2773.39] at iteration 529");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2772.66] at iteration 1440");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2772.18] at iteration 2225");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2773.05] at iteration 2146");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 18, TC = 2772.18] at iteration 2630");
 
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(2772.182174325898);
+        assertThat(solutionBest.totalCost).isEqualTo(2772.1821743258974);
         assertThat(solutionBest.tours.size()).isEqualTo(18);
-        // Check tours
-        counter = 0;
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 114 159 38 204 150 22 151 16 140 187 142 111 63 56 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 113 73 129 11 6 122 139 34 95 158 190 67 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 148 103 206 197 124 141 69 200 162 109 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 57 118 83 143 176 36 33 121 165 188 202 108 78 201 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 48 26 152 40 153 169 89 105 15 59 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 101 144 119 166 35 126 71 9 1 99 53 17 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 20 41 85 80 31 25 172 77 110 179 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 62 120 44 192 196 97 14 96 130 28 19 30 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 45 178 173 154 24 61 100 64 27 149 68 76 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 21 23 182 75 163 194 145 195 52 92 198 74 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 32 171 65 86 115 94 51 174 136 189 147 12 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 93 55 135 58 184 37 138 146 102 131 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 60 82 180 84 191 125 4 72 193 46 128 90 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 170 134 50 156 112 168 79 29 87 42 123 133 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 116 164 66 160 47 205 91 70 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 10 5 106 167 43 13 2 175 203 155 39 107 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 177 3 88 8 186 127 98 157 199 183 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 161 104 18 54 185 132 7 181 117 49 81 137 0");
-        // Check requests
-        counter = 0;
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("56 70 13 81 77 72 19");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("4 36 80 8 46 55");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("101 76 50 71 62");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("84 29 90 59 42 97 39");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("15 21 52 26 78");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("48 73 49 60 18 0");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("38 16 11 22 43");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("61 99 47 33 9 65");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("14 32 88 92 79 24");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("74 94 12 100 37 102");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("17 28 87 34 44 57");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("45 68 69 75 30");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("93 41 2 98 63 31");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("86 67 40 27 23 54");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("82 25 35 58");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("85 3 20 53 7 89");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("6 91 1 64 96");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("51 5 10 83 66 95");
+        assertThat(solutionBest.requestIds.size()).isEqualTo(18);
     }
 
     @Test
@@ -185,67 +113,40 @@ public class StaticTcMinimizerTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3645.03] at iteration 110");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3628.72] at iteration 111");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3621.21] at iteration 158");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3609.51] at iteration 266");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3588.02] at iteration 267");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3581.87] at iteration 271");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3573.11] at iteration 690");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3557.45] at iteration 847");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3540.17] at iteration 848");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3522.62] at iteration 1530");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3520.47] at iteration 1533");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3506.51] at iteration 1995");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3500.32] at iteration 1997");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3492.43] at iteration 2158");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3487.26] at iteration 2160");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3463.95] at iteration 2184");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3463.65] at iteration 5378");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3455.99] at iteration 6105");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3439.78] at iteration 6109");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3438.59] at iteration 6111");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3428.15] at iteration 6193");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3426.35] at iteration 9761");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3425.04] at iteration 10755");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3420.17] at iteration 10767");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3417.33] at iteration 10775");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3416.46] at iteration 10776");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3414.65] at iteration 10783");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3408.54] at iteration 10790");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3407.48] at iteration 10794");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3569.28] at iteration 427");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3537.48] at iteration 428");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3525.13] at iteration 432");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3518.06] at iteration 436");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3502.70] at iteration 1770");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3456.60] at iteration 1773");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3454.58] at iteration 1776");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3449.49] at iteration 6949");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3440.45] at iteration 6954");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3439.87] at iteration 6955");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3424.25] at iteration 6966");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3418.90] at iteration 6970");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3418.61] at iteration 10477");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3418.04] at iteration 10479");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3415.80] at iteration 10480");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3412.49] at iteration 11117");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3410.00] at iteration 11173");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3406.45] at iteration 11280");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3406.30] at iteration 13506");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3405.66] at iteration 14507");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3405.41] at iteration 14914");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3405.33] at iteration 14926");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3404.76] at iteration 14928");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3404.32] at iteration 17473");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3403.77] at iteration 17546");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3399.97] at iteration 17715");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3397.49] at iteration 17732");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3397.48] at iteration 17736");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3397.32] at iteration 17921");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV = 14, TC = 3396.91] at iteration 17936");
 
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3407.477246629216);
+        assertThat(solutionBest.totalCost).isEqualTo(3396.9105150279297);
         assertThat(solutionBest.tours.size()).isEqualTo(14);
-        // Check tours
-        counter = 0;
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 67 63 137 36 44 5 3 117 80 182 175 9 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 35 145 112 121 181 146 169 103 154 101 105 24 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 140 57 173 95 178 23 19 114 138 32 90 204 159 127 77 198 74 45 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 4 188 15 184 166 193 153 71 144 186 179 202 33 190 167 107 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 149 81 1 143 26 176 51 21 113 124 134 203 69 165 31 185 126 156 172 197 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 89 106 125 151 129 191 43 141 70 164 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 46 54 85 94 12 82 47 58 22 174 108 97 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 73 13 20 30 34 62 98 163 136 177 6 189 102 10 83 52 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 72 147 135 93 199 109 64 133 195 25 201 116 61 49 206 27 28 75 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 18 150 68 158 50 66 131 86 180 160 130 11 79 91 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 196 60 99 152 38 84 104 207 100 194 183 118 142 128 88 59 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 7 55 41 157 56 39 208 37 65 96 29 110 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 87 161 92 48 8 162 115 16 2 76 205 17 40 200 192 111 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(counter++), " ")).isEqualTo("0 132 155 14 120 123 168 139 187 170 171 122 42 53 78 148 119 0");
-        // Check requests
-        counter = 0;
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("58 2 33 17 35 93");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("71 54 16 59 50 92");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("68 66 44 89 30 102 15 47 56");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("1 91 84 98 95 97 70 7");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("64 55 13 83 69 0 90 37 88 73");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("75 62 23 43 61");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("46 6 28 11 52 24");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("3 49 32 48 39 82 10 14");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("65 100 57 53 72 38 26 103 12");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("5 9 78 27 74 36 79");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("51 99 101 19 76 41 94 31");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("18 34 22 4 29 20");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("45 40 81 80 21 42 25 8");
-        assertThat(StringUtils.join(solutionBest.requestIds.get(counter++), " ")).isEqualTo("67 60 85 86 96 87 77 63");
+        assertThat(solutionBest.requestIds.size()).isEqualTo(14);
     }
 }

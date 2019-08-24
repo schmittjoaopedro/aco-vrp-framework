@@ -56,6 +56,7 @@ public class WorstRemoval extends RemovalOperator {
             int vehicle = solution.getVehicle(removePickupNode);
             solution.visited[removePickupNode] = false;
             solution.visited[removeDeliveryNode] = false;
+            solution.visitedRequests[requestId] = false;
             // First remove delivery because pickup will un-synchronize the indexes
             solution.tours.get(vehicle).remove(solution.getTourPosition(removeDeliveryNode));
             solution.tours.get(vehicle).remove(solution.getTourPosition(removePickupNode));

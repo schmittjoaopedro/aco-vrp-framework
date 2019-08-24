@@ -26,6 +26,8 @@ public class Solver {
 
     private LinkedList<String> logs = new LinkedList<>();
 
+    private CallCenter callCenter;
+
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this.instance = instance;
         this.maxIterations = maxIterations;
@@ -37,9 +39,12 @@ public class Solver {
         if (minimizeTc == true) {
             costMinimizer = new CostMinimizer(instance, random);
         }
+        callCenter = new CallCenter(instance, instance.depot.twStart, instance.depot.twEnd);
     }
 
     public void init() {
+        // Load static requests
+        callCenter.loadStaticRequests();
         // Init both algorithms
         Optional.ofNullable(vehicleMinimizer).ifPresent(VehicleMinimizer::init);
         Optional.ofNullable(costMinimizer).ifPresent(CostMinimizer::init);
@@ -71,6 +76,7 @@ public class Solver {
             iteration++;
         }
         instance.solutionEvaluation(solutionBest);
+        callCenter.rollbackOriginalInformation(solutionBest);
         printSolutionBest();
     }
 

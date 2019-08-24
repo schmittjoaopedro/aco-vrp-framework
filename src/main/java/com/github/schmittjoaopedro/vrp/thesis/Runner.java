@@ -83,7 +83,8 @@ public class Runner {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("pdp100");
+        executeProblemSolver(pdptw100Directory, "lc101");
+        /*System.out.println("pdp100");
         for (String instance : instances_100) {
             executeProblemSolver(pdptw100Directory, instance);
         }
@@ -106,14 +107,14 @@ public class Runner {
         System.out.println("pdp1000");
         for (String instance : instances_1000) {
             executeProblemSolver(pdptw1000Directory, instance);
-        }
+        }*/
     }
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {
         Long time = System.currentTimeMillis();
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
-        solver.setPrintConsole(false);
+        solver.setPrintConsole(true);
         solver.enableLocalSearch();
         solver.init();
         solver.run();
