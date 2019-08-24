@@ -29,23 +29,14 @@ public class VehicleMinimizer extends ALNS {
 
     public VehicleMinimizer(Instance instance, Random random) {
         super(instance, random);
-    }
-
-    public void init() {
-        // Create initial solution
-        greedyInsertion = new RegretInsertion(random, instance, (solution, instance) -> 1);
-        solution = SolutionUtils.createSolution(instance);
-        greedyInsertion.insert(solution, 0);
-        SolutionUtils.removeEmptyVehicles(solution);
-        instance.solutionEvaluation(solution);
-        feasibleSolutionBest = SolutionUtils.copy(solution);
 
         // Add insertion heuristics
+        greedyInsertion = new RegretInsertion(random, instance, (sol, inst) -> 1);
         insertionOperators.add(greedyInsertion);
-        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> 2));
-        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> 3));
-        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> 4));
-        insertionOperators.add(new RegretInsertion(random, instance, (solution, instance) -> solution.requestBankSize(instance)));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 2));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 3));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 4));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.requestBankSize(inst)));
         // Add removal heuristics
         removalOperators.add(new RandomRemoval(instance, random));
         removalOperators.add(new WorstRemoval(instance, random));
@@ -53,6 +44,22 @@ public class VehicleMinimizer extends ALNS {
         // Add noise heuristics
         noiseOperators.add(new NoiseOperator(0));
         noiseOperators.add(new NoiseOperator(1));
+        // Create initial solution
+        solution = SolutionUtils.createSolution(instance);
+    }
+
+    public void init() {
+        Solution newSolution = SolutionUtils.createSolution(instance);
+        for (int k = 0; k < newSolution.tours.size(); k++) {
+            newSolution.tours.set(k, newSolution.tours.get(k));
+            newSolution.requestIds.set(k, newSolution.requestIds.get(k));
+        }
+        solution = newSolution;
+        instance.solutionEvaluation(solution);
+        greedyInsertion.insert(solution, 0);
+        SolutionUtils.removeEmptyVehicles(solution);
+        instance.solutionEvaluation(solution);
+        feasibleSolutionBest = SolutionUtils.copy(solution);
 
         // Prepare algorithm structures and initial parameters
         resetOperatorsWeights();
@@ -106,10 +113,12 @@ public class VehicleMinimizer extends ALNS {
     }
 
     public void removeLastVehicle(Solution solution) {
-        int vehicle = solution.tours.size() - 1;
-        solution.tours.remove(vehicle);
-        solution.requestIds.remove(vehicle);
-        instance.solutionEvaluation(solution);
+        if (solution.tours.size() > 1) {
+            int vehicle = solution.tours.size() - 1;
+            solution.tours.remove(vehicle);
+            solution.requestIds.remove(vehicle);
+            instance.solutionEvaluation(solution);
+        }
     }
 
 }

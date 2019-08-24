@@ -150,7 +150,9 @@ public class Solution {
 
     @Override
     public String toString() {
-        return "[F = " + feasible + ", NV = " + tours.size() + ", TC = " + COST_FORMAT.format(MathUtils.round(totalCost)) + "]";
+        return "[F = " + feasible +
+                ", NV = " + StringUtils.leftPad(String.valueOf(tours.size()), 3) +
+                ", TC = " + StringUtils.leftPad(COST_FORMAT.format(MathUtils.round(totalCost)), 9) + "]";
     }
 
     protected class NodeIndex {

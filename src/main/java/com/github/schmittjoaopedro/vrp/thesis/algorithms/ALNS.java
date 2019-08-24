@@ -107,11 +107,7 @@ public abstract class ALNS {
     }
 
     protected int generateRandomNumRemoveRequests(double removeControl) {
-        int numRemoveRequests = 0;
-        while (numRemoveRequests < 4) {
-            numRemoveRequests = (int) (random.nextDouble() * Math.min(100, (int) (removeControl * instance.numRequests)));
-        }
-        return numRemoveRequests;
+        return (int) Math.max(4, random.nextDouble() * Math.min(100, (int) (removeControl * instance.numRequests)));
     }
 
     protected int rouletteSelection(List<Operator> operators) {

@@ -29,18 +29,18 @@ public class LiteratureResultsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
-        assertThat(solutionBest.totalCost).isEqualTo(1035.3499342457626);
+        assertThat(solutionBest.totalCost).isEqualTo(1035.3499342457624);
         assertThat(solutionBest.tours.size()).isEqualTo(9);
         int idx = 0;
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 20 25 27 15 30 24 23 18 16 14 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 67 65 62 74 72 61 64 68 66 69 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 5 3 7 8 10 11 9 6 4 2 1 75 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 43 42 41 40 44 46 101 45 48 51 50 52 49 47 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 13 17 19 94 93 102 97 100 99 96 95 12 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 90 87 98 92 84 85 88 86 89 91 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 32 33 31 35 104 37 38 39 36 34 29 28 26 103 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 57 55 54 53 56 58 60 59 22 21 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 81 78 76 71 70 73 77 79 80 83 82 63 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 90 87 98 92 84 85 88 86 89 91 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 13 17 19 94 93 102 97 100 99 96 95 12 0");
     }
 
     @Test
@@ -50,6 +50,7 @@ public class LiteratureResultsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(588.8759626534237);
         assertThat(solutionBest.tours.size()).isEqualTo(3);
         int idx = 0;
@@ -65,18 +66,19 @@ public class LiteratureResultsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
-        assertThat(solutionBest.totalCost).isEqualTo(1003.7669978006982);
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(1003.7669978006979);
         assertThat(solutionBest.tours.size()).isEqualTo(9);
         int idx = 0;
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 95 59 99 94 6 18 83 84 17 45 60 89 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 92 98 85 93 87 57 15 43 42 97 13 58 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 69 30 51 9 81 106 33 50 29 3 77 68 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 27 31 88 7 82 8 46 36 49 47 48 104 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 28 76 79 78 34 35 71 65 66 20 105 1 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 95 59 99 94 6 18 83 84 17 45 60 89 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 2 41 22 72 74 101 75 56 23 67 39 4 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 52 62 19 11 64 63 90 32 10 70 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 5 61 16 86 38 14 44 91 100 102 37 96 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 21 73 40 53 26 12 80 103 24 25 55 54 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 28 76 79 78 34 35 71 65 66 20 105 1 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 92 98 85 93 87 57 15 43 42 97 13 58 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 52 62 19 11 64 63 90 32 10 70 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 2 41 22 72 74 101 75 56 23 67 39 4 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 27 31 88 7 82 8 46 36 49 47 48 104 0");
     }
 
     @Test
@@ -86,12 +88,13 @@ public class LiteratureResultsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(930.5857489156436);
         assertThat(solutionBest.tours.size()).isEqualTo(3);
         int idx = 0;
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 52 82 83 5 99 59 95 92 98 44 14 38 86 16 61 85 18 7 8 84 17 45 46 36 49 32 10 48 60 89 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 28 76 29 12 40 2 73 21 72 39 67 23 75 22 41 15 57 87 94 6 101 53 26 13 97 42 43 91 100 37 93 96 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 27 69 31 88 62 47 19 11 64 63 90 30 51 71 9 81 33 3 79 78 34 35 65 66 20 70 1 50 77 68 80 24 54 55 25 4 56 74 58 102 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 52 82 83 5 99 59 95 92 98 44 14 38 86 16 61 85 18 7 8 84 17 45 46 36 49 32 10 48 60 89 0");
     }
 
     @Test
@@ -101,22 +104,23 @@ public class LiteratureResultsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(1637.6243913700941);
         assertThat(solutionBest.tours.size()).isEqualTo(13);
         int idx = 0;
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 2 45 5 7 79 55 101 68 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 69 88 78 108 73 60 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 90 53 66 56 91 106 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 72 71 81 41 54 96 94 93 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 39 36 44 38 40 37 35 104 43 70 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 33 76 18 48 21 25 24 105 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 92 95 64 99 52 86 57 74 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 63 62 67 84 51 85 89 102 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 42 61 8 6 46 4 107 3 1 100 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 90 53 66 56 91 106 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 98 47 16 103 15 87 59 97 75 58 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 65 83 19 23 22 20 49 77 0");
-        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 72 71 81 41 54 96 94 93 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 98 47 16 103 15 87 59 97 75 58 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 82 12 14 11 9 10 13 17 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 42 61 8 6 46 4 107 3 1 100 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 69 88 78 108 73 60 0");
         assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 29 27 26 30 28 32 31 34 50 80 0");
+        assertThat(StringUtils.join(solutionBest.tours.get(idx++), ' ')).isEqualTo("0 2 45 5 7 79 55 101 68 0");
     }
 
     @Test
@@ -126,6 +130,7 @@ public class LiteratureResultsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(1089.0676879447258);
         assertThat(solutionBest.tours.size()).isEqualTo(3);
         int idx = 0;

@@ -4,7 +4,6 @@ import com.github.schmittjoaopedro.vrp.thesis.Solver;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -41,13 +40,14 @@ public class StaticNvMinimizerTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
-        assertThat(solver.getLogs().get(0)).isEqualTo("Initial solution = [F = true, NV = 20, TC = 4385.17]");
-        assertThat(solver.getLogs().get(1)).isEqualTo("New best = [F = true, NV = 19, TC = 4097.69] at iteration 6");
-        assertThat(solver.getLogs().get(2)).isEqualTo("New best = [F = true, NV = 18, TC = 4133.07] at iteration 45");
-        assertThat(solver.getLogs().get(3)).isEqualTo("New best = [F = true, NV = 17, TC = 3640.98] at iteration 67");
+        int counter = 0;
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  20, TC =   4385.17]");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  19, TC =   4097.69] at iteration 6");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   3960.59] at iteration 26");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  17, TC =   3438.93] at iteration 402");
 
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3640.9778334906696);
+        assertThat(solutionBest.totalCost).isEqualTo(3438.932635997139);
         assertThat(solutionBest.tours.size()).isEqualTo(17);
         assertThat(solutionBest.requestIds.size()).isEqualTo(17);
     }
@@ -59,15 +59,16 @@ public class StaticNvMinimizerTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
-        assertThat(solver.getLogs().get(0)).isEqualTo("Initial solution = [F = true, NV = 16, TC = 5070.74]");
-        assertThat(solver.getLogs().get(1)).isEqualTo("New best = [F = true, NV = 15, TC = 4538.34] at iteration 1");
-        assertThat(solver.getLogs().get(2)).isEqualTo("New best = [F = true, NV = 14, TC = 4287.88] at iteration 4");
-        assertThat(solver.getLogs().get(3)).isEqualTo("New best = [F = true, NV = 13, TC = 4278.02] at iteration 7");
-        assertThat(solver.getLogs().get(4)).isEqualTo("New best = [F = true, NV = 12, TC = 4091.96] at iteration 81");
-        assertThat(solver.getLogs().get(5)).isEqualTo("New best = [F = true, NV = 11, TC = 3924.43] at iteration 5415");
+        int counter = 0;
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  16, TC =   5070.74]");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  15, TC =   4538.34] at iteration 1");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  14, TC =   4287.88] at iteration 4");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  13, TC =   4882.41] at iteration 15");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  12, TC =   4098.06] at iteration 53");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  11, TC =   3894.25] at iteration 7550");
 
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3924.4295378737456);
+        assertThat(solutionBest.totalCost).isEqualTo(3894.2519286903953);
         assertThat(solutionBest.tours.size()).isEqualTo(11);
         assertThat(solutionBest.requestIds.size()).isEqualTo(11);
     }

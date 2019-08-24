@@ -83,38 +83,53 @@ public class Runner {
     }
 
     public static void main(String[] args) throws Exception {
-        executeProblemSolver(pdptw100Directory, "lc101");
-        /*System.out.println("pdp100");
-        for (String instance : instances_100) {
-            executeProblemSolver(pdptw100Directory, instance);
+        if (isExecute("100", args)) {
+            System.out.println("pdp100");
+            for (String instance : instances_100) {
+                executeProblemSolver(pdptw100Directory, instance);
+            }
         }
-        System.out.println("pdp200");
-        for (String instance : instances_200) {
-            executeProblemSolver(pdptw200Directory, instance);
+        if (isExecute("200", args)) {
+            System.out.println("pdp200");
+            for (String instance : instances_200) {
+                executeProblemSolver(pdptw200Directory, instance);
+            }
         }
-        System.out.println("pdp400");
-        for (String instance : instances_400) {
-            executeProblemSolver(pdptw400Directory, instance);
+        if (isExecute("400", args)) {
+            System.out.println("pdp400");
+            for (String instance : instances_400) {
+                executeProblemSolver(pdptw400Directory, instance);
+            }
         }
-        System.out.println("pdp600");
-        for (String instance : instances_600) {
-            executeProblemSolver(pdptw600Directory, instance);
+        if (isExecute("600", args)) {
+            System.out.println("pdp600");
+            for (String instance : instances_600) {
+                executeProblemSolver(pdptw600Directory, instance);
+            }
         }
-        System.out.println("pdp800");
-        for (String instance : instances_800) {
-            executeProblemSolver(pdptw800Directory, instance);
+        if (isExecute("800", args)) {
+            System.out.println("pdp800");
+            for (String instance : instances_800) {
+                executeProblemSolver(pdptw800Directory, instance);
+            }
         }
-        System.out.println("pdp1000");
-        for (String instance : instances_1000) {
-            executeProblemSolver(pdptw1000Directory, instance);
-        }*/
+        if (isExecute("1000", args)) {
+            System.out.println("pdp1000");
+            for (String instance : instances_1000) {
+                executeProblemSolver(pdptw1000Directory, instance);
+            }
+        }
+    }
+
+    private static boolean isExecute(String numNodes, String[] args) {
+        return args[0].equals("ALL") || args[0].equals(numNodes);
     }
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {
         Long time = System.currentTimeMillis();
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
-        solver.setPrintConsole(true);
+        solver.setPrintConsole(false);
         solver.enableLocalSearch();
         solver.init();
         solver.run();

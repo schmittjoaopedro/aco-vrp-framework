@@ -89,6 +89,9 @@ public class Reader {
                 request.pickupTask = tasks[nodeId - 1];
                 request.deliveryTask = tasks[deliveryIndex - 1];
                 request.requestId = reqId;
+                if (lineData.length == 10) {
+                    request.announceTime = Double.valueOf(lineData[9]);
+                }
                 requests.add(request);
                 maxDemand = Math.max(maxDemand, request.pickupTask.demand);
                 reqId++;
