@@ -44,6 +44,12 @@ public abstract class ALNS {
         return feasibleSolutionBest;
     }
 
+    public void setBaseSolution(Solution newSolution) {
+        solution = SolutionUtils.copy(newSolution);
+        solutionBest = SolutionUtils.copy(newSolution);
+        feasibleSolutionBest = SolutionUtils.copy(newSolution);
+    }
+
     protected void resetOperatorsWeights() {
         noiseOperators.forEach(Operator::resetOperator);
         removalOperators.forEach(Operator::resetOperator);

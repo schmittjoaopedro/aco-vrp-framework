@@ -18,4 +18,12 @@ public class Request {
         return announceTime;
     }
 
+    public boolean isVehicleRelocatable() {
+        return pickupTask.isIdle() && deliveryTask.isIdle();
+    }
+
+    public boolean isFullyVisited() {
+        return !pickupTask.isIdle() && !deliveryTask.isIdle();
+    }
+
 }

@@ -16,7 +16,7 @@ public class SolutionUtils {
             to.tourCosts.add(i, from.tourCosts.get(i));
         }
         to.visited = from.visited.clone();
-        to.visitedRequests = from.visitedRequests.clone();
+        to.removedRequests = from.removedRequests.clone();
         to.nodeIndexes = from.nodeIndexes.clone();
         to.totalCost = from.totalCost;
         to.feasible = from.feasible;
@@ -41,7 +41,7 @@ public class SolutionUtils {
         solution.requestIds = new ArrayList<>();
         solution.tourCosts = new ArrayList<>();
         solution.visited = new boolean[instance.numNodes];
-        solution.visitedRequests = new boolean[instance.numRequests];
+        solution.removedRequests = new boolean[instance.numRequests];
         solution.nodeIndexes = new Solution.NodeIndex[instance.numNodes];
         solution.totalCost = 0.0;
         solution.feasible = false;
@@ -53,6 +53,9 @@ public class SolutionUtils {
             solution.requestIds.add(new ArrayList<>());
             solution.tours.get(i).add(0);
             solution.tours.get(i).add(0);
+        }
+        for (int i = 0; i < instance.numRequests; i++) {
+            solution.removedRequests[i] = true;
         }
     }
 

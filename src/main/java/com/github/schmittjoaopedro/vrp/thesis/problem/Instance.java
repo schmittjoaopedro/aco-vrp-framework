@@ -82,13 +82,20 @@ public class Instance {
         }
     }
 
+    public boolean isDepot(int node) {
+        return depot.nodeId == node;
+    }
+
     public void solutionEvaluation(Solution solution) {
         solution.tourCosts = new ArrayList<>(solution.tours.size());
         solution.toVisit = numTasks;
         solution.totalCost = 0.0;
         solution.feasible = true;
         solution.visited = new boolean[numNodes];
-        solution.visitedRequests = new boolean[numRequests];
+        solution.removedRequests = new boolean[numRequests];
+        for (int i = 0; i < numRequests; i++) {
+            solution.removedRequests[i] = true;
+        }
         int[] numNodesByRequest = new int[numRequests];
         Double[] pickupByRequestTime = new Double[numRequests];
         Double[] deliveryByRequestTime = new Double[numRequests];
@@ -112,7 +119,7 @@ public class Instance {
                 // For precedence and attendance restrictions
                 task = getTask(next);
                 if (task != null) { // Ignore node depot
-                    solution.visitedRequests[task.requestId] = true;
+                    solution.removedRequests[task.requestId] = false;
                     if (task.isPickup) {
                         numNodesByRequest[task.requestId]++;
                         pickupByRequestTime[task.requestId] = currentTime;

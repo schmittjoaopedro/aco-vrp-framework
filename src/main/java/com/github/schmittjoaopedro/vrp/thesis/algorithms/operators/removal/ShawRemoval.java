@@ -32,38 +32,40 @@ public class ShawRemoval extends RemovalOperator {
         double[][] requestsRelatedness = new double[instance.numRequests][instance.numRequests]; // R x R relatedness matrix
         for (int i = 0; i < instance.numRequests; ++i) {
             Request reqA = instance.requests[i];
-            if (solution.visited[reqA.pickupTask.nodeId]) {
+            if (!solution.removedRequests[i] && reqA.isVehicleRelocatable()) {
                 attendedRequests.add(i);
                 for (int j = 0; j < instance.numRequests; ++j) {
                     requestsRelatedness[i][j] = 0.0;
                     Request reqB = instance.requests[j];
-                    if (solution.visited[instance.requests[j].pickupTask.nodeId]) {
+                    if (!solution.removedRequests[j] && reqB.isVehicleRelocatable()) {
                         requestsRelatedness[i][j] = relatedness(solution, routeTimes, reqA, reqB);
                     }
                 }
             }
         }
-        int r = (int) (random.nextDouble() * (double) attendedRequests.size());
-        removeRequests.add(attendedRequests.get(r));
-        attendedRequests.remove(r); // Remove at position r
-        while (removeRequests.size() < q && attendedRequests.size() > 0) {
-            r = (int) (random.nextDouble() % (double) removeRequests.size());
-            PriorityQueue<RemovalRequest> heap = new PriorityQueue<>();
-            for (int i = 0; i < attendedRequests.size(); ++i) {
-                heap.add(new RemovalRequest(requestsRelatedness[attendedRequests.get(i)][removeRequests.get(r)], -i));
+        if (!attendedRequests.isEmpty()) {
+            int r = (int) (random.nextDouble() * (double) attendedRequests.size());
+            removeRequests.add(attendedRequests.get(r));
+            attendedRequests.remove(r); // Remove at position r
+            while (removeRequests.size() < q && attendedRequests.size() > 0) {
+                r = (int) (random.nextDouble() % (double) removeRequests.size());
+                PriorityQueue<RemovalRequest> heap = new PriorityQueue<>();
+                for (int i = 0; i < attendedRequests.size(); ++i) {
+                    heap.add(new RemovalRequest(requestsRelatedness[attendedRequests.get(i)][removeRequests.get(r)], -i));
+                }
+                double y = random.nextDouble();
+                y = Math.pow(y, shawRandomDegree);
+                int toRemove = (int) (y * (double) attendedRequests.size());
+                int removePos = -1;
+                for (int i = 0; i <= toRemove; ++i) {
+                    removePos = -heap.peek().position;
+                    heap.poll();
+                }
+                removeRequests.add(attendedRequests.get(removePos));
+                attendedRequests.remove(removePos);
             }
-            double y = random.nextDouble();
-            y = Math.pow(y, shawRandomDegree);
-            int toRemove = (int) (y * (double) attendedRequests.size());
-            int removePos = -1;
-            for (int i = 0; i <= toRemove; ++i) {
-                removePos = -heap.peek().position;
-                heap.poll();
-            }
-            removeRequests.add(attendedRequests.get(removePos));
-            attendedRequests.remove(removePos);
+            solution.remove(removeRequests, instance);
         }
-        solution.remove(removeRequests, instance);
     }
 
     protected RouteTimes calculateRouteTimes(Solution solution) {

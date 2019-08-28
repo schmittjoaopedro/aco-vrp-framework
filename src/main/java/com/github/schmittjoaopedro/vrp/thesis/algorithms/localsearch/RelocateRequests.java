@@ -42,34 +42,36 @@ public class RelocateRequests {
             improvement = false;
             for (Integer requestId = 0; requestId < instance.numRequests; requestId++) {
                 request = instance.requests[requestId];
-                int vehicle = tempSol.getVehicle(request.pickupTask.nodeId);
-                bestInsertion = new InsertPosition();
-                for (int k = 0; k < tempSol.tours.size(); k++) {
-                    if (k != vehicle) {
-                        insertPosition = insertionService.calculateBestPosition(tempSol.tours.get(k), request, routeTimes[k]);
-                        if (insertPosition.cost < bestInsertion.cost) {
-                            bestInsertion = insertPosition;
-                            bestVehicle = k;
+                if (request.isVehicleRelocatable()) {
+                    int vehicle = tempSol.getVehicle(request.pickupTask.nodeId);
+                    bestInsertion = new InsertPosition();
+                    for (int k = 0; k < tempSol.tours.size(); k++) {
+                        if (k != vehicle) {
+                            insertPosition = insertionService.calculateBestPosition(tempSol.tours.get(k), request, routeTimes[k]);
+                            if (insertPosition.cost < bestInsertion.cost) {
+                                bestInsertion = insertPosition;
+                                bestVehicle = k;
+                            }
                         }
                     }
-                }
-                if (bestInsertion.cost < Double.MAX_VALUE) {
-                    int hash = getHashCost(bestInsertion, bestVehicle);
-                    if (!solutionHashes.contains(hash)) {
-                        solutionHashes.add(hash);
-                        double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
-                        if (bestInsertion.cost < removalGain) {
-                            // Remove request from old vehicle
-                            tempSol.remove(Arrays.asList(requestId), instance);
-                            routeTimes[vehicle] = new RouteTimes(tempSol.tours.get(vehicle).size());
-                            insertionService.calculateRouteTimes(tempSol.tours.get(vehicle), routeTimes[vehicle]);
-                            tempSol.indexVehicle(vehicle);
-                            // Insert request on new vehicle
-                            tempSol.insert(instance, requestId, bestVehicle, bestInsertion.pickupPos, bestInsertion.deliveryPos);
-                            routeTimes[bestVehicle] = new RouteTimes(tempSol.tours.get(bestVehicle).size());
-                            insertionService.calculateRouteTimes(tempSol.tours.get(bestVehicle), routeTimes[bestVehicle]);
-                            tempSol.indexVehicle(bestVehicle);
-                            improvement = true;
+                    if (bestInsertion.cost < Double.MAX_VALUE) {
+                        int hash = getHashCost(bestInsertion, bestVehicle);
+                        if (!solutionHashes.contains(hash)) {
+                            solutionHashes.add(hash);
+                            double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
+                            if (bestInsertion.cost < removalGain) {
+                                // Remove request from old vehicle
+                                tempSol.remove(Arrays.asList(requestId), instance);
+                                routeTimes[vehicle] = new RouteTimes(tempSol.tours.get(vehicle).size());
+                                insertionService.calculateRouteTimes(tempSol.tours.get(vehicle), routeTimes[vehicle]);
+                                tempSol.indexVehicle(vehicle);
+                                // Insert request on new vehicle
+                                tempSol.insert(instance, requestId, bestVehicle, bestInsertion.pickupPos, bestInsertion.deliveryPos);
+                                routeTimes[bestVehicle] = new RouteTimes(tempSol.tours.get(bestVehicle).size());
+                                insertionService.calculateRouteTimes(tempSol.tours.get(bestVehicle), routeTimes[bestVehicle]);
+                                tempSol.indexVehicle(bestVehicle);
+                                improvement = true;
+                            }
                         }
                     }
                 }

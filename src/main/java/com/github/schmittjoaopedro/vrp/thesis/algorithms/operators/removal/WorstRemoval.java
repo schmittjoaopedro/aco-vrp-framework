@@ -5,6 +5,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
@@ -31,7 +32,7 @@ public class WorstRemoval extends RemovalOperator {
         double[] requestsCosts = new double[instance.numRequests];
         for (int r = 0; r < instance.numRequests; r++) {
             Request request = instance.requests[r];
-            if (solution.visited[request.pickupTask.nodeId]) {
+            if (!solution.removedRequests[request.requestId]) {
                 requestsCosts[request.requestId] = solution.calculateRequestRemovalGain(instance, request);
             }
         }
@@ -39,7 +40,7 @@ public class WorstRemoval extends RemovalOperator {
             Queue<RequestRemoval> heap = new PriorityQueue<>();
             for (int i = 0; i < instance.numRequests; ++i) {
                 Request request = instance.requests[i];
-                if (solution.visited[request.pickupTask.nodeId]) {
+                if (!solution.removedRequests[request.requestId]) {
                     heap.add(new RequestRemoval(-requestsCosts[request.requestId], -request.pickupTask.nodeId));
                 }
             }
@@ -52,15 +53,8 @@ public class WorstRemoval extends RemovalOperator {
                 heap.poll();
             }
             Integer requestId = instance.getTask(removePickupNode).requestId;
-            int removeDeliveryNode = instance.requests[requestId].deliveryTask.nodeId;
             int vehicle = solution.getVehicle(removePickupNode);
-            solution.visited[removePickupNode] = false;
-            solution.visited[removeDeliveryNode] = false;
-            solution.visitedRequests[requestId] = false;
-            // First remove delivery because pickup will un-synchronize the indexes
-            solution.tours.get(vehicle).remove(solution.getTourPosition(removeDeliveryNode));
-            solution.tours.get(vehicle).remove(solution.getTourPosition(removePickupNode));
-            solution.requestIds.get(vehicle).remove(requestId);
+            solution.remove(Arrays.asList(requestId), instance);
             --q;
             solution.indexVehicle(vehicle);
             for (int i = 1; i < solution.tours.get(vehicle).size() - 1; ++i) {

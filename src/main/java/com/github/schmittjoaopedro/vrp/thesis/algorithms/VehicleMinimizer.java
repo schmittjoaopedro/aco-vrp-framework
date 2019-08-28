@@ -9,6 +9,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class VehicleMinimizer extends ALNS {
@@ -36,7 +37,7 @@ public class VehicleMinimizer extends ALNS {
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 2));
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 3));
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 4));
-        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.requestBankSize(inst)));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.removeRequestsNumber(inst)));
         // Add removal heuristics
         removalOperators.add(new RandomRemoval(instance, random));
         removalOperators.add(new WorstRemoval(instance, random));
@@ -48,11 +49,13 @@ public class VehicleMinimizer extends ALNS {
         solution = SolutionUtils.createSolution(instance);
     }
 
-    public void init() {
+    public void init(Solution solutionBase) {
         Solution newSolution = SolutionUtils.createSolution(instance);
-        for (int k = 0; k < newSolution.tours.size(); k++) {
-            newSolution.tours.set(k, newSolution.tours.get(k));
-            newSolution.requestIds.set(k, newSolution.requestIds.get(k));
+        if (solutionBase != null) {
+            for (int k = 0; k < solutionBase.tours.size(); k++) {
+                newSolution.tours.set(k, new ArrayList<>(solutionBase.tours.get(k)));
+                newSolution.requestIds.set(k, new ArrayList<>(solutionBase.requestIds.get(k)));
+            }
         }
         solution = newSolution;
         instance.solutionEvaluation(solution);

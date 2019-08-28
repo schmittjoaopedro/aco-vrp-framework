@@ -58,6 +58,7 @@ public class Reader {
                 yCoords[i - 1] = depot.y;
             } else {
                 Task task = new Task();
+                task.status = Task.Status.Idle;
                 task.nodeId = Integer.valueOf(lineData[0]);
                 task.x = Double.valueOf(lineData[1]);
                 task.y = Double.valueOf(lineData[2]);

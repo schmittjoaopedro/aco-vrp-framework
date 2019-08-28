@@ -9,6 +9,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class CostMinimizer extends ALNS {
@@ -35,7 +36,7 @@ public class CostMinimizer extends ALNS {
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 2));
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 3));
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 4));
-        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.requestBankSize(inst)));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.removeRequestsNumber(inst)));
         // Add removal heuristics
         removalOperators.add(new RandomRemoval(instance, random));
         removalOperators.add(new WorstRemoval(instance, random));
@@ -47,11 +48,13 @@ public class CostMinimizer extends ALNS {
         solution = SolutionUtils.createSolution(instance);
     }
 
-    public void init() {
+    public void init(Solution solutionBase) {
         Solution newSolution = SolutionUtils.createSolution(instance);
-        for (int k = 0; k < newSolution.tours.size(); k++) {
-            newSolution.tours.set(k, newSolution.tours.get(k));
-            newSolution.requestIds.set(k, newSolution.requestIds.get(k));
+        if (solutionBase != null) {
+            for (int k = 0; k < solutionBase.tours.size(); k++) {
+                newSolution.tours.set(k, new ArrayList<>(solutionBase.tours.get(k)));
+                newSolution.requestIds.set(k, new ArrayList<>(solutionBase.requestIds.get(k)));
+            }
         }
         solution = newSolution;
         instance.solutionEvaluation(solution);
@@ -61,6 +64,7 @@ public class CostMinimizer extends ALNS {
         SolutionUtils.removeEmptyVehicles(solution);
         instance.solutionEvaluation(solution);
         executeLocalSearch(solution);
+        SolutionUtils.removeEmptyVehicles(solution);
         feasibleSolutionBest = SolutionUtils.copy(solution);
         solutionBest = SolutionUtils.copy(solution);
 
@@ -88,6 +92,7 @@ public class CostMinimizer extends ALNS {
                     if (solutionNew.feasible) {
                         SolutionUtils.removeEmptyVehicles(solutionNew);
                         executeLocalSearch(solutionNew);
+                        SolutionUtils.removeEmptyVehicles(solutionNew);
                         feasibleSolutionBest = SolutionUtils.copy(solutionNew);
                     }
                     solutionBest = SolutionUtils.copy(solutionNew);
@@ -107,9 +112,7 @@ public class CostMinimizer extends ALNS {
     }
 
     public void resetToInitialSolution(Solution solution) {
-        this.solutionBest = SolutionUtils.copy(solution);
-        this.feasibleSolutionBest = SolutionUtils.copy(solution);
-        this.solution = SolutionUtils.copy(solution);
+        setBaseSolution(solution);
         T = calculateStartingTemperature(solution.totalCost, tolerance);
     }
 }

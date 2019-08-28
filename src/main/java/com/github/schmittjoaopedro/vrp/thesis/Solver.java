@@ -31,9 +31,13 @@ public class Solver {
 
     private CallCenter callCenter;
 
+    private VehiclesControlCenter vehiclesControlCenter;
+
     private int iteration = 1;
 
     private Statistics statistics;
+
+    private RoutePrinter routePrinter;
 
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this.instance = instance;
@@ -60,8 +64,11 @@ public class Solver {
     public void run() {
         while (iteration < maxIterations) {
             final int i = iteration;
-            processCallCenter(i);
+            attendNewRequests(i);
             if (instance.numRequests > 0) {
+                // Monitor vehicles visiting clients
+                trackOperatingVehicles(i);
+                printVehiclesOperation();
                 // Minimize NV
                 Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(i));
                 Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
@@ -84,7 +91,17 @@ public class Solver {
         printSolutionBest();
     }
 
-    private void processCallCenter(int iteration) {
+    private void trackOperatingVehicles(int iteration) {
+        if (Optional.ofNullable(vehiclesControlCenter).isPresent()) {
+            // Track moving vehicles
+            if (vehiclesControlCenter.moveVehicle(solutionBest, iteration)) {
+                Optional.ofNullable(vehicleMinimizer).ifPresent(vm -> vm.setBaseSolution(solutionBest));
+                Optional.ofNullable(costMinimizer).ifPresent(cm -> cm.setBaseSolution(solutionBest));
+            }
+        }
+    }
+
+    private void attendNewRequests(int iteration) {
         List<Integer> requests = callCenter.loadNewRequests(iteration);
         if (!requests.isEmpty()) {
             log("New requests = " + StringUtils.join(requests));
@@ -95,8 +112,8 @@ public class Solver {
     private void resetAlgorithms() {
         if (instance.numRequests > 0) {
             // Init both algorithms
-            Optional.ofNullable(vehicleMinimizer).ifPresent(VehicleMinimizer::init);
-            Optional.ofNullable(costMinimizer).ifPresent(CostMinimizer::init);
+            Optional.ofNullable(vehicleMinimizer).ifPresent(vm -> vm.init(solutionBest));
+            Optional.ofNullable(costMinimizer).ifPresent(cm -> cm.init(solutionBest));
             // Create initial solution for both
             Solution initNv = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
             Solution initTc = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
@@ -177,6 +194,10 @@ public class Solver {
         Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.setUseLocalSearch(true));
     }
 
+    public void enableVehicleControlCenter() {
+        vehiclesControlCenter = new VehiclesControlCenter(instance, 0, maxIterations);
+    }
+
     public void saveStatistics(File file) {
         try {
             FileUtils.writeStringToFile(file, "iteration,nv,tc\n", "UTF-8", false);
@@ -189,5 +210,15 @@ public class Solver {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void printVehiclesOperation() {
+        if (routePrinter != null && iteration % 99 == 0) {
+            routePrinter.printRoute(instance, solutionBest, iteration);
+        }
+    }
+
+    public void enablePrintOperation(String folderPath) {
+        routePrinter = new RoutePrinter(instance, folderPath, 1024, 768);
     }
 }

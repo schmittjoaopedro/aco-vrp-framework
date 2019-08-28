@@ -25,7 +25,7 @@ public class RandomRemoval extends RemovalOperator {
     public void remove(Solution solution, int q) {
         List<Integer> requestIds = new ArrayList<>();
         for (Task pickupTask : instance.pickupTasks) {
-            if (solution.visited[pickupTask.nodeId]) {
+            if (!solution.removedRequests[pickupTask.requestId]) {
                 requestIds.add(pickupTask.requestId);
             }
         }

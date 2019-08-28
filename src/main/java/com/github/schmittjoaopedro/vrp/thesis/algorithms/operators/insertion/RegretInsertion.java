@@ -48,7 +48,7 @@ public class RegretInsertion extends InsertionOperator {
             insertionService.calculateRouteTimes(solution.tours.get(k), routeTimes);
             for (int r = 0; r < insertionCosts.length; r++) {
                 request = instance.requests[r];
-                if (solution.visited[request.pickupTask.nodeId] == false) {
+                if (solution.removedRequests[request.requestId]) {
                     insertionCosts[r][k] = insertionService.calculateBestPosition(solution.tours.get(k), request, routeTimes);
                 }
             }
@@ -63,7 +63,7 @@ public class RegretInsertion extends InsertionOperator {
             InsertPosition insertPos = null;
             for (int r = 0; r < insertionCosts.length; r++) {
                 pickupTask = instance.pickupTasks[r];
-                if (solution.visited[pickupTask.nodeId] == false) {
+                if (solution.removedRequests[r]) {
                     Queue<InsertVehicle> heap = new PriorityQueue<>(); // Create a heap to hold the best vehicle to insert the request
                     for (int k = 0; k < insertionCosts[r].length; k++) {
                         double cost = insertionCosts[r][k].cost;
@@ -73,7 +73,7 @@ public class RegretInsertion extends InsertionOperator {
                         heap.add(new InsertVehicle(cost, k));
                     }
                     InsertVehicle insertionVehicle = heap.peek();
-                    if (insertionVehicle.cost == Double.MAX_VALUE) continue;
+                    if (insertionVehicle == null || insertionVehicle.cost == Double.MAX_VALUE) continue;
                     int curPossibleVehicles = 0;
                     if (insertionVehicle.cost < Double.MAX_VALUE) ++curPossibleVehicles;
                     int minRoute = insertionVehicle.routeIndex;
@@ -108,7 +108,7 @@ public class RegretInsertion extends InsertionOperator {
             insertionService.calculateRouteTimes(solution.tours.get(insertRoute), routeTimes); // Update the vehicle costs
             for (int r = 0; r < insertionCosts.length; r++) {
                 request = instance.requests[r];
-                if (solution.visited[request.pickupTask.nodeId] == false && insertionCosts[r][insertRoute].cost < Double.MAX_VALUE) {
+                if (solution.removedRequests[r] && insertionCosts[r][insertRoute].cost < Double.MAX_VALUE) {
                     insertionCosts[r][insertRoute] = insertionService.calculateBestPosition(solution.tours.get(insertRoute), request, routeTimes);
                 }
             }

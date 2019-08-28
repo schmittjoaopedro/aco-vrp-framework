@@ -8,10 +8,13 @@ public class RouteTimes {
 
     public double[] slackTime;
 
+    public double[] departureTime;
+
     public RouteTimes(int size) {
         startTime = new double[size];
         waitingTime = new double[size];
         slackTime = new double[size];
+        departureTime = new double[size];
     }
 
 }
