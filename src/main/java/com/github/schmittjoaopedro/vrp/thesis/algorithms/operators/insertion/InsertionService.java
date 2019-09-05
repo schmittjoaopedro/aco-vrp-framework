@@ -24,12 +24,13 @@ public class InsertionService {
             boolean isValidCapacity, isValidTimeWindow, isValidSlackTime;
             ArrayList<Integer> newRoute = new ArrayList<>(route);
             newRoute.add(newRoute.get(0), pickupNode);
-            RouteTimes newRouteTimes = new RouteTimes(newRoute.size());
             for (int i = 1; i < route.size(); ++i) { // Ignore depot
                 swapPositions(newRoute, i, i - 1); // Advance current pickup one position
                 prevNode = route.get(i - 1);
                 currNode = route.get(i);
-                if (instance.isDepot(currNode) || instance.getTask(currNode).isIdle()) {
+                boolean isInTimeToVisit = instance.startVisitTime(pickupNode) <= routeTimes.departureTime[i - 1]; // Already know request when we departure from previous node
+                boolean isIdleNode = instance.isDepot(currNode) || instance.getTask(currNode).isIdle();
+                if (isIdleNode && isInTimeToVisit) {
                     cost = instance.dist(prevNode, pickupNode) + instance.dist(pickupNode, currNode) - instance.dist(prevNode, currNode);
                     arrivalTime = routeTimes.startTime[i - 1] + instance.dist(prevNode, pickupNode) + instance.serviceTime(prevNode);
                     waitTime = Math.max(0.0, instance.twStart(pickupNode) - arrivalTime);
@@ -43,7 +44,7 @@ public class InsertionService {
                             }
                             isValidSlackTime = delay <= routeTimes.waitingTime[i] + routeTimes.slackTime[i] + ep;
                             if (isValidSlackTime) {
-                                calculateRouteTimes(newRoute, newRouteTimes);
+                                RouteTimes newRouteTimes = new RouteTimes(newRoute, instance);
                                 InsertPosition deliveryPosition = calculateBestDeliveryPosition(newRoute, request.deliveryTask.nodeId, i + 1, totalAmount + instance.demand(pickupNode), newRouteTimes);
                                 if (cost + deliveryPosition.cost < insertPosition.cost) {
                                     insertPosition.cost = cost + deliveryPosition.cost;
@@ -84,8 +85,7 @@ public class InsertionService {
                         instance.dist(route.get(deliveryIdx), route.get(deliveryIdx + 1)) -
                         instance.dist(route.get(deliveryIdx - 1), route.get(deliveryIdx + 1));
                 newRoute.remove(deliveryIdx);
-                RouteTimes newRouteTimes = new RouteTimes(newRoute.size());
-                calculateRouteTimes(newRoute, newRouteTimes);
+                RouteTimes newRouteTimes = new RouteTimes(newRoute, instance);
                 InsertPosition deliveryPosition = calculateBestDeliveryPosition(newRoute, request.deliveryTask.nodeId, startNode, totalAmount, newRouteTimes);
                 if (deliveryPosition.cost < cost) {
                     insertPosition.cost = deliveryPosition.cost;
@@ -129,33 +129,6 @@ public class InsertionService {
             }
         }
         return insertPosition;
-    }
-
-    public void calculateRouteTimes(ArrayList<Integer> route, RouteTimes routeTimes) {
-        // Depot times
-        routeTimes.startTime[0] = 0.0;
-        routeTimes.waitingTime[0] = 0.0;
-        routeTimes.slackTime[0] = 0.0;
-        routeTimes.departureTime[0] = 0.0;
-        // Node times
-        double visitedTime, time = 0;
-        int prev, curr;
-        for (int j = 1; j < route.size(); ++j) {
-            prev = route.get(j - 1);
-            curr = route.get(j);
-            time += instance.dist(prev, curr) / instance.vehicleSpeed + instance.serviceTime(prev);
-            visitedTime = time;
-            time = Math.max(time, instance.twStart(curr));
-            routeTimes.startTime[j] = time;
-            routeTimes.departureTime[j] = time + instance.serviceTime(curr);
-            routeTimes.waitingTime[j] = Math.max(0., time - visitedTime);
-            routeTimes.slackTime[0] = 0.0;
-        }
-        // Slack times
-        routeTimes.slackTime[route.size() - 1] = instance.twEnd(route.get(route.size() - 1)) - routeTimes.startTime[route.size() - 1];
-        for (int i = route.size() - 2; i > 0; --i) {
-            routeTimes.slackTime[i] = Math.min(routeTimes.slackTime[i + 1] + routeTimes.waitingTime[i + 1], instance.twEnd(route.get(i)) - routeTimes.startTime[i]);
-        }
     }
 
     private void swapPositions(ArrayList<Integer> route, int i1, int i2) {

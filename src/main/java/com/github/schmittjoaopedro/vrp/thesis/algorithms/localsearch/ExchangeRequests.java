@@ -96,9 +96,7 @@ public class ExchangeRequests {
     }
 
     public RouteTimes createRouteTimes(ArrayList<Integer> tour) {
-        RouteTimes routeTimes = new RouteTimes(tour.size());
-        insertionService.calculateRouteTimes(tour, routeTimes);
-        return routeTimes;
+        return new RouteTimes(tour, instance);
     }
 
     public int getHash(int v1, InsertPosition pos1, int v2, InsertPosition pos2) {

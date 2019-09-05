@@ -33,8 +33,7 @@ public class RelocateRequests {
         SolutionUtils.copyFromTo(solution, tempSol);
         RouteTimes[] routeTimes = new RouteTimes[tempSol.tours.size()];
         for (int k = 0; k < tempSol.tours.size(); k++) {
-            routeTimes[k] = new RouteTimes(tempSol.tours.get(k).size());
-            insertionService.calculateRouteTimes(tempSol.tours.get(k), routeTimes[k]);
+            routeTimes[k] = new RouteTimes(tempSol.tours.get(k), instance);
             tempSol.indexVehicle(k);
         }
         boolean improvement = true;
@@ -62,13 +61,11 @@ public class RelocateRequests {
                             if (bestInsertion.cost < removalGain) {
                                 // Remove request from old vehicle
                                 tempSol.remove(Arrays.asList(requestId), instance);
-                                routeTimes[vehicle] = new RouteTimes(tempSol.tours.get(vehicle).size());
-                                insertionService.calculateRouteTimes(tempSol.tours.get(vehicle), routeTimes[vehicle]);
+                                routeTimes[vehicle] = new RouteTimes(tempSol.tours.get(vehicle), instance);
                                 tempSol.indexVehicle(vehicle);
                                 // Insert request on new vehicle
                                 tempSol.insert(instance, requestId, bestVehicle, bestInsertion.pickupPos, bestInsertion.deliveryPos);
-                                routeTimes[bestVehicle] = new RouteTimes(tempSol.tours.get(bestVehicle).size());
-                                insertionService.calculateRouteTimes(tempSol.tours.get(bestVehicle), routeTimes[bestVehicle]);
+                                routeTimes[bestVehicle] = new RouteTimes(tempSol.tours.get(bestVehicle), instance);
                                 tempSol.indexVehicle(bestVehicle);
                                 improvement = true;
                             }

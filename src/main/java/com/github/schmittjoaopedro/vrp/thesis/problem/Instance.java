@@ -1,5 +1,8 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertionService;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +39,11 @@ public class Instance {
 
     public Task[] deliveryTasks;
 
+    public boolean movingVehicle;
+
     public double[] objWeight = {1.0, 0.0, 100000.0};
+
+    public double currentTime = 0.0;
 
     public double dist(int i, int j) {
         return distances[i][j];
@@ -74,6 +81,24 @@ public class Instance {
         }
     }
 
+    public double announceTime(int node) {
+        if (depot.nodeId == node) {
+            return 0.0;
+        } else {
+            return requests[getTask(node).requestId].announceTime;
+        }
+    }
+
+    public double startVisitTime(int node) {
+        if (!movingVehicle) {
+            return 0.0;
+        } if (depot.nodeId == node) {
+            return currentTime;
+        } else {
+            return requests[getTask(node).requestId].startVisitTime;
+        }
+    }
+
     public Task getTask(int node) {
         if (node == depot.nodeId) {
             return null;
@@ -101,16 +126,24 @@ public class Instance {
         Double[] deliveryByRequestTime = new Double[numRequests];
         // For each vehicle
         for (int k = 0; k < solution.tours.size(); k++) {
-            List<Integer> tour = solution.tours.get(k);
-            Double currentTime = depot.twStart;
+            solution.tourCosts.add(0.0);
+            if (solution.requestIds.get(k).isEmpty()) continue;
+            ArrayList<Integer> tour = solution.tours.get(k);
+            //Double currentTime = announceTime(tour.get(1));
+            Double currentTime = startVisitTime(tour.get(1));
             Double tourCost = 0.0;
             Double capacity = 0.0;
-            int curr, next;
             Task task;
+            int curr, next;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
             for (int i = 0; i < tour.size() - 1; i++) {
                 curr = tour.get(i);
                 next = tour.get(i + 1);
+                // Is infeasible visit a route before they announce time
+                if (currentTime < announceTime(next)) {
+                    solution.feasible = false;
+                    throw new RuntimeException();
+                }
                 solution.visited[curr] = true;
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
@@ -157,7 +190,7 @@ public class Instance {
                     solution.toVisit--;
                 }
             }
-            solution.tourCosts.add(tourCost);
+            solution.tourCosts.set(k, tourCost);
             solution.totalCost += tourCost;
         }
         // Check that all requests were attended

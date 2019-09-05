@@ -1,6 +1,9 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertionService;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
+import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Task;
 import org.apache.commons.io.FileUtils;
@@ -31,6 +34,8 @@ public class RoutePrinter {
 
     private Color committed = Color.green;
 
+    private InsertionService insertionService;
+
     public RoutePrinter(Instance instance, String folderPath, int width, int height) {
         this.folderPath = folderPath;
         this.width = width;
@@ -48,7 +53,7 @@ public class RoutePrinter {
         maxY = Math.max(maxY, instance.depot.y);
         minX = Math.min(minX, instance.depot.x);
         minY = Math.min(minY, instance.depot.y);
-
+        insertionService = new InsertionService(instance);
     }
 
     public void printRoute(Instance instance, Solution solution, int iteration) {
@@ -62,18 +67,20 @@ public class RoutePrinter {
             indexHtml.append("\t\t\t<path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n");
             indexHtml.append("\t\t</marker>\n");
             indexHtml.append("\t</defs>");
-            for (Task task : instance.tasks) {
-                if (task.isPickup) {
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, task.x, task.y, "red", String.valueOf(task.requestId));
+            for (Request req : instance.requests) {
+                if (req.pickupTask.x != req.pickupTask.x || req.deliveryTask.y != req.deliveryTask.x) {
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "red", String.valueOf(req.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "blue", String.valueOf(req.requestId));
                 } else {
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, task.x, task.y, "blue", String.valueOf(task.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "gray", String.valueOf(req.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "gray", String.valueOf(req.requestId));
                 }
             }
             drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
             double xCoordSource, yCoordSource, xCoordTarget, yCoordTarget;
             for (int k = 0; k < solution.tours.size(); k++) {
                 for (int i = 0; i < solution.tours.get(k).size() - 1; i++) {
-                    Color color = idle;
+                    Color color;
                     Task task;
                     if (i == 0) {
                         xCoordSource = instance.depot.x;
@@ -83,20 +90,15 @@ public class RoutePrinter {
                         xCoordSource = task.x;
                         yCoordSource = task.y;
                     }
-                    if (i == solution.tours.get(k).size() - 2) {
+                    if (instance.isDepot(solution.tours.get(k).get(i + 1))) {
                         xCoordTarget = instance.depot.x;
                         yCoordTarget = instance.depot.y;
-                        task = instance.getTask(solution.tours.get(k).get(i));
-                        switch (task.status) {
-                            case Transition:
-                                color = transition;
-                                break;
-                            case Committed:
-                                color = committed;
-                                break;
-                            default:
-                                color = idle;
-                                break;
+                        color = idle;
+                        if (instance.depot.twEnd - instance.dist(solution.tours.get(k).get(i), solution.tours.get(k).get(i + 1)) < instance.currentTime) {
+                            color = transition;
+                        }
+                        if (iteration == 25000) {
+                            color = committed;
                         }
                     } else {
                         task = instance.getTask(solution.tours.get(k).get(i + 1));

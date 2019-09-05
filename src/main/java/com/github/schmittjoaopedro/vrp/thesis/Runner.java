@@ -5,6 +5,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Random;
 
@@ -18,6 +19,13 @@ public class Runner {
     private static final String pdptw600Directory;
     private static final String pdptw800Directory;
     private static final String pdptw1000Directory;
+
+    private static boolean dynamism = true;
+
+    private static String[] dynamic_suffixes = {
+            "_a_0.1", "_a_0.25", "_a_0.5", "_a_0.75", "_a_1.0",
+            "_q_0_0.1", "_q_0_0.25", "_q_0_0.5", "_q_0_0.75", "_q_0_1.0",
+    };
 
     private static String[] instances_100 = {
             "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
@@ -74,12 +82,21 @@ public class Runner {
     };
 
     static {
-        pdptw100Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
-        pdptw200Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
-        pdptw400Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
-        pdptw600Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
-        pdptw800Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
-        pdptw1000Directory = Paths.get(Runner.class.getClassLoader().getResource("pdptw1000").getFile().substring(1)).toString();
+        if (dynamism) {
+            pdptw100Directory = Paths.get(Runner.class.getClassLoader().getResource("dpdptw/100-tasks").getFile().substring(1)).toString();
+            pdptw200Directory = Paths.get(Runner.class.getClassLoader().getResource("dpdptw/200-tasks").getFile().substring(1)).toString();
+            pdptw400Directory = Paths.get(Runner.class.getClassLoader().getResource("dpdptw/400-tasks").getFile().substring(1)).toString();
+            pdptw600Directory = Paths.get(Runner.class.getClassLoader().getResource("dpdptw/600-tasks").getFile().substring(1)).toString();
+            pdptw800Directory = Paths.get(Runner.class.getClassLoader().getResource("dpdptw/800-tasks").getFile().substring(1)).toString();
+            pdptw1000Directory = Paths.get(Runner.class.getClassLoader().getResource("dpdptw/1000-tasks").getFile().substring(1)).toString();
+        } else {
+            pdptw100Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
+            pdptw200Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+            pdptw400Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
+            pdptw600Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
+            pdptw800Directory = Paths.get(Runner.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
+            pdptw1000Directory = Paths.get(Runner.class.getClassLoader().getResource("pdptw1000").getFile().substring(1)).toString();
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -126,16 +143,29 @@ public class Runner {
     }
 
     private static void executeProblemSolver(String directory, String problem) throws Exception {
+        if (dynamism) {
+            for (String suffix : dynamic_suffixes) {
+                executeProblemInstance(directory, problem + suffix);
+            }
+        } else {
+            executeProblemInstance(directory, problem);
+        }
+    }
+
+    private static void executeProblemInstance(String directory, String problem) throws IOException {
         Long time = System.currentTimeMillis();
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
         solver.setPrintConsole(false);
         solver.enableLocalSearch();
+        if (dynamism) {
+            solver.enableVehicleControlCenter();
+        }
         solver.init();
         solver.run();
         Solution solution = solver.getSolutionBest();
         time = System.currentTimeMillis() - time;
         Double timeMinutes = time / (1000.0 * 60.0);
-        System.out.println(StringUtils.rightPad(instance.name, 10) + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
+        System.out.println(StringUtils.rightPad(instance.name, 20) + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
     }
 }

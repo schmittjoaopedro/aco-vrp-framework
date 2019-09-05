@@ -24,6 +24,8 @@ public class CallCenter {
 
     private Map<Integer, Integer> taskLinks = new HashMap<>();
 
+    private double setupTime = 90.0;
+
     public CallCenter(Instance instance, double startTime, double endTime) {
         this.instance = instance;
         this.startTime = startTime;
@@ -74,18 +76,29 @@ public class CallCenter {
         instance.pickupTasks = new Task[0];
 
         // Load static (a-priori) information
-        loadNewRequests(0.0);
+        loadNewRequests();
     }
 
     /*
      * Add new requests to the problem based on the announce time compared with the current time.
      */
-    public List<Integer> loadNewRequests(double currentTime) {
+    public List<Integer> loadNewRequests() {
 
         // Check for new available requests based on the passing time.
         List<Request> newRequests = new ArrayList<>();
         while (dynamicPointer < dynamicRequests.length) {
-            if (getAlgorithmTime(currentTime) >= getProblemTime(dynamicRequests[dynamicPointer].announceTime)) {
+            double announceTime = dynamicRequests[dynamicPointer].announceTime;
+            if (instance.movingVehicle) {
+                announceTime -= setupTime;
+            }
+            if (instance.currentTime >= announceTime) {
+                if (instance.movingVehicle) {
+                    announceTime = Math.max(announceTime, 0.0);
+                    dynamicRequests[dynamicPointer].announceTime = announceTime;
+                    dynamicRequests[dynamicPointer].startVisitTime = announceTime;
+                } else {
+                    dynamicRequests[dynamicPointer].announceTime = 0.0;
+                }
                 newRequests.add(dynamicRequests[dynamicPointer]);
                 dynamicPointer++;
             } else {

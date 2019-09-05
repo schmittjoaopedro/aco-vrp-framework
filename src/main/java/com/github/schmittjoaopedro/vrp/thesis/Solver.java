@@ -64,10 +64,11 @@ public class Solver {
     public void run() {
         while (iteration < maxIterations) {
             final int i = iteration;
-            attendNewRequests(i);
+            updateAlgorithmTime(i);
+            attendNewRequests();
             if (instance.numRequests > 0) {
                 // Monitor vehicles visiting clients
-                trackOperatingVehicles(i);
+                trackOperatingVehicles();
                 printVehiclesOperation();
                 // Minimize NV
                 Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(i));
@@ -86,23 +87,28 @@ public class Solver {
             }
             iteration++;
         }
+        printVehiclesOperation();
         instance.solutionEvaluation(solutionBest);
-        callCenter.rollbackOriginalInformation(solutionBest);
         printSolutionBest();
     }
 
-    private void trackOperatingVehicles(int iteration) {
-        if (Optional.ofNullable(vehiclesControlCenter).isPresent()) {
+    private void trackOperatingVehicles() {
+        if (instance.movingVehicle) {
             // Track moving vehicles
-            if (vehiclesControlCenter.moveVehicle(solutionBest, iteration)) {
+            if (vehiclesControlCenter.moveVehicle(solutionBest)) {
                 Optional.ofNullable(vehicleMinimizer).ifPresent(vm -> vm.setBaseSolution(solutionBest));
                 Optional.ofNullable(costMinimizer).ifPresent(cm -> cm.setBaseSolution(solutionBest));
             }
         }
     }
 
-    private void attendNewRequests(int iteration) {
-        List<Integer> requests = callCenter.loadNewRequests(iteration);
+    private void updateAlgorithmTime(double currentTime) {
+        double scaledTime = currentTime / maxIterations;
+        instance.currentTime = (int) (instance.depot.twEnd - instance.depot.twStart) * scaledTime;
+    }
+
+    private void attendNewRequests() {
+        List<Integer> requests = callCenter.loadNewRequests();
         if (!requests.isEmpty()) {
             log("New requests = " + StringUtils.join(requests));
             resetAlgorithms();
@@ -157,10 +163,21 @@ public class Solver {
     }
 
     private String getSummaryResults() {
+        double[] startTimes = new double[solutionBest.tours.size()];
+        for (int i = 0; i < startTimes.length; i++) {
+            startTimes[i] = instance.startVisitTime(solutionBest.tours.get(i).get(1));
+        }
+        callCenter.rollbackOriginalInformation(solutionBest);
         String msg = "\nInstance = " + instance.name;
         msg += "\nBest solution feasibility = " + solutionBest.feasible + "\nRoutes";
-        for (ArrayList route : solutionBest.tours) {
-            msg += "\n" + StringUtils.join(route, " ");
+        for (int i = 0; i < solutionBest.tours.size(); i++) {
+            ArrayList<Integer> route = solutionBest.tours.get(i);
+            double startTime = startTimes[i];
+            if (instance.movingVehicle) {
+                msg += "\nStart time " + MathUtils.round(startTime, 2) + " Route = " + StringUtils.join(route, " ");
+            } else {
+                msg += "\n" + StringUtils.join(route, " ");
+            }
         }
         msg += "\nRequests";
         for (ArrayList requests : solutionBest.requestIds) {
@@ -195,7 +212,8 @@ public class Solver {
     }
 
     public void enableVehicleControlCenter() {
-        vehiclesControlCenter = new VehiclesControlCenter(instance, 0, maxIterations);
+        vehiclesControlCenter = new VehiclesControlCenter(instance);
+        instance.movingVehicle = true;
     }
 
     public void saveStatistics(File file) {
@@ -213,7 +231,7 @@ public class Solver {
     }
 
     public void printVehiclesOperation() {
-        if (routePrinter != null && iteration % 99 == 0) {
+        if (routePrinter != null && iteration % 5 == 0) {
             routePrinter.printRoute(instance, solutionBest, iteration);
         }
     }

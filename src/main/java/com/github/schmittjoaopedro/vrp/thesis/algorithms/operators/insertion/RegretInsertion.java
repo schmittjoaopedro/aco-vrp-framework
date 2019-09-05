@@ -44,8 +44,7 @@ public class RegretInsertion extends InsertionOperator {
         }
         // Calculate insertion cost of each request x vehicle
         for (int k = 0; k < solution.tours.size(); ++k) {
-            routeTimes = new RouteTimes(solution.tours.get(k).size());
-            insertionService.calculateRouteTimes(solution.tours.get(k), routeTimes);
+            routeTimes = new RouteTimes(solution.tours.get(k), instance);
             for (int r = 0; r < insertionCosts.length; r++) {
                 request = instance.requests[r];
                 if (solution.removedRequests[request.requestId]) {
@@ -104,8 +103,7 @@ public class RegretInsertion extends InsertionOperator {
             if (insertCost == Double.MAX_VALUE) return;
             // Insert node and recalculate Insert Cost
             solution.insert(instance, insertRequestId, insertRoute, insertPos.pickupPos, insertPos.deliveryPos);
-            routeTimes = new RouteTimes(solution.tours.get(insertRoute).size());
-            insertionService.calculateRouteTimes(solution.tours.get(insertRoute), routeTimes); // Update the vehicle costs
+            routeTimes = new RouteTimes(solution.tours.get(insertRoute), instance);
             for (int r = 0; r < insertionCosts.length; r++) {
                 request = instance.requests[r];
                 if (solution.removedRequests[r] && insertionCosts[r][insertRoute].cost < Double.MAX_VALUE) {
