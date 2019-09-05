@@ -68,7 +68,7 @@ public class RoutePrinter {
             indexHtml.append("\t\t</marker>\n");
             indexHtml.append("\t</defs>");
             for (Request req : instance.requests) {
-                if (req.pickupTask.x != req.pickupTask.x || req.deliveryTask.y != req.deliveryTask.x) {
+                if (req.pickupTask.x != req.deliveryTask.x || req.pickupTask.y != req.deliveryTask.y) {
                     drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "red", String.valueOf(req.requestId));
                     drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "blue", String.valueOf(req.requestId));
                 } else {
