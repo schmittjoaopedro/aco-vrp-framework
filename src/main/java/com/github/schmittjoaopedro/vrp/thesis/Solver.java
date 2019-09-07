@@ -1,7 +1,7 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.CostMinimizer;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.Statistics;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.Statistic;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.VehicleMinimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -35,9 +35,11 @@ public class Solver {
 
     private int iteration = 1;
 
-    private Statistics statistics;
+    private Statistic statistic;
 
     private RoutePrinter routePrinter;
+
+    private boolean collectStatistics;
 
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this(instance, random, maxIterations, 90, minimizeNv, minimizeTc);
@@ -55,7 +57,7 @@ public class Solver {
             costMinimizer = new CostMinimizer(instance, random);
         }
         callCenter = new CallCenter(instance, setupTime);
-        statistics = new Statistics(maxIterations);
+        statistic = new Statistic(maxIterations, instance);
     }
 
     public void init() {
@@ -86,13 +88,13 @@ public class Solver {
                 if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
                     costMinimizer.resetToInitialSolution(feasibleNV);
                 }
-                statistics.nv[i] = solutionBest.tours.size();
-                statistics.tc[i] = solutionBest.totalCost;
+                collectStatistics();
             }
             iteration++;
         }
         printVehiclesOperation();
         instance.solutionEvaluation(solutionBest);
+        statistic.solutionBest = solutionBest;
         printSolutionBest();
     }
 
@@ -102,6 +104,27 @@ public class Solver {
             if (vehiclesControlCenter.moveVehicle(solutionBest)) {
                 Optional.ofNullable(vehicleMinimizer).ifPresent(vm -> vm.setBaseSolution(solutionBest));
                 Optional.ofNullable(costMinimizer).ifPresent(cm -> cm.setBaseSolution(solutionBest));
+            }
+        }
+    }
+
+    private void collectStatistics() {
+        if (collectStatistics) {
+            statistic.global_nv[iteration] = solutionBest.tours.size();
+            statistic.global_tc[iteration] = solutionBest.totalCost;
+            if (vehicleMinimizer != null) {
+                statistic.vehicle_minimizer_best_nv[iteration] = vehicleMinimizer.getSolutionBest().tours.size();
+                statistic.vehicle_minimizer_best_tc[iteration] = vehicleMinimizer.getSolutionBest().totalCost;
+                statistic.vehicle_minimizer_local_nv[iteration] = vehicleMinimizer.getSolutionLocal().tours.size();
+                statistic.vehicle_minimizer_local_tc[iteration] = vehicleMinimizer.getSolutionLocal().totalCost;
+                statistic.vehicle_minimizer_temperature[iteration] = vehicleMinimizer.getTemperature();
+            }
+            if (costMinimizer != null) {
+                statistic.cost_minimizer_best_nv[iteration] = costMinimizer.getSolutionBest().tours.size();
+                statistic.cost_minimizer_best_tc[iteration] = costMinimizer.getSolutionBest().totalCost;
+                statistic.cost_minimizer_local_nv[iteration] = costMinimizer.getSolutionLocal().tours.size();
+                statistic.cost_minimizer_local_tc[iteration] = costMinimizer.getSolutionLocal().totalCost;
+                statistic.cost_minimizer_temperature[iteration] = costMinimizer.getTemperature();
             }
         }
     }
@@ -225,7 +248,7 @@ public class Solver {
             FileUtils.writeStringToFile(file, "iteration,nv,tc\n", "UTF-8", false);
             StringBuilder iterationStatistics = new StringBuilder();
             for (int i = 1; i < maxIterations; i++) {
-                iterationStatistics.append(i).append(',').append(statistics.nv[i]).append(',').append(statistics.tc[i]).append('\n');
+                iterationStatistics.append(i).append(',').append(statistic.global_nv[i]).append(',').append(statistic.global_tc[i]).append('\n');
             }
             FileUtils.writeStringToFile(file, iterationStatistics.toString(), "UTF-8", true);
             FileUtils.writeStringToFile(file, getSummaryResults(), "UTF-8", true);
@@ -242,5 +265,13 @@ public class Solver {
 
     public void enablePrintOperation(String folderPath) {
         routePrinter = new RoutePrinter(instance, folderPath, 1024, 768);
+    }
+
+    public void enableStatisticsCollector() {
+        collectStatistics = true;
+    }
+
+    public Statistic getStatistic() {
+        return statistic;
     }
 }

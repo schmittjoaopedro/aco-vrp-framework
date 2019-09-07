@@ -174,4 +174,16 @@ public abstract class ALNS {
         this.useLocalSearch = useLocalSearch;
     }
 
+    public Solution getSolutionBest() {
+        return solutionBest;
+    }
+
+    public Solution getSolutionLocal() {
+        return solution;
+    }
+
+    public double getTemperature() {
+        return T;
+    }
+
 }

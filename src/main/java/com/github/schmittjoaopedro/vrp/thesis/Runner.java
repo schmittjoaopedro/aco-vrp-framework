@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.StatisticCalculator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -11,6 +12,7 @@ import java.util.Random;
 
 public class Runner {
 
+    private static final String REPORT_DIRECTORY = "C:\\Temp\\ALNS TWO-STAGE - preliminary analysis thesis\\";
     private static int maxIterations = 25000;
 
     private static final String pdptw100Directory;
@@ -28,12 +30,12 @@ public class Runner {
     };
 
     private static String[] instances_100 = {
-            "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
+            "lc101", "lc102"/*, "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
             "lc201", "lc202", "lc203", "lc204", "lc205", "lc206", "lc207", "lc208",
             "lr101", "lr102", "lr103", "lr104", "lr105", "lr106", "lr107", "lr108", "lr109", "lr110", "lr111", "lr112",
             "lr201", "lr202", "lr203", "lr204", "lr205", "lr206", "lr207", "lr208", "lr209", "lr210", "lr211",
             "lrc101", "lrc102", "lrc103", "lrc104", "lrc105", "lrc106", "lrc107", "lrc108",
-            "lrc201", "lrc202", "lrc203", "lrc204", "lrc205", "lrc206", "lrc207", "lrc208"
+            "lrc201", "lrc202", "lrc203", "lrc204", "lrc205", "lrc206", "lrc207", "lrc208"*/
     };
 
     private static String[] instances_200 = {
@@ -100,13 +102,11 @@ public class Runner {
     }
 
     public static void main(String[] args) throws Exception {
+        //executeProblemSolver(pdptw100Directory, "lc102");
         if (isExecute("100", args)) {
-            System.out.println("pdp100");
-            for (String instance : instances_100) {
-                executeProblemSolver(pdptw100Directory, instance);
-            }
+            executeProblemGroup("pdp100", instances_100);
         }
-        if (isExecute("200", args)) {
+        /*if (isExecute("200", args)) {
             System.out.println("pdp200");
             for (String instance : instances_200) {
                 executeProblemSolver(pdptw200Directory, instance);
@@ -135,29 +135,39 @@ public class Runner {
             for (String instance : instances_1000) {
                 executeProblemSolver(pdptw1000Directory, instance);
             }
-        }
+        }*/
     }
 
     private static boolean isExecute(String numNodes, String[] args) {
         return args[0].equals("ALL") || args[0].equals(numNodes);
     }
 
-    private static void executeProblemSolver(String directory, String problem) throws Exception {
+    private static void executeProblemGroup(String problemGroup, String[] instances) throws Exception {
+        StatisticCalculator statisticCalculator = new StatisticCalculator(REPORT_DIRECTORY + problemGroup, maxIterations);
+        System.out.println(problemGroup);
+        for (String instance : instances) {
+            executeProblemSolver(pdptw100Directory, instance, statisticCalculator);
+        }
+        statisticCalculator.consolidateAllTestCases(problemGroup);
+    }
+
+    private static void executeProblemSolver(String directory, String problem, StatisticCalculator statisticCalculator) throws Exception {
         if (dynamism) {
             for (String suffix : dynamic_suffixes) {
-                executeProblemInstance(directory, problem + suffix);
+                executeProblemInstance(directory, problem + suffix, statisticCalculator);
             }
         } else {
-            executeProblemInstance(directory, problem);
+            executeProblemInstance(directory, problem, statisticCalculator);
         }
     }
 
-    private static void executeProblemInstance(String directory, String problem) throws IOException {
+    private static void executeProblemInstance(String directory, String problem, StatisticCalculator statisticCalculator) throws IOException {
         Long time = System.currentTimeMillis();
         Instance instance = Reader.getInstance(Paths.get(directory, problem + ".txt").toFile());
         Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
         solver.setPrintConsole(false);
         solver.enableLocalSearch();
+        solver.enableStatisticsCollector();
         if (dynamism) {
             solver.enableVehicleControlCenter();
         }
@@ -167,5 +177,7 @@ public class Runner {
         time = System.currentTimeMillis() - time;
         Double timeMinutes = time / (1000.0 * 60.0);
         System.out.println(StringUtils.rightPad(instance.name, 20) + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
+        statisticCalculator.addStatisticsResult(solver.getStatistic());
+        statisticCalculator.consolidateSingleTestCase(problem);
     }
 }
