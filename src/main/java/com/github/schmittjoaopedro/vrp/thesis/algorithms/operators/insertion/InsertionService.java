@@ -28,7 +28,7 @@ public class InsertionService {
                 swapPositions(newRoute, i, i - 1); // Advance current pickup one position
                 prevNode = route.get(i - 1);
                 currNode = route.get(i);
-                boolean isInTimeToVisit = instance.startVisitTime(pickupNode) <= routeTimes.departureTime[i - 1]; // Already know request when we departure from previous node
+                boolean isInTimeToVisit = instance.lastIdleTime(pickupNode) <= routeTimes.departureTime[i - 1]; // Already know request when we departure from previous node
                 boolean isIdleNode = instance.isDepot(currNode) || instance.getTask(currNode).isIdle();
                 if (isIdleNode && isInTimeToVisit) {
                     cost = instance.dist(prevNode, pickupNode) + instance.dist(pickupNode, currNode) - instance.dist(prevNode, currNode);

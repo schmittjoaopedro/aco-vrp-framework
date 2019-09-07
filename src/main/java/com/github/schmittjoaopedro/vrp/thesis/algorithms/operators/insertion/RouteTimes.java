@@ -26,7 +26,7 @@ public class RouteTimes {
     public void calculateRouteTimes(ArrayList<Integer> route, Instance instance) {
         // Node times
         double visitedTime;
-        double time = instance.startVisitTime(route.get(1));
+        double time = instance.lastIdleTime(route.get(1));
         // Depot times
         startTime[0] = time;
         departureTime[0] = time;

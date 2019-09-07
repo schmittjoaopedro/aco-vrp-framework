@@ -169,7 +169,7 @@ public class Solver {
     private String getSummaryResults() {
         double[] startTimes = new double[solutionBest.tours.size()];
         for (int i = 0; i < startTimes.length; i++) {
-            startTimes[i] = instance.startVisitTime(solutionBest.tours.get(i).get(1));
+            startTimes[i] = instance.lastIdleTime(solutionBest.tours.get(i).get(1));
         }
         callCenter.rollbackOriginalInformation(solutionBest);
         String msg = "\nInstance = " + instance.name;

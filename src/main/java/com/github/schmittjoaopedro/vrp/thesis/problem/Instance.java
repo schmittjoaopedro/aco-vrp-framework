@@ -89,14 +89,14 @@ public class Instance {
         }
     }
 
-    public double startVisitTime(int node) {
+    public double lastIdleTime(int node) {
         if (!movingVehicle) {
             return 0.0;
         }
         if (depot.nodeId == node) {
             return currentTime;
         } else {
-            return requests[getTask(node).requestId].startVisitTime;
+            return requests[getTask(node).requestId].lastIdleTime;
         }
     }
 
@@ -136,7 +136,7 @@ public class Instance {
             if (solution.requestIds.get(k).isEmpty()) continue;
             ArrayList<Integer> tour = solution.tours.get(k);
             //Double currentTime = announceTime(tour.get(1));
-            Double currentTime = startVisitTime(tour.get(1));
+            Double currentTime = lastIdleTime(tour.get(1));
             Double tourCost = 0.0;
             Double capacity = 0.0;
             Task task;

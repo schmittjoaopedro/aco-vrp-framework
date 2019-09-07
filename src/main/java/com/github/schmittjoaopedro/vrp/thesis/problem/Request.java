@@ -10,7 +10,7 @@ public class Request {
 
     public double announceTime;
 
-    public double startVisitTime; // Time when vehicle starts to go visit this request
+    public double lastIdleTime; // Time when vehicle starts to go visit this request
 
     public int getRequestId() {
         return requestId;

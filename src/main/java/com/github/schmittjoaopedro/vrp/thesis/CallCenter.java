@@ -20,6 +20,10 @@ public class CallCenter {
 
     private Map<Integer, Integer> taskLinks = new HashMap<>();
 
+    /**
+     * It's used to simulate the necessary time that the solver needs to setup the vehicle before start
+     * attending the new request.
+     */
     private double setupTime;
 
     public CallCenter(Instance instance, double setupTime) {
@@ -90,7 +94,7 @@ public class CallCenter {
                 if (instance.movingVehicle) {
                     announceTime = Math.max(announceTime, 0.0);
                     dynamicRequests[dynamicPointer].announceTime = announceTime;
-                    dynamicRequests[dynamicPointer].startVisitTime = announceTime;
+                    dynamicRequests[dynamicPointer].lastIdleTime = announceTime;
                 } else {
                     dynamicRequests[dynamicPointer].announceTime = 0.0;
                 }

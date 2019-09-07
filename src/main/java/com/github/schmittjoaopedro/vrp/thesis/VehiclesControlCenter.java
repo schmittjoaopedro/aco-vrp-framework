@@ -56,7 +56,7 @@ public class VehiclesControlCenter {
             if (req.pickupTask.isIdle()) {
                 // When it let to be idle, then the startVisitTime will be the time that
                 // vehicle starts to move to this request
-                req.startVisitTime = instance.currentTime;
+                req.lastIdleTime = instance.currentTime;
             }
         }
         checkConsistencyWithVisitedNodes(solution);
