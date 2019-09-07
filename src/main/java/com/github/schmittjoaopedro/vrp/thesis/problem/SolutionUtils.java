@@ -48,7 +48,7 @@ public class SolutionUtils {
         solution.maxTime = 0.0;
         solution.toVisit = instance.numTasks;
         // Instantiate empty vehicles
-        for (int i = 0; i < instance.numVehicles; ++i) {
+        for (int i = 0; i < instance.numVehicles(); ++i) {
             solution.tours.add(new ArrayList<>());
             solution.requestIds.add(new ArrayList<>());
             solution.tours.get(i).add(0);

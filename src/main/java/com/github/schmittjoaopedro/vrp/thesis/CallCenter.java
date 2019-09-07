@@ -12,10 +12,6 @@ public class CallCenter {
 
     private Instance instance;
 
-    private double startTime;
-
-    private double endTime;
-
     private int dynamicPointer = 0;
 
     private Request[] dynamicRequests;
@@ -24,12 +20,11 @@ public class CallCenter {
 
     private Map<Integer, Integer> taskLinks = new HashMap<>();
 
-    private double setupTime = 90.0;
+    private double setupTime;
 
-    public CallCenter(Instance instance, double startTime, double endTime) {
+    public CallCenter(Instance instance, double setupTime) {
         this.instance = instance;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.setupTime = setupTime;
     }
 
     /*
@@ -189,14 +184,6 @@ public class CallCenter {
                 requests.set(i, requestLinks.get(requests.get(i)));
             }
         }
-    }
-
-    private double getAlgorithmTime(double currentTime) {
-        return (currentTime - startTime) / (endTime - startTime);
-    }
-
-    private double getProblemTime(double currentTime) {
-        return (currentTime - instance.depot.twStart) / (instance.depot.twEnd - instance.depot.twStart);
     }
 
 }

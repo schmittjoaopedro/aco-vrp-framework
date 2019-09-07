@@ -143,6 +143,33 @@ public abstract class ALNS {
         }
     }
 
+    protected Solution insertNewRequests(InsertionOperator insertionOperator, Solution solutionBase) {
+        Solution solution = copyBaseSolution(solutionBase);
+        while (solution.toVisit > 0) {
+            insertionOperator.insert(solution, 0);
+            SolutionUtils.removeEmptyVehicles(solution);
+            instance.solutionEvaluation(solution);
+            // If the fleet is insufficient to attend new requests. Add a new vehicle to this operation.
+            if (solution.toVisit > 0) {
+                instance.extraVehicles++;
+                solution = copyBaseSolution(solutionBase);
+            }
+        }
+        return solution;
+    }
+
+    protected Solution copyBaseSolution(Solution solutionBase) {
+        Solution newSolution = SolutionUtils.createSolution(instance);
+        if (solutionBase != null) {
+            for (int k = 0; k < solutionBase.tours.size(); k++) {
+                newSolution.tours.set(k, new ArrayList<>(solutionBase.tours.get(k)));
+                newSolution.requestIds.set(k, new ArrayList<>(solutionBase.requestIds.get(k)));
+            }
+        }
+        instance.solutionEvaluation(newSolution);
+        return newSolution;
+    }
+
     public void setUseLocalSearch(boolean useLocalSearch) {
         this.useLocalSearch = useLocalSearch;
     }

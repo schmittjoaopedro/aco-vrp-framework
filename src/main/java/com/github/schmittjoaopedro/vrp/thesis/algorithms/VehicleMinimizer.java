@@ -9,7 +9,6 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class VehicleMinimizer extends ALNS {
@@ -50,18 +49,7 @@ public class VehicleMinimizer extends ALNS {
     }
 
     public void init(Solution solutionBase) {
-        Solution newSolution = SolutionUtils.createSolution(instance);
-        if (solutionBase != null) {
-            for (int k = 0; k < solutionBase.tours.size(); k++) {
-                newSolution.tours.set(k, new ArrayList<>(solutionBase.tours.get(k)));
-                newSolution.requestIds.set(k, new ArrayList<>(solutionBase.requestIds.get(k)));
-            }
-        }
-        solution = newSolution;
-        instance.solutionEvaluation(solution);
-        greedyInsertion.insert(solution, 0);
-        SolutionUtils.removeEmptyVehicles(solution);
-        instance.solutionEvaluation(solution);
+        solution = insertNewRequests(greedyInsertion, solutionBase);
         feasibleSolutionBest = SolutionUtils.copy(solution);
 
         // Prepare algorithm structures and initial parameters

@@ -40,6 +40,10 @@ public class Solver {
     private RoutePrinter routePrinter;
 
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
+        this(instance, random, maxIterations, 90, minimizeNv, minimizeTc);
+    }
+
+    public Solver(Instance instance, Random random, int maxIterations, double setupTime, boolean minimizeNv, boolean minimizeTc) {
         this.instance = instance;
         this.maxIterations = maxIterations;
         // Create vehicle minimizer
@@ -50,7 +54,7 @@ public class Solver {
         if (minimizeTc == true) {
             costMinimizer = new CostMinimizer(instance, random);
         }
-        callCenter = new CallCenter(instance, 0, maxIterations);
+        callCenter = new CallCenter(instance, setupTime);
         statistics = new Statistics(maxIterations);
     }
 

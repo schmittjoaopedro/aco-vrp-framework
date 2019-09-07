@@ -1,5 +1,7 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.InfeasibleSolutionException;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -14,6 +16,8 @@ public class Instance {
     public int numRequests;
 
     public int numVehicles;
+
+    public int extraVehicles;
 
     public double vehiclesCapacity;
 
@@ -108,6 +112,10 @@ public class Instance {
         return depot.nodeId == node;
     }
 
+    public int numVehicles() {
+        return numVehicles + extraVehicles;
+    }
+
     public void solutionEvaluation(Solution solution) {
         solution.tourCosts = new ArrayList<>(solution.tours.size());
         solution.toVisit = numTasks;
@@ -140,6 +148,7 @@ public class Instance {
                 // Is infeasible visit a route before they announce time
                 if (currentTime < announceTime(next)) {
                     solution.feasible = false;
+                    throw new InfeasibleSolutionException("Announce time infeasibility");
                 }
                 solution.visited[curr] = true;
                 tourCost += dist(curr, next);
@@ -160,27 +169,32 @@ public class Instance {
                         // Check if delivery is made by the same vehicle of pickup
                         if (k != parityConstraint[task.requestId]) {
                             solution.feasible = false;
+                            throw new InfeasibleSolutionException("Parity infeasibility");
                         }
                     }
                 }
                 // Check time windows feasibility
                 if (currentTime > twEnd(next)) {
                     solution.feasible = false;
+                    throw new InfeasibleSolutionException("Time window infeasibility");
                 }
                 // Check capacity feasibility
                 if (capacity > vehiclesCapacity) {
                     solution.feasible = false;
+                    throw new InfeasibleSolutionException("Capacity infeasibility");
                 }
                 currentTime += serviceTime(next);
                 // Check if nodes and requests lists are consistent
                 if (curr != 0 && !solution.requestIds.get(k).contains(getTask(curr).requestId)) {
                     solution.feasible = false;
+                    throw new InfeasibleSolutionException("Node-request synchronization infeasibility");
                 }
             }
             for (Integer requestId : attendedRequests) {
                 // Check if all nodes of each request is attended by the same vehicle
                 if (numNodesByRequest[requestId] != 1) { // pair-wise for PDPTW
                     solution.feasible = false;
+                    throw new InfeasibleSolutionException("Pair-wire infeasibility");
                 }
                 solution.toVisit -= numNodesByRequest[requestId];
                 // Check if all pickups are not attended after the delivery
@@ -188,6 +202,7 @@ public class Instance {
                 // we must to use greater inequality, as the pickup and delivery times will be the same.
                 if (pickupByRequestTime[requestId] > deliveryByRequestTime[requestId]) {
                     solution.feasible = false;
+                    throw new InfeasibleSolutionException("Precedence infeasibility");
                 } else {
                     solution.toVisit--;
                 }
