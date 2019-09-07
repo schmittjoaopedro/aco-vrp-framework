@@ -1,11 +1,7 @@
 package com.github.schmittjoaopedro.vrp.thesis.problem;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertionService;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class Instance {
 
@@ -92,7 +88,8 @@ public class Instance {
     public double startVisitTime(int node) {
         if (!movingVehicle) {
             return 0.0;
-        } if (depot.nodeId == node) {
+        }
+        if (depot.nodeId == node) {
             return currentTime;
         } else {
             return requests[getTask(node).requestId].startVisitTime;
@@ -122,6 +119,7 @@ public class Instance {
             solution.removedRequests[i] = true;
         }
         int[] numNodesByRequest = new int[numRequests];
+        int[] parityConstraint = new int[numRequests];
         Double[] pickupByRequestTime = new Double[numRequests];
         Double[] deliveryByRequestTime = new Double[numRequests];
         // For each vehicle
@@ -142,7 +140,6 @@ public class Instance {
                 // Is infeasible visit a route before they announce time
                 if (currentTime < announceTime(next)) {
                     solution.feasible = false;
-                    throw new RuntimeException();
                 }
                 solution.visited[curr] = true;
                 tourCost += dist(curr, next);
@@ -156,9 +153,14 @@ public class Instance {
                     if (task.isPickup) {
                         numNodesByRequest[task.requestId]++;
                         pickupByRequestTime[task.requestId] = currentTime;
-                    } else {
+                        parityConstraint[task.requestId] = k;
+                    } else { // Is delivery
                         attendedRequests.add(task.requestId);
                         deliveryByRequestTime[task.requestId] = currentTime;
+                        // Check if delivery is made by the same vehicle of pickup
+                        if (k != parityConstraint[task.requestId]) {
+                            solution.feasible = false;
+                        }
                     }
                 }
                 // Check time windows feasibility
