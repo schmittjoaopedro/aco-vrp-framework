@@ -84,6 +84,7 @@ public class StatisticCalculator {
         Statistic bestSolution = statistics.get(0);
         testResult.bestNv = bestSolution.solutionBest.tours.size();
         testResult.bestTc = bestSolution.solutionBest.totalCost;
+        testResult.bestFeasible = bestSolution.solutionBest.feasible ? 1 : 0;
         testResult.meanSdStatistic = new StatisticMeanSd(maxIterations);
         for (int i = 0; i < maxIterations; i++) {
             testResult.meanSdStatistic.mean_global_nv[i] = mean(statistics, "global_nv", i);
