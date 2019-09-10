@@ -42,6 +42,7 @@ public class Statistic implements Comparable<Statistic> {
         this.instance = instance;
         global_nv = new int[maxIterations];
         global_tc = new double[maxIterations];
+        global_fc = new int[maxIterations];
         vehicle_minimizer_best_nv = new int[maxIterations];
         vehicle_minimizer_best_tc = new double[maxIterations];
         vehicle_minimizer_local_nv = new int[maxIterations];
