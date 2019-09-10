@@ -7,17 +7,27 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Reader {
 
     public static Instance getInstance(File file) throws IOException {
-        Instance instance = new Instance();
-        instance.name = file.getName().replaceAll(".txt", StringUtils.EMPTY);
-        String[] lineData;
         FileInputStream fisTargetFile = new FileInputStream(file);
         String rawContent[] = IOUtils.toString(fisTargetFile, "UTF-8").split("\r\n");
+        return getInstance(file.getName(), rawContent);
+    }
+
+    public static Instance getInstance(String fileName, InputStream inputStream) throws IOException {
+        String rawContent[] = IOUtils.toString(inputStream, "UTF-8").split("\r\n");
+        return getInstance(fileName, rawContent);
+    }
+
+    public static Instance getInstance(String fileName, String rawContent[]) throws IOException {
+        Instance instance = new Instance();
+        instance.name = fileName.replaceAll(".txt", StringUtils.EMPTY);
+        String[] lineData;
         // Remove invalid last line (normalization step for PDPTW with 200 tasks
         int lastLine = 0;
         while (lastLine < rawContent.length) {

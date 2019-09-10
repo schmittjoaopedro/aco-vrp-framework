@@ -70,12 +70,21 @@ public class Solver {
     public void run() {
         while (iteration < maxIterations) {
             final int i = iteration;
+            // Update algorithm time relative to the current iteration
             updateAlgorithmTime(i);
-            attendNewRequests();
             if (instance.numRequests > 0) {
-                // Monitor vehicles visiting clients
+                /*
+                 * Monitors vehicles visiting clients.
+                 * This step must precede the new requests attendance because the local search executed by
+                 * resetAlgorithms (in attendNewRequests) can relocate from one route to another a request
+                 * that must be visited in the current time by the current route.
+                 */
                 trackOperatingVehicles();
                 printVehiclesOperation();
+            }
+            // Check if new requests should be attended in the current time
+            attendNewRequests();
+            if (instance.numRequests > 0) {
                 // Minimize NV
                 Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(i));
                 Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
@@ -112,6 +121,7 @@ public class Solver {
         if (collectStatistics) {
             statistic.global_nv[iteration] = solutionBest.tours.size();
             statistic.global_tc[iteration] = solutionBest.totalCost;
+            statistic.global_fc[iteration] = solutionBest.feasible ? 1 : 0;
             if (vehicleMinimizer != null) {
                 statistic.vehicle_minimizer_best_nv[iteration] = vehicleMinimizer.getSolutionBest().tours.size();
                 statistic.vehicle_minimizer_best_tc[iteration] = vehicleMinimizer.getSolutionBest().totalCost;

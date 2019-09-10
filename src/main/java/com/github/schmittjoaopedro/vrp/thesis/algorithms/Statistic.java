@@ -15,6 +15,8 @@ public class Statistic implements Comparable<Statistic> {
 
     public double[] global_tc;
 
+    public int[] global_fc;
+
     public int[] vehicle_minimizer_best_nv;
 
     public double[] vehicle_minimizer_best_tc;

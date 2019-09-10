@@ -36,11 +36,13 @@ public class StatisticCalculator {
         testStatistics.get(statistic.instance.name).add(statistic);
     }
 
-    public void consolidateSingleTestCase(String testName) {
+    public void consolidateSingleTestCase(String testName, boolean saveOnDisk) {
         TestResult testResult = new TestResult();
         defineBestSolution(testResult, testStatistics.get(testName));
         testResults.put(testName, testResult);
-        writeTestResultToCsv(testResult, testName);
+        if (saveOnDisk) {
+            writeTestResultToCsv(testResult, testName);
+        }
     }
 
     public void consolidateAllTestCases(String fileName) {
@@ -51,6 +53,7 @@ public class StatisticCalculator {
         for (String testName : testNames) {
             csvFile.addData(testName + "_nv");
             csvFile.addData(testName + "_tc");
+            csvFile.addData(testName + "_fc");
         }
         csvFile.newRow();
 
@@ -59,6 +62,7 @@ public class StatisticCalculator {
             testResult = testResults.get(testName);
             csvFile.addData(testResult.bestNv);
             csvFile.addData(testResult.bestTc);
+            csvFile.addData(testResult.bestFeasible);
         }
         csvFile.newRow();
 
@@ -68,6 +72,7 @@ public class StatisticCalculator {
                 testResult = testResults.get(testName);
                 csvFile.addData(testResult.meanSdStatistic.mean_global_nv[i]);
                 csvFile.addData(testResult.meanSdStatistic.mean_global_tc[i]);
+                csvFile.addData(testResult.meanSdStatistic.mean_global_fc[i]);
             }
             csvFile.newRow();
         }
@@ -85,6 +90,8 @@ public class StatisticCalculator {
             testResult.meanSdStatistic.sd_global_nv[i] = sd(statistics, "global_nv", i);
             testResult.meanSdStatistic.mean_global_tc[i] = mean(statistics, "global_tc", i);
             testResult.meanSdStatistic.sd_global_tc[i] = sd(statistics, "global_tc", i);
+            testResult.meanSdStatistic.mean_global_fc[i] = mean(statistics, "global_fc", i);
+            testResult.meanSdStatistic.sd_global_fc[i] = sd(statistics, "global_fc", i);
             testResult.meanSdStatistic.mean_vehicle_minimizer_best_nv[i] = mean(statistics, "vehicle_minimizer_best_nv", i);
             testResult.meanSdStatistic.sd_vehicle_minimizer_best_nv[i] = sd(statistics, "vehicle_minimizer_best_nv", i);
             testResult.meanSdStatistic.mean_vehicle_minimizer_best_tc[i] = mean(statistics, "vehicle_minimizer_best_tc", i);
@@ -218,6 +225,8 @@ public class StatisticCalculator {
         public int bestNv;
 
         public double bestTc;
+
+        public int bestFeasible;
 
         private StatisticMeanSd meanSdStatistic;
 
