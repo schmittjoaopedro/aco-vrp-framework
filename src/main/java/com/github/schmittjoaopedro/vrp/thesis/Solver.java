@@ -12,10 +12,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Solver {
 
     private boolean printConsole = true;
+
+    private boolean parallelExecution = false;
 
     private Instance instance;
 
@@ -40,6 +45,8 @@ public class Solver {
     private RoutePrinter routePrinter;
 
     private boolean collectStatistics;
+
+    private ThreadPoolExecutor threadPoolExecutor;
 
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this(instance, random, maxIterations, 90, minimizeNv, minimizeTc);
@@ -69,9 +76,8 @@ public class Solver {
 
     public void run() {
         while (iteration < maxIterations) {
-            final int i = iteration;
             // Update algorithm time relative to the current iteration
-            updateAlgorithmTime(i);
+            updateAlgorithmTime(iteration);
             if (instance.numRequests > 0) {
                 /*
                  * Monitors vehicles visiting clients.
@@ -85,14 +91,12 @@ public class Solver {
             // Check if new requests should be attended in the current time
             attendNewRequests();
             if (instance.numRequests > 0) {
-                // Minimize NV
-                Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(i));
+                // Optimize solutions
+                executeOptimization();
                 Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
-                // Minimize TC
-                Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.optimize(i));
                 Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
                 // Use best solution from both NV and TC
-                Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(best -> updateBest(best, i));
+                Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(best -> updateBest(best, iteration));
                 // Synchronize algorithm objectives
                 if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
                     costMinimizer.resetToInitialSolution(feasibleNV);
@@ -105,6 +109,28 @@ public class Solver {
         instance.solutionEvaluation(solutionBest);
         statistic.solutionBest = solutionBest;
         printSolutionBest();
+    }
+
+    private void executeOptimization() {
+        if (parallelExecution) {
+            CountDownLatch latch = new CountDownLatch(2);
+            threadPoolExecutor.submit(() -> {
+                Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(iteration));
+                latch.countDown();
+            });
+            threadPoolExecutor.submit(() -> {
+                Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.optimize(iteration));
+                latch.countDown();
+            });
+            try {
+                latch.await();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            Optional.ofNullable(vehicleMinimizer).ifPresent(nv -> nv.optimize(iteration));
+            Optional.ofNullable(costMinimizer).ifPresent(tc -> tc.optimize(iteration));
+        }
     }
 
     private void trackOperatingVehicles() {
@@ -283,5 +309,10 @@ public class Solver {
 
     public Statistic getStatistic() {
         return statistic;
+    }
+
+    public void enableParallelExecution() {
+        this.parallelExecution = true;
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
     }
 }

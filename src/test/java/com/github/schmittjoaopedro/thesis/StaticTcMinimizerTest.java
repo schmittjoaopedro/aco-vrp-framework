@@ -40,6 +40,10 @@ public class StaticTcMinimizerTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(2772.182174325898);
+        assertThat(solutionBest.tours.size()).isEqualTo(18);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(18);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  20, TC =   4385.17]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  19, TC =   4043.29] at iteration 1");
@@ -68,11 +72,6 @@ public class StaticTcMinimizerTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   2778.18] at iteration 180");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   2776.26] at iteration 182");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   2772.18] at iteration 870");
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(2772.182174325898);
-        assertThat(solutionBest.tours.size()).isEqualTo(18);
-        assertThat(solutionBest.requestIds.size()).isEqualTo(18);
     }
 
     @Test
@@ -82,6 +81,10 @@ public class StaticTcMinimizerTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(3421.964026239856);
+        assertThat(solutionBest.tours.size()).isEqualTo(14);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(14);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  16, TC =   5070.74]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  16, TC =   4652.02] at iteration 1");
@@ -130,10 +133,5 @@ public class StaticTcMinimizerTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  14, TC =   3426.93] at iteration 7845");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  14, TC =   3422.01] at iteration 7850");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  14, TC =   3421.96] at iteration 17849");
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3421.964026239856);
-        assertThat(solutionBest.tours.size()).isEqualTo(14);
-        assertThat(solutionBest.requestIds.size()).isEqualTo(14);
     }
 }

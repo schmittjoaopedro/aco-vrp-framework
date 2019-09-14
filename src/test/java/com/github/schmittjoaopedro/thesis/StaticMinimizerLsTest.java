@@ -42,6 +42,10 @@ public class StaticMinimizerLsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(2772.1821743258974);
+        assertThat(solutionBest.tours.size()).isEqualTo(18);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(18);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  19, TC =   3249.13]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   3013.42] at iteration 10");
@@ -53,11 +57,6 @@ public class StaticMinimizerLsTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   2773.53] at iteration 41");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   2772.66] at iteration 62");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   2772.18] at iteration 2286");
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(2772.1821743258974);
-        assertThat(solutionBest.tours.size()).isEqualTo(18);
-        assertThat(solutionBest.requestIds.size()).isEqualTo(18);
     }
 
     @Test
@@ -68,6 +67,10 @@ public class StaticMinimizerLsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(3133.750522624257);
+        assertThat(solutionBest.tours.size()).isEqualTo(17);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(17);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  19, TC =   3249.13]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  19, TC =   3248.00] at iteration 3");
@@ -92,11 +95,6 @@ public class StaticMinimizerLsTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  17, TC =   3135.07] at iteration 14138");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  17, TC =   3133.86] at iteration 16207");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  17, TC =   3133.75] at iteration 18573");
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3133.750522624257);
-        assertThat(solutionBest.tours.size()).isEqualTo(17);
-        assertThat(solutionBest.requestIds.size()).isEqualTo(17);
     }
 
     @Test
@@ -107,6 +105,9 @@ public class StaticMinimizerLsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(3389.177392261772);
+        assertThat(solutionBest.tours.size()).isEqualTo(15);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  16, TC =   3719.92]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  16, TC =   3709.53] at iteration 3");
@@ -130,10 +131,6 @@ public class StaticMinimizerLsTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  15, TC =   3394.37] at iteration 10705");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  15, TC =   3392.97] at iteration 10733");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  15, TC =   3389.18] at iteration 10765");
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3389.177392261772);
-        assertThat(solutionBest.tours.size()).isEqualTo(15);
     }
 
     @Test
@@ -144,6 +141,10 @@ public class StaticMinimizerLsTest {
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(3748.0920761787306);
+        assertThat(solutionBest.tours.size()).isEqualTo(11);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(11);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  16, TC =   3719.92]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  16, TC =   3715.42] at iteration 1");
@@ -199,10 +200,5 @@ public class StaticMinimizerLsTest {
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  11, TC =   3780.70] at iteration 13408");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  11, TC =   3758.50] at iteration 13594");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  11, TC =   3748.09] at iteration 13605");
-
-        assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3748.0920761787306);
-        assertThat(solutionBest.tours.size()).isEqualTo(11);
-        assertThat(solutionBest.requestIds.size()).isEqualTo(11);
     }
 }
