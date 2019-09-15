@@ -75,44 +75,54 @@ public class Solver {
     }
 
     public void run() {
-        long time = System.currentTimeMillis();
-        while (iteration < maxIterations) {
-            // Update algorithm time relative to the current iteration
-            updateAlgorithmTime(iteration);
-            if (instance.numRequests > 0) {
-                /*
-                 * Monitors vehicles visiting clients.
-                 * This step must precede the new requests attendance because the local search executed by
-                 * resetAlgorithms (in attendNewRequests) can relocate from one route to another a request
-                 * that must be visited in the current time by the current route.
-                 */
-                trackOperatingVehicles();
-                printVehiclesOperation();
-            }
-            // Check if new requests should be attended in the current time
-            attendNewRequests();
-            if (instance.numRequests > 0) {
-                // Optimize solutions
-                executeOptimization();
-                Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
-                Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
-                // Use best solution from both NV and TC
-                Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(best -> updateBest(best, iteration));
-                // Synchronize algorithm objectives
-                if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
-                    costMinimizer.resetToInitialSolution(feasibleNV);
+        try {
+            long time = System.currentTimeMillis();
+            while (iteration < maxIterations) {
+                // Update algorithm time relative to the current iteration
+                updateAlgorithmTime(iteration);
+                if (instance.numRequests > 0) {
+                    /*
+                     * Monitors vehicles visiting clients.
+                     * This step must precede the new requests attendance because the local search executed by
+                     * resetAlgorithms (in attendNewRequests) can relocate from one route to another a request
+                     * that must be visited in the current time by the current route.
+                     */
+                    trackOperatingVehicles();
+                    printVehiclesOperation();
                 }
-                collectStatistics();
+                // Check if new requests should be attended in the current time
+                attendNewRequests();
+                if (instance.numRequests > 0) {
+                    // Optimize solutions
+                    executeOptimization();
+                    Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
+                    Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
+                    // Use best solution from both NV and TC
+                    Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(best -> updateBest(best, iteration));
+                    // Synchronize algorithm objectives
+                    if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
+                        costMinimizer.resetToInitialSolution(feasibleNV);
+                    }
+                    collectStatistics();
+                }
+                iteration++;
             }
-            iteration++;
+            if (collectStatistics) {
+                statistic.executionTime = System.currentTimeMillis() - time;
+            }
+            printVehiclesOperation();
+            instance.solutionEvaluation(solutionBest);
+            statistic.solutionBest = solutionBest;
+            printSolutionBest();
+        } finally {
+            finishThreads();
         }
-        if (collectStatistics) {
-            statistic.executionTime = System.currentTimeMillis() - time;
+    }
+
+    public void finishThreads() {
+        if (parallelExecution) {
+            threadPoolExecutor.shutdown();
         }
-        printVehiclesOperation();
-        instance.solutionEvaluation(solutionBest);
-        statistic.solutionBest = solutionBest;
-        printSolutionBest();
     }
 
     private void executeOptimization() {

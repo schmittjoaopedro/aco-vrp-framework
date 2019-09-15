@@ -46,6 +46,7 @@ public class Runner {
                 while (!threadPoolExecutor.awaitTermination(2, TimeUnit.HOURS)) ;
                 statisticCalculator.calculateInstanceStatistics();
                 statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
+                System.out.println("Num threads = " + Thread.activeCount());
                 System.out.println("Finishing to process all instances of " + instanceName);
             }
         }
