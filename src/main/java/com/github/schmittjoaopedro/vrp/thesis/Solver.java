@@ -75,6 +75,7 @@ public class Solver {
     }
 
     public void run() {
+        long time = System.currentTimeMillis();
         while (iteration < maxIterations) {
             // Update algorithm time relative to the current iteration
             updateAlgorithmTime(iteration);
@@ -104,6 +105,9 @@ public class Solver {
                 collectStatistics();
             }
             iteration++;
+        }
+        if (collectStatistics) {
+            statistic.executionTime = System.currentTimeMillis() - time;
         }
         printVehiclesOperation();
         instance.solutionEvaluation(solutionBest);

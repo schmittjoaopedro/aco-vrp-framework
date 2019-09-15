@@ -11,6 +11,8 @@ public class Statistic implements Comparable<Statistic> {
 
     public int maxIterations;
 
+    public long executionTime;
+
     public int[] global_nv;
 
     public double[] global_tc;

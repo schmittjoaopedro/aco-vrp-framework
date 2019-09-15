@@ -1,6 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
-public class StatisticMeanSd {
+public class IterationStatistics {
 
     public double[] mean_global_nv;
 
@@ -54,7 +54,7 @@ public class StatisticMeanSd {
 
     public double[] sd_cost_minimizer_temperature;
 
-    public StatisticMeanSd(int maxIterations) {
+    public IterationStatistics(int maxIterations) {
         mean_global_nv = new double[maxIterations];
         sd_global_nv = new double[maxIterations];
         mean_global_tc = new double[maxIterations];

@@ -1,118 +1,191 @@
 package com.github.schmittjoaopedro.vrp.thesis.algorithms;
 
+import com.github.schmittjoaopedro.tsp.utils.Maths;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 public class StatisticCalculator {
 
-    private LinkedList<String> testNames = new LinkedList<>();
+    private String testName;
 
-    private Map<String, LinkedList<Statistic>> testStatistics = new HashMap<>();
+    private TestResult testResult;
 
-    private Map<String, TestResult> testResults = new HashMap<>();
-
-    private String directory;
+    private LinkedList<Statistic> statistics = new LinkedList<>();
 
     private int maxIterations;
 
-    public StatisticCalculator(String directory, int maxIterations) {
-        this.directory = directory;
+    public StatisticCalculator(String testName, int maxIterations) {
+        this.testName = testName;
         this.maxIterations = maxIterations;
+        this.testResult = new TestResult();
     }
 
     public synchronized void addStatisticsResult(Statistic statistic) {
-        if (!testStatistics.containsKey(statistic.instance.name)) {
-            testNames.add(statistic.instance.name);
-            testStatistics.put(statistic.instance.name, new LinkedList<>());
-        }
-        testStatistics.get(statistic.instance.name).add(statistic);
+        statistics.add(statistic);
     }
 
-    public void consolidateSingleTestCase(String testName, boolean saveOnDisk) {
-        TestResult testResult = new TestResult();
-        defineBestSolution(testResult, testStatistics.get(testName));
-        testResults.put(testName, testResult);
-        if (saveOnDisk) {
-            writeTestResultToCsv(testResult, testName);
-        }
-    }
-
-    public void consolidateAllTestCases(String fileName) {
-        CsvFile csvFile = new CsvFile(fileName);
-        TestResult testResult;
-
-        csvFile.addData("instance");
-        for (String testName : testNames) {
-            csvFile.addData(testName + "_nv");
-            csvFile.addData(testName + "_tc");
-            csvFile.addData(testName + "_fc");
-        }
-        csvFile.newRow();
-
-        csvFile.addData("bsf");
-        for (String testName : testNames) {
-            testResult = testResults.get(testName);
-            csvFile.addData(testResult.bestNv);
-            csvFile.addData(testResult.bestTc);
-            csvFile.addData(testResult.bestFeasible);
-        }
-        csvFile.newRow();
-
-        for (int i = 0; i < maxIterations; i++) {
-            csvFile.addData(i);
-            for (String testName : testNames) {
-                testResult = testResults.get(testName);
-                csvFile.addData(testResult.meanSdStatistic.mean_global_nv[i]);
-                csvFile.addData(testResult.meanSdStatistic.mean_global_tc[i]);
-                csvFile.addData(testResult.meanSdStatistic.mean_global_fc[i]);
-            }
-            csvFile.newRow();
-        }
-        csvFile.saveToDisk(directory);
-    }
-
-    private void defineBestSolution(TestResult testResult, LinkedList<Statistic> statistics) {
+    public void calculateInstanceStatistics() {
         Collections.sort(statistics);
+        // Calculate bsf
         Statistic bestSolution = statistics.get(0);
         testResult.bestNv = bestSolution.solutionBest.tours.size();
         testResult.bestTc = bestSolution.solutionBest.totalCost;
         testResult.bestFeasible = bestSolution.solutionBest.feasible ? 1 : 0;
-        testResult.meanSdStatistic = new StatisticMeanSd(maxIterations);
+        testResult.executionTime = bestSolution.executionTime;
+        // Calculate summary
+        DescriptiveStatistics bsfNvStats = new DescriptiveStatistics();
+        DescriptiveStatistics bsfTcStats = new DescriptiveStatistics();
+        DescriptiveStatistics bsfFcStats = new DescriptiveStatistics();
+        DescriptiveStatistics timeStats = new DescriptiveStatistics();
+        for (int i = 0; i < statistics.size(); i++) {
+            bsfNvStats.addValue(statistics.get(i).solutionBest.tours.size());
+            bsfTcStats.addValue(statistics.get(i).solutionBest.totalCost);
+            bsfFcStats.addValue(statistics.get(i).solutionBest.feasible ? 1.0 : 0.0);
+            timeStats.addValue(statistics.get(i).executionTime);
+        }
+        testResult.meanBestNv = bsfNvStats.getMean();
+        testResult.sdBestNv = bsfNvStats.getStandardDeviation();
+        testResult.meanBestTc = bsfTcStats.getMean();
+        testResult.sdBestTc = bsfTcStats.getStandardDeviation();
+        testResult.meanBestFeasible = bsfFcStats.getMean();
+        testResult.sdBestFeasible = bsfFcStats.getStandardDeviation();
+        testResult.meanExecutionTime = timeStats.getMean();
+        testResult.sdExecutionTime = timeStats.getStandardDeviation();
+        // Iterations statistics
+        testResult.iterationStatistics = new IterationStatistics(maxIterations);
         for (int i = 0; i < maxIterations; i++) {
-            testResult.meanSdStatistic.mean_global_nv[i] = mean(statistics, "global_nv", i);
-            testResult.meanSdStatistic.sd_global_nv[i] = sd(statistics, "global_nv", i);
-            testResult.meanSdStatistic.mean_global_tc[i] = mean(statistics, "global_tc", i);
-            testResult.meanSdStatistic.sd_global_tc[i] = sd(statistics, "global_tc", i);
-            testResult.meanSdStatistic.mean_global_fc[i] = mean(statistics, "global_fc", i);
-            testResult.meanSdStatistic.sd_global_fc[i] = sd(statistics, "global_fc", i);
-            testResult.meanSdStatistic.mean_vehicle_minimizer_best_nv[i] = mean(statistics, "vehicle_minimizer_best_nv", i);
-            testResult.meanSdStatistic.sd_vehicle_minimizer_best_nv[i] = sd(statistics, "vehicle_minimizer_best_nv", i);
-            testResult.meanSdStatistic.mean_vehicle_minimizer_best_tc[i] = mean(statistics, "vehicle_minimizer_best_tc", i);
-            testResult.meanSdStatistic.sd_vehicle_minimizer_best_tc[i] = sd(statistics, "vehicle_minimizer_best_tc", i);
-            testResult.meanSdStatistic.mean_vehicle_minimizer_local_nv[i] = mean(statistics, "vehicle_minimizer_local_nv", i);
-            testResult.meanSdStatistic.sd_vehicle_minimizer_local_nv[i] = sd(statistics, "vehicle_minimizer_local_nv", i);
-            testResult.meanSdStatistic.mean_vehicle_minimizer_local_tc[i] = mean(statistics, "vehicle_minimizer_local_tc", i);
-            testResult.meanSdStatistic.sd_vehicle_minimizer_local_tc[i] = sd(statistics, "vehicle_minimizer_local_tc", i);
-            testResult.meanSdStatistic.mean_vehicle_minimizer_temperature[i] = mean(statistics, "vehicle_minimizer_temperature", i);
-            testResult.meanSdStatistic.sd_vehicle_minimizer_temperature[i] = sd(statistics, "vehicle_minimizer_temperature", i);
-            testResult.meanSdStatistic.mean_cost_minimizer_best_nv[i] = mean(statistics, "cost_minimizer_best_nv", i);
-            testResult.meanSdStatistic.sd_cost_minimizer_best_nv[i] = sd(statistics, "cost_minimizer_best_nv", i);
-            testResult.meanSdStatistic.mean_cost_minimizer_best_tc[i] = mean(statistics, "cost_minimizer_best_tc", i);
-            testResult.meanSdStatistic.sd_cost_minimizer_best_tc[i] = sd(statistics, "cost_minimizer_best_tc", i);
-            testResult.meanSdStatistic.mean_cost_minimizer_local_nv[i] = mean(statistics, "cost_minimizer_local_nv", i);
-            testResult.meanSdStatistic.sd_cost_minimizer_local_nv[i] = sd(statistics, "cost_minimizer_local_nv", i);
-            testResult.meanSdStatistic.mean_cost_minimizer_local_tc[i] = mean(statistics, "cost_minimizer_local_tc", i);
-            testResult.meanSdStatistic.sd_cost_minimizer_local_tc[i] = sd(statistics, "cost_minimizer_local_tc", i);
-            testResult.meanSdStatistic.mean_cost_minimizer_temperature[i] = mean(statistics, "cost_minimizer_temperature", i);
-            testResult.meanSdStatistic.sd_cost_minimizer_temperature[i] = sd(statistics, "cost_minimizer_temperature", i);
+            testResult.iterationStatistics.mean_global_nv[i] = mean(statistics, "global_nv", i);
+            testResult.iterationStatistics.sd_global_nv[i] = sd(statistics, "global_nv", i);
+            testResult.iterationStatistics.mean_global_tc[i] = mean(statistics, "global_tc", i);
+            testResult.iterationStatistics.sd_global_tc[i] = sd(statistics, "global_tc", i);
+            testResult.iterationStatistics.mean_global_fc[i] = mean(statistics, "global_fc", i);
+            testResult.iterationStatistics.sd_global_fc[i] = sd(statistics, "global_fc", i);
+            testResult.iterationStatistics.mean_vehicle_minimizer_best_nv[i] = mean(statistics, "vehicle_minimizer_best_nv", i);
+            testResult.iterationStatistics.sd_vehicle_minimizer_best_nv[i] = sd(statistics, "vehicle_minimizer_best_nv", i);
+            testResult.iterationStatistics.mean_vehicle_minimizer_best_tc[i] = mean(statistics, "vehicle_minimizer_best_tc", i);
+            testResult.iterationStatistics.sd_vehicle_minimizer_best_tc[i] = sd(statistics, "vehicle_minimizer_best_tc", i);
+            testResult.iterationStatistics.mean_vehicle_minimizer_local_nv[i] = mean(statistics, "vehicle_minimizer_local_nv", i);
+            testResult.iterationStatistics.sd_vehicle_minimizer_local_nv[i] = sd(statistics, "vehicle_minimizer_local_nv", i);
+            testResult.iterationStatistics.mean_vehicle_minimizer_local_tc[i] = mean(statistics, "vehicle_minimizer_local_tc", i);
+            testResult.iterationStatistics.sd_vehicle_minimizer_local_tc[i] = sd(statistics, "vehicle_minimizer_local_tc", i);
+            testResult.iterationStatistics.mean_vehicle_minimizer_temperature[i] = mean(statistics, "vehicle_minimizer_temperature", i);
+            testResult.iterationStatistics.sd_vehicle_minimizer_temperature[i] = sd(statistics, "vehicle_minimizer_temperature", i);
+            testResult.iterationStatistics.mean_cost_minimizer_best_nv[i] = mean(statistics, "cost_minimizer_best_nv", i);
+            testResult.iterationStatistics.sd_cost_minimizer_best_nv[i] = sd(statistics, "cost_minimizer_best_nv", i);
+            testResult.iterationStatistics.mean_cost_minimizer_best_tc[i] = mean(statistics, "cost_minimizer_best_tc", i);
+            testResult.iterationStatistics.sd_cost_minimizer_best_tc[i] = sd(statistics, "cost_minimizer_best_tc", i);
+            testResult.iterationStatistics.mean_cost_minimizer_local_nv[i] = mean(statistics, "cost_minimizer_local_nv", i);
+            testResult.iterationStatistics.sd_cost_minimizer_local_nv[i] = sd(statistics, "cost_minimizer_local_nv", i);
+            testResult.iterationStatistics.mean_cost_minimizer_local_tc[i] = mean(statistics, "cost_minimizer_local_tc", i);
+            testResult.iterationStatistics.sd_cost_minimizer_local_tc[i] = sd(statistics, "cost_minimizer_local_tc", i);
+            testResult.iterationStatistics.mean_cost_minimizer_temperature[i] = mean(statistics, "cost_minimizer_temperature", i);
+            testResult.iterationStatistics.sd_cost_minimizer_temperature[i] = sd(statistics, "cost_minimizer_temperature", i);
+        }
+    }
+
+    public void writeTestResultToCsv(String directory, boolean bsf, boolean summary, boolean iteration) {
+        if (bsf) {
+            CsvFile bsfFile = new CsvFile(testName + "_bsf");
+            bsfFile.addData("tc");
+            bsfFile.addData("nv");
+            bsfFile.addData("feasible");
+            bsfFile.addData("execTime");
+            bsfFile.newRow();
+            bsfFile.addData(testResult.bestTc);
+            bsfFile.addData(testResult.bestNv);
+            bsfFile.addData(testResult.bestFeasible);
+            bsfFile.addData(testResult.executionTime);
+            bsfFile.newRow();
+            bsfFile.saveToDisk(directory);
+        }
+        if (summary) {
+            CsvFile summaryFile = new CsvFile(testName + "_summary");
+            summaryFile.addData("mean_bsf_nv");
+            summaryFile.addData("sd_bsf_nv");
+            summaryFile.addData("mean_bsf_tc");
+            summaryFile.addData("sd_bsf_tc");
+            summaryFile.addData("mean_bsf_fc");
+            summaryFile.addData("sd_bsf_fc");
+            summaryFile.addData("mean_exec_time");
+            summaryFile.addData("sd_exec_time");
+            summaryFile.newRow();
+            summaryFile.addData(testResult.meanBestNv);
+            summaryFile.addData(testResult.sdBestNv);
+            summaryFile.addData(testResult.meanBestTc);
+            summaryFile.addData(testResult.sdBestTc);
+            summaryFile.addData(testResult.meanBestFeasible);
+            summaryFile.addData(testResult.sdBestFeasible);
+            summaryFile.addData(testResult.meanExecutionTime);
+            summaryFile.addData(testResult.sdExecutionTime);
+            summaryFile.newRow();
+            summaryFile.saveToDisk(directory);
+        }
+        if (iteration) {
+            CsvFile detailedFile = new CsvFile(testName + "_iteration");
+            detailedFile.addData("mean_global_nv");
+            detailedFile.addData("sd_global_nv");
+            detailedFile.addData("mean_global_tc");
+            detailedFile.addData("sd_global_tc");
+            detailedFile.addData("mean_global_fc");
+            detailedFile.addData("sd_global_fc");
+            detailedFile.addData("mean_vehicle_minimizer_best_nv");
+            detailedFile.addData("sd_vehicle_minimizer_best_nv");
+            detailedFile.addData("mean_vehicle_minimizer_best_tc");
+            detailedFile.addData("sd_vehicle_minimizer_best_tc");
+            detailedFile.addData("mean_vehicle_minimizer_local_nv");
+            detailedFile.addData("sd_vehicle_minimizer_local_nv");
+            detailedFile.addData("mean_vehicle_minimizer_local_tc");
+            detailedFile.addData("sd_vehicle_minimizer_local_tc");
+            detailedFile.addData("mean_vehicle_minimizer_temperature");
+            detailedFile.addData("sd_vehicle_minimizer_temperature");
+            detailedFile.addData("mean_cost_minimizer_best_nv");
+            detailedFile.addData("sd_cost_minimizer_best_nv");
+            detailedFile.addData("mean_cost_minimizer_best_tc");
+            detailedFile.addData("sd_cost_minimizer_best_tc");
+            detailedFile.addData("mean_cost_minimizer_local_nv");
+            detailedFile.addData("sd_cost_minimizer_local_nv");
+            detailedFile.addData("mean_cost_minimizer_local_tc");
+            detailedFile.addData("sd_cost_minimizer_local_tc");
+            detailedFile.addData("mean_cost_minimizer_temperature");
+            detailedFile.addData("sd_cost_minimizer_temperature");
+            detailedFile.newRow();
+            IterationStatistics iterationStatistics = testResult.iterationStatistics;
+            for (int i = 1; i < maxIterations; i++) {
+                detailedFile.addData(iterationStatistics.mean_global_nv[i]);
+                detailedFile.addData(iterationStatistics.sd_global_nv[i]);
+                detailedFile.addData(iterationStatistics.mean_global_tc[i]);
+                detailedFile.addData(iterationStatistics.sd_global_tc[i]);
+                detailedFile.addData(iterationStatistics.mean_global_fc[i]);
+                detailedFile.addData(iterationStatistics.sd_global_fc[i]);
+                detailedFile.addData(iterationStatistics.mean_vehicle_minimizer_best_nv[i]);
+                detailedFile.addData(iterationStatistics.sd_vehicle_minimizer_best_nv[i]);
+                detailedFile.addData(iterationStatistics.mean_vehicle_minimizer_best_tc[i]);
+                detailedFile.addData(iterationStatistics.sd_vehicle_minimizer_best_tc[i]);
+                detailedFile.addData(iterationStatistics.mean_vehicle_minimizer_local_nv[i]);
+                detailedFile.addData(iterationStatistics.sd_vehicle_minimizer_local_nv[i]);
+                detailedFile.addData(iterationStatistics.mean_vehicle_minimizer_local_tc[i]);
+                detailedFile.addData(iterationStatistics.sd_vehicle_minimizer_local_tc[i]);
+                detailedFile.addData(iterationStatistics.mean_vehicle_minimizer_temperature[i]);
+                detailedFile.addData(iterationStatistics.sd_vehicle_minimizer_temperature[i]);
+                detailedFile.addData(iterationStatistics.mean_cost_minimizer_best_nv[i]);
+                detailedFile.addData(iterationStatistics.sd_cost_minimizer_best_nv[i]);
+                detailedFile.addData(iterationStatistics.mean_cost_minimizer_best_tc[i]);
+                detailedFile.addData(iterationStatistics.sd_cost_minimizer_best_tc[i]);
+                detailedFile.addData(iterationStatistics.mean_cost_minimizer_local_nv[i]);
+                detailedFile.addData(iterationStatistics.sd_cost_minimizer_local_nv[i]);
+                detailedFile.addData(iterationStatistics.mean_cost_minimizer_local_tc[i]);
+                detailedFile.addData(iterationStatistics.sd_cost_minimizer_local_tc[i]);
+                detailedFile.addData(iterationStatistics.mean_cost_minimizer_temperature[i]);
+                detailedFile.addData(iterationStatistics.sd_cost_minimizer_temperature[i]);
+                detailedFile.newRow();
+            }
+            detailedFile.saveToDisk(directory);
         }
     }
 
@@ -121,7 +194,7 @@ public class StatisticCalculator {
         for (Statistic statistic : statistics) {
             mean += getFromDoubleArray(statistic, fieldName, iteration);
         }
-        return mean / statistics.size();
+        return Maths.round(mean / statistics.size(), 2);
     }
 
     private double sd(LinkedList<Statistic> statistics, String fieldName, int iteration) {
@@ -134,7 +207,7 @@ public class StatisticCalculator {
             }
             dev = Math.sqrt(dev / (double) (statistics.size() - 1));
         }
-        return dev;
+        return Maths.round(dev);
     }
 
     private double getFromDoubleArray(Statistic statistic, String fieldName, int iteration) {
@@ -152,73 +225,6 @@ public class StatisticCalculator {
         return value;
     }
 
-    private void writeTestResultToCsv(TestResult testResult, String testName) {
-        CsvFile csvFile = new CsvFile(testName);
-        csvFile.addData("bsf_nv");
-        csvFile.addData("bsf_tc");
-        csvFile.addData("mean_global_nv");
-        csvFile.addData("sd_global_nv");
-        csvFile.addData("mean_global_tc");
-        csvFile.addData("sd_global_tc");
-        csvFile.addData("mean_vehicle_minimizer_best_nv");
-        csvFile.addData("sd_vehicle_minimizer_best_nv");
-        csvFile.addData("mean_vehicle_minimizer_best_tc");
-        csvFile.addData("sd_vehicle_minimizer_best_tc");
-        csvFile.addData("mean_vehicle_minimizer_local_nv");
-        csvFile.addData("sd_vehicle_minimizer_local_nv");
-        csvFile.addData("mean_vehicle_minimizer_local_tc");
-        csvFile.addData("sd_vehicle_minimizer_local_tc");
-        csvFile.addData("mean_vehicle_minimizer_temperature");
-        csvFile.addData("sd_vehicle_minimizer_temperature");
-        csvFile.addData("mean_cost_minimizer_best_nv");
-        csvFile.addData("sd_cost_minimizer_best_nv");
-        csvFile.addData("mean_cost_minimizer_best_tc");
-        csvFile.addData("sd_cost_minimizer_best_tc");
-        csvFile.addData("mean_cost_minimizer_local_nv");
-        csvFile.addData("sd_cost_minimizer_local_nv");
-        csvFile.addData("mean_cost_minimizer_local_tc");
-        csvFile.addData("sd_cost_minimizer_local_tc");
-        csvFile.addData("mean_cost_minimizer_temperature");
-        csvFile.addData("sd_cost_minimizer_temperature");
-        csvFile.newRow();
-        StatisticMeanSd statisticMeanSd = testResult.meanSdStatistic;
-        for (int i = 1; i < maxIterations; i++) {
-            if (i == 1) {
-                csvFile.addData(testResult.bestNv);
-                csvFile.addData(testResult.bestTc);
-            } else {
-                csvFile.addData(StringUtils.EMPTY);
-                csvFile.addData(StringUtils.EMPTY);
-            }
-            csvFile.addData(statisticMeanSd.mean_global_nv[i]);
-            csvFile.addData(statisticMeanSd.sd_global_nv[i]);
-            csvFile.addData(statisticMeanSd.mean_global_tc[i]);
-            csvFile.addData(statisticMeanSd.sd_global_tc[i]);
-            csvFile.addData(statisticMeanSd.mean_vehicle_minimizer_best_nv[i]);
-            csvFile.addData(statisticMeanSd.sd_vehicle_minimizer_best_nv[i]);
-            csvFile.addData(statisticMeanSd.mean_vehicle_minimizer_best_tc[i]);
-            csvFile.addData(statisticMeanSd.sd_vehicle_minimizer_best_tc[i]);
-            csvFile.addData(statisticMeanSd.mean_vehicle_minimizer_local_nv[i]);
-            csvFile.addData(statisticMeanSd.sd_vehicle_minimizer_local_nv[i]);
-            csvFile.addData(statisticMeanSd.mean_vehicle_minimizer_local_tc[i]);
-            csvFile.addData(statisticMeanSd.sd_vehicle_minimizer_local_tc[i]);
-            csvFile.addData(statisticMeanSd.mean_vehicle_minimizer_temperature[i]);
-            csvFile.addData(statisticMeanSd.sd_vehicle_minimizer_temperature[i]);
-            csvFile.addData(statisticMeanSd.mean_cost_minimizer_best_nv[i]);
-            csvFile.addData(statisticMeanSd.sd_cost_minimizer_best_nv[i]);
-            csvFile.addData(statisticMeanSd.mean_cost_minimizer_best_tc[i]);
-            csvFile.addData(statisticMeanSd.sd_cost_minimizer_best_tc[i]);
-            csvFile.addData(statisticMeanSd.mean_cost_minimizer_local_nv[i]);
-            csvFile.addData(statisticMeanSd.sd_cost_minimizer_local_nv[i]);
-            csvFile.addData(statisticMeanSd.mean_cost_minimizer_local_tc[i]);
-            csvFile.addData(statisticMeanSd.sd_cost_minimizer_local_tc[i]);
-            csvFile.addData(statisticMeanSd.mean_cost_minimizer_temperature[i]);
-            csvFile.addData(statisticMeanSd.sd_cost_minimizer_temperature[i]);
-            csvFile.newRow();
-        }
-        csvFile.saveToDisk(directory);
-    }
-
     protected class TestResult {
 
         public String name;
@@ -229,7 +235,25 @@ public class StatisticCalculator {
 
         public int bestFeasible;
 
-        private StatisticMeanSd meanSdStatistic;
+        public long executionTime;
+
+        public double meanBestNv;
+
+        public double sdBestNv;
+
+        public double meanBestTc;
+
+        public double sdBestTc;
+
+        public double meanBestFeasible;
+
+        public double sdBestFeasible;
+
+        public double meanExecutionTime;
+
+        public double sdExecutionTime;
+
+        private IterationStatistics iterationStatistics;
 
     }
 

@@ -3,149 +3,104 @@ package com.github.schmittjoaopedro.vrp.thesis;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.StatisticCalculator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
-import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.cli.*;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Runner {
 
-    private static final String REPORT_DIRECTORY = "C:\\Temp\\ALNS TWO-STAGE - preliminary analysis thesis\\";
-    private static int maxIterations = 25000;
-
-    private static final String pdptw100Directory = "dpdptw/100-tasks/";
-    private static final String pdptw200Directory = "dpdptw/200-tasks/";
-    private static final String pdptw400Directory = "dpdptw/400-tasks/";
-    private static final String pdptw600Directory = "dpdptw/600-tasks/";
-    private static final String pdptw800Directory = "dpdptw/800-tasks/";
-    private static final String pdptw1000Directory = "dpdptw/1000-tasks/";
-
-    private static boolean dynamism = true;
-
-    private static String[] dynamic_suffixes = {
-            "_a_0.1", "_a_0.25", "_a_0.5", "_a_0.75", "_a_1.0",
-            "_q_0_0.1", "_q_0_0.25", "_q_0_0.5", "_q_0_0.75", "_q_0_1.0",
-    };
-
-    public static String[] instances_100 = {
-            "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108", "lc109",
-            "lc201", "lc202", "lc203", "lc204", "lc205", "lc206", "lc207", "lc208",
-            "lr101", "lr102", "lr103", "lr104", "lr105", "lr106", "lr107", "lr108", "lr109", "lr110", "lr111", "lr112",
-            "lr201", "lr202", "lr203", "lr204", "lr205", "lr206", "lr207", "lr208", "lr209", "lr210", "lr211",
-            "lrc101", "lrc102", "lrc103", "lrc104", "lrc105", "lrc106", "lrc107", "lrc108",
-            "lrc201", "lrc202", "lrc203", "lrc204", "lrc205", "lrc206", "lrc207", "lrc208"
-    };
-
-    public static String[] instances_200 = {
-            "LC1_2_1", "LC1_2_2", "LC1_2_3", "LC1_2_4", "LC1_2_5", "LC1_2_6", "LC1_2_7", "LC1_2_8", "LC1_2_9", "LC1_2_10",
-            "LC2_2_1", "LC2_2_2", "LC2_2_3", "LC2_2_4", "LC2_2_5", "LC2_2_6", "LC2_2_7", "LC2_2_8", "LC2_2_9", "LC2_2_10",
-            "LR1_2_1", "LR1_2_2", "LR1_2_3", "LR1_2_4", "LR1_2_5", "LR1_2_6", "LR1_2_7", "LR1_2_8", "LR1_2_9", "LR1_2_10",
-            "LR2_2_1", "LR2_2_2", "LR2_2_3", "LR2_2_4", "LR2_2_5", "LR2_2_6", "LR2_2_7", "LR2_2_8", "LR2_2_9", "LR2_2_10",
-            "LRC1_2_1", "LRC1_2_2", "LRC1_2_3", "LRC1_2_4", "LRC1_2_5", "LRC1_2_6", "LRC1_2_7", "LRC1_2_8", "LRC1_2_9", "LRC1_2_10",
-            "LRC2_2_1", "LRC2_2_2", "LRC2_2_3", "LRC2_2_4", "LRC2_2_5", "LRC2_2_6", "LRC2_2_7", "LRC2_2_8", "LRC2_2_9", "LRC2_2_10"
-    };
-
-    public static String[] instances_400 = {
-            "LC1_4_1", "LC1_4_2", "LC1_4_3", "LC1_4_4", "LC1_4_5", "LC1_4_6", "LC1_4_7", "LC1_4_8", "LC1_4_9", "LC1_4_10",
-            "LC2_4_1", "LC2_4_2", "LC2_4_3", "LC2_4_4", "LC2_4_5", "LC2_4_6", "LC2_4_7", "LC2_4_8", "LC2_4_9", "LC2_4_10",
-            "LR1_4_1", "LR1_4_2", "LR1_4_3", "LR1_4_4", "LR1_4_5", "LR1_4_6", "LR1_4_7", "LR1_4_8", "LR1_4_9", "LR1_4_10",
-            "LR2_4_1", "LR2_4_2", "LR2_4_3", "LR2_4_4", "LR2_4_5", "LR2_4_6", "LR2_4_7", "LR2_4_8", "LR2_4_9", "LR2_4_10",
-            "LRC1_4_1", "LRC1_4_2", "LRC1_4_3", "LRC1_4_4", "LRC1_4_5", "LRC1_4_6", "LRC1_4_7", "LRC1_4_8", "LRC1_4_9", "LRC1_4_10",
-            "LRC2_4_1", "LRC2_4_2", "LRC2_4_3", "LRC2_4_4", "LRC2_4_5", "LRC2_4_6", "LRC2_4_7", "LRC2_4_8", "LRC2_4_9", "LRC2_4_10"
-    };
-
-    public static String[] instances_600 = {
-            "LC1_6_1", "LC1_6_2", "LC1_6_3", "LC1_6_4", "LC1_6_5", "LC1_6_6", "LC1_6_7", "LC1_6_8", "LC1_6_9", "LC1_6_10",
-            "LC2_6_1", "LC2_6_2", "LC2_6_3", "LC2_6_4", "LC2_6_5", "LC2_6_6", "LC2_6_7", "LC2_6_8", "LC2_6_9", "LC2_6_10",
-            "LR1_6_1", "LR1_6_2", "LR1_6_3", "LR1_6_4", "LR1_6_5", "LR1_6_6", "LR1_6_7", "LR1_6_8", "LR1_6_9", "LR1_6_10",
-            "LR2_6_1", "LR2_6_2", "LR2_6_3", "LR2_6_4", "LR2_6_5", "LR2_6_6", "LR2_6_7", "LR2_6_8", "LR2_6_9", "LR2_6_10",
-            "LRC1_6_1", "LRC1_6_2", "LRC1_6_3", "LRC1_6_4", "LRC1_6_5", "LRC1_6_6", "LRC1_6_7", "LRC1_6_8", "LRC1_6_9", "LRC1_6_10",
-            "LRC2_6_1", "LRC2_6_2", "LRC2_6_3", "LRC2_6_4", "LRC2_6_5", "LRC2_6_6", "LRC2_6_7", "LRC2_6_8", "LRC2_6_9", "LRC2_6_10"
-    };
-
-    public static String[] instances_800 = {
-            "LC1_8_1", "LC1_8_2", "LC1_8_3", "LC1_8_4", "LC1_8_5", "LC1_8_6", "LC1_8_7", "LC1_8_8", "LC1_8_9", "LC1_8_10",
-            "LC2_8_1", "LC2_8_2", "LC2_8_3", "LC2_8_4", "LC2_8_5", "LC2_8_6", "LC2_8_7", "LC2_8_8", "LC2_8_9", "LC2_8_10",
-            "LR1_8_1", "LR1_8_2", "LR1_8_3", "LR1_8_4", "LR1_8_5", "LR1_8_6", "LR1_8_7", "LR1_8_8", "LR1_8_9", "LR1_8_10",
-            "LR2_8_1", "LR2_8_2", "LR2_8_3", "LR2_8_4", "LR2_8_5", "LR2_8_6", "LR2_8_7", "LR2_8_8", "LR2_8_9", "LR2_8_10",
-            "LRC1_8_1", "LRC1_8_2", "LRC1_8_3", "LRC1_8_4", "LRC1_8_5", "LRC1_8_6", "LRC1_8_7", "LRC1_8_8", "LRC1_8_9", "LRC1_8_10",
-            "LRC2_8_1", "LRC2_8_2", "LRC2_8_3", "LRC2_8_4", "LRC2_8_5", "LRC2_8_6", "LRC2_8_7", "LRC2_8_8", "LRC2_8_9", "LRC2_8_10"
-    };
-
-    public static String[] instances_1000 = {
-            "LC1_10_1", "LC1_10_2", "LC1_10_3", "LC1_10_4", "LC1_10_5", "LC1_10_6", "LC1_10_7", "LC1_10_8", "LC1_10_9", "LC1_10_10",
-            "LC2_10_1", "LC2_10_2", "LC2_10_3", "LC2_10_4", "LC2_10_5", "LC2_10_6", "LC2_10_7", "LC2_10_8", "LC2_10_9", "LC2_10_10",
-            "LR1_10_1", "LR1_10_2", "LR1_10_3", "LR1_10_4", "LR1_10_5", "LR1_10_6", "LR1_10_7", "LR1_10_8", "LR1_10_9", "LR1_10_10",
-            "LR2_10_1", "LR2_10_2", "LR2_10_3", "LR2_10_4", "LR2_10_5", "LR2_10_6", "LR2_10_7", "LR2_10_8", "LR2_10_9", "LR2_10_10",
-            "LRC1_10_1", "LRC1_10_2", "LRC1_10_3", "LRC1_10_4", "LRC1_10_5", "LRC1_10_6", "LRC1_10_7", "LRC1_10_8", "LRC1_10_9", "LRC1_10_10",
-            "LRC2_10_1", "LRC2_10_2", "LRC2_10_3", "LRC2_10_4", "LRC2_10_5", "LRC2_10_6", "LRC2_10_7", "LRC2_10_10"
-    };
+    public static final String INPUT_DIR = "inputDir";
+    public static final String OUTPUT_DIR = "outputDir";
+    public static final String MOVING_VEHICLE = "movingVehicle";
+    public static final String LOCAL_SEARCH = "localSearch";
+    public static final String PARALLEL = "parallel";
+    public static final String HELP = "help";
+    public static final String NUM_TRIALS = "numTrials";
+    public static final String MAX_ITERATIONS = "maxIterations";
 
     public static void main(String[] args) throws Exception {
-        if (isExecute("100", args)) {
-            executeProblemGroup("pdp100", pdptw100Directory, instances_100);
-        }
-        if (isExecute("200", args)) {
-            executeProblemGroup("pdp200", pdptw200Directory, instances_200);
-        }
-        if (isExecute("400", args)) {
-            executeProblemGroup("pdp400", pdptw400Directory, instances_400);
-        }
-        if (isExecute("600", args)) {
-            executeProblemGroup("pdp600", pdptw600Directory, instances_600);
-        }
-        if (isExecute("800", args)) {
-            executeProblemGroup("pdp800", pdptw800Directory, instances_800);
-        }
-        if (isExecute("1000", args)) {
-            executeProblemGroup("pdp1000", pdptw1000Directory, instances_1000);
-        }
-    }
-
-    private static boolean isExecute(String numNodes, String[] args) {
-        return args[0].equals("ALL") || args[0].equals(numNodes);
-    }
-
-    private static void executeProblemGroup(String problemGroup, String directory, String[] instances) throws Exception {
-        System.out.println(problemGroup);
-        for (String instance : instances) {
-            executeProblemSolver(directory, instance);
-        }
-    }
-
-    private static void executeProblemSolver(String directory, String problem) throws Exception {
-        StatisticCalculator statisticCalculator = new StatisticCalculator(REPORT_DIRECTORY + problem, maxIterations);
-        if (dynamism) {
-            for (String suffix : dynamic_suffixes) {
-                executeProblemInstance(directory, problem + suffix, statisticCalculator);
+        CommandLine commandLine = parseCommandLine(args);
+        if (commandLine.hasOption(INPUT_DIR) &&
+                commandLine.hasOption(OUTPUT_DIR) &&
+                commandLine.hasOption(NUM_TRIALS) &&
+                commandLine.hasOption(MAX_ITERATIONS)) {
+            String inputDir = commandLine.getOptionValue(INPUT_DIR);
+            String outputDir = commandLine.getOptionValue(OUTPUT_DIR);
+            Integer numTrials = Integer.valueOf(commandLine.getOptionValue(NUM_TRIALS));
+            Integer maxIterations = Integer.valueOf(commandLine.getOptionValue(MAX_ITERATIONS));
+            File[] instances = getInstances(inputDir);
+            for (File instance : instances) {
+                String instanceName = instance.getName().substring(0, instance.getName().indexOf("."));
+                StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
+                ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numTrials);
+                for (int i = 0; i < numTrials; i++) {
+                    System.out.println("Starting to process " + instanceName + ", trial " + i);
+                    threadPoolExecutor.submit(createSampleExecution(instance, maxIterations, commandLine, statisticCalculator));
+                }
+                threadPoolExecutor.shutdown();
+                while (!threadPoolExecutor.awaitTermination(2, TimeUnit.HOURS)) ;
+                statisticCalculator.calculateInstanceStatistics();
+                statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
+                System.out.println("Finishing to process all instances of " + instanceName);
             }
-        } else {
-            executeProblemInstance(directory, problem, statisticCalculator);
         }
-        statisticCalculator.consolidateAllTestCases(problem);
-        System.gc();
     }
 
-    private static void executeProblemInstance(String directory, String problem, StatisticCalculator statisticCalculator) throws IOException {
-        Long time = System.currentTimeMillis();
-        InputStream inputStream = Runner.class.getClassLoader().getResourceAsStream(directory + problem + ".txt");
-        Instance instance = Reader.getInstance(problem, inputStream);
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+    private static Runnable createSampleExecution(File instanceFile,
+                                                  Integer maxIterations,
+                                                  CommandLine commandLine,
+                                                  StatisticCalculator statisticCalculator) throws Exception {
+        Instance instance = Reader.getInstance(instanceFile);
+        long seed = (long) (1000.0 * Math.random());
+        Solver solver = new Solver(instance, new Random(seed), maxIterations, true, true);
         solver.setPrintConsole(false);
-        solver.enableLocalSearch();
         solver.enableStatisticsCollector();
-        if (dynamism) {
+        if (commandLine.hasOption(LOCAL_SEARCH)) {
+            solver.enableLocalSearch();
+        }
+        if (commandLine.hasOption(MOVING_VEHICLE)) {
             solver.enableVehicleControlCenter();
         }
-        solver.init();
-        solver.run();
-        Solution solution = solver.getSolutionBest();
-        time = System.currentTimeMillis() - time;
-        Double timeMinutes = time / (1000.0 * 60.0);
-        System.out.println(StringUtils.rightPad(instance.name, 20) + " = " + solution + " time(m) = " + MathUtils.round(timeMinutes));
-        statisticCalculator.addStatisticsResult(solver.getStatistic());
-        statisticCalculator.consolidateSingleTestCase(problem, false);
+        if (commandLine.hasOption(PARALLEL)) {
+            solver.enableParallelExecution();
+        }
+        return () -> {
+            solver.init();
+            solver.run();
+            statisticCalculator.addStatisticsResult(solver.getStatistic());
+        };
+    }
+
+    private static File[] getInstances(String inputDir) {
+        File folder = Paths.get(inputDir).toFile();
+        return folder.listFiles();
+    }
+
+    private static CommandLine parseCommandLine(String[] args) throws Exception {
+        Options options = createOptions();
+        CommandLineParser commandLineParser = new DefaultParser();
+        CommandLine commandLine = commandLineParser.parse(options, args);
+        if (commandLine.getOptions().length == 0 || commandLine.hasOption("help")) {
+            new HelpFormatter().printHelp("help", options);
+        }
+        return commandLine;
+    }
+
+    private static Options createOptions() {
+        Options options = new Options();
+        options.addOption(INPUT_DIR, true, "Instances input directory");
+        options.addOption(OUTPUT_DIR, true, "Results output directory");
+        options.addOption(NUM_TRIALS, true, "Number of trials by test instance");
+        options.addOption(MAX_ITERATIONS, true, "Number of maximum iterations to execute");
+        options.addOption(MOVING_VEHICLE, false, "Enable moving vehicle");
+        options.addOption(LOCAL_SEARCH, false, "Enable local search");
+        options.addOption(PARALLEL, false, "Enable algorithm objectives (NV and TC) to execute in parallel");
+        options.addOption(HELP, false, "Print help");
+        return options;
     }
 }
