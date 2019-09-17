@@ -8,6 +8,8 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -17,6 +19,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Solver {
+
+    public static final Logger LOGGER = LogManager.getLogger(Runner.class);
 
     private boolean printConsole = true;
 
@@ -47,6 +51,8 @@ public class Solver {
     private boolean collectStatistics;
 
     private ThreadPoolExecutor threadPoolExecutor;
+
+    private boolean logThreadInfo;
 
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
         this(instance, random, maxIterations, 90, minimizeNv, minimizeTc);
@@ -137,6 +143,9 @@ public class Solver {
                 latch.countDown();
             });
             try {
+                if (iteration % 5000 == 0 && logThreadInfo) {
+                    LOGGER.info("Iteration {}. Active threads {}", iteration, Thread.activeCount());
+                }
                 latch.await();
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
@@ -328,5 +337,9 @@ public class Solver {
     public void enableParallelExecution() {
         this.parallelExecution = true;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    }
+
+    public void enableThreadInfo() {
+        logThreadInfo = true;
     }
 }
