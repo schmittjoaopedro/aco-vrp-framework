@@ -1,7 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertionService;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -57,7 +56,7 @@ public class RoutePrinter {
     }
 
     public void printRoute(Instance instance, Solution solution, int iteration) {
-        double margin = 5;
+        double margin = 20;
         // Draw html
         try {
             StringBuilder indexHtml = new StringBuilder();
@@ -67,21 +66,11 @@ public class RoutePrinter {
             indexHtml.append("\t\t\t<path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n");
             indexHtml.append("\t\t</marker>\n");
             indexHtml.append("\t</defs>");
-            for (Request req : instance.requests) {
-                if (req.pickupTask.x != req.deliveryTask.x || req.pickupTask.y != req.deliveryTask.y) {
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "red", String.valueOf(req.requestId));
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "blue", String.valueOf(req.requestId));
-                } else {
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "gray", String.valueOf(req.requestId));
-                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "gray", String.valueOf(req.requestId));
-                }
-            }
-            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
             double xCoordSource, yCoordSource, xCoordTarget, yCoordTarget;
             for (int k = 0; k < solution.tours.size(); k++) {
                 for (int i = 0; i < solution.tours.get(k).size() - 1; i++) {
                     Color color;
-                    Task task;
+                    Task task = null;
                     if (i == 0) {
                         xCoordSource = instance.depot.x;
                         yCoordSource = instance.depot.y;
@@ -99,6 +88,9 @@ public class RoutePrinter {
                         }
                         if (iteration == 25000) {
                             color = committed;
+                            drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordTarget, yCoordTarget);
+                        } else if (task.isCommitted()) {
+                            drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource);
                         }
                     } else {
                         task = instance.getTask(solution.tours.get(k).get(i + 1));
@@ -107,6 +99,7 @@ public class RoutePrinter {
                         switch (task.status) {
                             case Transition:
                                 color = transition;
+                                drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource);
                                 break;
                             case Committed:
                                 color = committed;
@@ -116,7 +109,11 @@ public class RoutePrinter {
                                 break;
                         }
                     }
-                    indexHtml.append("\n\t<line x1=\"");
+                    indexHtml.append("\n\t<line ");
+                    if (color == idle) {
+                        indexHtml.append("stroke-dasharray=\"2, 2\" ");
+                    }
+                    indexHtml.append("x1=\"");
                     indexHtml.append(((width / maxX) * xCoordSource) + margin);
                     indexHtml.append("\" y1=\"");
                     indexHtml.append(((height / maxY) * yCoordSource) + margin);
@@ -130,10 +127,30 @@ public class RoutePrinter {
                     //indexHtml.append(");stroke-width:2\" marker-end=\"url(#arrow)\" />"); // with arrow
                 }
             }
+            for (Request req : instance.requests) {
+                if (req.pickupTask.x != req.deliveryTask.x || req.pickupTask.y != req.deliveryTask.y) {
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "red", String.valueOf(req.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "blue", String.valueOf(req.requestId));
+                } else {
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "gray", String.valueOf(req.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "gray", String.valueOf(req.requestId));
+                }
+            }
+            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
             indexHtml.append("\n</svg>");
             FileUtils.writeStringToFile(Paths.get(folderPath, instance.name + "-" + iteration + ".html").toFile(), indexHtml.toString(), "UTF-8");
         } catch (IOException e) {
         }
+    }
+
+    private static void drawTruck(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml, double xCoord, double yCoord) {
+        double x = ((width / maxX) * xCoord) + margin;
+        double y = ((height / maxY) * yCoord) + margin;
+        indexHtml.append("\n\t<image xlink:href=\"../truck.png\" height=\"40\" width=\"40\" x=\"");
+        indexHtml.append(x - 20.0);
+        indexHtml.append("\" y=\"");
+        indexHtml.append(y - 20.0);
+        indexHtml.append("\" />");
     }
 
     private static void drawNode(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml, double xCoord, double yCoord, String color, String text) {
