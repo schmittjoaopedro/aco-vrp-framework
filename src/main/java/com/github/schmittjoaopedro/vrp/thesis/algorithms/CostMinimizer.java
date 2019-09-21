@@ -35,7 +35,7 @@ public class CostMinimizer extends ALNS {
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 2));
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 3));
         insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> 4));
-        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.removeRequestsNumber(inst)));
+        insertionOperators.add(new RegretInsertion(random, instance, (sol, inst) -> sol.tours.size()));
         // Add removal heuristics
         removalOperators.add(new RandomRemoval(instance, random));
         removalOperators.add(new WorstRemoval(instance, random));

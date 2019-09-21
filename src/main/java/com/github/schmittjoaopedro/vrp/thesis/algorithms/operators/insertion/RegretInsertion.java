@@ -77,15 +77,21 @@ public class RegretInsertion extends InsertionOperator {
                     if (insertionVehicle.cost < Double.MAX_VALUE) ++curPossibleVehicles;
                     int minRoute = insertionVehicle.routeIndex;
                     heap.poll();
-                    double kCost = insertionVehicle.cost;
-                    for (int z = 1; z < regretK; ++z) { // Obtain the k-position to calculate regret cost
+                    // Calculate regret-k value
+                    double kCost;
+                    double regretCost = 0.0;
+                    for (int z = 1; z < regretK; ++z) {
                         if (!heap.isEmpty()) {
                             kCost = heap.peek().cost;
-                            if (kCost < Double.MAX_VALUE) ++curPossibleVehicles;
-                            heap.poll();
+                            if (kCost < Double.MAX_VALUE) {
+                                ++curPossibleVehicles;
+                                regretCost += kCost - insertionVehicle.cost;
+                                heap.poll();
+                            } else {
+                                break;
+                            }
                         }
                     }
-                    double regretCost = kCost - insertionVehicle.cost;
                     boolean isLessVehiclesNumber = curPossibleVehicles < minPossibleVehicles;
                     boolean isSameVehiclesNumber = curPossibleVehicles == minPossibleVehicles;
                     boolean isGreaterRegret = regretCost > maxRegretCost;
