@@ -1,17 +1,16 @@
 package com.github.schmittjoaopedro.vrp.thesis.utils;
 
-import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
-
 import java.nio.file.Paths;
 import java.util.Locale;
 
 public class SummaryUtils {
 
-    private static final String DIRECTORY = "C:\\Temp\\UDESC-servers\\results\\static_output\\pdp_100";
+    private static final String DIRECTORY = "C:\\Temp\\mpdptw";
 
     public static void main(String[] args) throws Exception {
+        String[] instances = InstanceUtils.instances_100;
         System.out.println("BSF");
-        for (String instance : InstanceUtils.instances_100) {
+        for (String instance : instances) {
             String data[][] = CsvReader.readCsvFromDirectory(Paths.get(DIRECTORY, instance + "_bsf.csv").toAbsolutePath().toString());
             System.out.printf(Locale.US, "%s;%.2f;%.2f;%.2f;%.2f\n",
                     instance,
@@ -22,7 +21,7 @@ public class SummaryUtils {
         }
 
         System.out.println("SUMMARY");
-        for (String instance : InstanceUtils.instances_100) {
+        for (String instance : instances) {
             String data[][] = CsvReader.readCsvFromDirectory(Paths.get(DIRECTORY, instance + "_summary.csv").toAbsolutePath().toString());
             System.out.printf(Locale.US, "%s;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f\n",
                     instance,

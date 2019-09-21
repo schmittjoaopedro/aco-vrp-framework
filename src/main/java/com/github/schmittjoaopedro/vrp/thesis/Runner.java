@@ -16,7 +16,12 @@ import java.util.concurrent.TimeUnit;
 
 public class Runner {
 
-    public static final Logger LOGGER = LogManager.getLogger(Runner.class);
+    public static final Logger LOGGER;
+
+    static {
+        System.setProperty("logFilename", "run_" + System.currentTimeMillis() + ".log");
+        LOGGER = LogManager.getLogger(Runner.class);
+    }
 
     public static final String INPUT_DIR = "inputDir";
     public static final String OUTPUT_DIR = "outputDir";
@@ -45,32 +50,36 @@ public class Runner {
                 File instance = instances[(int) p];
                 String instanceName = instance.getName().substring(0, instance.getName().lastIndexOf("."));
                 StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
-                LOGGER.info("Starting to process {}. Num active threads {}.", instanceName, Thread.activeCount());
-                double numSegments = calculateNumTrialSegments(numCpus, numTrials);
+                double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine);
                 double trialSegmentSize = numTrials / numSegments;
+                LOGGER.info("Starting to process {}. Active threads {}. Segments {}. Trials per segment {}", instanceName, Thread.activeCount(), numSegments, trialSegmentSize);
                 for (int i = 0; i < numSegments; i++) {
-                    LOGGER.info("Allocating {} threads. Segment {}", (trialSegmentSize * NUM_THREADS_PER_RUN), i);
-                    executeThreadPool(commandLine, (int) trialSegmentSize, maxIterations, instance, statisticCalculator);
+                    executeThreadPool(commandLine, (int) trialSegmentSize, maxIterations, instance, statisticCalculator, i);
                 }
                 statisticCalculator.calculateInstanceStatistics();
                 statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
                 LOGGER.info("Finishing to process {}. Num active threads {}.", instanceName, Thread.activeCount());
-                LOGGER.info("Processed {}", ((p + 1.0) / instances.length * 100.0));
+                LOGGER.info("Processed {}%", MathUtils.round(((p + 1.0) / instances.length * 100.0), 2));
             }
         }
     }
 
-    private static void executeThreadPool(CommandLine commandLine, Integer numTrials, Integer maxIterations, File instance, StatisticCalculator statisticCalculator) throws Exception {
+    private static void executeThreadPool(CommandLine commandLine, Integer numTrials, Integer maxIterations, File instance, StatisticCalculator statisticCalculator, int segment) throws Exception {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numTrials);
         for (int i = 0; i < numTrials; i++) {
             threadPoolExecutor.submit(createSampleExecution(instance, maxIterations, commandLine, statisticCalculator, i == 0));
         }
         threadPoolExecutor.shutdown();
+        LOGGER.info("Active threads {} threads. Segment {}", Thread.activeCount(), segment);
         while (!threadPoolExecutor.awaitTermination(2, TimeUnit.HOURS)) ;
     }
 
-    private static double calculateNumTrialSegments(double numCpu, double numTrials) {
-        return Math.ceil((numTrials * NUM_THREADS_PER_RUN) / numCpu);
+    private static double calculateNumTrialSegments(double numCpu, double numTrials, CommandLine commandLine) {
+        if (commandLine.hasOption(PARALLEL)) {
+            return Math.ceil((numTrials * NUM_THREADS_PER_RUN) / numCpu);
+        } else {
+            return Math.ceil(numTrials / numCpu);
+        }
     }
 
     private static Runnable createSampleExecution(File instanceFile,

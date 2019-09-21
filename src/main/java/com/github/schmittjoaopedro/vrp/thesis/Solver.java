@@ -20,7 +20,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class Solver {
 
-    public static final Logger LOGGER = LogManager.getLogger(Runner.class);
+    public static final Logger LOGGER;
+
+    static {
+        System.setProperty("logFilename", "run_" + System.currentTimeMillis() + ".log");
+        LOGGER = LogManager.getLogger(Solver.class);
+    }
 
     private boolean printConsole = true;
 
