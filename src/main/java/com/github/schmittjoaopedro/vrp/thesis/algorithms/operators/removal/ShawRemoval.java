@@ -75,7 +75,7 @@ public class ShawRemoval extends RemovalOperator {
         routeTimes.waitTime = new double[instance.numNodes];
         routeTimes.visitedTime[0] = 0;
         for (int r = 0; r < solution.tours.size(); r++) {
-            double time = 0;
+            double time = instance.lastIdleTime(solution.tours.get(r).get(1));
             int prev, curr;
             for (int j = 1; j < solution.tours.get(r).size() - 1; ++j) {
                 prev = solution.tours.get(r).get(j - 1);

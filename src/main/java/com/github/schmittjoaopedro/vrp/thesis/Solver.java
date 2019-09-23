@@ -80,7 +80,7 @@ public class Solver {
 
     public void init() {
         // Load static requests
-        callCenter.loadStaticRequests();
+        Optional.ofNullable(callCenter).ifPresent(c -> c.loadStaticRequests());
         solutionBest = SolutionUtils.createSolution(instance);
         resetAlgorithms();
     }
@@ -199,10 +199,12 @@ public class Solver {
     }
 
     private void attendNewRequests() {
-        List<Integer> requests = callCenter.loadNewRequests();
-        if (!requests.isEmpty()) {
-            log("New requests = " + StringUtils.join(requests));
-            resetAlgorithms();
+        if (Optional.ofNullable(callCenter).isPresent()) {
+            List<Integer> requests = callCenter.loadNewRequests();
+            if (!requests.isEmpty()) {
+                log("New requests = " + StringUtils.join(requests));
+                resetAlgorithms();
+            }
         }
     }
 
@@ -258,7 +260,7 @@ public class Solver {
         for (int i = 0; i < startTimes.length; i++) {
             startTimes[i] = instance.lastIdleTime(solutionBest.tours.get(i).get(1));
         }
-        callCenter.rollbackOriginalInformation(solutionBest);
+        Optional.ofNullable(callCenter).ifPresent(c -> c.rollbackOriginalInformation(solutionBest));
         String msg = "\nInstance = " + instance.name;
         msg += "\nBest solution feasibility = " + solutionBest.feasible + "\nRoutes";
         for (int i = 0; i < solutionBest.tours.size(); i++) {
@@ -342,6 +344,10 @@ public class Solver {
     public void enableParallelExecution() {
         this.parallelExecution = true;
         threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+    }
+
+    public void disableCallCenter() {
+        callCenter = null;
     }
 
     public void enableThreadInfo() {

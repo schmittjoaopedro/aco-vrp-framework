@@ -41,14 +41,14 @@ public class StaticNvMinimizerTest {
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3438.932635997139);
+        assertThat(solutionBest.totalCost).isEqualTo(3352.0332862894074);
         assertThat(solutionBest.tours.size()).isEqualTo(17);
         assertThat(solutionBest.requestIds.size()).isEqualTo(17);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  20, TC =   4385.17]");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  19, TC =   4097.69] at iteration 6");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   3960.59] at iteration 26");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  17, TC =   3438.93] at iteration 402");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  19, TC =   4326.63] at iteration 4");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  18, TC =   4785.37] at iteration 6");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  17, TC =   3352.03] at iteration 141");
     }
 
     @Test
@@ -59,16 +59,16 @@ public class StaticNvMinimizerTest {
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(3894.2519286903953);
+        assertThat(solutionBest.totalCost).isEqualTo(4253.694858533941);
         assertThat(solutionBest.tours.size()).isEqualTo(11);
         assertThat(solutionBest.requestIds.size()).isEqualTo(11);
         int counter = 0;
         assertThat(solver.getLogs().get(counter++)).isEqualTo("Insertion heuristic = [F = true, NV =  16, TC =   5070.74]");
         assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  15, TC =   4538.34] at iteration 1");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  14, TC =   4287.88] at iteration 4");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  13, TC =   4882.41] at iteration 15");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  12, TC =   4098.06] at iteration 53");
-        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  11, TC =   3894.25] at iteration 7550");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  14, TC =   4477.21] at iteration 2");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  13, TC =   4559.66] at iteration 21");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  12, TC =   4271.70] at iteration 93");
+        assertThat(solver.getLogs().get(counter++)).isEqualTo("New best = [F = true, NV =  11, TC =   4253.69] at iteration 6366");
     }
 
 }

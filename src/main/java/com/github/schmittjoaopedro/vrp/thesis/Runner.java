@@ -49,19 +49,25 @@ public class Runner {
             for (double p = 0; p < instances.length; p++) {
                 File instance = instances[(int) p];
                 String instanceName = instance.getName().substring(0, instance.getName().lastIndexOf("."));
-                StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
-                double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine);
-                double trialSegmentSize = numTrials / numSegments;
-                LOGGER.info("Starting to process {}. Active threads {}. Segments {}. Trials per segment {}", instanceName, Thread.activeCount(), numSegments, trialSegmentSize);
-                for (int i = 0; i < numSegments; i++) {
-                    executeThreadPool(commandLine, (int) trialSegmentSize, maxIterations, instance, statisticCalculator, i);
+                if (!isProcessed(outputDir, instanceName)) {
+                    StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
+                    double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine);
+                    double trialSegmentSize = numTrials / numSegments;
+                    LOGGER.info("Starting to process {}. Active threads {}. Segments {}. Trials per segment {}", instanceName, Thread.activeCount(), numSegments, trialSegmentSize);
+                    for (int i = 0; i < numSegments; i++) {
+                        executeThreadPool(commandLine, (int) trialSegmentSize, maxIterations, instance, statisticCalculator, i);
+                    }
+                    statisticCalculator.calculateInstanceStatistics();
+                    statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
                 }
-                statisticCalculator.calculateInstanceStatistics();
-                statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
                 LOGGER.info("Finishing to process {}. Num active threads {}.", instanceName, Thread.activeCount());
                 LOGGER.info("Processed {}%", MathUtils.round(((p + 1.0) / instances.length * 100.0), 2));
             }
         }
+    }
+
+    private static boolean isProcessed(String outputDir, String instanceName) {
+        return Paths.get(outputDir, instanceName + "_bsf.csv").toFile().exists();
     }
 
     private static void executeThreadPool(CommandLine commandLine, Integer numTrials, Integer maxIterations, File instance, StatisticCalculator statisticCalculator, int segment) throws Exception {
