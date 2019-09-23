@@ -84,42 +84,43 @@ public class RealScenariosTest {
         realSolver.setGeoCodeFile(geoCodes);
         realSolver.setDurationFile(duration);
         realSolver.setBoundWorkingDayTimeByMaxTimeWindows(false);
-        realSolver.setNumVehicles(1);
-        realSolver.setVehiclesCapacity(1000.0);
+        realSolver.setNumVehicles(2);
+        realSolver.setVehiclesCapacity(100.0);
         realSolver.setWorkingDayTime(24 * 60 * 60);
-        realSolver.addRealRequest(0, 10, 1.0);
-        realSolver.addRealRequest(0, 11, 1.0);
-        realSolver.addRealRequest(0, 12, 1.0);
-        realSolver.addRealRequest(1, 0, 1.0);
-        realSolver.addRealRequest(0, 6, 1.0);
-        realSolver.addRealRequest(0, 13, 1.0);
-        realSolver.addRealRequest(0, 14, 1.0);
-        realSolver.addRealRequest(0, 15, 1.0);
-        realSolver.addRealRequest(0, 16, 1.0);
-        realSolver.addRealRequest(0, 16, 1.0);
-        realSolver.addRealRequest(0, 17, 1.0);
+        realSolver.addRealRequest(0, 10, 15.0);
+        realSolver.addRealRequest(0, 11, 15.0);
+        realSolver.addRealRequest(0, 12, 15.0);
+        realSolver.addRealRequest(1, 0, 15.0);
+        realSolver.addRealRequest(0, 6, 15.0);
+        realSolver.addRealRequest(0, 13, 15.0);
+        realSolver.addRealRequest(0, 14, 15.0);
+        realSolver.addRealRequest(0, 15, 15.0);
+        realSolver.addRealRequest(0, 16, 15.0);
+        realSolver.addRealRequest(0, 16, 15.0);
+        realSolver.addRealRequest(0, 17, 15.0);
 
         realSolver.optimize();
         String result = realSolver.getTechnicalSolution();
         System.out.println(result);
-        assertThat(result).contains("Optimized durations 1.65 (h)\n" +
-                "Optimized distances 77.11 (km)\n" +
+        assertThat(result).contains("Optimized durations 1.79 (h)\n" +
+                "Optimized distances 79.98 (km)\n" +
                 "\n" +
-                "Vehicle 0, Time = 1.65 (hs), Distance 77.11 (km), Route = [\n" +
+                "Vehicle 0, Time = 1.79 (hs), Distance 79.98 (km), Route = [\n" +
                 "\t0 -> R. Benjamin Constant, 2628 - Costa e Silva, Joinville - SC, 89217-260, Brazil\n" +
-                "\t10 -> R. Frederico Hubner, 118 - América, Joinville - SC, 89204-280, Brazil\n" +
-                "\t1 -> R. Pref. Helmuth Fallgatter, 2260 - Boa Vista, Joinville - SC, 89206-101, Brazil\n" +
-                "\t14 -> R. Santa Cruz, 28 - Boa Vista, Joinville - SC, 89206-810, Brazil\n" +
-                "\t12 -> R. Albano Schmidt, 3400 - Comasa, Joinville - SC, 89205-100, Brazil\n" +
-                "\t17 -> R. Jacutinga, 206 - Iririú, Joinville - SC, 89227-365, Brazil\n" +
-                "\t15 -> Av. Santos Dumont, 3939 - Santo Antônio, Joinville - SC, 89223-600, Brazil\n" +
-                "\t6 -> R. Rui Barbosa, 169 - Zona Industrial Norte, Joinville - SC, 89219-520, Brazil\n" +
-                "\t16 -> R. Hans Dieter Schmidt, 1500 - Zona Industrial Norte, Joinville - SC, 89219-504, Brazil\n" +
-                "\t11 -> R. Dona Francisca, 12346 - Pirabeiraba, Joinville - SC, 89239-250, Brazil\n" +
                 "\t13 -> BR-101, 3248 - Santa Catarina, Joinville - SC, 89233-190, Brazil\n" +
+                "\t16 -> R. Hans Dieter Schmidt, 1500 - Zona Industrial Norte, Joinville - SC, 89219-504, Brazil\n" +
+                "\t6 -> R. Rui Barbosa, 169 - Zona Industrial Norte, Joinville - SC, 89219-520, Brazil\n" +
+                "\t0 -> R. Benjamin Constant, 2628 - Costa e Silva, Joinville - SC, 89217-260, Brazil\n" +
+                "\t11 -> R. Dona Francisca, 12346 - Pirabeiraba, Joinville - SC, 89239-250, Brazil\n" +
+                "\t15 -> Av. Santos Dumont, 3939 - Santo Antônio, Joinville - SC, 89223-600, Brazil\n" +
+                "\t17 -> R. Jacutinga, 206 - Iririú, Joinville - SC, 89227-365, Brazil\n" +
+                "\t12 -> R. Albano Schmidt, 3400 - Comasa, Joinville - SC, 89205-100, Brazil\n" +
+                "\t14 -> R. Santa Cruz, 28 - Boa Vista, Joinville - SC, 89206-810, Brazil\n" +
+                "\t1 -> R. Pref. Helmuth Fallgatter, 2260 - Boa Vista, Joinville - SC, 89206-101, Brazil\n" +
+                "\t10 -> R. Frederico Hubner, 118 - América, Joinville - SC, 89204-280, Brazil\n" +
                 "\t0 -> R. Benjamin Constant, 2628 - Costa e Silva, Joinville - SC, 89217-260, Brazil\n" +
                 "]\n" +
-                "Requests: [10, 2, 3, 0, 6, 1, 5, 7, 8, 9, 4]");
+                "Requests: [7, 6, 1, 5, 9, 3, 0, 8, 4, 10, 2]");
     }
 
     @Test

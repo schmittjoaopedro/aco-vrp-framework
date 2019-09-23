@@ -1,6 +1,5 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
-import com.github.schmittjoaopedro.vrp.thesis.Solver;
 import com.github.schmittjoaopedro.vrp.thesis.problem.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -108,7 +107,7 @@ public class RealSolver {
         List<Task> pickupTasks = new ArrayList<>();
         List<Task> deliveryTasks = new ArrayList<>();
         for (int i = 0; i < realRequests.size(); i++) {
-            normalizedRequests.add(createRequest(i, j++, j++, realRequests.get(i).deliveryTask.demand));
+            normalizedRequests.add(createRequest(i, j++, j++, realRequests.get(i).pickupTask.demand));
             tasks.add(normalizedRequests.get(i).pickupTask);
             tasks.add(normalizedRequests.get(i).deliveryTask);
             pickupTasks.add(normalizedRequests.get(i).pickupTask);
@@ -173,7 +172,7 @@ public class RealSolver {
         request.pickupTask.nodeId = pkpNodeId;
         request.pickupTask.requestId = requestId;
         request.pickupTask.isPickup = true;
-        request.pickupTask.demand = -demand;
+        request.pickupTask.demand = demand;
         request.pickupTask.serviceTime = serviceTime;
         request.pickupTask.twStart = 0.0;
         request.pickupTask.twEnd = workingDayTime;
@@ -182,7 +181,7 @@ public class RealSolver {
         request.deliveryTask.nodeId = dvrNodeId;
         request.deliveryTask.requestId = requestId;
         request.deliveryTask.isDeliver = true;
-        request.deliveryTask.demand = demand;
+        request.deliveryTask.demand = -demand;
         request.deliveryTask.serviceTime = serviceTime;
         request.deliveryTask.twStart = 0.0;
         request.deliveryTask.twEnd = workingDayTime;
