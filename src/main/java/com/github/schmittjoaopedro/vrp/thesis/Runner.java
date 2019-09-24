@@ -36,22 +36,18 @@ public class Runner {
 
     public static void main(String[] args) throws Exception {
         CommandLine commandLine = parseCommandLine(args);
-        if (commandLine.hasOption(INPUT_DIR) &&
-                commandLine.hasOption(OUTPUT_DIR) &&
-                commandLine.hasOption(NUM_TRIALS) &&
-                commandLine.hasOption(MAX_ITERATIONS)) {
-            String inputDir = commandLine.getOptionValue(INPUT_DIR);
+        if (commandLine.hasOption(INPUT_DIR) && commandLine.hasOption(OUTPUT_DIR) && commandLine.hasOption(NUM_TRIALS) && commandLine.hasOption(MAX_ITERATIONS)) {
             String outputDir = commandLine.getOptionValue(OUTPUT_DIR);
             Integer numTrials = Integer.valueOf(commandLine.getOptionValue(NUM_TRIALS));
             Integer maxIterations = Integer.valueOf(commandLine.getOptionValue(MAX_ITERATIONS));
             Integer numCpus = Integer.valueOf(commandLine.getOptionValue(NUM_CPU));
-            File[] instances = getInstances(inputDir);
+            File[] instances = getInstances(commandLine.getOptionValue(INPUT_DIR));
             for (double p = 0; p < instances.length; p++) {
                 File instance = instances[(int) p];
                 String instanceName = instance.getName().substring(0, instance.getName().lastIndexOf("."));
                 if (!isProcessed(outputDir, instanceName)) {
                     StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
-                    double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine);
+                    double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine.hasOption(PARALLEL));
                     double trialSegmentSize = numTrials / numSegments;
                     LOGGER.info("Starting to process {}. Active threads {}. Segments {}. Trials per segment {}", instanceName, Thread.activeCount(), numSegments, trialSegmentSize);
                     for (int i = 0; i < numSegments; i++) {
@@ -80,8 +76,8 @@ public class Runner {
         while (!threadPoolExecutor.awaitTermination(2, TimeUnit.HOURS)) ;
     }
 
-    private static double calculateNumTrialSegments(double numCpu, double numTrials, CommandLine commandLine) {
-        if (commandLine.hasOption(PARALLEL)) {
+    private static double calculateNumTrialSegments(double numCpu, double numTrials, boolean parallel) {
+        if (parallel) {
             return Math.ceil((numTrials * NUM_THREADS_PER_RUN) / numCpu);
         } else {
             return Math.ceil(numTrials / numCpu);
