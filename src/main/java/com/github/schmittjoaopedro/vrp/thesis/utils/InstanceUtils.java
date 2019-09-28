@@ -2,9 +2,12 @@ package com.github.schmittjoaopedro.vrp.thesis.utils;
 
 public class InstanceUtils {
 
-    public static String[] dynamic_suffixes = {
-            "a_0.1", "a_0.25", "a_0.5", "a_0.75", "a_1.0",
-            "q_0_0.1", "q_0_0.25", "q_0_0.5", "q_0_0.75", "q_0_1.0",
+    public static String[] dynamic_urgency_suffixes = {
+            "a_0.1", "a_0.25", "a_0.5", "a_0.75", "a_1.0"
+    };
+
+    public static String[] dynamic_apriori_suffixes = {
+            "q_0_0.1", "q_0_0.25", "q_0_0.5", "q_0_0.75", "q_0_1.0"
     };
 
     public static String[] instances_100 = {

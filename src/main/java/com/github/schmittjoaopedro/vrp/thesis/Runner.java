@@ -45,7 +45,8 @@ public class Runner {
             for (double p = 0; p < instances.length; p++) {
                 File instance = instances[(int) p];
                 String instanceName = instance.getName().substring(0, instance.getName().lastIndexOf("."));
-                if (!isProcessed(outputDir, instanceName)) {
+                boolean isMultipleTrials = numTrials > 1;
+                if (!isProcessed(outputDir, instanceName) && isMultipleTrials) {
                     StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
                     double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine.hasOption(PARALLEL));
                     double trialSegmentSize = numTrials / numSegments;
@@ -53,6 +54,12 @@ public class Runner {
                     for (int i = 0; i < numSegments; i++) {
                         executeThreadPool(commandLine, (int) trialSegmentSize, maxIterations, instance, statisticCalculator, i);
                     }
+                    statisticCalculator.calculateInstanceStatistics();
+                    statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
+                } else {
+                    LOGGER.info("Starting to process {}.", instanceName);
+                    StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
+                    createSampleExecution(instance, maxIterations, commandLine, statisticCalculator, true).run();
                     statisticCalculator.calculateInstanceStatistics();
                     statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
                 }

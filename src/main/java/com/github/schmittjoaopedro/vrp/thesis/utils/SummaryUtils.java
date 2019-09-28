@@ -5,10 +5,10 @@ import java.util.Locale;
 
 public class SummaryUtils {
 
-    private static final String DIRECTORY = "C:\\Temp\\UDESC-servers\\results\\static_fix_regret\\pdp_1000";
+    private static final String DIRECTORY = "C:\\Temp\\UDESC-servers\\results\\static_output\\pdp_400";
 
     public static void main(String[] args) {
-        String[] instances = InstanceUtils.instances_1000;
+        String[] instances = InstanceUtils.instances_400;
         System.out.println("BSF");
         for (String instance : instances) {
             String data[][] = CsvReader.readCsvFromDirectory(Paths.get(DIRECTORY, instance + "_bsf.csv").toAbsolutePath().toString());
