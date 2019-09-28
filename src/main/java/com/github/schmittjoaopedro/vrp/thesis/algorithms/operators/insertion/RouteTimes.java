@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class RouteTimes {
 
+    public double[] arrivalTime;
+
     public double[] startTime;
 
     public double[] waitingTime;
@@ -16,6 +18,7 @@ public class RouteTimes {
 
     public RouteTimes(ArrayList<Integer> route, Instance instance) {
         int size = route.size();
+        arrivalTime = new double[size];
         startTime = new double[size];
         waitingTime = new double[size];
         slackTime = new double[size];
@@ -28,6 +31,7 @@ public class RouteTimes {
         double visitedTime;
         double time = instance.lastIdleTime(route.get(1));
         // Depot times
+        arrivalTime[0] = time;
         startTime[0] = time;
         departureTime[0] = time;
         waitingTime[0] = 0.0;
@@ -38,6 +42,7 @@ public class RouteTimes {
             curr = route.get(j);
             time += instance.dist(prev, curr) / instance.vehicleSpeed + instance.serviceTime(prev);
             visitedTime = time;
+            arrivalTime[j] = time;
             time = Math.max(time, instance.twStart(curr));
             startTime[j] = time;
             departureTime[j] = time + instance.serviceTime(curr);

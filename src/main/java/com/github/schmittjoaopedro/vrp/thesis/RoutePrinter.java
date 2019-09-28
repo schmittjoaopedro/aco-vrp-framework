@@ -1,6 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.InsertionService;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -33,8 +33,6 @@ public class RoutePrinter {
 
     private Color committed = Color.green;
 
-    private InsertionService insertionService;
-
     public RoutePrinter(Instance instance, String folderPath, int width, int height) {
         this.folderPath = folderPath;
         this.width = width;
@@ -52,7 +50,6 @@ public class RoutePrinter {
         maxY = Math.max(maxY, instance.depot.y);
         minX = Math.min(minX, instance.depot.x);
         minY = Math.min(minY, instance.depot.y);
-        insertionService = new InsertionService(instance);
     }
 
     public void printRoute(Instance instance, Solution solution, int iteration) {
@@ -68,6 +65,7 @@ public class RoutePrinter {
             indexHtml.append("\t</defs>");
             double xCoordSource, yCoordSource, xCoordTarget, yCoordTarget;
             for (int k = 0; k < solution.tours.size(); k++) {
+                RouteTimes routeTimes = new RouteTimes(solution.tours.get(k), instance);
                 for (int i = 0; i < solution.tours.get(k).size() - 1; i++) {
                     Color color;
                     Task task = null;
@@ -83,14 +81,19 @@ public class RoutePrinter {
                         xCoordTarget = instance.depot.x;
                         yCoordTarget = instance.depot.y;
                         color = idle;
-                        if (instance.depot.twEnd - instance.dist(solution.tours.get(k).get(i), solution.tours.get(k).get(i + 1)) < instance.currentTime) {
+                        double distToDepot = instance.dist(solution.tours.get(k).get(i), solution.tours.get(k).get(i + 1));
+                        if (instance.depot.twEnd - distToDepot < instance.currentTime) {
                             color = transition;
                         }
                         if (iteration == 25000) {
                             color = committed;
-                            drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordTarget, yCoordTarget);
+                            drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordTarget, yCoordTarget, xCoordTarget, yCoordTarget, routeTimes.departureTime[i], routeTimes.arrivalTime[i + 1], instance.currentTime);
                         } else if (task.isCommitted()) {
-                            drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource);
+                            if (instance.depot.twEnd - distToDepot > instance.currentTime) {
+                                drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource, xCoordSource, yCoordSource, routeTimes.departureTime[i], routeTimes.arrivalTime[i + 1], instance.currentTime);
+                            } else {
+                                drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource, xCoordTarget, yCoordTarget, instance.depot.twEnd - distToDepot, instance.depot.twEnd, instance.currentTime);
+                            }
                         }
                     } else {
                         task = instance.getTask(solution.tours.get(k).get(i + 1));
@@ -99,7 +102,7 @@ public class RoutePrinter {
                         switch (task.status) {
                             case Transition:
                                 color = transition;
-                                drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource);
+                                drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordSource, yCoordSource, xCoordTarget, yCoordTarget, routeTimes.departureTime[i], routeTimes.arrivalTime[i + 1], instance.currentTime);
                                 break;
                             case Committed:
                                 color = committed;
@@ -143,9 +146,16 @@ public class RoutePrinter {
         }
     }
 
-    private static void drawTruck(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml, double xCoord, double yCoord) {
-        double x = ((width / maxX) * xCoord) + margin;
-        double y = ((height / maxY) * yCoord) + margin;
+    private static void drawTruck(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml,
+                                  double xSource, double ySource, double xTarget, double yStart,
+                                  double minTime, double maxTime, double currentTime) {
+        double timeFactor = Math.min(1.0, (currentTime - minTime) / (maxTime - minTime));
+        double xS = ((width / maxX) * xSource) + margin;
+        double yS = ((height / maxY) * ySource) + margin;
+        double xT = ((width / maxX) * xTarget) + margin;
+        double yT = ((height / maxY) * yStart) + margin;
+        double x = (xS + (xT - xS) * timeFactor);
+        double y = (yS + (yT - yS) * timeFactor);
         indexHtml.append("\n\t<image xlink:href=\"../truck.png\" height=\"40\" width=\"40\" x=\"");
         indexHtml.append(x - 20.0);
         indexHtml.append("\" y=\"");
