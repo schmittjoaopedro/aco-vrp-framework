@@ -1,32 +1,28 @@
 package com.github.schmittjoaopedro.vrp.thesis.utils;
 
-import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class ConsolidateReportsUtils {
 
-    private static final String resultsDirectory = "C:\\Temp\\UDESC-servers\\results\\dynamic_output\\200-tasks";
-    private static final String literatureData = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\200-tasks.csv";
+    private static final String resultsDirectory = "C:\\Temp\\UDESC-servers\\results\\dynamic_output\\600-tasks";
+    private static final String literatureData = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\600-tasks.csv";
     //private static final String[] groups = {"lc1", "lc2", "lr1", "lr2", "lrc1", "lrc2"};
     private static final String[] groups = {"LC1", "LC2", "LR1", "LR2", "LRC1", "LRC2"};
 
     public static void main(String[] args) throws Exception {
-        //calculateBsfStatistics();
-        //calculateAverageStatistics();
+        calculateBsfStatistics();
+        calculateAverageStatistics();
         printFullAverageResults();
     }
 
     public static void calculateBsfStatistics() throws Exception {
         System.out.println("BSF");
-        CSVParser literature = readCSV(literatureData);
+        CSVParser literature = CsvReader.readCSV(literatureData);
         Map<String, Result> resultMap = new HashMap<>();
         // Load literature results data
         for (CSVRecord literatureRecord : literature.getRecords()) {
@@ -35,14 +31,14 @@ public class ConsolidateReportsUtils {
             res.nv = Double.valueOf(literatureRecord.get("nv"));
             res.tc = Double.valueOf(literatureRecord.get("tc"));
             for (int i = 0; i < InstanceUtils.dynamic_urgency_suffixes.length; i++) {
-                CSVParser resultCSV = readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_urgency_suffixes[i] + "_bsf.csv");
+                CSVParser resultCSV = CsvReader.readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_urgency_suffixes[i] + "_bsf.csv");
                 CSVRecord urgRec = resultCSV.getRecords().get(0);
                 res.nv_a[i] = Double.valueOf(urgRec.get("nv"));
                 res.tc_a[i] = Double.valueOf(urgRec.get("tc"));
                 res.fc_a[i] = Double.valueOf(urgRec.get("feasible"));
             }
             for (int i = 0; i < InstanceUtils.dynamic_apriori_suffixes.length; i++) {
-                CSVParser resultCSV = readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_apriori_suffixes[i] + "_bsf.csv");
+                CSVParser resultCSV = CsvReader.readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_apriori_suffixes[i] + "_bsf.csv");
                 CSVRecord urgRec = resultCSV.getRecords().get(0);
                 res.nv_q[i] = Double.valueOf(urgRec.get("nv"));
                 res.tc_q[i] = Double.valueOf(urgRec.get("tc"));
@@ -82,7 +78,7 @@ public class ConsolidateReportsUtils {
 
     public static void calculateAverageStatistics() throws Exception {
         System.out.println("Average");
-        CSVParser literature = readCSV(literatureData);
+        CSVParser literature = CsvReader.readCSV(literatureData);
         Map<String, Result> resultMap = new HashMap<>();
         // Load literature results data
         for (CSVRecord literatureRecord : literature.getRecords()) {
@@ -91,7 +87,7 @@ public class ConsolidateReportsUtils {
             res.nv = Double.valueOf(literatureRecord.get("nv"));
             res.tc = Double.valueOf(literatureRecord.get("tc"));
             for (int i = 0; i < InstanceUtils.dynamic_urgency_suffixes.length; i++) {
-                CSVParser resultCSV = readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_urgency_suffixes[i] + "_summary.csv");
+                CSVParser resultCSV = CsvReader.readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_urgency_suffixes[i] + "_summary.csv");
                 CSVRecord urgRec = resultCSV.getRecords().get(0);
                 res.nv_a[i] = Double.valueOf(urgRec.get("mean_bsf_nv"));
                 res.tc_a[i] = Double.valueOf(urgRec.get("mean_bsf_tc"));
@@ -101,7 +97,7 @@ public class ConsolidateReportsUtils {
                 res.fc_a_sd[i] = Double.valueOf(urgRec.get("sd_bsf_fc"));
             }
             for (int i = 0; i < InstanceUtils.dynamic_apriori_suffixes.length; i++) {
-                CSVParser resultCSV = readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_apriori_suffixes[i] + "_summary.csv");
+                CSVParser resultCSV = CsvReader.readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_apriori_suffixes[i] + "_summary.csv");
                 CSVRecord aprioriRec = resultCSV.getRecords().get(0);
                 res.nv_q[i] = Double.valueOf(aprioriRec.get("mean_bsf_nv"));
                 res.tc_q[i] = Double.valueOf(aprioriRec.get("mean_bsf_tc"));
@@ -124,7 +120,7 @@ public class ConsolidateReportsUtils {
             meanNv /= resultMap.values().size();
             meanTc /= resultMap.values().size();
             meanFc /= resultMap.values().size();
-            System.out.printf(Locale.US, "%s, NV = %.1f, TC = %.1f, FC = %.1f\n", InstanceUtils.dynamic_urgency_suffixes[i], meanNv, meanTc, meanFc);
+            System.out.printf(Locale.US, "%s, NV = %.1f%%, TC = %.1f%%, FC = %.1f%%\n", InstanceUtils.dynamic_urgency_suffixes[i], meanNv, meanTc, meanFc);
         }
         for (int i = 0; i < InstanceUtils.dynamic_apriori_suffixes.length; i++) {
             double meanNv = 0.0;
@@ -138,13 +134,13 @@ public class ConsolidateReportsUtils {
             meanNv /= resultMap.values().size();
             meanTc /= resultMap.values().size();
             meanFc /= resultMap.values().size();
-            System.out.printf(Locale.US, "%s, NV = %.1f, TC = %.1f, FC = %.1f\n", InstanceUtils.dynamic_apriori_suffixes[i], meanNv, meanTc, meanFc);
+            System.out.printf(Locale.US, "%s, NV = %.1f%%, TC = %.1f%%, FC = %.1f%%\n", InstanceUtils.dynamic_apriori_suffixes[i], meanNv, meanTc, meanFc);
         }
     }
 
     public static void printFullAverageResults() throws Exception {
         System.out.println("Average");
-        CSVParser literature = readCSV(literatureData);
+        CSVParser literature = CsvReader.readCSV(literatureData);
         Map<String, Result> resultMap = new HashMap<>();
         // Load literature results data
         for (CSVRecord literatureRecord : literature.getRecords()) {
@@ -161,7 +157,7 @@ public class ConsolidateReportsUtils {
             res.nv += Double.valueOf(literatureRecord.get("nv"));
             res.tc += Double.valueOf(literatureRecord.get("tc"));
             for (int i = 0; i < InstanceUtils.dynamic_urgency_suffixes.length; i++) {
-                CSVParser resultCSV = readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_urgency_suffixes[i] + "_summary.csv");
+                CSVParser resultCSV = CsvReader.readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_urgency_suffixes[i] + "_summary.csv");
                 CSVRecord urgRec = resultCSV.getRecords().get(0);
                 res.nv_a[i] += Double.valueOf(urgRec.get("mean_bsf_nv"));
                 res.tc_a[i] += Double.valueOf(urgRec.get("mean_bsf_tc"));
@@ -171,7 +167,7 @@ public class ConsolidateReportsUtils {
                 res.fc_a_sd[i] += Double.valueOf(urgRec.get("sd_bsf_fc"));
             }
             for (int i = 0; i < InstanceUtils.dynamic_apriori_suffixes.length; i++) {
-                CSVParser resultCSV = readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_apriori_suffixes[i] + "_summary.csv");
+                CSVParser resultCSV = CsvReader.readCSV(resultsDirectory + "\\" + currentInstance + "_" + InstanceUtils.dynamic_apriori_suffixes[i] + "_summary.csv");
                 CSVRecord aprioriRec = resultCSV.getRecords().get(0);
                 res.nv_q[i] += Double.valueOf(aprioriRec.get("mean_bsf_nv"));
                 res.tc_q[i] += Double.valueOf(aprioriRec.get("mean_bsf_tc"));
@@ -180,7 +176,6 @@ public class ConsolidateReportsUtils {
                 res.tc_q_sd[i] += Double.valueOf(aprioriRec.get("sd_bsf_tc"));
                 res.fc_q_sd[i] += Double.valueOf(aprioriRec.get("sd_bsf_fc"));
             }
-            System.out.println("");
         }
         for (Result r : resultMap.values()) {
             r.nv /= r.count;
@@ -218,16 +213,6 @@ public class ConsolidateReportsUtils {
                     r.nv_q[2],r.nv_q_sd[2],r.tc_q[2],r.tc_q_sd[2],r.fc_q[2],r.fc_q_sd[2],
                     r.nv_q[3],r.nv_q_sd[3],r.tc_q[3],r.tc_q_sd[3],r.fc_q[3],r.fc_q_sd[3],
                     r.nv_q[4],r.nv_q_sd[4],r.tc_q[4],r.tc_q_sd[4],r.fc_q[4],r.fc_q_sd[4]);
-        }
-    }
-
-    private static CSVParser readCSV(String csvPath) {
-        try {
-            Reader in = new FileReader(csvPath);
-            return CSVFormat.DEFAULT.withHeader().withDelimiter(';').parse(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 

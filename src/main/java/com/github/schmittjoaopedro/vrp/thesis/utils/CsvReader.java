@@ -1,12 +1,27 @@
 package com.github.schmittjoaopedro.vrp.thesis.utils;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Paths;
 
 public class CsvReader {
+
+    public static CSVParser readCSV(String csvPath) {
+        try {
+            Reader in = new FileReader(csvPath);
+            return CSVFormat.DEFAULT.withHeader().withDelimiter(';').parse(in);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static String[][] readCsvFromDirectory(String directory) {
         String[][] data = null;
