@@ -64,4 +64,73 @@ public class InstanceUtils {
             "LRC2_10_1", "LRC2_10_2", "LRC2_10_3", "LRC2_10_4", "LRC2_10_5", "LRC2_10_6", "LRC2_10_7", "LRC2_10_10"
     };
 
+    public static String dynamism(String instance) {
+        String urgency;
+        if (instance.contains("_a_0.1")) {
+            urgency = "a_0.1";
+        } else if (instance.contains("_a_0.25")) {
+            urgency = "a_0.25";
+        } else if (instance.contains("_a_0.5")) {
+            urgency = "a_0.5";
+        } else if (instance.contains("_a_0.75")) {
+            urgency = "a_0.75";
+        } else if (instance.contains("_a_1.0")) {
+            urgency = "a_1.0";
+        } else if (instance.contains("_q_0_0.1")) {
+            urgency = "q_0_0.1";
+        } else if (instance.contains("_q_0_0.25")) {
+            urgency = "q_0_0.25";
+        } else if (instance.contains("_q_0_0.5")) {
+            urgency = "q_0_0.5";
+        } else if (instance.contains("_q_0_0.75")) {
+            urgency = "q_0_0.75";
+        } else if (instance.contains("_q_0_1.0")) {
+            urgency = "q_0_1.0";
+        } else {
+            urgency = null;
+        }
+        return urgency;
+    }
+
+    public static String group(String instance) {
+        String group;
+        String name = instance.toUpperCase();
+        if (name.toUpperCase().startsWith("LC1")) {
+            group = "LC1";
+        } else if (name.toUpperCase().startsWith("LC2")) {
+            group = "LC2";
+        } else if (name.toUpperCase().startsWith("LR1")) {
+            group = "LR1";
+        } else if (name.toUpperCase().startsWith("LR2")) {
+            group = "LR2";
+        } else if (name.toUpperCase().startsWith("LRC1")) {
+            group = "LRC1";
+        } else if (name.toUpperCase().startsWith("LRC2")) {
+            group = "LRC2";
+        } else {
+            group = null;
+        }
+        return group;
+    }
+
+    public static String distributionType(String instance) {
+        String group;
+        String name = instance.toUpperCase();
+        if (name.toUpperCase().startsWith("LC1")) {
+            group = "LC";
+        } else if (name.toUpperCase().startsWith("LC2")) {
+            group = "LC";
+        } else if (name.toUpperCase().startsWith("LR1")) {
+            group = "LR";
+        } else if (name.toUpperCase().startsWith("LR2")) {
+            group = "LR";
+        } else if (name.toUpperCase().startsWith("LRC1")) {
+            group = "LRC";
+        } else if (name.toUpperCase().startsWith("LRC2")) {
+            group = "LRC";
+        } else {
+            group = null;
+        }
+        return group;
+    }
 }

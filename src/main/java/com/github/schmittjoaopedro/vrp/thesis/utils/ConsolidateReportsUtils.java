@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class ConsolidateReportsUtils {
 
-    private static final String resultsDirectory = "C:\\Temp\\UDESC-servers\\results\\dynamic_output\\600-tasks";
-    private static final String literatureData = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\600-tasks.csv";
+    private static final String resultsDirectory = "C:\\Temp\\UDESC-servers\\results\\dynamic_output\\1000-tasks";
+    private static final String literatureData = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\1000-tasks.csv";
     //private static final String[] groups = {"lc1", "lc2", "lr1", "lr2", "lrc1", "lrc2"};
     private static final String[] groups = {"LC1", "LC2", "LR1", "LR2", "LRC1", "LRC2"};
 
@@ -58,7 +58,7 @@ public class ConsolidateReportsUtils {
             meanNv /= resultMap.values().size();
             meanTc /= resultMap.values().size();
             meanFc /= resultMap.values().size();
-            System.out.printf(Locale.US, "%s, NV = %.1f, TC = %.1f, FC = %.1f\n", InstanceUtils.dynamic_urgency_suffixes[i], meanNv, meanTc, meanFc);
+            System.out.printf(Locale.US, "%s, NV = %.1f%%, TC = %.1f%%, FC = %.1f%%\n", InstanceUtils.dynamic_urgency_suffixes[i], meanNv, meanTc, meanFc);
         }
         for (int i = 0; i < InstanceUtils.dynamic_apriori_suffixes.length; i++) {
             double meanNv = 0.0;
@@ -72,7 +72,7 @@ public class ConsolidateReportsUtils {
             meanNv /= resultMap.values().size();
             meanTc /= resultMap.values().size();
             meanFc /= resultMap.values().size();
-            System.out.printf(Locale.US, "%s, NV = %.1f, TC = %.1f, FC = %.1f\n", InstanceUtils.dynamic_apriori_suffixes[i], meanNv, meanTc, meanFc);
+            System.out.printf(Locale.US, "%s, NV = %.1f%%, TC = %.1f%%, FC = %.1f%%\n", InstanceUtils.dynamic_apriori_suffixes[i], meanNv, meanTc, meanFc);
         }
     }
 
