@@ -17,7 +17,74 @@ public class LarsenEdodtw {
 
     public static void main(String[] args) throws Exception {
         //edodtwByProblemSize();
-        edodtwByDistributionType();
+        //edodtwByDistributionType();
+        edodtwByDynamicDegree();
+    }
+
+    private static void edodtwByDynamicDegree() throws Exception {
+        // Static columns
+        System.out.printf(Locale.US, "Static;\n");
+        double overallMean = 0.0;
+        int totalCounter = 0;
+        for (String problemSize : PROBLEM_SIZES) {
+            File[] instanceFiles = listFiles(BASE_LIT_DIR + "pdp_" + problemSize);
+            for (File instanceFile : instanceFiles) {
+                Instance instance = Reader.getInstance(instanceFile);
+                double instanceEdodtw = 0.0;
+                for (Request request : instance.requests) {
+                    instanceEdodtw += (instance.depot.twEnd - (request.pickupTask.twEnd - request.announceTime)) / instance.depot.twEnd;
+                }
+                instanceEdodtw /= instance.requests.length;
+                overallMean += instanceEdodtw;
+                totalCounter++;
+            }
+        }
+        overallMean /= totalCounter;
+        System.out.printf(Locale.US, "%.2f;", overallMean);
+        // Urgency columns
+        System.out.printf(Locale.US, "\na_0.1;a_0.25;a_0.5;a_0.75;a_1.0;\n");
+        for (String a : InstanceUtils.dynamic_urgency_suffixes) {
+            overallMean = 0.0;
+            totalCounter = 0;
+            for (String problemSize : PROBLEM_SIZES) {
+                File[] instanceFiles = listFiles(BASE_LIT_DIR + "pdp_" + problemSize);
+                for (File instanceFile : instanceFiles) {
+                    File file = new File(BASE_LIT_DIR + "dpdptw\\" + problemSize + "-tasks\\" + instanceFile.getName().replaceAll(".txt", "") + "_" + a + ".txt");
+                    Instance instance = Reader.getInstance(file);
+                    double instanceEdodtw = 0.0;
+                    for (Request request : instance.requests) {
+                        instanceEdodtw += (instance.depot.twEnd - (request.pickupTask.twEnd - request.announceTime)) / instance.depot.twEnd;
+                    }
+                    instanceEdodtw /= instance.requests.length;
+                    overallMean += instanceEdodtw;
+                    totalCounter++;
+                }
+            }
+            overallMean /= totalCounter;
+            System.out.printf(Locale.US, "%.2f;", overallMean);
+        }
+        // A-priori columns
+        System.out.printf(Locale.US, "\nq_0.1;q_0.25;q_0.5;q_0.75;q_1.0;\n");
+        for (String a : InstanceUtils.dynamic_apriori_suffixes) {
+            overallMean = 0.0;
+            totalCounter = 0;
+            for (String problemSize : PROBLEM_SIZES) {
+                File[] instanceFiles = listFiles(BASE_LIT_DIR + "pdp_" + problemSize);
+                for (File instanceFile : instanceFiles) {
+                    File file = new File(BASE_LIT_DIR + "dpdptw\\" + problemSize + "-tasks\\" + instanceFile.getName().replaceAll(".txt", "") + "_" + a + ".txt");
+                    Instance instance = Reader.getInstance(file);
+                    double instanceEdodtw = 0.0;
+                    for (Request request : instance.requests) {
+                        instanceEdodtw += (instance.depot.twEnd - (request.pickupTask.twEnd - request.announceTime)) / instance.depot.twEnd;
+                    }
+                    instanceEdodtw /= instance.requests.length;
+                    overallMean += instanceEdodtw;
+                    totalCounter++;
+                }
+            }
+            overallMean /= totalCounter;
+            System.out.printf(Locale.US, "%.2f;", overallMean);
+        }
     }
 
     private static void edodtwByDistributionType() throws Exception {

@@ -1,9 +1,11 @@
 package com.github.schmittjoaopedro.vrp.thesis.utils;
 
+import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -11,13 +13,14 @@ import java.util.stream.Collectors;
 
 public class StaticInstancesSummary {
 
+    private static final String BASE_LIT_DIR = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\";
     private static final String BASE_DIR = "C:\\Temp\\UDESC-servers\\results\\static_output\\";
     private static final String DIRECTORY = BASE_DIR + "pdp_800";
-    private static final String BASE_LIT_DIR = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\";
     private static final String literatureData = BASE_LIT_DIR + "800-tasks.csv";
     private static final String[] instances = InstanceUtils.instances_800;
     private static Map<String, Double> literatureNv = new HashMap<>();
     private static Map<String, Double> literatureTc = new HashMap<>();
+    private static final String[] PROBLEM_SIZES = {"100", "200", "400", "600", "800", "1000"};
 
     public static void main(String[] args) throws Exception {
         //loadLiteratureResults();
@@ -28,7 +31,70 @@ public class StaticInstancesSummary {
         //printGapByDistributionType();
         //printGapByTimeWindowsSize();
         //printIterationCurvesByProblemSize();
-        printIterationCurvesByProblemType();
+        //printIterationCurvesByProblemType();
+        printCompactedResultsByProblemSizeAndGeographicalDistributionType();
+    }
+
+    private static void printCompactedResultsByProblemSizeAndGeographicalDistributionType() throws Exception {
+        Map<String, GroupedResult> resultMap = new HashMap<>();
+        for (String problemSize : PROBLEM_SIZES) {
+            CSVParser literatureData = CsvReader.readCSV(BASE_LIT_DIR + problemSize + "-tasks.csv");
+            for (CSVRecord literature : literatureData.getRecords()) {
+                // Grouped result
+                String geoDistType = InstanceUtils.distributionType(literature.get("instance"));
+                String key = problemSize + "-" + geoDistType;
+                GroupedResult groupedResult = resultMap.computeIfAbsent(key, k -> new GroupedResult());
+                groupedResult.problemSize = problemSize;
+                groupedResult.geoDistributionType = geoDistType;
+                // Literature
+                groupedResult.literatureNv += Double.valueOf(literature.get("nv"));
+                groupedResult.literatureTc += Double.valueOf(literature.get("tc"));
+                groupedResult.count++;
+                // Algorithm
+                String instanceName = InstanceUtils.fileName(literature.get("instance"));
+                CSVParser algorithmData = CsvReader.readCSV(BASE_DIR + "pdp_" + problemSize + "\\" + instanceName + "_summary.csv");
+                CSVRecord algorithm = algorithmData.getRecords().get(0);
+                groupedResult.algorithmNvMean += Double.valueOf(algorithm.get("mean_bsf_nv"));
+                groupedResult.algorithmNvSd += Double.valueOf(algorithm.get("sd_bsf_nv"));
+                groupedResult.algorithmTcMean += Double.valueOf(algorithm.get("mean_bsf_tc"));
+                groupedResult.algorithmTcSd += Double.valueOf(algorithm.get("sd_bsf_tc"));
+            }
+        }
+        resultMap.forEach((key, value) -> {
+            value.literatureNv /= value.count;
+            value.literatureTc /= value.count;
+            value.algorithmNvMean /= value.count;
+            value.algorithmNvSd /= value.count;
+            value.algorithmTcMean /= value.count;
+            value.algorithmTcSd /= value.count;
+        });
+        System.out.println("Size;GeoDistributionType;Literature NV;Algorithm NV Mean;Algorithm NV Sd;Literature TC;Algorithm TC Mean;Algorithm TC Sd");
+        GroupedResult overallMean = new GroupedResult();
+        for (String problemSize : PROBLEM_SIZES) {
+            for (String geoDistType : new String[]{"LC", "LRC", "LR"}) {
+                GroupedResult groupedResult = resultMap.get(problemSize + "-" + geoDistType);
+                System.out.printf(Locale.US, "%s & %s & %.2f & %.2f$\\pm$%.2f & %.2f & %.2f$\\pm$%.2f \\\\\n",
+                        groupedResult.problemSize, groupedResult.geoDistributionType,
+                        groupedResult.literatureNv, groupedResult.algorithmNvMean, groupedResult.algorithmNvSd,
+                        groupedResult.literatureTc, groupedResult.algorithmTcMean, groupedResult.algorithmTcSd);
+                overallMean.literatureNv += groupedResult.literatureNv;
+                overallMean.literatureTc += groupedResult.literatureTc;
+                overallMean.algorithmNvMean += groupedResult.algorithmNvMean;
+                overallMean.algorithmTcMean += groupedResult.algorithmTcMean;
+                overallMean.algorithmNvSd += groupedResult.algorithmNvSd;
+                overallMean.algorithmTcSd += groupedResult.algorithmTcSd;
+                overallMean.count++;
+            }
+        }
+        overallMean.literatureNv /= overallMean.count;
+        overallMean.literatureTc /= overallMean.count;
+        overallMean.algorithmNvMean /= overallMean.count;
+        overallMean.algorithmTcMean /= overallMean.count;
+        overallMean.algorithmNvSd /= overallMean.count;
+        overallMean.algorithmTcSd /= overallMean.count;
+        System.out.printf(Locale.US, "%.2f & %.2f$\\pm$%.2f & %.2f & %.2f$\\pm$%.2f \\\\\n",
+                overallMean.literatureNv, overallMean.algorithmNvMean, overallMean.algorithmNvSd,
+                overallMean.literatureTc, overallMean.algorithmTcMean, overallMean.algorithmTcSd);
     }
 
     private static void printIterationCurvesByProblemType() throws Exception {
@@ -307,4 +373,15 @@ public class StaticInstancesSummary {
         }
     }
 
+    static class GroupedResult {
+        String problemSize;
+        String geoDistributionType;
+        double literatureNv = 0.0;
+        double literatureTc = 0.0;
+        double algorithmNvMean = 0.0;
+        double algorithmTcMean = 0.0;
+        double algorithmNvSd = 0.0;
+        double algorithmTcSd = 0.0;
+        int count = 0;
+    }
 }

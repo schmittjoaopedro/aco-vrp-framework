@@ -133,4 +133,12 @@ public class InstanceUtils {
         }
         return group;
     }
+
+    public static String fileName(String instance) {
+        String name = instance;
+        if (instance.contains("_")) {
+            name = instance.toUpperCase();
+        }
+        return name;
+    }
 }
