@@ -23,7 +23,7 @@ public class DynamicGraphsSummary {
         //printStaticCurvesByProblemDistributionType("TC", DYNAMIC_RESULTS_DIR + "%s-tasks", "a_0.75");
 
         //printStaticCurvesByProblemDistributionType("TC", DYNAMIC_RESULTS_DIR + "%s-tasks", "q_0_0.25");
-        printStaticCurvesByProblemDistributionType("TC", DYNAMIC_RESULTS_DIR + "%s-tasks", "q_0_0.75");
+        //printStaticCurvesByProblemDistributionType("TC", DYNAMIC_RESULTS_DIR + "%s-tasks", "q_0_0.75");
 
         //printStaticCurvesByProblemDistributionType("NV", STATIC_RESULTS_DIR + "pdp_%s", null);
         //printStaticCurvesByProblemDistributionType("TC", STATIC_RESULTS_DIR + "pdp_%s", null);

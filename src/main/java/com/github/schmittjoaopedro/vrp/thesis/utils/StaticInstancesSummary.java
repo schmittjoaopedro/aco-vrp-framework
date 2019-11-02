@@ -32,7 +32,108 @@ public class StaticInstancesSummary {
         //printGapByTimeWindowsSize();
         //printIterationCurvesByProblemSize();
         //printIterationCurvesByProblemType();
-        printCompactedResultsByProblemSizeAndGeographicalDistributionType();
+        //printCompactedResultsByProblemSizeAndGeographicalDistributionType();
+        //printIterationTotalCostCurvesByProblemType();
+        //printIterationCostMinimizerTemperatureCurvesByProblemType();
+
+    }
+
+    private static void printIterationCostMinimizerTemperatureCurvesByProblemType() throws Exception {
+        System.out.println("Iterations Average Total Cost By Problem Type");
+        Map<String, List<Double>> meanNvs = new HashMap<>();
+        Map<String, List<Double>> meanTcs = new HashMap<>();
+        String distTypes[] = {"LC1", "LR1", "LRC1", "LC2", "LR2", "LRC2"};
+        String instSizes[] = {"100", "200", "400", "600", "800", "1000"};
+        for (String dist : distTypes) {
+            Set<String> instancesPath = new HashSet<>();
+            for (String size : instSizes) {
+                CSVParser literature = CsvReader.readCSV(BASE_LIT_DIR + size + "-tasks.csv");
+                for (CSVRecord record : literature.getRecords()) {
+                    String instanceName = size.equals("100") ? record.get("instance") : StringUtils.upperCase(record.get("instance"));
+                    if (instanceName.toUpperCase().startsWith(dist)) {
+                        instancesPath.add(Paths.get(BASE_DIR + "pdp_" + size, instanceName + "_iteration.csv").toAbsolutePath().toString());
+                    }
+                }
+            }
+            Double[] nvValues = new Double[24999];
+            Double[] tcValues = new Double[24999];
+            for (int i = 0; i < nvValues.length; i++) {
+                nvValues[i] = 0.0;
+                tcValues[i] = 0.0;
+            }
+            for (String instance : instancesPath) {
+                String data[][] = CsvReader.readCsvFromDirectory(instance);
+                for (int i = 1; i < data.length; i++) {
+                    nvValues[i - 1] += Double.valueOf(data[i][2]);
+                    tcValues[i - 1] += Double.valueOf(data[i][24]);
+                }
+            }
+            for (int i = 0; i < nvValues.length; i++) {
+                nvValues[i] /= instancesPath.size();
+                tcValues[i] /= instancesPath.size();
+            }
+            meanNvs.put(dist, Arrays.asList(nvValues));
+            meanTcs.put(dist, Arrays.asList(tcValues));
+        }
+        for (String dist : distTypes) {
+            System.out.printf("BSF(%s);LOCAL(%s);", dist, dist);
+        }
+        System.out.println("");
+        for (int i = 0; i < 24999; i++) {
+            for (String dist : distTypes) {
+                System.out.printf(Locale.US, "%.2f;%.2f;", meanNvs.get(dist).get(i), meanTcs.get(dist).get(i));
+            }
+            System.out.println("");
+        }
+    }
+
+    private static void printIterationTotalCostCurvesByProblemType() throws Exception {
+        System.out.println("Iterations Average Total Cost By Problem Type");
+        Map<String, List<Double>> meanNvs = new HashMap<>();
+        Map<String, List<Double>> meanTcs = new HashMap<>();
+        String distTypes[] = {"LC1", "LR1", "LRC1", "LC2", "LR2", "LRC2"};
+        String instSizes[] = {"100", "200", "400", "600", "800", "1000"};
+        for (String dist : distTypes) {
+            Set<String> instancesPath = new HashSet<>();
+            for (String size : instSizes) {
+                CSVParser literature = CsvReader.readCSV(BASE_LIT_DIR + size + "-tasks.csv");
+                for (CSVRecord record : literature.getRecords()) {
+                    String instanceName = size.equals("100") ? record.get("instance") : StringUtils.upperCase(record.get("instance"));
+                    if (instanceName.toUpperCase().startsWith(dist)) {
+                        instancesPath.add(Paths.get(BASE_DIR + "pdp_" + size, instanceName + "_iteration.csv").toAbsolutePath().toString());
+                    }
+                }
+            }
+            Double[] nvValues = new Double[24999];
+            Double[] tcValues = new Double[24999];
+            for (int i = 0; i < nvValues.length; i++) {
+                nvValues[i] = 0.0;
+                tcValues[i] = 0.0;
+            }
+            for (String instance : instancesPath) {
+                String data[][] = CsvReader.readCsvFromDirectory(instance);
+                for (int i = 1; i < data.length; i++) {
+                    nvValues[i - 1] += Double.valueOf(data[i][2]);
+                    tcValues[i - 1] += Double.valueOf(data[i][22]);
+                }
+            }
+            for (int i = 0; i < nvValues.length; i++) {
+                nvValues[i] /= instancesPath.size();
+                tcValues[i] /= instancesPath.size();
+            }
+            meanNvs.put(dist, Arrays.asList(nvValues));
+            meanTcs.put(dist, Arrays.asList(tcValues));
+        }
+        for (String dist : distTypes) {
+            System.out.printf("BSF(%s);LOCAL(%s);", dist, dist);
+        }
+        System.out.println("");
+        for (int i = 0; i < 24999; i++) {
+            for (String dist : distTypes) {
+                System.out.printf(Locale.US, "%.2f;%.2f;", meanNvs.get(dist).get(i), meanTcs.get(dist).get(i));
+            }
+            System.out.println("");
+        }
     }
 
     private static void printCompactedResultsByProblemSizeAndGeographicalDistributionType() throws Exception {
@@ -150,6 +251,8 @@ public class StaticInstancesSummary {
         System.out.println("Iterations Average Cost By Problem Size");
         Map<String, List<Double>> meanNvs = new HashMap<>();
         Map<String, List<Double>> meanTcs = new HashMap<>();
+        Map<String, List<Double>> meanLocalTcs = new HashMap<>();
+        Map<String, List<Double>> meanTempTcs = new HashMap<>();
         String instSizes[] = {"100", "200", "400", "600", "800", "1000"};
         for (String dir : instSizes) {
             CSVParser literature = CsvReader.readCSV(BASE_LIT_DIR + dir + "-tasks.csv");
@@ -160,31 +263,42 @@ public class StaticInstancesSummary {
             }
             Double[] nvValues = new Double[24999];
             Double[] tcValues = new Double[24999];
+            Double[] tcLocalValues = new Double[24999];
+            Double[] tcTempValues = new Double[24999];
             for (int i = 0; i < nvValues.length; i++) {
                 nvValues[i] = 0.0;
                 tcValues[i] = 0.0;
+                tcLocalValues[i] = 0.0;
+                tcTempValues[i] = 0.0;
             }
             for (String instance : instances) {
                 String data[][] = CsvReader.readCsvFromDirectory(Paths.get(BASE_DIR + "pdp_" + dir, instance + "_iteration.csv").toAbsolutePath().toString());
                 for (int i = 1; i < data.length; i++) {
                     nvValues[i - 1] += Double.valueOf(data[i][0]);
                     tcValues[i - 1] += Double.valueOf(data[i][2]);
+                    tcLocalValues[i - 1] += Double.valueOf(data[i][22]);
+                    tcTempValues[i - 1] += Double.valueOf(data[i][24]);
                 }
             }
             for (int i = 0; i < nvValues.length; i++) {
                 nvValues[i] /= instances.size();
                 tcValues[i] /= instances.size();
+                tcLocalValues[i] /= instances.size();
+                tcTempValues[i] /= instances.size();
             }
             meanNvs.put(dir, Arrays.asList(nvValues));
             meanTcs.put(dir, Arrays.asList(tcValues));
+            meanLocalTcs.put(dir, Arrays.asList(tcLocalValues));
+            meanTempTcs.put(dir, Arrays.asList(tcTempValues));
         }
         for (String dir : instSizes) {
-            System.out.printf("NV(%s);TC(%s);", dir, dir);
+            System.out.printf("NV(%s);TC(%s);TC_LOCAL(%s);TEMP(%s);", dir, dir, dir, dir);
         }
         System.out.println("");
         for (int i = 0; i < 24999; i++) {
             for (String dir : instSizes) {
-                System.out.printf(Locale.US, "%.2f;%.2f;", meanNvs.get(dir).get(i), meanTcs.get(dir).get(i));
+                System.out.printf(Locale.US, "%.2f;%.2f;%.2f;%.2f;", meanNvs.get(dir).get(i), meanTcs.get(dir).get(i),
+                        meanLocalTcs.get(dir).get(i), meanTempTcs.get(dir).get(i));
             }
             System.out.println("");
         }
