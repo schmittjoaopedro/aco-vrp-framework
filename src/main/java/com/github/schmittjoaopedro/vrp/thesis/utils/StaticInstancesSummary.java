@@ -15,21 +15,21 @@ public class StaticInstancesSummary {
 
     private static final String BASE_LIT_DIR = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\";
     private static final String BASE_DIR = "C:\\Temp\\UDESC-servers\\results\\static_output\\";
-    private static final String DIRECTORY = BASE_DIR + "pdp_800";
-    private static final String literatureData = BASE_LIT_DIR + "800-tasks.csv";
-    private static final String[] instances = InstanceUtils.instances_800;
+    private static final String DIRECTORY = BASE_DIR + "pdp_1000";
+    private static final String literatureData = BASE_LIT_DIR + "1000-tasks.csv";
+    private static final String[] instances = InstanceUtils.instances_1000;
     private static Map<String, Double> literatureNv = new HashMap<>();
     private static Map<String, Double> literatureTc = new HashMap<>();
     private static final String[] PROBLEM_SIZES = {"100", "200", "400", "600", "800", "1000"};
 
     public static void main(String[] args) throws Exception {
-        //loadLiteratureResults();
-        //printBestSoFarResults();
-        //printAverageResults();
-        //printBestSoFarGap();
-        //printAverageGap();
-        //printGapByDistributionType();
-        //printGapByTimeWindowsSize();
+        loadLiteratureResults();
+        printBestSoFarResults();
+        printAverageResults();
+        printBestSoFarGap();
+        printAverageGap();
+        printGapByDistributionType();
+        printGapByTimeWindowsSize();
         //printIterationCurvesByProblemSize();
         //printIterationCurvesByProblemType();
         //printCompactedResultsByProblemSizeAndGeographicalDistributionType();

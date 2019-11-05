@@ -18,9 +18,9 @@ public class ConsolidateReportsUtils {
     private static final String[] PROBLEM_SIZES = {"100", "200", "400", "600", "800", "1000"};
 
     public static void main(String[] args) throws Exception {
-        calculateBsfStatistics();
-        calculateAverageStatistics();
-        printFullAverageResultsByDistributionType();
+        //calculateBsfStatistics();
+        //calculateAverageStatistics();
+        //printFullAverageResultsByDistributionType();
         printFullAverageResultsForAll();
     }
 
@@ -287,7 +287,9 @@ public class ConsolidateReportsUtils {
                 meanFc += result.fc_a[i] * 100.0;
                 sdNv += (result.nv_a_sd[i] / result.nv_a[i]) * 100.0;
                 sdTc += (result.tc_a_sd[i] / result.tc_a[i]) * 100.0;
-                sdFc += (result.fc_a_sd[i] / result.fc_a[i]) * 100.0;
+                if (result.fc_a_sd[i] > 0) {
+                    sdFc += (result.fc_a_sd[i] / result.fc_a[i]) * 100.0;
+                }
             }
             meanNv /= resultMap.values().size();
             sdNv /= resultMap.values().size();
@@ -311,7 +313,9 @@ public class ConsolidateReportsUtils {
                 meanFc += result.fc_q[i] * 100.0;
                 sdNv += (result.nv_a_sd[i] / result.nv_a[i]) * 100.0;
                 sdTc += (result.tc_a_sd[i] / result.tc_a[i]) * 100.0;
-                sdFc += (result.fc_a_sd[i] / result.fc_a[i]) * 100.0;
+                if (result.fc_a_sd[i] > 0) {
+                    sdFc += (result.fc_a_sd[i] / result.fc_a[i]) * 100.0;
+                }
             }
             meanNv /= resultMap.values().size();
             sdNv /= resultMap.values().size();

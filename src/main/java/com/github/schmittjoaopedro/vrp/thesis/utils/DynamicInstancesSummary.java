@@ -15,8 +15,8 @@ public class DynamicInstancesSummary {
 
     public static void main(String[] args) {
         //calculateGapByLocationDistributionType();
-        calculateGapByProblemSize();
-        //printIterationResultsByDynamicsDegree();
+        //calculateGapByProblemSize();
+        printIterationResultsByDynamicsDegree();
     }
 
     public static void printIterationResultsByDynamicsDegree() {
