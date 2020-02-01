@@ -255,6 +255,11 @@ public class Solver {
         log(msg);
     }
 
+    public void printSolutionBestRoute(String path) {
+        RoutePrinter finalPrinter = new RoutePrinter(instance, path, 1024, 768);
+        finalPrinter.staticPrintRoute(instance, solutionBest);
+    }
+
     private String getSummaryResults() {
         double[] startTimes = new double[solutionBest.tours.size()];
         for (int i = 0; i < startTimes.length; i++) {

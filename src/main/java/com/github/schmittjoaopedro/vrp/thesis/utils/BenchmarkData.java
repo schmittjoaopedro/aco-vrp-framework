@@ -22,10 +22,10 @@ public class BenchmarkData {
         }
         for (Instance instance : instances) {
             for (Task task : instance.tasks) {
-                //System.out.println(task.twEnd - task.twStart);
+                System.out.println(task.twEnd - task.twStart);
                 //System.out.println(task.demand);
             }
-            System.out.println(instance.depot.twEnd - instance.depot.twStart);
+            //System.out.println(instance.depot.twEnd - instance.depot.twStart);
         }
     }
 

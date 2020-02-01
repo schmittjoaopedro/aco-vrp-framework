@@ -146,6 +146,68 @@ public class RoutePrinter {
         }
     }
 
+    public void staticPrintRoute(Instance instance, Solution solution) {
+        double margin = 5;
+        // Draw html
+        try {
+            StringBuilder indexHtml = new StringBuilder();
+            indexHtml.append("<svg width=\"").append(width + margin * 2).append("\" height=\"").append(height + margin * 2).append("\">");
+            indexHtml.append("\t<defs>\n");
+            indexHtml.append("\t\t<marker id=\"arrow\" markerWidth=\"10\" markerHeight=\"10\" refX=\"0\" refY=\"3\" orient=\"auto\" markerUnits=\"strokeWidth\">\n");
+            indexHtml.append("\t\t\t<path d=\"M0,0 L0,6 L9,3 z\" fill=\"#f00\" />\n");
+            indexHtml.append("\t\t</marker>\n");
+            indexHtml.append("\t</defs>");
+            for (Request req : instance.requests) {
+                if (req.pickupTask.x != req.pickupTask.x || req.deliveryTask.y != req.deliveryTask.x) {
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "red", String.valueOf(req.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "blue", String.valueOf(req.requestId));
+                } else {
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.pickupTask.x, req.pickupTask.y, "gray", String.valueOf(req.requestId));
+                    drawNode(width, height, margin, maxX, maxY, indexHtml, req.deliveryTask.x, req.deliveryTask.y, "gray", String.valueOf(req.requestId));
+                }
+            }
+            drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
+            double xCoordSource, yCoordSource, xCoordTarget, yCoordTarget;
+            for (int k = 0; k < solution.tours.size(); k++) {
+                Color color = new Color((int) (Math.random() * 255.0), (int) (Math.random() * 255.0), (int) (Math.random() * 255.0));
+                for (int i = 0; i < solution.tours.get(k).size() - 1; i++) {
+                    Task task;
+                    if (i == 0) {
+                        xCoordSource = instance.depot.x;
+                        yCoordSource = instance.depot.y;
+                    } else {
+                        task = instance.getTask(solution.tours.get(k).get(i));
+                        xCoordSource = task.x;
+                        yCoordSource = task.y;
+                    }
+                    if (instance.isDepot(solution.tours.get(k).get(i + 1))) {
+                        xCoordTarget = instance.depot.x;
+                        yCoordTarget = instance.depot.y;
+                    } else {
+                        task = instance.getTask(solution.tours.get(k).get(i + 1));
+                        xCoordTarget = task.x;
+                        yCoordTarget = task.y;
+                    }
+                    indexHtml.append("\n\t<line x1=\"");
+                    indexHtml.append(((width / maxX) * xCoordSource) + margin);
+                    indexHtml.append("\" y1=\"");
+                    indexHtml.append(((height / maxY) * yCoordSource) + margin);
+                    indexHtml.append("\" x2=\"");
+                    indexHtml.append(((width / maxX) * xCoordTarget) + margin);
+                    indexHtml.append("\" y2=\"");
+                    indexHtml.append(((height / maxY) * yCoordTarget) + margin);
+                    indexHtml.append("\" style=\"stroke:rgb(");
+                    indexHtml.append(color.getRed()).append(",").append(color.getGreen()).append(",").append(color.getBlue());
+                    indexHtml.append(");stroke-width:2\" />"); // without arrow
+                    //indexHtml.append(");stroke-width:2\" marker-end=\"url(#arrow)\" />"); // with arrow
+                }
+            }
+            indexHtml.append("\n</svg>");
+            FileUtils.writeStringToFile(Paths.get(folderPath, instance.name + ".html").toFile(), indexHtml.toString(), "UTF-8");
+        } catch (IOException e) {
+        }
+    }
+
     private static void drawTruck(int width, int height, double margin, double maxX, double maxY, StringBuilder indexHtml,
                                   double xSource, double ySource, double xTarget, double yStart,
                                   double minTime, double maxTime, double currentTime) {
