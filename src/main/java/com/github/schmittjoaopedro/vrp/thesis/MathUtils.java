@@ -19,4 +19,8 @@ public class MathUtils {
         return (double) tmp / factor;
     }
 
+    public static double gap(double literature, double experiment) {
+        return (100.0 * experiment / literature) - 100.0;
+    }
+
 }

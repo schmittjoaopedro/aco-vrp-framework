@@ -1,11 +1,9 @@
 package com.github.schmittjoaopedro.vrp.thesis.utils;
 
-import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -23,13 +21,14 @@ public class StaticInstancesSummary {
     private static final String[] PROBLEM_SIZES = {"100", "200", "400", "600", "800", "1000"};
 
     public static void main(String[] args) throws Exception {
-        loadLiteratureResults();
-        printBestSoFarResults();
-        printAverageResults();
+        //loadLiteratureResults();
+        //printBestSoFarResults();
+        //printBsfByProblemType();
+        //printAverageResults();
         printBestSoFarGap();
-        printAverageGap();
-        printGapByDistributionType();
-        printGapByTimeWindowsSize();
+        //printAverageGap();
+        //printGapByDistributionType();
+        //printGapByTimeWindowsSize();
         //printIterationCurvesByProblemSize();
         //printIterationCurvesByProblemType();
         //printCompactedResultsByProblemSizeAndGeographicalDistributionType();
@@ -196,6 +195,52 @@ public class StaticInstancesSummary {
         System.out.printf(Locale.US, "%.2f & %.2f$\\pm$%.2f & %.2f & %.2f$\\pm$%.2f \\\\\n",
                 overallMean.literatureNv, overallMean.algorithmNvMean, overallMean.algorithmNvSd,
                 overallMean.literatureTc, overallMean.algorithmTcMean, overallMean.algorithmTcSd);
+    }
+
+    private static void printBsfByProblemType() throws Exception {
+        System.out.println("Iterations Average Cost By Problem Type");
+        Map<String, Double> meanNvs = new HashMap<>();
+        Map<String, Double> meanTcs = new HashMap<>();
+        String distTypes[] = {"LC", "LRC", "LR"};
+        String instSizes[] = {"100", "200", "400", "600", "800", "1000"};
+        double nvTotal = .0;
+        double tcTotal = .0;
+        double count = 0;
+        for (String size : instSizes) {
+            for (String dist : distTypes) {
+                Set<String> instancesPath = new HashSet<>();
+                CSVParser literature = CsvReader.readCSV(BASE_LIT_DIR + size + "-tasks.csv");
+                for (CSVRecord record : literature.getRecords()) {
+                    String instanceName = size.equals("100") ? record.get("instance") : StringUtils.upperCase(record.get("instance"));
+                    if (InstanceUtils.distributionType(record.get("instance")).equals(dist)) {
+                        instancesPath.add(Paths.get(BASE_DIR + "pdp_" + size, instanceName + "_bsf.csv").toAbsolutePath().toString());
+                    }
+                }
+                double nvValue = 0.0;
+                double tcValue = 0.0;
+                for (String instance : instancesPath) {
+                    String data[][] = CsvReader.readCsvFromDirectory(instance);
+                    for (int i = 1; i < data.length; i++) {
+                        tcValue += Double.valueOf(data[i][0]);
+                        nvValue += Double.valueOf(data[i][1]);
+                    }
+                }
+                count += instancesPath.size();
+                nvTotal += nvValue;
+                tcTotal += tcValue;
+                nvValue /= instancesPath.size();
+                tcValue /= instancesPath.size();
+                meanNvs.put(size + "-" + dist, nvValue);
+                meanTcs.put(size + "-" + dist, tcValue);
+            }
+        }
+        for (String size : instSizes) {
+            for (String dist : distTypes) {
+                System.out.printf(Locale.US, "NV(%s) = (%.2f)\t\tTC(%s) = (%.2f)\n", size + "-" + dist, meanNvs.get(size + "-" + dist),
+                        size + "-" + dist, meanTcs.get(size + "-" + dist));
+            }
+        }
+        System.out.printf(Locale.US, "Mean NV = %.2f Mean TC = %.2f", (nvTotal / count), (tcTotal / count));
     }
 
     private static void printIterationCurvesByProblemType() throws Exception {
