@@ -15,10 +15,10 @@ public class DynamicInstancesSummary {
     private static final String[] DISTRIBUTION_GROUPS = {"LC", "LRC", "LR"};
 
     public static void main(String[] args) {
-        calculateGapByLocationDistributionType();
+        //calculateGapByLocationDistributionType();
         //calculateGapByProblemSize();
         //printIterationResultsByDynamicsDegree();
-        //printIterationTemperatureByDynamicsDegree();
+        printIterationTemperatureByDynamicsDegree();
     }
 
     public static void printIterationResultsByDynamicsDegree() {

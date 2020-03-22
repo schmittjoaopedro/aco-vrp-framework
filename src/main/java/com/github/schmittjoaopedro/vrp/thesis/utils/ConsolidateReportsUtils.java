@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis.utils;
 
+import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
@@ -21,7 +22,7 @@ public class ConsolidateReportsUtils {
         //calculateBsfStatistics();
         //calculateAverageStatistics();
         //printFullAverageResultsByDistributionType();
-        printFullAverageResultsForAll();
+        //printFullAverageResultsForAll();
     }
 
     public static void calculateBsfStatistics() throws Exception {
@@ -243,7 +244,7 @@ public class ConsolidateReportsUtils {
     public static void printFullAverageResultsForAll() throws Exception {
         System.out.println("Average");
         Map<String, Result> resultMap = new HashMap<>();
-        for (String problemSize :PROBLEM_SIZES) {
+        for (String problemSize : PROBLEM_SIZES) {
             CSVParser literature = CsvReader.readCSV(literatureRootData + problemSize + "-tasks.csv");
             // Load literature results data
             for (CSVRecord literatureRecord : literature.getRecords()) {
@@ -275,6 +276,8 @@ public class ConsolidateReportsUtils {
         }
         System.out.println("Loaded results");
         for (int i = 0; i < InstanceUtils.dynamic_urgency_suffixes.length; i++) {
+            double litNv = 0.0;
+            double litTc = 0.0;
             double meanNv = 0.0;
             double sdNv = 0.0;
             double meanTc = 0.0;
@@ -282,25 +285,37 @@ public class ConsolidateReportsUtils {
             double meanFc = 0.0;
             double sdFc = 0.0;
             for (Result result : resultMap.values()) {
-                meanNv += (1.0 - (result.nv / result.nv_a[i])) * 100.0;
-                meanTc += (1.0 - (result.tc / result.tc_a[i])) * 100.0;
-                meanFc += result.fc_a[i] * 100.0;
-                sdNv += (result.nv_a_sd[i] / result.nv_a[i]) * 100.0;
-                sdTc += (result.tc_a_sd[i] / result.tc_a[i]) * 100.0;
+                litNv += result.nv;
+                meanNv += result.nv_a[i];
+                sdNv += result.nv_a_sd[i];
+                litTc += result.tc;
+                meanTc += result.tc_a[i];
+                sdTc += result.tc_a_sd[i];
+                meanFc += result.fc_a[i];
                 if (result.fc_a_sd[i] > 0) {
-                    sdFc += (result.fc_a_sd[i] / result.fc_a[i]) * 100.0;
+                    sdFc += (result.fc_a_sd[i] / result.fc_a[i]);
                 }
             }
+            litNv /= resultMap.values().size();
+            litTc /= resultMap.values().size();
             meanNv /= resultMap.values().size();
             sdNv /= resultMap.values().size();
             meanTc /= resultMap.values().size();
             sdTc /= resultMap.values().size();
             meanFc /= resultMap.values().size();
             sdFc /= resultMap.values().size();
+
+            sdNv = sdNv / meanNv;
+            meanNv = MathUtils.gap(litNv, meanNv);
+            sdTc = sdTc / meanTc;
+            meanTc = MathUtils.gap(litTc, meanTc);
+
             System.out.printf(Locale.US, "%s, NV = %.1f%%±%.1f%%, TC = %.1f%%±%.1f%%, FC = %.1f%%±%.1f%%\n",
-                    InstanceUtils.dynamic_urgency_suffixes[i], meanNv, sdNv, meanTc, sdTc, meanFc, sdFc);
+                    InstanceUtils.dynamic_urgency_suffixes[i], meanNv * 100.0, sdNv * 100.0, meanTc * 100.0, sdTc * 100.0, meanFc * 100.0, sdFc * 100.0);
         }
         for (int i = 0; i < InstanceUtils.dynamic_apriori_suffixes.length; i++) {
+            double litNv = 0.0;
+            double litTc = 0.0;
             double meanNv = 0.0;
             double sdNv = 0.0;
             double meanTc = 0.0;
@@ -308,23 +323,33 @@ public class ConsolidateReportsUtils {
             double meanFc = 0.0;
             double sdFc = 0.0;
             for (Result result : resultMap.values()) {
-                meanNv += (1.0 - (result.nv / result.nv_q[i])) * 100.0;
-                meanTc += (1.0 - (result.tc / result.tc_q[i])) * 100.0;
-                meanFc += result.fc_q[i] * 100.0;
-                sdNv += (result.nv_a_sd[i] / result.nv_a[i]) * 100.0;
-                sdTc += (result.tc_a_sd[i] / result.tc_a[i]) * 100.0;
-                if (result.fc_a_sd[i] > 0) {
-                    sdFc += (result.fc_a_sd[i] / result.fc_a[i]) * 100.0;
+                litNv += result.nv;
+                meanNv += result.nv_q[i];
+                sdNv += result.nv_q_sd[i];
+                litTc += result.tc;
+                meanTc += result.tc_q[i];
+                sdTc += result.tc_q_sd[i];
+                meanFc += result.fc_q[i];
+                if (result.fc_q_sd[i] > 0) {
+                    sdFc += (result.fc_q_sd[i] / result.fc_q[i]);
                 }
             }
+            litNv /= resultMap.values().size();
+            litTc /= resultMap.values().size();
             meanNv /= resultMap.values().size();
             sdNv /= resultMap.values().size();
             meanTc /= resultMap.values().size();
             sdTc /= resultMap.values().size();
             meanFc /= resultMap.values().size();
             sdFc /= resultMap.values().size();
+
+            sdNv = sdNv / meanNv;
+            meanNv = MathUtils.gap(litNv, meanNv);
+            sdTc = sdTc / meanTc;
+            meanTc = MathUtils.gap(litTc, meanTc);
+
             System.out.printf(Locale.US, "%s, NV = %.1f%%±%.1f%%, TC = %.1f%%±%.1f%%, FC = %.1f%%±%.1f%%\n",
-                    InstanceUtils.dynamic_urgency_suffixes[i], meanNv, sdNv, meanTc, sdTc, meanFc, sdFc);
+                    InstanceUtils.dynamic_apriori_suffixes[i], meanNv * 100.0, sdNv * 100.0, meanTc * 100.0, sdTc * 100.0, meanFc * 100.0, sdFc * 100.0);
         }
     }
 
