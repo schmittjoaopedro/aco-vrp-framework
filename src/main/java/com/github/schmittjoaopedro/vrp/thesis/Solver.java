@@ -1,8 +1,11 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.CostMinimizer;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.Statistic;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.VehicleMinimizer;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.alns.CostMinimizerALNS;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.alns.VehicleMinimizerALNS;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.lns.CostMinimizerLNS;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.lns.VehicleMinimizerLNS;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -35,9 +38,9 @@ public class Solver {
 
     private int maxIterations;
 
-    private VehicleMinimizer vehicleMinimizer;
+    private LNSOptimizer vehicleMinimizer;
 
-    private CostMinimizer costMinimizer;
+    private LNSOptimizer costMinimizer;
 
     private Solution solutionBest;
 
@@ -59,23 +62,47 @@ public class Solver {
 
     private boolean logThreadInfo;
 
-    public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc) {
-        this(instance, random, maxIterations, 90, minimizeNv, minimizeTc);
+    public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc, LNSOptimizer.Type type) {
+        this(instance, random, maxIterations, 90, minimizeNv, minimizeTc, type);
     }
 
-    public Solver(Instance instance, Random random, int maxIterations, double setupTime, boolean minimizeNv, boolean minimizeTc) {
+    public Solver(Instance instance, Random random, int maxIterations, double setupTime, boolean minimizeNv, boolean minimizeTc, LNSOptimizer.Type type) {
         this.instance = instance;
         this.maxIterations = maxIterations;
-        // Create vehicle minimizer
-        if (minimizeNv == true) {
-            vehicleMinimizer = new VehicleMinimizer(instance, random);
-        }
-        // Create cost minimizer
-        if (minimizeTc == true) {
-            costMinimizer = new CostMinimizer(instance, random);
-        }
+        createVehicleMinimizer(instance, random, minimizeNv, type);
+        createCostMinimizer(instance, random, minimizeTc, type);
         callCenter = new CallCenter(instance, setupTime);
         statistic = new Statistic(maxIterations, instance);
+    }
+
+    private void createCostMinimizer(Instance instance, Random random, boolean minimizeTc, LNSOptimizer.Type type) {
+        if (minimizeTc == true) {
+            switch (type) {
+                case ALNS:
+                    costMinimizer = new CostMinimizerALNS(instance, random);
+                    break;
+                case LNS:
+                    costMinimizer = new CostMinimizerLNS(instance, random);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid algorithm");
+            }
+        }
+    }
+
+    private void createVehicleMinimizer(Instance instance, Random random, boolean minimizeNv, LNSOptimizer.Type type) {
+        if (minimizeNv == true) {
+            switch (type) {
+                case ALNS:
+                    vehicleMinimizer = new VehicleMinimizerALNS(instance, random);
+                    break;
+                case LNS:
+                    vehicleMinimizer = new VehicleMinimizerLNS(instance, random);
+                    break;
+                default:
+                    throw new RuntimeException("Invalid algorithm");
+            }
+        }
     }
 
     public void init() {
@@ -106,8 +133,8 @@ public class Solver {
                 if (instance.numRequests > 0) {
                     // Optimize solutions
                     executeOptimization();
-                    Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
-                    Solution feasibleTC = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
+                    Solution feasibleNV = Optional.ofNullable(vehicleMinimizer).map(LNSOptimizer::getFeasibleSolutionBest).orElse(null);
+                    Solution feasibleTC = Optional.ofNullable(costMinimizer).map(LNSOptimizer::getFeasibleSolutionBest).orElse(null);
                     // Use best solution from both NV and TC
                     Optional.of(getBestSolution(feasibleNV, feasibleTC)).ifPresent(best -> updateBest(best, iteration));
                     // Synchronize algorithm objectives
@@ -214,8 +241,8 @@ public class Solver {
             Optional.ofNullable(vehicleMinimizer).ifPresent(vm -> vm.init(solutionBest));
             Optional.ofNullable(costMinimizer).ifPresent(cm -> cm.init(solutionBest));
             // Create initial solution for both
-            Solution initNv = Optional.ofNullable(vehicleMinimizer).map(VehicleMinimizer::getFeasibleSolutionBest).orElse(null);
-            Solution initTc = Optional.ofNullable(costMinimizer).map(CostMinimizer::getFeasibleSolutionBest).orElse(null);
+            Solution initNv = Optional.ofNullable(vehicleMinimizer).map(LNSOptimizer::getFeasibleSolutionBest).orElse(null);
+            Solution initTc = Optional.ofNullable(costMinimizer).map(LNSOptimizer::getFeasibleSolutionBest).orElse(null);
             // Select best initial solution
             solutionBest = getBestSolution(initNv, initTc);
             instance.solutionEvaluation(solutionBest);

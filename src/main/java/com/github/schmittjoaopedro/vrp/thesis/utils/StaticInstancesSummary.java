@@ -10,6 +10,24 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * GAP BSF
+ *
+ * 100 - NV 0.00%, TC = 0.02%
+ * 200 - NV 0.67%, TC = -1.50%
+ * 400 - NV 1.68%, TC = -2.74%
+ * 600 - NV 1.91%, TC = -2.35%
+ * 800 - NV 1.75%, TC = -1.32%
+ * 1000 - NV 2.10%, TC = -1.10%
+ *
+ * GAP Average
+ * 100 - NV 0.03% ±0.44%, TC = 0.18% ±0.26%
+ * 200 - NV 1.28% ±0.64%, TC = -1.37% ±1.30%
+ * 400 - NV 2.84% ±0.89%, TC = -3.00% ±2.06%
+ * 600 - NV 2.93% ±1.17%, TC = -2.08% ±2.96%
+ * 800 - NV 3.19% ±1.50%, TC = -2.73% ±2.68%
+ * 1000 - NV 3.37% ±1.31%, TC = -1.73% ±2.49%
+ */
 public class StaticInstancesSummary {
 
     private static final String BASE_LIT_DIR = "C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdptw\\";
@@ -22,15 +40,15 @@ public class StaticInstancesSummary {
     private static final String[] PROBLEM_SIZES = {"100", "200", "400", "600", "800", "1000"};
 
     public static void main(String[] args) throws Exception {
-        //loadLiteratureResults();
+        loadLiteratureResults();
         //printBestSoFarResults();
         //printBsfByProblemType();
         //printAverageResults();
         //printBestSoFarGap();
-        //printAverageGap();
+        printAverageGap();
         //printGapByDistributionType();
-        //printGapByTimeWindowsSize();
-        printIterationCurvesByProblemSize();
+        ////printGapByTimeWindowsSize();
+        //printIterationCurvesByProblemSize();
         //printIterationCurvesByProblemType();
         //printCompactedResultsByProblemSizeAndGeographicalDistributionType();
         //printIterationTotalCostCurvesByProblemType();

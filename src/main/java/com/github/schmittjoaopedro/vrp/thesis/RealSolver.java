@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,7 @@ public class RealSolver {
     public void optimize() {
         algTime = System.currentTimeMillis();
         Instance instance = getInstance();
-        Solver solver = new Solver(instance, new Random(1), 10000, true, true);
+        Solver solver = new Solver(instance, new Random(1), 10000, true, true, LNSOptimizer.Type.ALNS);
         solver.setPrintConsole(true);
         solver.disableCallCenter();
         solver.init();

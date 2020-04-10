@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.Solver;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -25,7 +26,7 @@ public class StaticNvTcMinimizerTest {
     @Test
     public void minimizeNvAndTc_lc1_2_3_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_3.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -108,7 +109,7 @@ public class StaticNvTcMinimizerTest {
     @Test
     public void minimizeNvAndTc_lr1_2_3_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_3.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -187,7 +188,7 @@ public class StaticNvTcMinimizerTest {
     @Test
     public void minimizeNvAndTc_lrc1_2_3_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lrc1_2_3.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();

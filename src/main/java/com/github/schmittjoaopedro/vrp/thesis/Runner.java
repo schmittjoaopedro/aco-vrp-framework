@@ -1,5 +1,6 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.StatisticCalculator;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
@@ -98,7 +99,7 @@ public class Runner {
                                                   boolean logThreadInfo) throws Exception {
         Instance instance = Reader.getInstance(instanceFile);
         long seed = (long) (1000.0 * Math.random());
-        Solver solver = new Solver(instance, new Random(seed), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(seed), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.setPrintConsole(false);
         solver.enableStatisticsCollector();
         if (logThreadInfo) {

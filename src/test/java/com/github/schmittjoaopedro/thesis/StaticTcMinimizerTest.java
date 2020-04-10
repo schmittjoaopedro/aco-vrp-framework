@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.Solver;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -24,7 +25,7 @@ public class StaticTcMinimizerTest {
     @Test
     public void minimizeCost_initial_solution() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         Solution solutionBest = solver.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
@@ -36,7 +37,7 @@ public class StaticTcMinimizerTest {
     @Test
     public void minimizeCost_lc1_2_3_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lc1_2_3.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, false, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, false, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -78,7 +79,7 @@ public class StaticTcMinimizerTest {
     @Test
     public void minimizeCost_lr1_2_10_Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw200Directory, "lr1_2_10.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, false, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, false, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();

@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.Solver;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -24,7 +25,7 @@ public class DynamicSolverTest {
     @Test
     public void dpdptw_lc103_a_0_1_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_a_0.1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -137,7 +138,7 @@ public class DynamicSolverTest {
     @Test
     public void dpdptw_lc103_a_0_5_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_a_0.5.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -302,7 +303,7 @@ public class DynamicSolverTest {
     @Test
     public void dpdptw_lc103_q_0_0_1_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_q_0_0.1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -488,7 +489,7 @@ public class DynamicSolverTest {
     @Test
     public void dpdptw_lc103_q_0_0_5_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_q_0_0.5.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();

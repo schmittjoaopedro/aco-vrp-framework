@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.Solver;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -30,7 +31,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lc103_a_0_1_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_a_0.1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");
@@ -67,7 +68,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lc103_a_0_5_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_a_0.5.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");
@@ -172,7 +173,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lc103_q_0_0_1_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_q_0_0.1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");
@@ -283,7 +284,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lc103_q_0_0_5_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc103_q_0_0.5.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");
@@ -349,7 +350,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lr1_4_8_q_0_0_1_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw400Directory, "LR1_4_8_q_0_0.1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");
@@ -764,7 +765,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lc104_a_1_0_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw100Directory, "lc104_a_1.0.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");
@@ -882,7 +883,7 @@ public class VehiclesDynamicSolverTest {
     @Test
     public void dpdptw_lrc2_8_7_q_0_1_test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(dpdptw800Directory, "LRC2_8_7_q_0_0.1.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.enableVehicleControlCenter();
         solver.enableLocalSearch();
         //solver.enablePrintOperation("C:\\Temp\\route-tracker\\print");

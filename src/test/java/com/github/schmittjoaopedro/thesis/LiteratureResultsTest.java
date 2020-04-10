@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.Solver;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -25,7 +26,7 @@ public class LiteratureResultsTest {
     @Test
     public void lc1Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lc103.txt").toFile());
-        Solver solver = new Solver(instance, new Random(5), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(5), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -46,7 +47,7 @@ public class LiteratureResultsTest {
     @Test
     public void lc2Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lc205.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -62,7 +63,7 @@ public class LiteratureResultsTest {
     @Test
     public void lr1Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lr112.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -84,7 +85,7 @@ public class LiteratureResultsTest {
     @Test
     public void lr2Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lr209.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -100,7 +101,7 @@ public class LiteratureResultsTest {
     @Test
     public void lrc1Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lrc105.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
@@ -126,7 +127,7 @@ public class LiteratureResultsTest {
     @Test
     public void lrc2Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lrc203.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true);
+        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
         solver.init();
         solver.run();
         Solution solutionBest = solver.getSolutionBest();
