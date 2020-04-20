@@ -1,24 +1,24 @@
 package com.github.schmittjoaopedro.vrp.pdptw.model;
 
 public class VehicleProperty {
-	private int TOTALVEHICLES;
-	private int CAPACITY;
-	private int SPEED;
-	
-	public VehicleProperty(int totalVehicles,int capacity) {					// for the moment, only capacity is used
-		this.TOTALVEHICLES =  totalVehicles;
-		this.CAPACITY = capacity;
-	}
+    private int TOTALVEHICLES;
+    private int CAPACITY;
+    private int SPEED;
 
-	public int getTotalVehicles() {
-		return TOTALVEHICLES;
-	}
+    public VehicleProperty(int totalVehicles, int capacity) { // for the moment, only capacity is used
+        this.TOTALVEHICLES = totalVehicles;
+        this.CAPACITY = capacity;
+    }
 
-	public int getCapacity() {
-		return CAPACITY;
-	}
+    public int getTotalVehicles() {
+        return TOTALVEHICLES;
+    }
 
-	public int getSpeed() {
-		return SPEED;
-	}
+    public int getCapacity() {
+        return CAPACITY;
+    }
+
+    public int getSpeed() {
+        return SPEED;
+    }
 }
