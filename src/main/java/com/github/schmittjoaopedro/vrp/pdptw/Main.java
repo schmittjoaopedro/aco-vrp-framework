@@ -48,6 +48,7 @@ public class Main {
                     DTTable.getSingleInstance().put(k, v);
                 }
             }
+            DTTable.getSingleInstance().compile();
 
             customersBR.close();
             customersInput.close();
