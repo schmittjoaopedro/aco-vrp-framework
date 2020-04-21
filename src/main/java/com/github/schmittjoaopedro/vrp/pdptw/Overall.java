@@ -26,6 +26,7 @@ public class Overall {
         while (gNoImpro < K) {
             Solution s = Sb;
             Solution Sb_temp = m.tabu_Embedded_SA(s);
+            System.out.println("gNoImpro = " + gNoImpro);
             // If Cost(Sb') < Cost(Sb) Then
             if (compareSolutionCost(Sb_temp.cost(), currentBestCost) > 0) {
                 currentBestCost = Sb_temp.cost();

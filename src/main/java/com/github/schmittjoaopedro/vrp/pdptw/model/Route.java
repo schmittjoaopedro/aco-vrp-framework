@@ -95,7 +95,8 @@ public class Route {
         if (pInsert > dInsert) {
             return false;
         }
-        Route result = this.clone();
+
+        /*Route result = this.clone();
         result.insertAt(dInsert, delivery);
         result.insertAt(pInsert, pickup);
         // capacity constraint
@@ -128,7 +129,57 @@ public class Route {
         if (arrivalTime > Customers.getSingleInstance().get(0).getL_time()) {
             return false;
         }
+        return true;*/
+        dInsert++;
+        int size = size() + 2;
+
+        // capacity constraint
+        int currentCapacity = 0;
+        for (int i = 0; i < size; i++) {
+            currentCapacity += getNode(i, pInsert, dInsert, pickup, delivery).getDemand();
+            if (currentCapacity > vp.getCapacity()) {
+                return false;
+            }
+        }
+        // time window constraint
+        double finishServiceTime = 0;
+        double arrivalTime;
+        Customer prev, curr;
+        for (int i = 0; i < size; i++) {
+            curr = getNode(i, pInsert, dInsert, pickup, delivery);
+            if (i == 0) {
+                arrivalTime = DTTable.getSingleInstance().getDTForDepot(curr.getID()).getTime();
+                finishServiceTime = Math.max(arrivalTime, curr.getE_time()) + curr.getService_time();
+            } else {
+                prev = getNode(i - 1, pInsert, dInsert, pickup, delivery);
+                arrivalTime = finishServiceTime + DTTable.getSingleInstance().get(new Key(prev.getID(), curr.getID())).getTime();
+                finishServiceTime = Math.max(arrivalTime, curr.getE_time()) + curr.getService_time();
+            }
+            if (arrivalTime > curr.getL_time()) {
+                return false;
+            }
+        }
+        // check depot time window
+        curr = getNode(size - 1, pInsert, dInsert, pickup, delivery);
+        arrivalTime = finishServiceTime + DTTable.getSingleInstance().getDTForDepot(curr.getID()).getTime();
+        if (arrivalTime > Customers.getSingleInstance().get(0).getL_time()) {
+            return false;
+        }
         return true;
+    }
+
+    private Customer getNode(int pos, int pIdx, int dIdx, Customer pickup, Customer delivery) {
+        if (pos < pIdx) {
+            return get(pos);
+        } else if (pos == pIdx) {
+            return pickup;
+        } else if (pos < dIdx) {
+            return get(pos - 1);
+        } else if (pos == dIdx) {
+            return delivery;
+        } else {
+            return get(pos - 2);
+        }
     }
 
 }
