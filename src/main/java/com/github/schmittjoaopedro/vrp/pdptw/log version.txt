@@ -1,0 +1,2042 @@
+"C:\Program Files\Java\jdk-11.0.4\bin\java.exe" "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.2\lib\idea_rt.jar=65520:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.2\bin" -Dfile.encoding=UTF-8 -classpath "C:\projects\aco-vrp-framework\target\classes;C:\programas\or-tools-vs2019\lib\com.google.ortools.jar;C:\programas\or-tools-vs2019\lib\protobuf.jar;C:\Users\1513 MX5-7\.m2\repository\org\json\json\20190722\json-20190722.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\commons\commons-csv\1.7\commons-csv-1.7.jar;C:\Users\1513 MX5-7\.m2\repository\commons-io\commons-io\2.5\commons-io-2.5.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\commons\commons-lang3\3.7\commons-lang3-3.7.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-scenario-util\4.4.6\rinsim-scenario-util-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-pdptw\4.4.6\rinsim-pdptw-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-core\4.4.6\rinsim-core-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\net\openhft\affinity\3.0.1\affinity-3.0.1.jar;C:\Users\1513 MX5-7\.m2\repository\net\java\dev\jna\jna\4.1.0\jna-4.1.0.jar;C:\Users\1513 MX5-7\.m2\repository\net\java\dev\jna\jna-platform\4.1.0\jna-platform-4.1.0.jar;C:\Users\1513 MX5-7\.m2\repository\org\kohsuke\jetbrains\annotations\9.0\annotations-9.0.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\guava\guava\24.1-android\guava-24.1-android.jar;C:\Users\1513 MX5-7\.m2\repository\org\checkerframework\checker-compat-qual\2.0.0\checker-compat-qual-2.0.0.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\errorprone\error_prone_annotations\2.1.3\error_prone_annotations-2.1.3.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\j2objc\j2objc-annotations\1.1\j2objc-annotations-1.1.jar;C:\Users\1513 MX5-7\.m2\repository\org\codehaus\mojo\animal-sniffer-annotations\1.14\animal-sniffer-annotations-1.14.jar;C:\Users\1513 MX5-7\.m2\repository\org\slf4j\slf4j-api\1.7.21\slf4j-api-1.7.21.jar;C:\Users\1513 MX5-7\.m2\repository\joda-time\joda-time\2.10.5\joda-time-2.10.5.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\code\gson\gson\2.8.0\gson-2.8.0.jar;C:\Users\1513 MX5-7\.m2\repository\org\jscience\jscience\4.3.1\jscience-4.3.1.jar;C:\Users\1513 MX5-7\.m2\repository\org\javolution\javolution\5.2.3\javolution-5.2.3.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-event\4.4.6\rinsim-event-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\guava\guava-testlib\24.1-android\guava-testlib-24.1-android.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-ui\4.4.6\rinsim-ui-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\org\eclipse\swt\org.eclipse.swt.win32.win32.x86_64\4.5.2\org.eclipse.swt.win32.win32.x86_64-4.5.2.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-test-util\4.4.6\rinsim-test-util-4.4.6-tests.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-fsm\4.4.6\rinsim-fsm-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-geom\4.4.6\rinsim-geom-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-event\4.4.6\rinsim-event-4.4.6-tests.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-cli\4.4.6\rinsim-cli-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-io\4.4.6\rinsim-io-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\github\rinde\rinsim-scenario\4.4.6\rinsim-scenario-4.4.6.jar;C:\Users\1513 MX5-7\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\1513 MX5-7\.m2\repository\commons-cli\commons-cli\1.4\commons-cli-1.4.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\logging\log4j\log4j-core\2.12.1\log4j-core-2.12.1.jar;C:\Users\1513 MX5-7\.m2\repository\org\apache\logging\log4j\log4j-api\2.12.1\log4j-api-2.12.1.jar" com.github.schmittjoaopedro.vrp.pdptw.Main
+Start problem lc101
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+
+Consequence: 
+14 Route 1: 43 42 41 40 44 46 45 48 51 101 50 52 49 47 
+8 Route 2: 57 55 54 53 56 58 60 59 
+10 Route 3: 81 78 104 76 71 70 73 77 79 80 
+8 Route 4: 13 17 18 19 15 16 14 12 
+12 Route 5: 67 65 63 62 74 72 61 64 102 68 66 69 
+10 Route 6: 98 96 95 94 92 93 97 106 100 99 
+10 Route 7: 32 33 31 35 37 38 39 36 105 34 
+10 Route 8: 90 87 86 83 82 84 85 88 89 91 
+12 Route 9: 5 3 7 8 10 11 9 6 4 2 1 75 
+12 Route 10: 20 24 25 27 29 30 28 26 23 103 22 21 
+
+NV: 10 TC: 828.9368669428338 SD: 9828.936866942833 WT: 0.0
+Time: 34.231
+Start problem lc102
+gNoImpro = 0
+better NV: 10 TC: 829.63 SD: 9829.63 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+
+Consequence: 
+14 Route 1: 43 42 41 40 44 46 45 48 51 50 106 52 49 47 
+10 Route 2: 81 78 105 76 71 70 73 77 79 80 
+12 Route 3: 67 65 63 62 74 72 61 64 68 102 66 69 
+12 Route 4: 20 24 25 27 29 30 28 103 26 23 22 21 
+8 Route 5: 57 55 54 53 56 58 60 59 
+10 Route 6: 90 87 86 83 82 84 85 88 89 91 
+10 Route 7: 98 96 95 94 92 93 97 101 100 99 
+12 Route 8: 5 3 7 8 10 11 9 6 4 2 1 75 
+10 Route 9: 32 33 31 35 37 38 39 104 36 34 
+8 Route 10: 13 17 18 19 15 16 14 12 
+
+NV: 10 TC: 828.9368669428337 SD: 9828.936866942831 WT: 0.0
+Time: 57.588
+Start problem lc103
+gNoImpro = 0
+better NV: 10 TC: 864.77 SD: 10035.08 WT: 170.307394
+gNoImpro = 0
+better NV: 10 TC: 856.79 SD: 10043.05 WT: 186.253569
+gNoImpro = 0
+better NV: 10 TC: 848.13 SD: 9905.87 WT: 57.738851
+gNoImpro = 0
+better NV: 10 TC: 842.04 SD: 9842.04 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 832.23 SD: 9832.23 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.06 SD: 9828.06 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.06 SD: 9828.06 WT: 0.0
+
+Consequence: 
+14 Route 1: 43 42 41 40 44 46 101 45 48 51 50 52 49 47 
+10 Route 2: 81 78 76 71 70 73 77 79 80 63 
+8 Route 3: 13 17 18 19 15 16 14 12 
+10 Route 4: 98 96 95 94 92 93 102 97 100 99 
+10 Route 5: 90 87 86 83 82 84 85 88 89 91 
+10 Route 6: 67 65 62 74 72 61 64 68 66 69 
+8 Route 7: 57 55 54 53 56 58 60 59 
+12 Route 8: 5 3 7 8 10 11 9 6 4 2 1 75 
+12 Route 9: 20 24 25 27 29 30 28 26 103 23 22 21 
+10 Route 10: 32 33 31 35 104 37 38 39 36 34 
+
+NV: 10 TC: 828.0648821980838 SD: 9828.064882198083 WT: 0.0
+Time: 44.593
+Start problem lc104
+gNoImpro = 0
+better NV: 9 TC: 1206.94 SD: 10250.72 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1108.22 SD: 10151.99 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1099.48 SD: 10143.26 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1096.88 SD: 10205.89 WT: 109.015598
+gNoImpro = 0
+better NV: 9 TC: 1092.59 SD: 10136.37 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1089.17 SD: 10132.95 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1086.77 SD: 10130.55 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1084.64 SD: 10128.42 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1076.06 SD: 10119.84 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1060.97 SD: 10104.75 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1060.97 SD: 10104.75 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1057.31 SD: 10101.09 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1057.31 SD: 10101.09 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1057.31 SD: 10101.09 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1040.72 SD: 10084.5 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1037.49 SD: 10081.27 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1037.49 SD: 10081.27 WT: 43.779645
+gNoImpro = 0
+better NV: 9 TC: 1037.49 SD: 10081.27 WT: 43.779645
+
+Consequence: 
+14 Route 1: 43 42 41 40 44 46 45 48 51 50 52 49 47 105 
+10 Route 2: 67 65 68 62 74 94 97 100 99 69 
+10 Route 3: 90 87 86 83 82 84 85 88 89 91 
+12 Route 4: 5 3 8 92 104 11 9 98 96 95 93 6 
+12 Route 5: 57 55 54 53 56 58 60 59 72 61 64 66 
+10 Route 6: 81 78 76 71 70 73 77 79 80 63 
+14 Route 7: 20 24 101 25 27 29 28 26 22 23 14 102 12 10 
+12 Route 8: 13 17 18 19 15 16 7 4 2 1 75 106 
+12 Route 9: 32 33 103 31 35 37 38 39 36 34 30 21 
+
+NV: 9 TC: 1037.4891459383714 SD: 10081.268791405006 WT: 43.77964546663564
+Time: 125.803
+Start problem lc105
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+
+Consequence: 
+14 Route 1: 43 42 41 40 44 46 45 48 51 50 52 104 49 47 
+10 Route 2: 32 33 31 35 37 38 39 36 34 101 
+12 Route 3: 5 3 7 8 10 11 9 6 4 2 1 75 
+10 Route 4: 90 87 86 83 82 84 85 88 89 91 
+10 Route 5: 81 78 76 71 70 73 77 79 102 80 
+10 Route 6: 98 96 95 94 92 93 97 100 99 105 
+8 Route 7: 57 55 54 53 56 58 60 59 
+12 Route 8: 20 24 25 27 29 30 28 26 23 106 22 21 
+8 Route 9: 13 17 18 19 15 16 14 12 
+12 Route 10: 67 65 103 63 62 74 72 61 64 68 66 69 
+
+NV: 10 TC: 828.9368669428338 SD: 9828.936866942833 WT: 0.0
+Time: 36.287
+Start problem lc106
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+
+Consequence: 
+8 Route 1: 57 55 54 53 56 58 60 59 
+14 Route 2: 43 42 41 40 44 46 45 48 51 50 101 52 49 47 
+8 Route 3: 13 17 18 19 15 16 14 12 
+12 Route 4: 67 65 63 62 74 72 61 64 68 66 103 69 
+10 Route 5: 98 96 95 94 92 93 97 100 106 99 
+12 Route 6: 20 24 25 27 29 30 28 26 23 22 105 21 
+10 Route 7: 81 104 78 76 71 70 73 77 79 80 
+10 Route 8: 32 33 31 35 37 38 39 36 102 34 
+10 Route 9: 90 87 86 83 82 84 85 88 89 91 
+12 Route 10: 5 3 7 8 10 11 9 6 4 2 1 75 
+
+NV: 10 TC: 828.9368669428338 SD: 9828.936866942833 WT: 0.0
+Time: 34.814
+Start problem lc107
+gNoImpro = 0
+better NV: 10 TC: 832.25 SD: 9832.25 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 832.25 SD: 9832.25 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 828.94 SD: 9828.94 WT: 0.0
+
+Consequence: 
+12 Route 1: 5 3 7 8 10 11 9 6 4 2 1 75 
+8 Route 2: 13 17 18 19 15 16 14 12 
+10 Route 3: 98 96 95 94 92 93 97 100 106 99 
+10 Route 4: 90 87 86 83 82 84 85 88 89 91 
+14 Route 5: 43 42 41 40 44 46 45 48 51 50 52 49 47 105 
+12 Route 6: 67 65 63 62 74 72 61 103 64 68 66 69 
+12 Route 7: 20 24 25 27 29 30 28 26 23 102 22 21 
+10 Route 8: 32 33 31 35 37 38 39 101 36 34 
+10 Route 9: 81 104 78 76 71 70 73 77 79 80 
+8 Route 10: 57 55 54 53 56 58 60 59 
+
+NV: 10 TC: 828.9368669428337 SD: 9828.936866942831 WT: 0.0
+Time: 45.445
+Start problem lc108
+gNoImpro = 0
+better NV: 10 TC: 846.66 SD: 9907.27 WT: 60.607293
+gNoImpro = 0
+better NV: 10 TC: 841.43 SD: 9844.22 WT: 2.793444
+gNoImpro = 0
+better NV: 10 TC: 839.27 SD: 9897.08 WT: 57.813849
+gNoImpro = 0
+better NV: 10 TC: 837.95 SD: 9895.76 WT: 57.813849
+gNoImpro = 0
+better NV: 10 TC: 837.39 SD: 9837.39 WT: 0.0
+
+Consequence: 
+12 Route 1: 43 57 55 54 53 56 58 60 59 52 49 105 
+10 Route 2: 41 40 42 44 45 46 48 51 50 47 
+10 Route 3: 5 3 7 8 10 11 9 6 4 1 
+12 Route 4: 98 96 95 94 92 93 97 101 100 99 2 75 
+12 Route 5: 20 24 25 27 106 29 30 28 26 23 22 21 
+12 Route 6: 67 65 63 62 74 72 61 64 68 102 66 69 
+8 Route 7: 13 17 18 19 15 16 14 12 
+10 Route 8: 81 78 76 71 70 73 77 79 103 80 
+10 Route 9: 32 33 31 35 37 38 39 104 36 34 
+10 Route 10: 90 87 86 83 82 84 85 88 89 91 
+
+NV: 10 TC: 837.393349865773 SD: 9837.393349865773 WT: 0.0
+Time: 46.356
+Start problem lc109
+gNoImpro = 0
+better NV: 9 TC: 1133.3 SD: 10135.48 WT: 2.184649
+gNoImpro = 0
+better NV: 9 TC: 1131.52 SD: 10131.52 WT: 0.0
+gNoImpro = 0
+better NV: 9 TC: 1129.19 SD: 10129.19 WT: 0.0
+gNoImpro = 0
+better NV: 9 TC: 1128.63 SD: 10131.08 WT: 2.447055
+gNoImpro = 0
+better NV: 9 TC: 1081.32 SD: 10081.32 WT: 0.0
+gNoImpro = 0
+better NV: 9 TC: 1078.15 SD: 10078.15 WT: 0.0
+gNoImpro = 0
+better NV: 9 TC: 1062.52 SD: 10062.52 WT: 0.0
+gNoImpro = 0
+better NV: 9 TC: 1059.24 SD: 10059.24 WT: 0.0
+
+Consequence: 
+12 Route 1: 65 63 74 62 8 10 11 9 6 2 1 75 
+10 Route 2: 5 3 98 95 94 92 93 97 100 99 
+12 Route 3: 20 24 25 30 29 46 51 28 26 23 22 21 
+10 Route 4: 7 13 17 18 19 15 16 14 12 4 
+12 Route 5: 96 104 81 78 76 71 70 73 77 102 79 80 
+12 Route 6: 67 57 55 54 53 56 58 61 64 68 66 69 
+14 Route 7: 32 27 105 33 31 35 37 38 39 36 103 34 52 49 
+12 Route 8: 90 87 86 72 101 83 82 84 85 88 89 91 
+12 Route 9: 43 42 41 40 44 45 60 59 48 106 50 47 
+
+NV: 9 TC: 1059.244094600685 SD: 10059.244094600685 WT: 0.0
+Time: 57.645
+Start problem lc201
+
+Consequence: 
+36 Route 1: 93 5 75 2 1 99 100 97 92 94 95 98 7 3 4 89 91 88 84 86 83 82 102 85 76 71 70 73 80 79 81 78 77 96 87 90 
+32 Route 2: 67 63 62 74 72 61 64 66 69 68 65 49 55 54 53 56 58 60 59 57 40 44 46 45 51 50 52 47 43 42 41 48 
+34 Route 3: 20 22 24 27 30 29 6 32 33 31 35 37 38 39 36 34 28 26 101 23 18 19 16 14 12 15 17 13 25 9 11 10 8 21 
+
+NV: 3 TC: 591.5565566715014 SD: 9591.556556671501 WT: 0.0
+Time: 213.288
+Start problem lc202
+gNoImpro = 0
+better NV: 3 TC: 683.71 SD: 9683.71 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 679.87 SD: 9679.87 WT: 0.0
+
+Consequence: 
+34 Route 1: 67 63 62 74 72 61 64 66 69 68 65 49 55 54 53 56 58 60 59 57 40 44 46 45 51 50 52 47 43 42 41 48 75 3 
+34 Route 2: 20 22 24 27 30 29 6 32 33 31 102 35 37 38 39 36 34 28 26 23 18 19 16 14 12 15 17 13 25 9 11 10 8 21 
+34 Route 3: 93 5 2 1 98 99 100 101 97 92 95 7 94 4 89 91 88 84 86 83 82 85 76 71 70 73 80 79 81 78 77 96 87 90 
+
+NV: 3 TC: 679.8749847077029 SD: 9679.874984707703 WT: 0.0
+Time: 345.545
+Start problem lc203
+gNoImpro = 0
+better NV: 3 TC: 776.29 SD: 9776.29 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 773.47 SD: 9773.47 WT: 0.0
+
+Consequence: 
+34 Route 1: 29 22 24 27 30 6 31 32 33 34 35 37 38 39 36 28 26 23 18 19 16 14 12 15 17 13 25 9 11 10 102 8 75 3 
+34 Route 2: 67 63 62 74 72 64 66 69 68 65 49 55 54 53 56 58 60 59 57 40 44 46 51 45 20 21 61 50 42 41 43 47 52 48 
+34 Route 3: 93 5 2 1 98 99 100 101 97 92 95 7 94 4 89 91 88 86 84 83 82 85 76 71 70 73 80 79 81 78 77 96 87 90 
+
+NV: 3 TC: 773.4691351558865 SD: 9773.469135155887 WT: 0.0
+Time: 382.506
+Start problem lc204
+gNoImpro = 0
+better NV: 4 TC: 758.62 SD: 14730.42 WT: 4971.794443
+gNoImpro = 0
+better NV: 3 TC: 876.24 SD: 9876.24 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 868.98 SD: 9868.98 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 867.36 SD: 9867.36 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 863.7 SD: 9863.7 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 858.13 SD: 9858.13 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 847.85 SD: 9847.85 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 845.73 SD: 9845.73 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 833.79 SD: 9833.79 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 817.29 SD: 9817.29 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 797.72 SD: 9797.72 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 797.06 SD: 9797.06 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 795.87 SD: 9795.87 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 781.46 SD: 9781.46 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 780.8 SD: 9780.8 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 777.81 SD: 9777.81 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 776.34 SD: 9776.34 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 775.68 SD: 9775.68 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 772.99 SD: 9772.99 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 772.33 SD: 9772.33 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 772.13 SD: 9772.13 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 769.19 SD: 9769.19 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 768.41 SD: 9768.41 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 765.34 SD: 9765.34 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 762.04 SD: 9762.04 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 760.48 SD: 9760.48 WT: 0.0
+
+Consequence: 
+34 Route 1: 67 63 62 74 66 72 61 64 69 68 65 49 55 54 53 56 58 60 59 57 40 44 46 43 52 47 42 41 45 51 50 48 89 96 
+34 Route 2: 22 24 20 27 30 29 6 32 33 31 35 37 38 39 36 34 28 26 101 23 18 19 14 16 17 15 12 13 25 9 11 10 8 21 
+34 Route 3: 93 5 75 2 99 1 100 97 92 3 94 95 98 7 4 91 88 83 84 90 82 102 85 71 76 70 73 79 80 81 78 77 86 87 
+
+NV: 3 TC: 760.4803439780987 SD: 9760.480343978099 WT: 0.0
+Time: 1858.167
+Start problem lc205
+gNoImpro = 0
+better NV: 3 TC: 765.75 SD: 9765.75 WT: 0.0
+
+Consequence: 
+36 Route 1: 93 5 75 2 1 99 100 97 92 94 95 98 7 3 4 89 91 88 86 84 83 82 85 76 71 70 73 80 79 81 102 78 77 96 87 90 
+32 Route 2: 22 74 72 62 61 66 64 69 68 65 49 39 55 54 53 56 58 60 59 57 40 44 46 45 51 50 52 47 43 42 41 48 
+34 Route 3: 67 63 20 24 27 30 29 6 32 33 31 35 37 38 36 34 28 26 23 18 19 16 101 14 17 12 15 13 9 25 11 10 8 21 
+
+NV: 3 TC: 765.7462150963299 SD: 9765.74621509633 WT: 0.0
+Time: 230.615
+Start problem lc206
+gNoImpro = 0
+better NV: 3 TC: 684.51 SD: 9684.51 WT: 0.0
+gNoImpro = 0
+better NV: 3 TC: 682.85 SD: 9682.85 WT: 0.0
+
+Consequence: 
+34 Route 1: 20 67 63 62 74 72 61 64 66 69 68 65 49 55 54 53 56 58 60 59 57 40 44 46 45 51 50 52 47 43 48 8 102 10 
+32 Route 2: 22 24 27 30 29 6 32 33 31 35 38 37 39 36 34 28 26 23 18 19 16 14 15 17 13 12 25 9 11 21 42 41 
+36 Route 3: 93 5 75 2 1 99 100 97 92 94 95 98 7 3 4 89 91 88 101 86 84 83 82 85 76 71 70 73 80 79 81 78 77 87 96 90 
+
+NV: 3 TC: 682.8495777602129 SD: 9682.849577760213 WT: 0.0
+Time: 333.285
+Start problem lc207
+gNoImpro = 0
+better NV: 3 TC: 602.25 SD: 9602.25 WT: 0.0
+
+Consequence: 
+32 Route 1: 67 63 74 62 66 69 72 61 64 68 65 49 55 54 53 56 58 60 59 57 40 44 46 51 50 52 45 42 41 47 43 48 
+34 Route 2: 20 22 24 27 30 29 6 32 33 31 35 37 38 39 36 34 28 26 23 17 18 19 101 16 14 12 15 13 9 25 11 10 8 21 
+36 Route 3: 93 5 75 2 1 99 100 97 92 94 95 98 7 3 4 89 91 88 86 84 83 82 85 76 71 70 73 80 79 81 102 78 77 96 87 90 
+
+NV: 3 TC: 602.2540138959894 SD: 9602.254013895988 WT: 0.0
+Time: 385.71
+Start problem lc208
+gNoImpro = 0
+better NV: 3 TC: 627.01 SD: 9681.84 WT: 54.833971
+gNoImpro = 0
+better NV: 3 TC: 625.94 SD: 9690.23 WT: 64.285654
+
+Consequence: 
+32 Route 1: 67 63 72 64 66 62 74 61 69 68 65 49 55 54 60 53 56 58 59 57 40 44 46 51 50 52 45 42 41 47 43 48 
+34 Route 2: 20 22 24 27 30 29 6 32 33 31 35 38 37 39 36 34 28 26 23 18 17 19 101 16 14 12 15 13 9 25 10 11 8 21 
+36 Route 3: 93 5 75 2 1 99 100 97 92 94 95 98 7 3 4 89 91 88 86 84 83 82 85 76 71 70 73 80 79 81 102 78 77 96 87 90 
+
+NV: 3 TC: 625.9413055572638 SD: 9690.226959637086 WT: 64.285654079821
+Time: 440.839
+Start problem lr101
+gNoImpro = 0
+better NV: 19 TC: 1650.8 SD: 4669.0 WT: 2018.204618
+
+Consequence: 
+6 Route 1: 45 82 18 84 60 89 
+2 Route 2: 52 6 
+6 Route 3: 95 98 16 86 91 100 
+4 Route 4: 59 99 94 96 
+4 Route 5: 63 64 49 48 
+6 Route 6: 39 23 104 67 55 25 
+6 Route 7: 65 71 81 50 68 103 
+6 Route 8: 14 44 105 38 43 13 
+6 Route 9: 36 47 19 8 46 17 
+6 Route 10: 62 11 90 20 32 70 
+6 Route 11: 33 29 78 34 35 77 
+6 Route 12: 30 51 101 9 66 1 
+6 Route 13: 72 75 22 74 102 58 
+6 Route 14: 2 21 73 41 56 4 
+6 Route 15: 5 83 61 85 37 93 
+8 Route 16: 27 69 76 79 3 54 24 80 
+6 Route 17: 92 42 15 87 57 97 
+4 Route 18: 31 88 7 10 
+6 Route 19: 28 12 40 53 106 26 
+
+NV: 19 TC: 1650.7992395710685 SD: 4669.003857744826 WT: 2018.204618173758
+Time: 13.892
+Start problem lr102
+gNoImpro = 0
+better NV: 17 TC: 1595.42 SD: 3825.71 WT: 1230.288545
+gNoImpro = 0
+better NV: 17 TC: 1595.42 SD: 3825.71 WT: 1230.288545
+gNoImpro = 0
+better NV: 17 TC: 1541.84 SD: 3931.22 WT: 1389.377574
+gNoImpro = 0
+better NV: 17 TC: 1525.29 SD: 4034.73 WT: 1509.440871
+gNoImpro = 0
+better NV: 17 TC: 1521.51 SD: 4055.9 WT: 1534.383669
+gNoImpro = 0
+better NV: 17 TC: 1521.51 SD: 4055.9 WT: 1534.383669
+gNoImpro = 0
+better NV: 17 TC: 1514.47 SD: 4052.31 WT: 1537.8446
+gNoImpro = 0
+better NV: 17 TC: 1513.73 SD: 4052.63 WT: 1538.902045
+gNoImpro = 0
+better NV: 17 TC: 1513.73 SD: 4052.63 WT: 1538.902045
+
+Consequence: 
+4 Route 1: 40 53 54 80 
+6 Route 2: 14 44 38 43 2 58 
+4 Route 3: 94 96 99 6 
+8 Route 4: 73 22 103 75 56 4 25 12 
+8 Route 5: 50 33 30 51 9 66 108 1 
+6 Route 6: 27 101 69 76 79 68 
+8 Route 7: 28 29 78 34 35 3 106 77 
+4 Route 8: 87 57 97 13 
+8 Route 9: 52 7 11 19 49 48 105 82 
+8 Route 10: 83 45 61 84 5 60 107 89 
+8 Route 11: 92 98 85 16 86 91 100 37 
+8 Route 12: 62 88 8 46 17 93 59 102 
+6 Route 13: 95 42 15 41 74 21 
+4 Route 14: 36 104 47 18 
+6 Route 15: 63 64 90 10 109 31 
+8 Route 16: 72 39 23 67 110 55 24 26 
+6 Route 17: 65 71 81 20 32 70 
+
+NV: 17 TC: 1513.725221382717 SD: 4052.6272659505535 WT: 1538.9020445678366
+Time: 32.263
+Start problem lr103
+gNoImpro = 0
+better NV: 13 TC: 1351.29 SD: 3072.87 WT: 721.577301
+gNoImpro = 0
+better NV: 13 TC: 1351.23 SD: 3008.54 WT: 657.307322
+gNoImpro = 0
+better NV: 13 TC: 1345.86 SD: 3018.09 WT: 672.230657
+gNoImpro = 0
+better NV: 13 TC: 1334.95 SD: 3010.8 WT: 675.848087
+gNoImpro = 0
+better NV: 13 TC: 1334.95 SD: 3010.8 WT: 675.848087
+gNoImpro = 0
+better NV: 13 TC: 1331.72 SD: 3027.39 WT: 695.670254
+gNoImpro = 0
+better NV: 13 TC: 1331.14 SD: 3039.67 WT: 708.5275
+gNoImpro = 0
+better NV: 13 TC: 1327.22 SD: 3019.47 WT: 692.251795
+gNoImpro = 0
+better NV: 13 TC: 1327.22 SD: 3019.47 WT: 692.251795
+gNoImpro = 0
+better NV: 13 TC: 1327.22 SD: 3019.47 WT: 692.251795
+gNoImpro = 0
+better NV: 13 TC: 1312.32 SD: 3054.43 WT: 742.106061
+gNoImpro = 0
+better NV: 13 TC: 1308.98 SD: 3056.83 WT: 747.847024
+gNoImpro = 0
+better NV: 13 TC: 1308.98 SD: 3056.83 WT: 747.847024
+gNoImpro = 0
+better NV: 13 TC: 1303.43 SD: 3138.62 WT: 835.182729
+gNoImpro = 0
+better NV: 13 TC: 1303.43 SD: 3138.62 WT: 835.182729
+
+Consequence: 
+6 Route 1: 40 53 101 12 68 80 
+8 Route 2: 27 69 30 9 66 20 51 1 
+10 Route 3: 42 43 15 57 41 74 72 73 21 58 
+8 Route 4: 2 22 75 56 4 25 54 104 
+12 Route 5: 92 98 14 44 38 86 16 61 85 91 100 37 
+6 Route 6: 60 45 83 5 99 6 
+8 Route 7: 52 62 88 103 84 17 93 59 
+6 Route 8: 94 96 95 97 87 13 
+10 Route 9: 7 19 11 8 46 47 48 82 18 89 
+8 Route 10: 71 65 78 81 34 35 77 28 
+6 Route 11: 50 33 76 79 10 31 
+8 Route 12: 26 39 23 67 55 24 29 3 
+8 Route 13: 36 64 49 63 102 90 32 70 
+
+NV: 13 TC: 1303.4342227137663 SD: 3138.616952083108 WT: 835.1827293693417
+Time: 45.24
+Start problem lr104
+gNoImpro = 0
+better NV: 12 TC: 1227.14 SD: 2432.86 WT: 205.721978
+gNoImpro = 0
+better NV: 11 TC: 1172.07 SD: 2328.56 WT: 156.486889
+gNoImpro = 0
+better NV: 10 TC: 1094.05 SD: 2201.79 WT: 107.738584
+gNoImpro = 0
+better NV: 10 TC: 1079.91 SD: 2165.13 WT: 85.219225
+gNoImpro = 0
+better NV: 10 TC: 1074.42 SD: 2159.64 WT: 85.219225
+gNoImpro = 0
+better NV: 10 TC: 1073.78 SD: 2159.0 WT: 85.219225
+gNoImpro = 0
+better NV: 10 TC: 1071.31 SD: 2156.53 WT: 85.219225
+gNoImpro = 0
+better NV: 10 TC: 1066.81 SD: 2186.9 WT: 120.098345
+gNoImpro = 0
+better NV: 9 TC: 1015.84 SD: 2017.63 WT: 1.791163
+
+Consequence: 
+12 Route 1: 27 104 52 88 62 11 64 63 90 32 10 31 
+12 Route 2: 12 80 68 24 29 79 78 34 81 33 77 3 
+10 Route 3: 18 82 48 46 8 47 36 49 19 7 
+10 Route 4: 70 30 20 66 9 35 65 71 51 50 
+14 Route 5: 6 94 96 59 93 101 99 84 17 45 83 5 60 89 
+12 Route 6: 28 1 69 76 53 26 40 102 13 97 95 58 
+12 Route 7: 42 43 15 57 87 2 73 72 74 22 103 41 
+12 Route 8: 92 98 14 44 38 86 16 61 85 91 100 37 
+10 Route 9: 21 75 56 23 67 39 55 4 25 54 
+
+NV: 9 TC: 1015.8361219936152 SD: 2017.6272845620151 WT: 1.7911625683999262
+Time: 51.583
+Start problem lr105
+gNoImpro = 0
+better NV: 14 TC: 1389.43 SD: 2706.87 WT: 317.431136
+gNoImpro = 0
+better NV: 14 TC: 1389.43 SD: 2706.87 WT: 317.431136
+gNoImpro = 0
+better NV: 14 TC: 1384.05 SD: 2684.79 WT: 300.738001
+gNoImpro = 0
+better NV: 14 TC: 1377.11 SD: 2691.77 WT: 314.655844
+
+Consequence: 
+8 Route 1: 42 14 44 38 86 37 97 13 
+8 Route 2: 95 92 98 99 94 6 96 106 
+8 Route 3: 2 15 57 87 43 100 91 93 
+6 Route 4: 27 69 76 40 53 26 
+10 Route 5: 28 12 29 79 3 50 68 101 24 80 
+10 Route 6: 59 5 61 16 85 84 17 60 89 103 
+6 Route 7: 47 36 19 49 46 48 
+6 Route 8: 45 102 83 82 8 18 
+8 Route 9: 63 64 11 90 10 32 104 70 
+8 Route 10: 33 65 105 71 9 66 20 1 
+8 Route 11: 72 39 23 67 55 54 4 25 
+8 Route 12: 31 30 51 81 78 34 35 77 
+8 Route 13: 21 73 75 22 41 56 74 58 
+4 Route 14: 52 62 88 7 
+
+NV: 14 TC: 1377.1110179102832 SD: 2691.766861508905 WT: 314.6558435986216
+Time: 22.03
+Start problem lr106
+gNoImpro = 0
+better NV: 15 TC: 1376.44 SD: 2928.7 WT: 552.255485
+gNoImpro = 0
+better NV: 12 TC: 1267.48 SD: 2401.24 WT: 133.750526
+gNoImpro = 0
+better NV: 12 TC: 1265.83 SD: 2399.58 WT: 133.750526
+
+Consequence: 
+8 Route 1: 65 71 51 9 35 34 3 77 
+6 Route 2: 63 64 11 90 10 31 
+8 Route 3: 83 45 18 8 84 17 5 60 
+8 Route 4: 96 85 91 16 61 99 6 89 
+10 Route 5: 94 92 42 15 57 87 97 104 95 13 
+6 Route 6: 27 103 69 76 40 53 
+10 Route 7: 48 47 36 19 49 46 102 7 82 52 
+10 Route 8: 21 72 39 23 67 55 54 4 25 101 
+10 Route 9: 50 33 29 79 78 81 68 24 80 12 
+10 Route 10: 59 37 14 44 38 86 43 100 98 93 
+8 Route 11: 62 88 30 66 20 32 70 1 
+10 Route 12: 28 26 73 41 22 75 56 74 2 58 
+
+NV: 12 TC: 1265.8262727935542 SD: 2399.576798307011 WT: 133.750525513457
+Time: 27.556
+Start problem lr107
+gNoImpro = 0
+better NV: 12 TC: 1281.87 SD: 2628.41 WT: 346.533197
+gNoImpro = 0
+better NV: 12 TC: 1281.87 SD: 2628.41 WT: 346.533197
+gNoImpro = 0
+better NV: 12 TC: 1270.88 SD: 2611.38 WT: 340.507901
+gNoImpro = 0
+better NV: 12 TC: 1267.26 SD: 2607.77 WT: 340.507901
+gNoImpro = 0
+better NV: 11 TC: 1249.67 SD: 2422.33 WT: 172.664025
+gNoImpro = 0
+better NV: 11 TC: 1219.73 SD: 2595.53 WT: 375.79328
+gNoImpro = 0
+better NV: 10 TC: 1134.04 SD: 2226.23 WT: 92.183658
+
+Consequence: 
+12 Route 1: 94 92 98 44 14 38 86 16 91 100 37 97 
+8 Route 2: 59 40 53 6 96 95 13 58 
+10 Route 3: 47 36 46 8 84 17 61 85 104 93 
+12 Route 4: 60 83 45 5 103 99 87 57 2 74 72 73 
+10 Route 5: 42 43 15 41 22 75 56 4 25 54 
+10 Route 6: 26 21 39 23 67 55 24 29 3 77 
+12 Route 7: 27 69 1 76 79 101 78 34 68 80 12 28 
+12 Route 8: 52 7 102 62 11 64 49 19 48 82 18 89 
+10 Route 9: 33 51 30 88 31 10 63 90 32 70 
+8 Route 10: 20 65 9 66 71 35 81 50 
+
+NV: 10 TC: 1134.0439905133835 SD: 2226.2276488829816 WT: 92.18365836959768
+Time: 38.315
+Start problem lr108
+gNoImpro = 0
+better NV: 10 TC: 1055.03 SD: 2264.04 WT: 209.00478
+gNoImpro = 0
+better NV: 9 TC: 1002.31 SD: 2002.31 WT: 0.0
+
+Consequence: 
+10 Route 1: 70 30 20 66 65 71 35 34 78 68 
+12 Route 2: 27 1 69 50 76 53 94 97 95 13 58 40 
+12 Route 3: 6 59 96 93 99 5 84 17 45 83 60 89 
+10 Route 4: 31 88 62 11 49 64 63 90 32 10 
+10 Route 5: 72 75 56 23 67 39 55 4 25 54 
+12 Route 6: 92 98 91 44 14 38 86 16 61 85 100 37 
+12 Route 7: 12 80 24 29 79 9 51 33 81 3 77 28 
+12 Route 8: 2 57 15 43 42 87 41 22 74 73 21 26 
+10 Route 9: 52 18 82 46 8 36 19 47 48 7 
+
+NV: 9 TC: 1002.3109773166448 SD: 2002.3109773166448 WT: 0.0
+Time: 27.21
+Start problem lr109
+gNoImpro = 0
+better NV: 13 TC: 1327.35 SD: 2595.11 WT: 267.758049
+gNoImpro = 0
+better NV: 13 TC: 1327.35 SD: 2595.11 WT: 267.758049
+gNoImpro = 0
+better NV: 13 TC: 1315.98 SD: 2599.6 WT: 283.614179
+gNoImpro = 0
+better NV: 13 TC: 1315.98 SD: 2599.6 WT: 283.614179
+gNoImpro = 0
+better NV: 13 TC: 1315.01 SD: 2582.77 WT: 267.758049
+gNoImpro = 0
+better NV: 13 TC: 1309.59 SD: 2577.35 WT: 267.758049
+gNoImpro = 0
+better NV: 12 TC: 1286.79 SD: 2356.77 WT: 69.974617
+gNoImpro = 0
+better NV: 12 TC: 1279.18 SD: 2365.01 WT: 85.830746
+gNoImpro = 0
+better NV: 12 TC: 1272.12 SD: 2360.73 WT: 88.606679
+gNoImpro = 0
+better NV: 12 TC: 1267.73 SD: 2358.51 WT: 90.779148
+gNoImpro = 0
+better NV: 12 TC: 1267.16 SD: 2359.28 WT: 92.119895
+gNoImpro = 0
+better NV: 11 TC: 1217.16 SD: 2258.62 WT: 41.460336
+
+Consequence: 
+10 Route 1: 52 31 88 7 18 8 46 17 60 89 
+8 Route 2: 45 82 19 47 36 49 106 48 
+12 Route 3: 95 92 98 42 15 57 105 87 97 43 13 58 
+10 Route 4: 59 44 14 38 86 84 37 100 91 93 
+8 Route 5: 28 29 78 79 3 77 50 68 
+10 Route 6: 83 5 61 16 85 99 104 94 6 96 
+10 Route 7: 27 69 30 51 71 65 66 20 70 1 
+10 Route 8: 2 72 73 21 40 53 26 54 55 25 
+10 Route 9: 39 67 23 75 22 41 74 56 103 4 
+10 Route 10: 12 76 33 81 9 35 34 102 24 80 
+8 Route 11: 62 11 64 63 90 32 10 101 
+
+NV: 11 TC: 1217.1590341249516 SD: 2258.619370587312 WT: 41.460336462360104
+Time: 32.229
+Start problem lr110
+gNoImpro = 0
+better NV: 12 TC: 1228.1 SD: 2387.89 WT: 159.787073
+gNoImpro = 0
+better NV: 12 TC: 1204.79 SD: 2328.26 WT: 123.475669
+gNoImpro = 0
+better NV: 12 TC: 1204.42 SD: 2327.93 WT: 123.510338
+gNoImpro = 0
+better NV: 12 TC: 1200.68 SD: 2346.94 WT: 146.258246
+gNoImpro = 0
+better NV: 12 TC: 1200.62 SD: 2364.17 WT: 163.549355
+gNoImpro = 0
+better NV: 12 TC: 1199.7 SD: 2335.37 WT: 135.665415
+gNoImpro = 0
+better NV: 12 TC: 1198.44 SD: 2361.99 WT: 163.549355
+gNoImpro = 0
+better NV: 12 TC: 1191.2 SD: 2314.71 WT: 123.510338
+gNoImpro = 0
+better NV: 12 TC: 1190.21 SD: 2313.72 WT: 123.510338
+gNoImpro = 0
+better NV: 12 TC: 1189.85 SD: 2309.92 WT: 120.069877
+gNoImpro = 0
+better NV: 12 TC: 1189.85 SD: 2309.92 WT: 120.069877
+gNoImpro = 0
+better NV: 12 TC: 1189.64 SD: 2309.71 WT: 120.069877
+gNoImpro = 0
+better NV: 12 TC: 1187.99 SD: 2308.06 WT: 120.069877
+gNoImpro = 0
+better NV: 12 TC: 1187.99 SD: 2308.06 WT: 120.069877
+
+Consequence: 
+2 Route 1: 6 94 
+10 Route 2: 21 72 75 56 23 67 39 25 55 4 
+8 Route 3: 27 69 30 66 71 65 35 1 
+12 Route 4: 28 76 33 103 9 51 81 34 78 77 104 68 
+8 Route 5: 52 88 19 47 36 49 64 70 
+10 Route 6: 31 62 11 63 90 10 101 32 102 20 
+6 Route 7: 7 82 18 8 46 48 
+12 Route 8: 92 59 99 98 85 87 57 15 43 42 13 58 
+8 Route 9: 12 29 79 3 50 54 24 80 
+10 Route 10: 95 14 44 38 86 17 84 45 60 89 
+8 Route 11: 2 41 22 74 73 40 53 26 
+10 Route 12: 83 5 61 16 37 96 97 100 91 93 
+
+NV: 12 TC: 1187.9875780382458 SD: 2308.057454766416 WT: 120.06987672816979
+Time: 52.253
+Start problem lr111
+gNoImpro = 0
+better NV: 11 TC: 1144.82 SD: 2242.7 WT: 97.872745
+gNoImpro = 0
+better NV: 11 TC: 1144.82 SD: 2242.7 WT: 97.872745
+gNoImpro = 0
+better NV: 11 TC: 1141.59 SD: 2333.8 WT: 192.205809
+gNoImpro = 0
+better NV: 11 TC: 1141.59 SD: 2333.8 WT: 192.205809
+gNoImpro = 0
+better NV: 11 TC: 1141.07 SD: 2333.28 WT: 192.205809
+gNoImpro = 0
+better NV: 11 TC: 1133.86 SD: 2326.07 WT: 192.205809
+gNoImpro = 0
+better NV: 11 TC: 1132.63 SD: 2324.83 WT: 192.205809
+gNoImpro = 0
+better NV: 11 TC: 1132.57 SD: 2324.77 WT: 192.205809
+gNoImpro = 0
+better NV: 11 TC: 1132.06 SD: 2326.81 WT: 194.75143
+
+Consequence: 
+10 Route 1: 92 98 37 59 99 97 87 6 94 13 
+12 Route 2: 83 18 45 8 105 84 61 91 100 85 93 96 
+6 Route 3: 28 76 79 54 4 26 
+8 Route 4: 30 51 9 78 29 68 3 50 
+12 Route 5: 52 31 88 62 11 63 10 90 32 20 70 104 
+6 Route 6: 27 101 69 53 40 12 
+12 Route 7: 95 42 14 44 38 86 16 17 5 60 89 106 
+10 Route 8: 7 19 64 49 36 47 46 48 82 107 
+10 Route 9: 73 108 75 23 67 39 55 25 24 80 
+12 Route 10: 2 57 102 15 43 41 22 74 56 72 21 58 
+10 Route 11: 1 33 81 65 66 71 35 34 77 103 
+
+NV: 11 TC: 1132.0635474896253 SD: 2326.8149777126996 WT: 194.75143022307438
+Time: 59.609
+Start problem lr112
+gNoImpro = 0
+better NV: 11 TC: 1172.63 SD: 2202.16 WT: 29.524907
+gNoImpro = 0
+better NV: 11 TC: 1154.17 SD: 2175.48 WT: 21.309624
+gNoImpro = 0
+better NV: 10 TC: 1102.74 SD: 2136.49 WT: 33.750873
+gNoImpro = 0
+better NV: 10 TC: 1060.47 SD: 2060.47 WT: 0.0
+gNoImpro = 0
+better NV: 10 TC: 1058.02 SD: 2081.68 WT: 23.657382
+gNoImpro = 0
+better NV: 10 TC: 1054.57 SD: 2098.63 WT: 44.059626
+gNoImpro = 0
+better NV: 10 TC: 1048.74 SD: 2072.4 WT: 23.657382
+gNoImpro = 0
+better NV: 10 TC: 1044.04 SD: 2067.7 WT: 23.657382
+gNoImpro = 0
+better NV: 10 TC: 1043.74 SD: 2067.39 WT: 23.657382
+
+Consequence: 
+6 Route 1: 18 82 8 45 17 60 
+10 Route 2: 52 62 19 11 64 63 90 32 10 70 
+8 Route 3: 6 94 95 59 99 84 83 89 
+12 Route 4: 5 61 16 86 38 14 44 91 100 102 37 96 
+10 Route 5: 27 31 88 7 48 104 47 36 49 46 
+12 Route 6: 69 30 51 9 81 106 33 29 68 3 50 77 
+12 Route 7: 28 76 79 78 34 35 71 65 66 20 105 1 
+12 Route 8: 92 98 85 93 87 57 15 43 42 97 13 58 
+12 Route 9: 21 73 40 53 26 12 80 103 24 25 55 54 
+12 Route 10: 2 72 41 22 74 101 75 56 23 67 39 4 
+
+NV: 10 TC: 1043.7373682147306 SD: 2067.3947506670634 WT: 23.65738245233267
+Time: 82.92
+Start problem lr201
+gNoImpro = 0
+better NV: 5 TC: 1664.86 SD: 15612.49 WT: 12947.628478
+gNoImpro = 0
+better NV: 5 TC: 1656.38 SD: 15799.63 WT: 13143.24914
+gNoImpro = 0
+better NV: 5 TC: 1606.6 SD: 15867.38 WT: 13260.781745
+gNoImpro = 0
+better NV: 5 TC: 1514.75 SD: 15687.33 WT: 13172.583733
+gNoImpro = 0
+better NV: 5 TC: 1438.4 SD: 16858.81 WT: 14420.406155
+gNoImpro = 0
+better NV: 5 TC: 1431.19 SD: 16911.05 WT: 14479.853224
+gNoImpro = 0
+better NV: 5 TC: 1430.35 SD: 16674.86 WT: 14244.5116
+gNoImpro = 0
+better NV: 5 TC: 1404.77 SD: 17177.39 WT: 14772.618164
+gNoImpro = 0
+better NV: 5 TC: 1402.31 SD: 17170.04 WT: 14767.733375
+gNoImpro = 0
+better NV: 5 TC: 1402.31 SD: 17170.04 WT: 14767.733375
+gNoImpro = 0
+better NV: 5 TC: 1390.56 SD: 17434.95 WT: 15044.39783
+gNoImpro = 0
+better NV: 5 TC: 1387.46 SD: 17375.91 WT: 14988.447304
+gNoImpro = 0
+better NV: 5 TC: 1382.93 SD: 17457.11 WT: 15074.173836
+gNoImpro = 0
+better NV: 5 TC: 1382.93 SD: 17457.11 WT: 15074.173836
+gNoImpro = 0
+better NV: 4 TC: 1453.27 SD: 10698.36 WT: 8245.088372
+gNoImpro = 0
+better NV: 4 TC: 1420.76 SD: 11009.05 WT: 8588.287695
+gNoImpro = 0
+better NV: 4 TC: 1413.93 SD: 11063.58 WT: 8649.648154
+gNoImpro = 0
+better NV: 4 TC: 1354.5 SD: 12680.28 WT: 10325.786177
+gNoImpro = 0
+better NV: 4 TC: 1347.18 SD: 12790.48 WT: 10443.300329
+gNoImpro = 0
+better NV: 4 TC: 1341.72 SD: 12756.74 WT: 10415.020414
+gNoImpro = 0
+better NV: 4 TC: 1319.45 SD: 12835.23 WT: 10515.784894
+gNoImpro = 0
+better NV: 4 TC: 1317.75 SD: 12857.3 WT: 10539.549344
+gNoImpro = 0
+better NV: 4 TC: 1316.92 SD: 12893.12 WT: 10576.200384
+gNoImpro = 0
+better NV: 4 TC: 1315.71 SD: 12996.48 WT: 10680.764566
+gNoImpro = 0
+better NV: 4 TC: 1315.71 SD: 12996.48 WT: 10680.764566
+gNoImpro = 0
+better NV: 4 TC: 1313.25 SD: 12963.71 WT: 10650.4555
+gNoImpro = 0
+better NV: 4 TC: 1304.31 SD: 12977.38 WT: 10673.071563
+gNoImpro = 0
+better NV: 4 TC: 1304.31 SD: 12977.38 WT: 10673.071563
+gNoImpro = 0
+better NV: 4 TC: 1304.09 SD: 12996.05 WT: 10691.954977
+gNoImpro = 0
+better NV: 4 TC: 1292.14 SD: 13217.52 WT: 10925.379538
+
+Consequence: 
+26 Route 1: 95 59 92 42 15 14 44 98 61 16 38 86 85 99 84 102 6 94 96 97 37 43 91 100 13 58 
+22 Route 2: 5 83 45 82 47 36 64 11 19 62 88 7 8 18 90 49 46 48 60 17 93 89 
+26 Route 3: 2 72 39 75 23 67 21 73 40 53 87 57 41 22 56 26 68 54 74 4 55 25 101 24 80 77 
+28 Route 4: 33 65 63 31 52 27 69 28 12 29 76 30 71 51 79 78 81 9 34 50 3 10 20 66 35 32 70 1 
+
+NV: 4 TC: 1292.1363085112878 SD: 13217.515846121187 WT: 10925.3795376099
+Time: 944.819
+Start problem lr202
+gNoImpro = 0
+better NV: 4 TC: 1658.9 SD: 6853.4 WT: 4194.501308
+gNoImpro = 0
+better NV: 4 TC: 1549.96 SD: 7568.7 WT: 5018.735041
+gNoImpro = 0
+better NV: 4 TC: 1544.68 SD: 6663.75 WT: 4119.077265
+gNoImpro = 0
+better NV: 4 TC: 1515.65 SD: 6556.04 WT: 4040.391491
+gNoImpro = 0
+better NV: 4 TC: 1513.66 SD: 6608.24 WT: 4094.584886
+gNoImpro = 0
+better NV: 4 TC: 1500.43 SD: 6807.09 WT: 4306.663333
+gNoImpro = 0
+better NV: 4 TC: 1481.2 SD: 6879.51 WT: 4398.315928
+gNoImpro = 0
+better NV: 4 TC: 1464.5 SD: 7000.46 WT: 4535.959537
+gNoImpro = 0
+better NV: 4 TC: 1454.63 SD: 7070.86 WT: 4616.234385
+gNoImpro = 0
+better NV: 4 TC: 1441.52 SD: 7207.1 WT: 4765.581005
+gNoImpro = 0
+better NV: 4 TC: 1431.05 SD: 7315.47 WT: 4884.412543
+gNoImpro = 0
+better NV: 4 TC: 1421.83 SD: 7380.07 WT: 4958.240385
+gNoImpro = 0
+better NV: 4 TC: 1420.35 SD: 7609.73 WT: 5189.376959
+gNoImpro = 0
+better NV: 4 TC: 1420.35 SD: 7609.73 WT: 5189.376959
+gNoImpro = 0
+better NV: 4 TC: 1420.35 SD: 7609.73 WT: 5189.376959
+gNoImpro = 0
+better NV: 4 TC: 1417.57 SD: 7722.3 WT: 5304.724872
+gNoImpro = 0
+better NV: 4 TC: 1400.37 SD: 8035.41 WT: 5635.03555
+gNoImpro = 0
+better NV: 4 TC: 1400.37 SD: 8035.41 WT: 5635.03555
+gNoImpro = 0
+better NV: 4 TC: 1397.88 SD: 8023.33 WT: 5625.443943
+gNoImpro = 0
+better NV: 4 TC: 1394.5 SD: 7861.38 WT: 5466.883649
+gNoImpro = 0
+better NV: 4 TC: 1363.35 SD: 8006.78 WT: 5643.431351
+gNoImpro = 0
+better NV: 4 TC: 1363.35 SD: 8006.78 WT: 5643.431351
+gNoImpro = 0
+better NV: 4 TC: 1355.41 SD: 7873.36 WT: 5517.950859
+gNoImpro = 0
+better NV: 4 TC: 1349.77 SD: 7895.93 WT: 5546.164904
+gNoImpro = 0
+better NV: 4 TC: 1348.23 SD: 7829.41 WT: 5481.173128
+
+Consequence: 
+20 Route 1: 50 33 65 34 29 27 28 67 72 21 78 79 3 53 13 37 100 93 17 60 
+14 Route 2: 69 76 12 26 40 73 87 57 41 22 75 74 58 89 
+34 Route 3: 96 59 98 92 42 14 91 85 2 39 23 15 44 38 16 61 5 18 99 86 84 8 6 94 95 97 43 56 4 54 55 25 24 80 
+32 Route 4: 31 52 83 45 36 47 48 62 63 64 11 19 7 88 30 71 9 51 81 90 49 46 82 10 20 32 66 35 68 77 70 1 
+
+NV: 4 TC: 1348.232777764351 SD: 7829.405905266278 WT: 5481.1731275019265
+Time: 999.98
+Start problem lr203
+gNoImpro = 0
+better NV: 4 TC: 1309.98 SD: 6247.95 WT: 3937.974555
+gNoImpro = 0
+better NV: 3 TC: 1402.74 SD: 4098.22 WT: 1695.478928
+gNoImpro = 0
+better NV: 3 TC: 1303.33 SD: 5159.01 WT: 2855.681468
+gNoImpro = 0
+better NV: 3 TC: 1299.55 SD: 5172.91 WT: 2873.365758
+gNoImpro = 0
+better NV: 3 TC: 1298.63 SD: 5175.65 WT: 2877.014225
+gNoImpro = 0
+better NV: 3 TC: 1297.58 SD: 5206.86 WT: 2909.278295
+gNoImpro = 0
+better NV: 3 TC: 1284.06 SD: 5083.99 WT: 2799.932015
+gNoImpro = 0
+better NV: 3 TC: 1260.27 SD: 5125.44 WT: 2865.168433
+gNoImpro = 0
+better NV: 3 TC: 1256.47 SD: 5136.61 WT: 2880.14091
+gNoImpro = 0
+better NV: 3 TC: 1254.48 SD: 5173.43 WT: 2918.94758
+gNoImpro = 0
+better NV: 3 TC: 1254.03 SD: 5199.89 WT: 2945.857301
+gNoImpro = 0
+better NV: 3 TC: 1244.89 SD: 5306.76 WT: 3061.86991
+gNoImpro = 0
+better NV: 3 TC: 1231.11 SD: 5770.88 WT: 3539.76747
+gNoImpro = 0
+better NV: 3 TC: 1231.11 SD: 5770.88 WT: 3539.76747
+gNoImpro = 0
+better NV: 3 TC: 1210.73 SD: 5756.15 WT: 3545.42758
+
+Consequence: 
+40 Route 1: 89 18 60 83 45 46 36 19 62 1 69 27 96 59 37 85 91 44 38 86 16 99 6 5 84 8 31 10 90 32 66 35 34 3 68 29 26 70 7 100 
+30 Route 2: 52 50 81 33 65 71 64 11 88 30 76 79 78 9 101 51 20 63 49 47 48 82 17 61 13 93 98 14 97 12 
+32 Route 3: 94 95 92 102 42 57 43 15 39 67 23 40 53 87 2 41 22 56 75 73 74 72 21 55 54 4 25 24 80 77 28 58 
+
+NV: 3 TC: 1210.7253813655425 SD: 5756.152961526398 WT: 3545.4275801608555
+Time: 1721.723
+Start problem lr204
+gNoImpro = 0
+better NV: 3 TC: 1243.85 SD: 4474.11 WT: 2230.266158
+gNoImpro = 0
+better NV: 3 TC: 1174.08 SD: 4062.98 WT: 1888.896995
+gNoImpro = 0
+better NV: 3 TC: 1170.73 SD: 3641.68 WT: 1470.943876
+gNoImpro = 0
+better NV: 3 TC: 1170.73 SD: 3641.68 WT: 1470.943876
+gNoImpro = 0
+better NV: 3 TC: 1167.17 SD: 3511.91 WT: 1344.742645
+gNoImpro = 0
+better NV: 3 TC: 1167.17 SD: 3511.91 WT: 1344.742645
+gNoImpro = 0
+better NV: 3 TC: 1164.48 SD: 3952.02 WT: 1787.543023
+gNoImpro = 0
+better NV: 3 TC: 1163.6 SD: 3958.15 WT: 1794.548981
+gNoImpro = 0
+better NV: 3 TC: 1162.0 SD: 3949.06 WT: 1787.057223
+gNoImpro = 0
+better NV: 3 TC: 1152.43 SD: 2808.41 WT: 655.977829
+gNoImpro = 0
+better NV: 3 TC: 1139.15 SD: 2945.74 WT: 806.596475
+gNoImpro = 0
+better NV: 3 TC: 1122.66 SD: 2863.36 WT: 740.696388
+gNoImpro = 0
+better NV: 3 TC: 1112.31 SD: 3120.31 WT: 1007.9967
+gNoImpro = 0
+better NV: 3 TC: 1104.96 SD: 3120.31 WT: 1015.344002
+gNoImpro = 0
+better NV: 3 TC: 1093.64 SD: 3120.31 WT: 1026.670924
+gNoImpro = 0
+better NV: 3 TC: 1089.88 SD: 3078.18 WT: 988.296911
+gNoImpro = 0
+better NV: 3 TC: 1081.11 SD: 3091.77 WT: 1010.65387
+gNoImpro = 0
+better NV: 3 TC: 1078.72 SD: 3094.16 WT: 1015.43837
+gNoImpro = 0
+better NV: 3 TC: 1077.49 SD: 3096.61 WT: 1019.123573
+
+Consequence: 
+48 Route 1: 28 68 12 26 73 75 22 41 15 43 91 16 61 17 86 38 44 99 96 97 87 60 83 8 84 45 46 47 36 49 64 63 90 32 66 65 71 35 33 3 77 50 1 30 10 89 2 58 
+34 Route 2: 27 52 82 7 48 19 11 62 88 31 69 76 29 67 39 53 79 81 9 34 78 70 20 51 80 24 55 4 72 74 21 93 100 13 
+18 Route 3: 94 95 92 98 59 6 18 5 85 37 14 42 57 23 56 25 54 40 
+
+NV: 3 TC: 1077.4906891624373 SD: 3096.614262473378 WT: 1019.1235733109406
+Time: 1713.004
+Start problem lr205
+gNoImpro = 0
+better NV: 4 TC: 1510.17 SD: 7571.23 WT: 5061.055629
+gNoImpro = 0
+better NV: 4 TC: 1468.8 SD: 7835.47 WT: 5366.672991
+gNoImpro = 0
+better NV: 4 TC: 1450.74 SD: 7599.06 WT: 5148.32498
+gNoImpro = 0
+better NV: 4 TC: 1446.96 SD: 7391.45 WT: 4944.489728
+gNoImpro = 0
+better NV: 4 TC: 1446.96 SD: 7391.45 WT: 4944.489728
+gNoImpro = 0
+better NV: 4 TC: 1419.41 SD: 6982.1 WT: 4562.686777
+gNoImpro = 0
+better NV: 4 TC: 1416.38 SD: 6943.39 WT: 4527.01342
+gNoImpro = 0
+better NV: 4 TC: 1413.75 SD: 6995.11 WT: 4581.369411
+gNoImpro = 0
+better NV: 4 TC: 1400.06 SD: 7013.8 WT: 4613.735706
+gNoImpro = 0
+better NV: 4 TC: 1363.4 SD: 7255.25 WT: 4891.848847
+gNoImpro = 0
+better NV: 4 TC: 1359.4 SD: 7337.53 WT: 4978.128002
+gNoImpro = 0
+better NV: 4 TC: 1344.57 SD: 8783.41 WT: 6438.839961
+gNoImpro = 0
+better NV: 4 TC: 1335.76 SD: 8792.71 WT: 6456.954113
+gNoImpro = 0
+better NV: 3 TC: 1481.52 SD: 2843.46 WT: 361.935663
+gNoImpro = 0
+better NV: 3 TC: 1473.79 SD: 2874.8 WT: 401.000692
+gNoImpro = 0
+better NV: 3 TC: 1468.43 SD: 2834.02 WT: 365.592493
+gNoImpro = 0
+better NV: 3 TC: 1467.48 SD: 2817.64 WT: 350.159623
+gNoImpro = 0
+better NV: 3 TC: 1464.88 SD: 2830.62 WT: 365.741213
+gNoImpro = 0
+better NV: 3 TC: 1385.36 SD: 3016.1 WT: 630.739948
+gNoImpro = 0
+better NV: 3 TC: 1385.21 SD: 3015.14 WT: 629.931045
+gNoImpro = 0
+better NV: 3 TC: 1375.13 SD: 3184.6 WT: 809.471596
+gNoImpro = 0
+better NV: 3 TC: 1374.42 SD: 3223.64 WT: 849.215751
+gNoImpro = 0
+better NV: 3 TC: 1374.42 SD: 3223.64 WT: 849.215751
+gNoImpro = 0
+better NV: 3 TC: 1369.2 SD: 3215.75 WT: 846.552055
+gNoImpro = 0
+better NV: 3 TC: 1369.2 SD: 3215.75 WT: 846.552055
+
+Consequence: 
+28 Route 1: 95 59 92 14 42 15 21 72 39 67 23 75 2 85 44 38 86 16 61 84 46 8 18 6 22 74 25 55 
+36 Route 2: 47 36 64 11 62 63 19 88 7 82 99 98 94 12 3 79 50 90 20 9 66 35 34 68 102 54 26 56 4 24 80 77 1 70 48 89 
+38 Route 3: 5 45 83 27 69 31 52 28 29 33 71 65 78 81 101 51 30 76 53 40 73 41 57 87 96 49 32 10 60 37 97 43 100 91 17 93 13 58 
+
+NV: 3 TC: 1369.1964116827558 SD: 3215.7484667606377 WT: 846.5520550778824
+Time: 902.696
+Start problem lr206
+gNoImpro = 0
+better NV: 4 TC: 1443.91 SD: 4399.74 WT: 1955.829502
+gNoImpro = 0
+better NV: 4 TC: 1406.22 SD: 4281.61 WT: 1875.387035
+gNoImpro = 0
+better NV: 4 TC: 1406.22 SD: 4281.61 WT: 1875.387035
+gNoImpro = 0
+better NV: 3 TC: 1390.35 SD: 3472.08 WT: 1081.734933
+gNoImpro = 0
+better NV: 3 TC: 1332.33 SD: 3718.92 WT: 1386.586231
+gNoImpro = 0
+better NV: 3 TC: 1329.69 SD: 3802.44 WT: 1472.751761
+gNoImpro = 0
+better NV: 3 TC: 1325.23 SD: 3797.98 WT: 1472.751761
+gNoImpro = 0
+better NV: 3 TC: 1315.78 SD: 3827.98 WT: 1512.195829
+gNoImpro = 0
+better NV: 3 TC: 1304.17 SD: 3842.87 WT: 1538.697173
+gNoImpro = 0
+better NV: 3 TC: 1300.21 SD: 3632.04 WT: 1331.83173
+gNoImpro = 0
+better NV: 3 TC: 1272.38 SD: 2971.27 WT: 698.88985
+gNoImpro = 0
+better NV: 3 TC: 1257.24 SD: 3191.92 WT: 934.672891
+gNoImpro = 0
+better NV: 3 TC: 1254.39 SD: 3157.72 WT: 903.331003
+gNoImpro = 0
+better NV: 3 TC: 1250.31 SD: 3193.39 WT: 943.085334
+gNoImpro = 0
+better NV: 3 TC: 1231.17 SD: 3186.54 WT: 955.363376
+gNoImpro = 0
+better NV: 3 TC: 1230.51 SD: 3187.86 WT: 957.346685
+gNoImpro = 0
+better NV: 3 TC: 1225.59 SD: 3129.83 WT: 904.246827
+gNoImpro = 0
+better NV: 3 TC: 1211.41 SD: 3298.51 WT: 1087.099806
+gNoImpro = 0
+better NV: 3 TC: 1199.55 SD: 3334.09 WT: 1134.53825
+gNoImpro = 0
+better NV: 3 TC: 1179.68 SD: 3396.49 WT: 1216.812141
+gNoImpro = 0
+better NV: 3 TC: 1174.53 SD: 3035.88 WT: 861.353173
+gNoImpro = 0
+better NV: 3 TC: 1172.92 SD: 3268.17 WT: 1095.249996
+gNoImpro = 0
+better NV: 3 TC: 1169.97 SD: 3274.06 WT: 1104.095306
+gNoImpro = 0
+better NV: 3 TC: 1163.81 SD: 3260.92 WT: 1097.113416
+gNoImpro = 0
+better NV: 3 TC: 1162.28 SD: 3263.97 WT: 1101.684744
+gNoImpro = 0
+better NV: 3 TC: 1160.86 SD: 3266.82 WT: 1105.958726
+gNoImpro = 0
+better NV: 3 TC: 1136.23 SD: 3346.58 WT: 1210.349737
+gNoImpro = 0
+better NV: 3 TC: 1136.13 SD: 3477.0 WT: 1340.877361
+gNoImpro = 0
+better NV: 3 TC: 1120.66 SD: 3538.87 WT: 1418.207744
+gNoImpro = 0
+better NV: 3 TC: 1120.57 SD: 3539.16 WT: 1418.592857
+gNoImpro = 0
+better NV: 3 TC: 1118.6 SD: 3554.94 WT: 1436.346316
+gNoImpro = 0
+better NV: 3 TC: 1118.6 SD: 3554.94 WT: 1436.346316
+gNoImpro = 0
+better NV: 3 TC: 1115.54 SD: 3564.1 WT: 1448.561445
+gNoImpro = 0
+better NV: 3 TC: 1110.84 SD: 3618.51 WT: 1507.676322
+gNoImpro = 0
+better NV: 3 TC: 1102.87 SD: 3568.12 WT: 1465.256766
+
+Consequence: 
+38 Route 1: 31 7 82 48 47 36 45 5 59 92 42 15 14 44 38 86 16 61 18 52 88 19 49 46 8 83 37 98 84 60 17 93 85 100 91 94 13 58 
+36 Route 2: 27 21 39 69 1 50 76 26 40 73 72 67 23 22 41 2 53 6 96 99 95 97 87 57 43 74 75 56 4 25 55 54 24 80 68 77 
+26 Route 3: 28 12 29 34 33 71 65 63 64 11 62 90 30 9 78 79 3 81 51 10 32 66 35 20 70 89 
+
+NV: 3 TC: 1102.8650678303543 SD: 3568.121833998537 WT: 1465.2567661681828
+Time: 1747.328
+Start problem lr207
+gNoImpro = 0
+better NV: 3 TC: 1436.53 SD: 3388.07 WT: 951.532476
+gNoImpro = 0
+better NV: 3 TC: 1435.99 SD: 3454.08 WT: 1018.090689
+gNoImpro = 0
+better NV: 3 TC: 1429.31 SD: 3447.4 WT: 1018.090689
+gNoImpro = 0
+better NV: 3 TC: 1425.76 SD: 3471.04 WT: 1045.275344
+gNoImpro = 0
+better NV: 3 TC: 1416.83 SD: 3532.17 WT: 1115.338313
+gNoImpro = 0
+better NV: 3 TC: 1399.33 SD: 3726.91 WT: 1327.584318
+gNoImpro = 0
+better NV: 3 TC: 1370.58 SD: 3659.53 WT: 1288.949239
+gNoImpro = 0
+better NV: 3 TC: 1355.69 SD: 3785.11 WT: 1429.425811
+gNoImpro = 0
+better NV: 3 TC: 1348.78 SD: 3268.04 WT: 919.262316
+gNoImpro = 0
+better NV: 3 TC: 1332.49 SD: 3195.34 WT: 862.856471
+gNoImpro = 0
+better NV: 3 TC: 1304.25 SD: 3979.78 WT: 1675.536015
+gNoImpro = 0
+better NV: 3 TC: 1196.27 SD: 4009.23 WT: 1812.956625
+gNoImpro = 0
+better NV: 3 TC: 1191.87 SD: 4026.42 WT: 1834.550008
+gNoImpro = 0
+better NV: 3 TC: 1187.32 SD: 3966.71 WT: 1779.38663
+gNoImpro = 0
+better NV: 3 TC: 1187.1 SD: 3966.48 WT: 1779.38663
+gNoImpro = 0
+better NV: 3 TC: 1183.07 SD: 3962.46 WT: 1779.38663
+gNoImpro = 0
+better NV: 3 TC: 1183.07 SD: 3929.77 WT: 1746.709088
+gNoImpro = 0
+better NV: 3 TC: 1183.07 SD: 3929.77 WT: 1746.709088
+
+Consequence: 
+28 Route 1: 50 51 20 65 71 81 33 30 29 39 67 23 40 2 87 97 99 5 84 17 86 61 100 98 93 96 18 70 
+44 Route 2: 28 24 26 95 59 92 91 101 16 44 14 42 57 15 43 38 85 8 48 47 49 19 82 6 53 41 22 56 55 102 1 31 10 90 32 66 35 77 73 74 75 25 54 12 
+30 Route 3: 27 52 60 83 45 46 36 64 11 63 62 7 88 69 9 34 78 79 3 76 68 80 4 72 21 58 13 37 94 89 
+
+NV: 3 TC: 1183.0658589773984 SD: 3929.774947312495 WT: 1746.7090883350963
+Time: 2052.413
+Start problem lr208
+gNoImpro = 0
+better NV: 3 TC: 1215.8 SD: 2569.31 WT: 353.511573
+gNoImpro = 0
+better NV: 3 TC: 1206.97 SD: 2599.47 WT: 392.505227
+gNoImpro = 0
+better NV: 3 TC: 1185.5 SD: 2559.83 WT: 374.325001
+gNoImpro = 0
+better NV: 3 TC: 1114.82 SD: 2534.33 WT: 419.514303
+gNoImpro = 0
+better NV: 3 TC: 1113.56 SD: 2441.79 WT: 328.231537
+gNoImpro = 0
+better NV: 3 TC: 1110.31 SD: 2525.55 WT: 415.237893
+gNoImpro = 0
+better NV: 3 TC: 1105.51 SD: 2520.74 WT: 415.237893
+gNoImpro = 0
+better NV: 3 TC: 1103.97 SD: 2519.21 WT: 415.237893
+gNoImpro = 0
+better NV: 3 TC: 1094.84 SD: 2511.17 WT: 416.324799
+gNoImpro = 0
+better NV: 3 TC: 1090.2 SD: 2615.78 WT: 525.57865
+gNoImpro = 0
+better NV: 3 TC: 1086.06 SD: 2543.41 WT: 457.347078
+gNoImpro = 0
+better NV: 3 TC: 1084.3 SD: 2573.01 WT: 488.712467
+gNoImpro = 0
+better NV: 3 TC: 1078.84 SD: 2583.8 WT: 504.953292
+
+Consequence: 
+46 Route 1: 95 92 2 57 14 42 41 22 23 67 39 56 72 21 40 70 10 90 64 82 8 84 85 59 1 30 51 33 78 34 29 24 54 4 55 25 75 74 73 58 96 97 37 100 91 6 
+20 Route 2: 52 7 48 11 69 76 94 99 98 87 15 43 38 44 16 86 17 45 5 53 
+34 Route 3: 28 93 61 60 83 18 88 31 62 19 47 46 36 49 63 32 20 66 9 35 65 71 81 79 3 50 77 68 80 12 26 13 89 27 
+
+NV: 3 TC: 1078.8448970435825 SD: 2583.7981887473898 WT: 504.95329170380757
+Time: 2429.758
+Start problem lr209
+gNoImpro = 0
+better NV: 4 TC: 1420.2 SD: 6111.43 WT: 3691.23285
+gNoImpro = 0
+better NV: 4 TC: 1401.83 SD: 6694.27 WT: 4292.441325
+gNoImpro = 0
+better NV: 4 TC: 1335.07 SD: 5941.94 WT: 3606.866695
+gNoImpro = 0
+better NV: 4 TC: 1319.89 SD: 5988.98 WT: 3669.090624
+gNoImpro = 0
+better NV: 4 TC: 1287.23 SD: 6237.29 WT: 3950.060922
+gNoImpro = 0
+better NV: 4 TC: 1286.28 SD: 5996.01 WT: 3709.73016
+gNoImpro = 0
+better NV: 4 TC: 1276.42 SD: 5876.31 WT: 3599.890885
+gNoImpro = 0
+better NV: 4 TC: 1257.84 SD: 5749.3 WT: 3491.461899
+gNoImpro = 0
+better NV: 4 TC: 1253.76 SD: 5929.64 WT: 3675.877567
+gNoImpro = 0
+better NV: 4 TC: 1252.26 SD: 6064.42 WT: 3812.160368
+gNoImpro = 0
+better NV: 4 TC: 1244.8 SD: 6041.2 WT: 3796.405017
+gNoImpro = 0
+better NV: 4 TC: 1244.8 SD: 6041.2 WT: 3796.405017
+gNoImpro = 0
+better NV: 4 TC: 1234.95 SD: 6040.88 WT: 3805.928938
+gNoImpro = 0
+better NV: 4 TC: 1227.56 SD: 5196.97 WT: 2969.41274
+gNoImpro = 0
+better NV: 3 TC: 1246.82 SD: 3224.23 WT: 977.407403
+gNoImpro = 0
+better NV: 3 TC: 1216.82 SD: 4235.24 WT: 2018.422461
+gNoImpro = 0
+better NV: 3 TC: 1216.82 SD: 4235.24 WT: 2018.422461
+gNoImpro = 0
+better NV: 3 TC: 1200.89 SD: 3406.41 WT: 1205.52306
+gNoImpro = 0
+better NV: 3 TC: 1197.15 SD: 3407.31 WT: 1210.157159
+gNoImpro = 0
+better NV: 3 TC: 1189.48 SD: 3751.17 WT: 1561.686706
+gNoImpro = 0
+better NV: 3 TC: 1186.37 SD: 3744.86 WT: 1558.490844
+gNoImpro = 0
+better NV: 3 TC: 1181.13 SD: 3739.62 WT: 1558.490844
+gNoImpro = 0
+better NV: 3 TC: 1180.76 SD: 3739.26 WT: 1558.490844
+gNoImpro = 0
+better NV: 3 TC: 1179.39 SD: 3737.88 WT: 1558.490844
+
+Consequence: 
+42 Route 1: 59 95 14 2 23 39 28 69 30 76 12 73 22 41 15 87 6 101 18 7 88 62 10 90 20 33 79 3 34 50 1 26 54 80 24 55 25 4 56 74 58 102 
+24 Route 2: 21 72 75 67 29 78 65 71 9 51 81 53 40 13 94 57 43 42 97 37 100 91 93 96 
+36 Route 3: 27 52 31 11 63 64 19 47 82 83 5 99 92 98 85 61 16 44 38 86 17 84 45 8 46 36 49 32 66 35 68 77 70 48 60 89 
+
+NV: 3 TC: 1179.385703533822 SD: 3737.8765471810607 WT: 1558.4908436472392
+Time: 1191.018
+Start problem lr210
+gNoImpro = 0
+better NV: 3 TC: 1337.83 SD: 3660.46 WT: 1322.632463
+gNoImpro = 0
+better NV: 3 TC: 1312.46 SD: 3835.04 WT: 1522.578057
+gNoImpro = 0
+better NV: 3 TC: 1301.78 SD: 4195.18 WT: 1893.40311
+gNoImpro = 0
+better NV: 3 TC: 1289.39 SD: 4191.33 WT: 1901.937209
+gNoImpro = 0
+better NV: 3 TC: 1253.13 SD: 4288.75 WT: 2035.624629
+gNoImpro = 0
+better NV: 3 TC: 1215.03 SD: 4447.5 WT: 2232.462469
+gNoImpro = 0
+better NV: 3 TC: 1193.39 SD: 4598.99 WT: 2405.598389
+gNoImpro = 0
+better NV: 3 TC: 1180.79 SD: 4829.61 WT: 2648.817571
+gNoImpro = 0
+better NV: 3 TC: 1180.79 SD: 4829.61 WT: 2648.817571
+gNoImpro = 0
+better NV: 3 TC: 1174.83 SD: 4892.62 WT: 2717.786496
+gNoImpro = 0
+better NV: 3 TC: 1165.87 SD: 4925.88 WT: 2760.011776
+gNoImpro = 0
+better NV: 3 TC: 1155.48 SD: 5139.47 WT: 2983.985603
+gNoImpro = 0
+better NV: 3 TC: 1149.25 SD: 5171.57 WT: 3022.320085
+gNoImpro = 0
+better NV: 3 TC: 1140.8 SD: 5249.39 WT: 3108.581636
+gNoImpro = 0
+better NV: 3 TC: 1137.99 SD: 5065.56 WT: 2927.563442
+gNoImpro = 0
+better NV: 3 TC: 1134.43 SD: 4155.17 WT: 2020.740358
+gNoImpro = 0
+better NV: 3 TC: 1132.01 SD: 4415.04 WT: 2283.034267
+gNoImpro = 0
+better NV: 3 TC: 1128.98 SD: 4284.92 WT: 2155.939979
+gNoImpro = 0
+better NV: 3 TC: 1047.61 SD: 4850.58 WT: 2802.965191
+gNoImpro = 0
+better NV: 3 TC: 1034.03 SD: 4847.69 WT: 2813.667333
+
+Consequence: 
+26 Route 1: 28 71 65 33 69 30 90 31 88 62 11 64 102 49 46 8 84 61 91 14 43 57 37 59 94 58 
+38 Route 2: 95 92 98 85 42 15 2 75 23 67 39 12 76 3 79 29 78 81 9 51 20 10 63 32 66 35 34 68 80 26 13 97 100 93 17 5 60 89 
+38 Route 3: 27 52 7 19 36 47 48 82 18 83 45 86 38 44 16 96 6 99 87 53 40 21 73 41 22 72 74 56 101 4 55 25 54 24 77 50 1 70 
+
+NV: 3 TC: 1034.0271691997323 SD: 4847.69450246564 WT: 2813.6673332659075
+Time: 1128.708
+Start problem lr211
+gNoImpro = 0
+better NV: 3 TC: 1233.52 SD: 3169.4 WT: 935.882538
+gNoImpro = 0
+better NV: 3 TC: 1161.2 SD: 3485.97 WT: 1324.765981
+gNoImpro = 0
+better NV: 3 TC: 1138.65 SD: 3251.4 WT: 1112.749056
+gNoImpro = 0
+better NV: 3 TC: 1133.59 SD: 3272.73 WT: 1139.134077
+gNoImpro = 0
+better NV: 3 TC: 1107.85 SD: 3157.73 WT: 1049.877479
+gNoImpro = 0
+better NV: 3 TC: 1107.41 SD: 3201.08 WT: 1093.664262
+gNoImpro = 0
+better NV: 3 TC: 1070.99 SD: 3097.73 WT: 1026.746888
+gNoImpro = 0
+better NV: 3 TC: 1065.71 SD: 3118.96 WT: 1053.247559
+gNoImpro = 0
+better NV: 3 TC: 1057.62 SD: 3348.44 WT: 1290.818101
+gNoImpro = 0
+better NV: 3 TC: 1045.48 SD: 3378.81 WT: 1333.334382
+gNoImpro = 0
+better NV: 3 TC: 1015.58 SD: 3606.24 WT: 1590.651842
+gNoImpro = 0
+better NV: 3 TC: 1015.57 SD: 3606.23 WT: 1590.651842
+gNoImpro = 0
+better NV: 3 TC: 1012.39 SD: 3603.04 WT: 1590.651842
+gNoImpro = 0
+better NV: 3 TC: 1011.76 SD: 3602.41 WT: 1590.651842
+gNoImpro = 0
+better NV: 3 TC: 997.23 SD: 3457.0 WT: 1459.76644
+
+Consequence: 
+30 Route 1: 28 27 52 82 95 92 98 61 14 42 2 40 73 21 72 75 23 67 39 12 79 33 81 9 65 71 32 90 10 60 
+34 Route 2: 69 31 88 62 11 19 7 18 83 94 59 99 85 16 86 44 38 43 15 41 22 57 87 13 53 26 50 3 34 35 66 20 70 1 
+36 Route 3: 76 29 78 51 30 63 64 49 36 47 48 46 8 45 17 84 5 93 91 100 37 97 96 6 89 58 74 56 4 25 55 24 54 80 68 77 
+
+NV: 3 TC: 997.2333233330005 SD: 3456.999763158713 WT: 1459.7664398257127
+Time: 1485.173
+Start problem lrc101
+gNoImpro = 0
+better NV: 16 TC: 1809.49 SD: 3492.0 WT: 682.510439
+gNoImpro = 0
+better NV: 15 TC: 1778.63 SD: 3230.54 WT: 451.917494
+gNoImpro = 0
+better NV: 15 TC: 1770.26 SD: 3240.86 WT: 470.600161
+gNoImpro = 0
+better NV: 15 TC: 1770.26 SD: 3240.86 WT: 470.600161
+
+Consequence: 
+8 Route 1: 83 23 21 19 18 48 25 101 
+6 Route 2: 65 52 99 57 86 74 
+8 Route 3: 63 76 104 51 22 49 20 24 
+8 Route 4: 92 95 33 29 34 50 93 80 
+6 Route 5: 64 103 90 84 56 66 
+4 Route 6: 30 28 26 32 
+4 Route 7: 62 67 71 94 
+8 Route 8: 69 98 88 53 78 60 100 70 
+8 Route 9: 72 36 38 41 40 43 37 35 
+8 Route 10: 39 42 44 61 81 96 54 68 
+8 Route 11: 14 47 12 73 106 79 46 55 
+8 Route 12: 82 11 15 16 9 10 13 17 
+6 Route 13: 59 75 87 97 77 58 
+10 Route 14: 5 45 2 7 6 8 3 1 105 4 
+6 Route 15: 27 31 85 102 89 91 
+
+NV: 15 TC: 1770.2572234069255 SD: 3240.8573847219277 WT: 470.60016131500146
+Time: 21.719
+Start problem lrc102
+gNoImpro = 0
+better NV: 15 TC: 1775.73 SD: 3308.41 WT: 532.674873
+gNoImpro = 0
+better NV: 15 TC: 1773.13 SD: 3307.0 WT: 533.870224
+gNoImpro = 0
+better NV: 15 TC: 1756.77 SD: 3161.07 WT: 404.303472
+gNoImpro = 0
+better NV: 15 TC: 1756.77 SD: 3161.07 WT: 404.303472
+gNoImpro = 0
+better NV: 15 TC: 1754.92 SD: 3158.03 WT: 403.108122
+gNoImpro = 0
+better NV: 15 TC: 1743.33 SD: 3096.0 WT: 352.670182
+gNoImpro = 0
+better NV: 15 TC: 1743.33 SD: 3096.0 WT: 352.670182
+gNoImpro = 0
+better NV: 15 TC: 1738.92 SD: 3220.03 WT: 481.106503
+gNoImpro = 0
+better NV: 14 TC: 1644.32 SD: 2955.95 WT: 311.631612
+gNoImpro = 0
+better NV: 14 TC: 1633.4 SD: 2942.93 WT: 309.526601
+gNoImpro = 0
+better NV: 14 TC: 1633.4 SD: 2942.93 WT: 309.526601
+gNoImpro = 0
+better NV: 13 TC: 1563.55 SD: 2771.89 WT: 208.338974
+gNoImpro = 0
+better NV: 13 TC: 1563.55 SD: 2771.89 WT: 208.338974
+gNoImpro = 0
+better NV: 13 TC: 1563.55 SD: 2771.89 WT: 208.338974
+
+Consequence: 
+6 Route 1: 42 36 44 81 54 68 
+10 Route 2: 33 28 27 26 31 34 50 93 94 80 
+10 Route 3: 96 106 72 104 38 41 40 43 35 37 
+2 Route 4: 61 90 
+8 Route 5: 69 88 53 78 10 13 17 12 
+8 Route 6: 91 64 99 86 57 74 59 52 
+10 Route 7: 14 47 15 16 9 87 97 75 102 58 
+8 Route 8: 82 11 73 79 7 55 100 70 
+6 Route 9: 39 71 67 84 56 66 
+8 Route 10: 85 63 76 51 22 49 20 24 
+8 Route 11: 92 95 62 29 30 32 103 89 
+12 Route 12: 2 45 1 3 5 8 101 6 46 4 60 98 
+10 Route 13: 65 83 19 23 48 18 21 25 77 105 
+
+NV: 13 TC: 1563.5504554244733 SD: 2771.889429168736 WT: 208.3389737442628
+Time: 36.316
+Start problem lrc103
+gNoImpro = 0
+better NV: 12 TC: 1368.36 SD: 2697.03 WT: 328.666946
+gNoImpro = 0
+better NV: 12 TC: 1363.33 SD: 2681.11 WT: 317.776218
+gNoImpro = 0
+better NV: 12 TC: 1359.33 SD: 2736.43 WT: 377.102886
+gNoImpro = 0
+better NV: 12 TC: 1358.13 SD: 2753.93 WT: 395.792874
+gNoImpro = 0
+better NV: 11 TC: 1261.08 SD: 2508.31 WT: 247.226513
+gNoImpro = 0
+better NV: 11 TC: 1261.08 SD: 2508.31 WT: 247.226513
+gNoImpro = 0
+better NV: 11 TC: 1258.74 SD: 2508.31 WT: 249.569849
+gNoImpro = 0
+better NV: 11 TC: 1258.74 SD: 2508.31 WT: 249.569849
+
+Consequence: 
+12 Route 1: 20 18 48 21 23 22 49 19 25 24 57 101 
+10 Route 2: 82 14 15 11 9 87 59 74 86 52 
+8 Route 3: 92 62 50 67 84 106 56 66 
+10 Route 4: 65 83 64 51 76 89 63 85 95 91 
+10 Route 5: 2 45 1 3 5 8 6 55 68 105 
+8 Route 6: 81 39 36 35 37 54 103 96 
+6 Route 7: 90 99 97 75 58 77 
+12 Route 8: 61 42 43 44 40 38 41 72 71 93 94 80 
+10 Route 9: 98 60 73 78 79 7 46 4 100 70 
+10 Route 10: 69 88 53 12 10 13 16 17 47 104 
+10 Route 11: 33 27 30 32 28 102 26 29 31 34 
+
+NV: 11 TC: 1258.7371181684086 SD: 2508.3069669538127 WT: 249.5698487854039
+Time: 46.99
+Start problem lrc104
+gNoImpro = 0
+better NV: 12 TC: 1328.47 SD: 2587.88 WT: 259.414135
+gNoImpro = 0
+better NV: 12 TC: 1299.38 SD: 2589.75 WT: 290.363591
+gNoImpro = 0
+better NV: 10 TC: 1155.34 SD: 2327.01 WT: 171.671118
+gNoImpro = 0
+better NV: 10 TC: 1154.19 SD: 2325.86 WT: 171.671118
+gNoImpro = 0
+better NV: 10 TC: 1154.19 SD: 2325.86 WT: 171.671118
+gNoImpro = 0
+better NV: 10 TC: 1153.83 SD: 2315.09 WT: 161.262934
+gNoImpro = 0
+better NV: 10 TC: 1153.83 SD: 2315.09 WT: 161.262934
+gNoImpro = 0
+better NV: 10 TC: 1152.67 SD: 2313.94 WT: 161.262934
+
+Consequence: 
+10 Route 1: 69 98 53 12 17 16 13 108 10 82 
+12 Route 2: 80 91 56 95 62 67 71 93 94 105 96 81 
+8 Route 3: 90 65 99 97 75 58 103 77 
+12 Route 4: 66 106 20 49 19 23 21 48 18 25 24 22 
+10 Route 5: 88 60 78 73 79 7 6 46 4 2 
+12 Route 6: 61 70 1 3 5 45 101 8 55 104 100 68 
+12 Route 7: 14 47 15 11 9 87 59 74 102 86 57 52 
+8 Route 8: 85 63 89 76 84 51 64 83 
+12 Route 9: 92 50 33 32 107 30 28 26 27 29 31 34 
+12 Route 10: 72 42 44 43 38 40 36 35 37 39 41 54 
+
+NV: 10 TC: 1152.6730370845107 SD: 2313.9359708887073 WT: 161.26293380419645
+Time: 68.428
+Start problem lrc105
+gNoImpro = 0
+better NV: 13 TC: 1646.89 SD: 2974.41 WT: 327.524817
+gNoImpro = 0
+better NV: 13 TC: 1646.89 SD: 2974.41 WT: 327.524817
+gNoImpro = 0
+better NV: 13 TC: 1646.55 SD: 2974.75 WT: 328.204646
+
+Consequence: 
+6 Route 1: 69 88 78 108 73 60 
+8 Route 2: 82 12 14 11 9 10 13 17 
+6 Route 3: 90 53 66 56 91 106 
+8 Route 4: 2 45 5 7 79 55 101 68 
+8 Route 5: 33 76 18 48 21 25 24 105 
+8 Route 6: 92 95 64 99 52 86 57 74 
+8 Route 7: 72 71 81 41 54 96 94 93 
+10 Route 8: 42 61 8 6 46 4 107 3 1 100 
+10 Route 9: 29 27 26 30 28 32 31 34 50 80 
+8 Route 10: 63 62 67 84 51 85 89 102 
+10 Route 11: 98 47 16 103 15 87 59 97 75 58 
+10 Route 12: 39 36 44 38 40 43 35 104 37 70 
+8 Route 13: 65 83 23 19 22 49 20 77 
+
+NV: 13 TC: 1646.5497845596822 SD: 2974.754430146915 WT: 328.2046455872324
+Time: 25.913
+Start problem lrc106
+gNoImpro = 0
+better NV: 15 TC: 1702.34 SD: 3015.16 WT: 312.813199
+gNoImpro = 0
+better NV: 14 TC: 1662.95 SD: 2881.96 WT: 219.008794
+gNoImpro = 0
+better NV: 14 TC: 1641.3 SD: 2833.85 WT: 192.552074
+gNoImpro = 0
+better NV: 14 TC: 1638.66 SD: 2840.04 WT: 201.379928
+gNoImpro = 0
+better NV: 14 TC: 1615.55 SD: 2793.62 WT: 178.073847
+gNoImpro = 0
+better NV: 14 TC: 1615.55 SD: 2793.62 WT: 178.073847
+gNoImpro = 0
+better NV: 14 TC: 1606.02 SD: 2779.8 WT: 173.77463
+gNoImpro = 0
+better NV: 14 TC: 1588.83 SD: 2791.54 WT: 202.708044
+gNoImpro = 0
+better NV: 14 TC: 1588.83 SD: 2791.54 WT: 202.708044
+gNoImpro = 0
+better NV: 14 TC: 1560.24 SD: 2782.36 WT: 222.116577
+gNoImpro = 0
+better NV: 13 TC: 1571.24 SD: 2708.39 WT: 137.151962
+gNoImpro = 0
+better NV: 13 TC: 1571.24 SD: 2708.39 WT: 137.151962
+gNoImpro = 0
+better NV: 13 TC: 1571.24 SD: 2708.39 WT: 137.151962
+gNoImpro = 0
+better NV: 13 TC: 1571.24 SD: 2708.39 WT: 137.151962
+
+Consequence: 
+10 Route 1: 31 29 27 26 101 28 34 50 80 105 
+6 Route 2: 82 52 87 59 75 97 
+8 Route 3: 92 61 81 90 94 96 54 68 
+6 Route 4: 51 102 63 85 84 66 
+8 Route 5: 99 86 57 22 49 20 24 91 
+6 Route 6: 72 71 67 30 32 93 
+6 Route 7: 98 88 53 10 9 17 
+10 Route 8: 12 103 47 78 73 79 60 55 106 70 
+6 Route 9: 95 62 33 76 89 56 
+8 Route 10: 69 11 14 15 16 13 58 74 
+12 Route 11: 2 45 5 8 7 6 46 4 3 1 104 100 
+10 Route 12: 42 39 44 40 36 38 41 43 37 35 
+10 Route 13: 65 83 64 19 23 21 18 48 25 77 
+
+NV: 13 TC: 1571.2393078209443 SD: 2708.3912695444346 WT: 137.15196172349042
+Time: 44.447
+Start problem lrc107
+gNoImpro = 0
+better NV: 12 TC: 1360.49 SD: 2509.21 WT: 148.720239
+gNoImpro = 0
+better NV: 12 TC: 1356.49 SD: 2509.21 WT: 152.720239
+gNoImpro = 0
+better NV: 11 TC: 1244.61 SD: 2346.5 WT: 101.888894
+gNoImpro = 0
+better NV: 11 TC: 1244.61 SD: 2346.5 WT: 101.888894
+gNoImpro = 0
+better NV: 11 TC: 1243.63 SD: 2345.52 WT: 101.888894
+gNoImpro = 0
+better NV: 11 TC: 1242.83 SD: 2344.72 WT: 101.888894
+gNoImpro = 0
+better NV: 11 TC: 1236.83 SD: 2338.72 WT: 101.888894
+gNoImpro = 0
+better NV: 11 TC: 1236.7 SD: 2338.59 WT: 101.888894
+gNoImpro = 0
+better NV: 11 TC: 1236.7 SD: 2338.59 WT: 101.888894
+
+Consequence: 
+4 Route 1: 61 81 106 90 
+8 Route 2: 82 99 87 59 75 97 58 77 
+8 Route 3: 72 71 93 94 67 50 96 54 
+12 Route 4: 64 19 25 23 21 18 48 49 20 56 91 102 
+10 Route 5: 92 95 62 84 85 63 51 76 89 80 
+14 Route 6: 2 6 7 103 8 5 3 1 45 46 4 100 55 104 
+10 Route 7: 11 12 14 47 17 16 15 13 9 10 
+10 Route 8: 69 98 88 53 78 73 79 60 70 68 
+10 Route 9: 65 83 52 74 105 86 57 24 22 66 
+10 Route 10: 31 29 27 28 26 30 32 34 33 101 
+10 Route 11: 41 42 39 38 44 43 40 37 35 36 
+
+NV: 11 TC: 1236.6970648111694 SD: 2338.5859584641635 WT: 101.88889365299404
+Time: 40.783
+Start problem lrc108
+gNoImpro = 0
+better NV: 11 TC: 1299.58 SD: 2331.01 WT: 31.437059
+gNoImpro = 0
+better NV: 11 TC: 1294.98 SD: 2349.9 WT: 54.922214
+gNoImpro = 0
+better NV: 11 TC: 1293.46 SD: 2348.39 WT: 54.922214
+gNoImpro = 0
+better NV: 11 TC: 1254.08 SD: 2342.38 WT: 88.294149
+gNoImpro = 0
+better NV: 11 TC: 1193.36 SD: 2295.74 WT: 102.375632
+gNoImpro = 0
+better NV: 11 TC: 1190.3 SD: 2292.68 WT: 102.375632
+gNoImpro = 0
+better NV: 11 TC: 1189.54 SD: 2291.92 WT: 102.375632
+gNoImpro = 0
+better NV: 11 TC: 1186.55 SD: 2270.56 WT: 84.012428
+gNoImpro = 0
+better NV: 11 TC: 1183.6 SD: 2282.19 WT: 98.590811
+gNoImpro = 0
+better NV: 11 TC: 1183.6 SD: 2282.19 WT: 98.590811
+
+Consequence: 
+2 Route 1: 90 55 
+10 Route 2: 65 83 57 24 22 49 21 23 25 77 
+10 Route 3: 82 99 52 86 87 59 97 75 58 74 
+10 Route 4: 41 44 42 43 40 38 36 35 37 39 
+10 Route 5: 69 53 60 1 103 3 5 45 4 68 
+10 Route 6: 64 51 76 89 18 48 19 20 101 66 
+12 Route 7: 92 95 102 67 62 50 85 63 84 56 91 80 
+10 Route 8: 12 14 47 17 15 16 13 9 11 10 
+8 Route 9: 88 61 81 94 71 72 54 96 
+12 Route 10: 98 78 73 79 7 104 8 46 6 2 70 100 
+10 Route 11: 33 32 30 28 26 27 29 31 34 93 
+
+NV: 11 TC: 1183.6029574052043 SD: 2282.193768373406 WT: 98.59081096820206
+Time: 81.168
+Start problem lrc201
+gNoImpro = 0
+better NV: 5 TC: 1725.64 SD: 12469.37 WT: 9743.730892
+gNoImpro = 0
+better NV: 5 TC: 1687.91 SD: 12569.03 WT: 9881.118491
+gNoImpro = 0
+better NV: 5 TC: 1686.22 SD: 12722.19 WT: 10035.968381
+gNoImpro = 0
+better NV: 5 TC: 1684.94 SD: 12814.27 WT: 10129.32266
+gNoImpro = 0
+better NV: 5 TC: 1651.79 SD: 13139.9 WT: 10488.110062
+gNoImpro = 0
+better NV: 5 TC: 1644.57 SD: 13028.62 WT: 10384.0464
+gNoImpro = 0
+better NV: 5 TC: 1640.26 SD: 13122.88 WT: 10482.626244
+gNoImpro = 0
+better NV: 5 TC: 1630.41 SD: 13227.85 WT: 10597.441865
+gNoImpro = 0
+better NV: 5 TC: 1599.38 SD: 13396.63 WT: 10797.249843
+gNoImpro = 0
+better NV: 4 TC: 1649.36 SD: 6976.53 WT: 4327.168366
+gNoImpro = 0
+better NV: 4 TC: 1640.54 SD: 6978.03 WT: 4337.497759
+gNoImpro = 0
+better NV: 4 TC: 1640.54 SD: 6978.03 WT: 4337.497759
+
+Consequence: 
+26 Route 1: 36 72 69 82 52 83 64 23 21 18 19 76 51 85 84 49 22 20 56 96 54 37 35 43 80 91 
+24 Route 2: 45 5 39 42 2 44 61 98 88 81 38 40 41 94 50 34 32 26 89 48 24 25 77 58 
+22 Route 3: 65 14 47 59 75 16 15 11 12 78 73 7 79 6 8 46 3 101 4 1 55 68 
+30 Route 4: 92 95 63 31 33 29 27 28 30 62 67 71 90 53 99 86 87 9 57 66 10 97 74 13 17 60 100 70 102 93 
+
+NV: 4 TC: 1640.536656386026 SD: 6978.034415518148 WT: 4337.497759132121
+Time: 311.956
+Start problem lrc202
+gNoImpro = 0
+better NV: 4 TC: 1645.02 SD: 8360.61 WT: 5715.59204
+gNoImpro = 0
+better NV: 4 TC: 1628.9 SD: 8446.92 WT: 5818.013693
+gNoImpro = 0
+better NV: 4 TC: 1603.79 SD: 7965.85 WT: 5362.058539
+gNoImpro = 0
+better NV: 4 TC: 1580.67 SD: 8068.78 WT: 5488.116827
+gNoImpro = 0
+better NV: 4 TC: 1569.0 SD: 8716.4 WT: 6147.402486
+gNoImpro = 0
+better NV: 4 TC: 1562.55 SD: 8719.19 WT: 6156.638578
+gNoImpro = 0
+better NV: 4 TC: 1560.58 SD: 8721.16 WT: 6160.584392
+gNoImpro = 0
+better NV: 4 TC: 1559.88 SD: 8723.27 WT: 6163.3988
+gNoImpro = 0
+better NV: 4 TC: 1558.75 SD: 8726.65 WT: 6167.899593
+gNoImpro = 0
+better NV: 4 TC: 1558.75 SD: 8726.65 WT: 6167.899593
+gNoImpro = 0
+better NV: 4 TC: 1557.03 SD: 8710.2 WT: 6153.169061
+gNoImpro = 0
+better NV: 4 TC: 1555.11 SD: 8699.63 WT: 6144.525756
+gNoImpro = 0
+better NV: 4 TC: 1546.4 SD: 8816.55 WT: 6270.151062
+gNoImpro = 0
+better NV: 4 TC: 1546.4 SD: 8816.55 WT: 6270.151062
+
+Consequence: 
+18 Route 1: 98 45 5 3 1 42 36 37 39 44 61 12 99 48 18 51 84 66 
+24 Route 2: 14 47 15 11 73 16 88 53 78 79 6 8 46 2 55 68 101 43 35 54 96 94 60 100 
+24 Route 3: 65 82 69 64 76 19 23 22 57 52 86 59 87 9 10 97 74 13 17 7 4 70 93 80 
+36 Route 4: 92 95 31 34 85 63 33 28 26 27 29 30 62 67 71 72 38 40 41 81 91 90 83 20 49 56 50 32 89 24 21 25 77 75 58 102 
+
+NV: 4 TC: 1546.398732257002 SD: 8816.549793956803 WT: 6270.151061699802
+Time: 513.367
+Start problem lrc203
+gNoImpro = 0
+better NV: 4 TC: 1604.78 SD: 7131.11 WT: 4526.332385
+gNoImpro = 0
+better NV: 4 TC: 1512.05 SD: 7502.57 WT: 4990.520199
+gNoImpro = 0
+better NV: 4 TC: 1512.05 SD: 7502.57 WT: 4990.520199
+gNoImpro = 0
+better NV: 4 TC: 1447.48 SD: 6533.32 WT: 4085.843299
+gNoImpro = 0
+better NV: 4 TC: 1438.62 SD: 6613.06 WT: 4174.438512
+gNoImpro = 0
+better NV: 4 TC: 1438.62 SD: 6613.06 WT: 4174.438512
+gNoImpro = 0
+better NV: 4 TC: 1438.36 SD: 6613.06 WT: 4174.70251
+gNoImpro = 0
+better NV: 3 TC: 1560.3 SD: 3442.58 WT: 882.286663
+gNoImpro = 0
+better NV: 3 TC: 1532.95 SD: 3120.42 WT: 587.476164
+gNoImpro = 0
+better NV: 3 TC: 1522.52 SD: 3181.99 WT: 659.469951
+gNoImpro = 0
+better NV: 3 TC: 1486.7 SD: 3085.21 WT: 598.505403
+gNoImpro = 0
+better NV: 3 TC: 1485.73 SD: 3084.24 WT: 598.505403
+gNoImpro = 0
+better NV: 3 TC: 1470.57 SD: 3062.42 WT: 591.847967
+gNoImpro = 0
+better NV: 3 TC: 1467.82 SD: 3068.32 WT: 600.508592
+gNoImpro = 0
+better NV: 3 TC: 1467.34 SD: 3067.85 WT: 600.508592
+gNoImpro = 0
+better NV: 3 TC: 1462.65 SD: 3063.16 WT: 600.508592
+gNoImpro = 0
+better NV: 3 TC: 1462.44 SD: 3063.16 WT: 600.720762
+gNoImpro = 0
+better NV: 3 TC: 1452.98 SD: 3211.65 WT: 758.66682
+gNoImpro = 0
+better NV: 3 TC: 1452.98 SD: 3211.65 WT: 758.66682
+gNoImpro = 0
+better NV: 3 TC: 1449.11 SD: 3207.4 WT: 758.291391
+gNoImpro = 0
+better NV: 3 TC: 1449.01 SD: 3207.68 WT: 758.66682
+gNoImpro = 0
+better NV: 3 TC: 1444.29 SD: 3202.58 WT: 758.291391
+gNoImpro = 0
+better NV: 3 TC: 1444.2 SD: 3202.86 WT: 758.66682
+gNoImpro = 0
+better NV: 3 TC: 1438.34 SD: 3209.88 WT: 771.537779
+gNoImpro = 0
+better NV: 3 TC: 1438.34 SD: 3209.88 WT: 771.537779
+
+Consequence: 
+24 Route 1: 81 42 39 36 69 64 67 38 44 40 41 5 8 6 53 49 21 19 56 68 55 100 70 61 
+34 Route 2: 54 1 3 45 46 2 7 60 15 11 86 23 48 99 88 79 78 9 87 59 97 75 74 4 101 35 37 43 72 71 96 93 94 80 
+44 Route 3: 90 65 91 92 102 95 50 62 33 32 28 26 27 34 31 29 30 89 76 63 85 84 51 20 22 18 24 66 57 52 10 12 14 47 73 17 16 13 58 77 25 83 82 98 
+
+NV: 3 TC: 1438.3445927483626 SD: 3209.882371805934 WT: 771.5377790575709
+Time: 1429.179
+Start problem lrc204
+gNoImpro = 0
+better NV: 3 TC: 1244.99 SD: 3565.29 WT: 1320.30593
+gNoImpro = 0
+better NV: 3 TC: 1095.07 SD: 3649.18 WT: 1554.112672
+gNoImpro = 0
+better NV: 3 TC: 993.41 SD: 4411.85 WT: 2418.439256
+gNoImpro = 0
+better NV: 3 TC: 991.86 SD: 4419.6 WT: 2427.74241
+
+Consequence: 
+38 Route 1: 54 72 40 39 70 68 69 98 12 15 14 47 17 16 11 10 53 82 99 52 86 87 9 13 74 59 97 75 58 77 25 24 57 83 102 66 65 90 
+28 Route 2: 81 41 37 35 36 38 43 44 42 1 101 3 5 45 46 8 7 79 73 78 60 6 4 2 88 55 100 61 
+36 Route 3: 80 92 91 23 67 62 95 76 84 56 64 51 20 22 49 19 21 48 18 89 63 85 33 32 30 28 26 27 29 31 34 50 71 93 94 96 
+
+NV: 3 TC: 991.860190911176 SD: 4419.602601355702 WT: 2427.7424104445263
+Time: 549.649
+Start problem lrc205
+gNoImpro = 0
+better NV: 5 TC: 1966.48 SD: 11417.02 WT: 8450.53516
+gNoImpro = 0
+better NV: 5 TC: 1851.59 SD: 11331.03 WT: 8479.438496
+gNoImpro = 0
+better NV: 5 TC: 1828.43 SD: 12321.72 WT: 9493.294141
+gNoImpro = 0
+better NV: 5 TC: 1809.68 SD: 12313.51 WT: 9503.822816
+gNoImpro = 0
+better NV: 5 TC: 1808.58 SD: 11528.99 WT: 8720.406797
+gNoImpro = 0
+better NV: 5 TC: 1807.69 SD: 11453.4 WT: 8645.70568
+gNoImpro = 0
+better NV: 5 TC: 1805.13 SD: 11379.59 WT: 8574.456962
+gNoImpro = 0
+better NV: 5 TC: 1805.13 SD: 11379.59 WT: 8574.456962
+gNoImpro = 0
+better NV: 5 TC: 1802.89 SD: 11464.82 WT: 8661.928705
+gNoImpro = 0
+better NV: 5 TC: 1762.9 SD: 11805.12 WT: 9042.217624
+gNoImpro = 0
+better NV: 5 TC: 1761.71 SD: 11814.61 WT: 9052.899877
+gNoImpro = 0
+better NV: 5 TC: 1761.29 SD: 11783.48 WT: 9022.182256
+gNoImpro = 0
+better NV: 5 TC: 1760.95 SD: 11699.47 WT: 8938.525152
+gNoImpro = 0
+better NV: 5 TC: 1648.8 SD: 11635.66 WT: 8986.857217
+gNoImpro = 0
+better NV: 5 TC: 1639.33 SD: 11270.14 WT: 8630.808029
+gNoImpro = 0
+better NV: 5 TC: 1639.3 SD: 11371.28 WT: 8731.978094
+gNoImpro = 0
+better NV: 5 TC: 1631.34 SD: 11395.97 WT: 8764.638218
+gNoImpro = 0
+better NV: 5 TC: 1598.85 SD: 11442.52 WT: 8843.67347
+gNoImpro = 0
+better NV: 4 TC: 1639.33 SD: 8212.45 WT: 5573.118833
+gNoImpro = 0
+better NV: 4 TC: 1638.22 SD: 8354.04 WT: 5715.819765
+gNoImpro = 0
+better NV: 4 TC: 1625.13 SD: 8538.04 WT: 5912.901683
+gNoImpro = 0
+better NV: 4 TC: 1624.32 SD: 8519.35 WT: 5895.030706
+gNoImpro = 0
+better NV: 4 TC: 1622.56 SD: 8509.06 WT: 5886.493809
+gNoImpro = 0
+better NV: 4 TC: 1614.72 SD: 8535.32 WT: 5920.597641
+gNoImpro = 0
+better NV: 4 TC: 1609.36 SD: 8556.85 WT: 5947.496541
+gNoImpro = 0
+better NV: 4 TC: 1606.95 SD: 8584.42 WT: 5977.463094
+gNoImpro = 0
+better NV: 4 TC: 1587.55 SD: 8414.99 WT: 5827.438924
+gNoImpro = 0
+better NV: 4 TC: 1585.61 SD: 8463.81 WT: 5878.197966
+gNoImpro = 0
+better NV: 4 TC: 1585.61 SD: 8463.81 WT: 5878.197966
+gNoImpro = 0
+better NV: 4 TC: 1585.61 SD: 8463.81 WT: 5878.197966
+gNoImpro = 0
+better NV: 4 TC: 1576.89 SD: 7907.02 WT: 5330.130771
+gNoImpro = 0
+better NV: 4 TC: 1566.33 SD: 7934.2 WT: 5367.873353
+gNoImpro = 0
+better NV: 4 TC: 1564.25 SD: 7865.8 WT: 5301.551644
+gNoImpro = 0
+better NV: 4 TC: 1564.25 SD: 7865.8 WT: 5301.551644
+
+Consequence: 
+26 Route 1: 65 83 63 85 27 28 30 67 99 86 87 9 57 49 22 20 54 68 24 74 13 17 60 100 101 80 
+26 Route 2: 92 95 29 31 33 64 23 21 18 19 76 51 84 52 59 75 97 102 10 55 43 35 37 93 96 91 
+20 Route 3: 69 98 11 15 16 47 14 12 88 78 73 79 7 6 8 46 4 3 1 70 
+30 Route 4: 2 45 5 42 39 36 72 71 62 94 61 44 40 38 41 81 90 53 82 66 56 50 34 32 26 89 48 25 77 58 
+
+NV: 4 TC: 1564.2453290682508 SD: 7865.796973474924 WT: 5301.5516444066725
+Time: 572.139
+Start problem lrc206
+gNoImpro = 0
+better NV: 4 TC: 1606.36 SD: 6173.15 WT: 3566.791273
+gNoImpro = 0
+better NV: 4 TC: 1601.51 SD: 6422.22 WT: 3820.712453
+gNoImpro = 0
+better NV: 4 TC: 1592.99 SD: 6409.01 WT: 3816.019578
+gNoImpro = 0
+better NV: 4 TC: 1589.41 SD: 6247.24 WT: 3657.825853
+gNoImpro = 0
+better NV: 4 TC: 1589.41 SD: 6247.24 WT: 3657.825853
+gNoImpro = 0
+better NV: 4 TC: 1443.28 SD: 4941.63 WT: 2498.349461
+gNoImpro = 0
+better NV: 4 TC: 1433.21 SD: 4492.37 WT: 2059.15213
+gNoImpro = 0
+better NV: 4 TC: 1431.28 SD: 4513.1 WT: 2081.814259
+gNoImpro = 0
+better NV: 4 TC: 1428.13 SD: 4431.61 WT: 2003.482061
+gNoImpro = 0
+better NV: 4 TC: 1381.44 SD: 4363.2 WT: 1981.753646
+gNoImpro = 0
+better NV: 4 TC: 1355.08 SD: 3699.51 WT: 1344.425072
+gNoImpro = 0
+better NV: 3 TC: 1370.32 SD: 2617.47 WT: 247.150381
+gNoImpro = 0
+better NV: 3 TC: 1330.38 SD: 2695.08 WT: 364.696547
+
+Consequence: 
+32 Route 1: 39 36 42 2 72 71 61 44 40 38 102 41 88 53 6 7 73 78 79 8 46 4 3 1 43 35 37 54 96 93 91 80 
+34 Route 2: 65 83 92 95 62 31 29 27 28 30 33 63 85 51 76 18 21 23 19 49 22 57 99 87 97 9 17 13 10 60 55 100 70 68 
+36 Route 3: 5 45 69 98 82 11 12 14 47 15 16 59 75 86 52 64 67 94 81 90 66 56 84 50 34 32 101 26 89 20 48 25 77 58 74 24 
+
+NV: 3 TC: 1330.3813855671888 SD: 2695.077932986389 WT: 364.6965474192001
+Time: 452.082
+Start problem lrc207
+gNoImpro = 0
+better NV: 4 TC: 1578.75 SD: 4835.57 WT: 2256.818234
+gNoImpro = 0
+better NV: 4 TC: 1523.3 SD: 5211.83 WT: 2688.529653
+gNoImpro = 0
+better NV: 4 TC: 1501.64 SD: 4917.1 WT: 2415.460514
+gNoImpro = 0
+better NV: 4 TC: 1493.55 SD: 5072.03 WT: 2578.482054
+gNoImpro = 0
+better NV: 4 TC: 1490.33 SD: 5066.41 WT: 2576.080709
+gNoImpro = 0
+better NV: 4 TC: 1482.99 SD: 5036.98 WT: 2553.998261
+gNoImpro = 0
+better NV: 4 TC: 1475.32 SD: 4774.13 WT: 2298.814525
+gNoImpro = 0
+better NV: 4 TC: 1475.32 SD: 4774.13 WT: 2298.814525
+gNoImpro = 0
+better NV: 4 TC: 1474.98 SD: 4782.69 WT: 2307.709614
+gNoImpro = 0
+better NV: 4 TC: 1469.42 SD: 4901.3 WT: 2431.883873
+gNoImpro = 0
+better NV: 4 TC: 1466.86 SD: 4896.35 WT: 2429.482527
+gNoImpro = 0
+better NV: 4 TC: 1466.86 SD: 4896.35 WT: 2429.482527
+gNoImpro = 0
+better NV: 4 TC: 1463.51 SD: 4789.18 WT: 2325.67237
+gNoImpro = 0
+better NV: 4 TC: 1457.61 SD: 4916.35 WT: 2458.741718
+gNoImpro = 0
+better NV: 4 TC: 1455.05 SD: 4911.4 WT: 2456.340372
+gNoImpro = 0
+better NV: 4 TC: 1455.05 SD: 4911.4 WT: 2456.340372
+gNoImpro = 0
+better NV: 4 TC: 1450.24 SD: 5025.67 WT: 2575.431456
+gNoImpro = 0
+better NV: 4 TC: 1450.24 SD: 5025.67 WT: 2575.431456
+gNoImpro = 0
+better NV: 4 TC: 1448.26 SD: 5015.19 WT: 2566.924962
+gNoImpro = 0
+better NV: 4 TC: 1416.83 SD: 4621.76 WT: 2204.927592
+gNoImpro = 0
+better NV: 4 TC: 1411.73 SD: 4622.94 WT: 2211.202514
+gNoImpro = 0
+better NV: 4 TC: 1408.32 SD: 4650.96 WT: 2242.644969
+gNoImpro = 0
+better NV: 4 TC: 1402.95 SD: 4640.27 WT: 2237.31613
+gNoImpro = 0
+better NV: 4 TC: 1402.95 SD: 4640.27 WT: 2237.31613
+gNoImpro = 0
+better NV: 4 TC: 1401.08 SD: 4667.23 WT: 2266.147542
+gNoImpro = 0
+better NV: 4 TC: 1394.33 SD: 4862.98 WT: 2468.646742
+gNoImpro = 0
+better NV: 4 TC: 1394.33 SD: 4862.98 WT: 2468.646742
+gNoImpro = 0
+better NV: 4 TC: 1392.36 SD: 4839.25 WT: 2446.889787
+gNoImpro = 0
+better NV: 4 TC: 1392.24 SD: 4839.25 WT: 2447.005911
+gNoImpro = 0
+better NV: 4 TC: 1389.59 SD: 4752.02 WT: 2362.4315
+gNoImpro = 0
+better NV: 4 TC: 1384.08 SD: 4741.59 WT: 2357.513126
+
+Consequence: 
+8 Route 1: 82 76 85 27 34 92 91 80 
+32 Route 2: 65 83 64 95 67 62 28 31 71 72 41 42 44 40 38 61 81 90 53 78 79 8 3 96 93 50 32 26 89 48 24 66 
+30 Route 3: 63 33 30 29 99 52 59 75 25 102 23 21 18 19 51 84 56 94 100 70 4 46 1 36 35 37 101 39 43 54 
+32 Route 4: 69 98 88 2 5 45 6 7 73 12 14 47 17 16 15 11 9 87 86 74 57 22 20 49 77 58 97 13 10 60 55 68 
+
+NV: 4 TC: 1384.0768439241053 SD: 4741.589969514653 WT: 2357.513125590547
+Time: 2103.743
+Start problem lrc208
+gNoImpro = 0
+better NV: 3 TC: 1269.43 SD: 2426.14 WT: 156.708719
+gNoImpro = 0
+better NV: 3 TC: 1263.73 SD: 2744.91 WT: 481.180644
+gNoImpro = 0
+better NV: 3 TC: 1217.85 SD: 2614.1 WT: 396.249026
+gNoImpro = 0
+better NV: 3 TC: 1184.21 SD: 2759.0 WT: 574.781197
+gNoImpro = 0
+better NV: 3 TC: 1176.88 SD: 2751.66 WT: 574.781197
+gNoImpro = 0
+better NV: 3 TC: 1175.9 SD: 2750.68 WT: 574.781197
+gNoImpro = 0
+better NV: 3 TC: 1175.9 SD: 2750.68 WT: 574.781197
+gNoImpro = 0
+better NV: 3 TC: 1170.13 SD: 2744.91 WT: 574.781197
+gNoImpro = 0
+better NV: 3 TC: 1146.8 SD: 2639.7 WT: 492.897833
+gNoImpro = 0
+better NV: 3 TC: 1114.76 SD: 2938.82 WT: 824.066049
+gNoImpro = 0
+better NV: 3 TC: 1112.2 SD: 2936.27 WT: 824.066049
+gNoImpro = 0
+better NV: 3 TC: 1112.2 SD: 2936.27 WT: 824.066049
+gNoImpro = 0
+better NV: 3 TC: 1107.77 SD: 2931.83 WT: 824.066049
+gNoImpro = 0
+better NV: 3 TC: 1090.73 SD: 2889.57 WT: 798.840478
+gNoImpro = 0
+better NV: 3 TC: 1089.52 SD: 2891.63 WT: 802.105856
+gNoImpro = 0
+better NV: 3 TC: 1089.52 SD: 2891.63 WT: 802.105856
+gNoImpro = 0
+better NV: 3 TC: 1086.91 SD: 2894.96 WT: 808.046102
+gNoImpro = 0
+better NV: 3 TC: 1082.2 SD: 2869.57 WT: 787.368232
+
+Consequence: 
+36 Route 1: 69 82 12 11 52 23 19 21 18 57 53 79 73 78 14 17 10 87 102 58 77 75 97 59 86 13 9 55 60 46 4 1 101 100 70 68 
+28 Route 2: 92 95 67 71 81 61 2 6 7 8 45 5 3 42 44 43 40 36 35 37 38 39 41 72 54 93 94 96 
+38 Route 3: 98 88 47 16 15 99 90 65 83 64 85 63 76 89 33 30 31 32 28 26 27 29 34 50 62 84 51 20 49 22 24 48 25 74 66 56 91 80 
+
+NV: 3 TC: 1082.2045636952216 SD: 2869.5727954548493 WT: 787.3682317596281
+Time: 1201.29
+
+Process finished with exit code 0

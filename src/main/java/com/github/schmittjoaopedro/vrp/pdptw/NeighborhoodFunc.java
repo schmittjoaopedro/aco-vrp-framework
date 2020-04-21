@@ -45,7 +45,7 @@ public class NeighborhoodFunc {
         for (int i = 0; i < s.get(r1Index).size() - 1; i++) {
             pickup = i;
             if ((delivery = Customers.getSingleInstance().findPair(s.get(r1Index), pickup)) > 0) {
-                newSolution = s.clone();
+                newSolution = s.clone(r1Index, r2Index);
                 if (newSolution.shift(r1Index, r2Index, pickup, delivery, this.vp)) {
                     if (s.size() == newSolution.size() + 1) {
                         newSolution.setRecorded(1);
@@ -95,8 +95,7 @@ public class NeighborhoodFunc {
                 pickup2 = j;
                 if ((delivery1 = Customers.getSingleInstance().findPair(s.get(r1Index), pickup1)) > 0
                         && (delivery2 = Customers.getSingleInstance().findPair(s.get(r2Index), pickup2)) > 0) {
-
-                    newSolution = s.clone();
+                    newSolution = s.clone(r1Index, r2Index);
                     if (newSolution.exchange(r1Index, r2Index, pickup1, delivery1, pickup2, delivery2, this.vp)) {
                         moveForwardRecordedRoutes(newSolution, r1Index, r2Index);
                         result.add(newSolution);
@@ -142,7 +141,7 @@ public class NeighborhoodFunc {
             }
             if ((delivery = Customers.getSingleInstance().findPair(s.get(routeIndex), pickup)) > 0) {
                 // insert into new(maybe the same) feasible position
-                newSolution = s.clone();
+                newSolution = s.clone(routeIndex);
                 if (newSolution.rearrange(routeIndex, pickup, delivery, this.vp)) {
                     result.add(newSolution);
                 }

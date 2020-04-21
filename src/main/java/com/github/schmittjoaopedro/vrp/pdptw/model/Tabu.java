@@ -46,4 +46,14 @@ public class Tabu {
     public static Tabu getSingleInstance() {
         return tabu;
     }
+
+    public static void init(int numCust) {
+        //tabu.queue = new Eigenvalue[Math.max(30, numCust / 2)]; // size of TABU list
+        tabu.queue = new Eigenvalue[5];
+        tabu.currentPosition = 0;
+    }
+
+    public static void reset() {
+        tabu = new Tabu();
+    }
 }

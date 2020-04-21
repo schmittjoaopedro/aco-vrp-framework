@@ -57,4 +57,8 @@ public class DTTable {
     public static DTTable getSingleInstance() {
         return dtTable;
     }
+
+    public static void reset() {
+        dtTable = new DTTable();
+    }
 }

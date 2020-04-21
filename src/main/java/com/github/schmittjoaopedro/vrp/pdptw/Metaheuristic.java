@@ -38,7 +38,7 @@ public class Metaheuristic {
 	public Solution tabu_Embedded_SA(Solution input) {
         // restart simulated annealing
         this.TEMPERATURE = this.INITIALTEMPERATURE;
-        Tabu.getSingleInstance().clear();
+        //Tabu.getSingleInstance().clear();
         // Obtain a solution Sb from DSL within nPDS(S) U nPDE(S)
         Solution Sb = nf.DLS_PDS_PDE(input);
         // Sb <- Perform a DSL withing NPR(S)

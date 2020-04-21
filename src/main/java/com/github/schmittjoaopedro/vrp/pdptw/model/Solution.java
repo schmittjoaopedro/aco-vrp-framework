@@ -45,6 +45,30 @@ public class Solution {
         return s;
     }
 
+    public Solution clone(int route1) {
+        Solution s = new Solution();
+        for (int i = 0; i < this.size(); i++) {
+            if (i == route1) {
+                s.add(this.get(i).clone());
+            } else {
+                s.add(this.get(i));
+            }
+        }
+        return s;
+    }
+
+    public Solution clone(int route1, int route2) {
+        Solution s = new Solution();
+        for (int i = 0; i < this.size(); i++) {
+            if (i == route1 || i == route2) {
+                s.add(this.get(i).clone());
+            } else {
+                s.add(this.get(i));
+            }
+        }
+        return s;
+    }
+
     public int getRecorded() {
         return recorded;
     }

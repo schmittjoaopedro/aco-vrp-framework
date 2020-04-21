@@ -51,4 +51,8 @@ public class Customers {
     public static Customers getSingleInstance() {
         return cs;
     }
+
+    public static void reset() {
+        cs = new Customers();
+    }
 }

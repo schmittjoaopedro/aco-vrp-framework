@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.pdptw;
 
 import com.github.schmittjoaopedro.tsp.utils.Maths;
 import com.github.schmittjoaopedro.vrp.pdptw.model.Solution;
+import com.github.schmittjoaopedro.vrp.pdptw.model.Tabu;
 import com.github.schmittjoaopedro.vrp.pdptw.model.VehicleProperty;
 
 
@@ -13,6 +14,7 @@ public class Overall {
     }
 
     public void run() {
+        Long time = System.currentTimeMillis();
         ProduceInitialSolution pis = new ProduceInitialSolution(vp);
         // The better solution produced from Modified Solomon’s Insertion Algorithm
         Solution Sb = pis.produceInitialSolution();
@@ -22,27 +24,31 @@ public class Overall {
         //int K = 5;
         int K = ((20 * vp.getTotalVehicles()) / 3) + 1;
         int gNoImpro = 0;
+        Tabu.getSingleInstance().clear();
         double[] currentBestCost = Sb.cost();
         while (gNoImpro < K) {
             Solution s = Sb;
             Solution Sb_temp = m.tabu_Embedded_SA(s);
-            System.out.println("gNoImpro = " + gNoImpro);
             // If Cost(Sb') < Cost(Sb) Then
             if (compareSolutionCost(Sb_temp.cost(), currentBestCost) > 0) {
                 currentBestCost = Sb_temp.cost();
                 Sb = Sb_temp;
                 gNoImpro = 0;
                 double[] cost = Sb.cost();
+                System.out.println("gNoImpro = " + gNoImpro);
                 System.out.println("better NV: " + (int) cost[0] + " TC: " + Maths.round(cost[1], 2) + " SD: " + Maths.round(cost[2], 2) + " WT: " + Maths.round(cost[3]));
             } else {
                 double[] cost = Sb.cost();
-                System.out.println("worse NV: " + (int) cost[0] + " TC: " + Maths.round(cost[1], 2) + " SD: " + Maths.round(cost[2], 2) + " WT: " + Maths.round(cost[3]));
+                //System.out.println("gNoImpro = " + gNoImpro);
+                //System.out.println("worse NV: " + (int) cost[0] + " TC: " + Maths.round(cost[1], 2) + " SD: " + Maths.round(cost[2], 2) + " WT: " + Maths.round(cost[3]));
                 gNoImpro++;
             }
         }
         Sb.printSolution();
         double[] cost = Sb.cost();
-        System.out.println("NV: " + (int) cost[0] + " TC: " + cost[1] + " SD: " + cost[2] + " WT: " + cost[3]);
+        double timeSec = ((System.currentTimeMillis() - time) / 1000.0);
+        System.out.println("NV\tTC\tSD\tWT\tCT" + (int) cost[0] + " TC: " + cost[1] + " SD: " + cost[2] + " WT: " + cost[3]);
+        System.out.println((int) cost[0] + "\t" + cost[1] + "\t" + cost[2] + "\t" + cost[3] + "\t" + timeSec);
     }
 
     private int compareSolutionCost(double[] targetCost, double[] currentBestCost) {
