@@ -46,6 +46,7 @@ public class Route {
     }
 
     public double[] cost() {
+        int p1, p2;
         double TC = 0;
         double WT = 0;        // waiting time
         double ST = 0;        // service time
@@ -56,10 +57,11 @@ public class Route {
         TT += DTTable.getSingleInstance().getDTForDepot(this.get(0).getID()).getTime();
 
         for (int i = 1; i < this.size(); i++) {
-            Key key = new Key(this.get(i).getID(), this.get(i - 1).getID());
-            TC += DTTable.getSingleInstance().get(key).getDistance();
+            p1 = this.get(i).getID();
+            p2 = this.get(i - 1).getID();
+            TC += DTTable.getSingleInstance().get(p1, p2).getDistance();
             ST += this.get(i).getService_time();
-            TT += DTTable.getSingleInstance().get(key).getTime();
+            TT += DTTable.getSingleInstance().get(p1, p2).getTime();
             if ((this.get(i).getE_time() - ST - TT) > 0) {
                 WT += this.get(i).getE_time() - ST - TT;
             }
@@ -152,7 +154,7 @@ public class Route {
                 finishServiceTime = Math.max(arrivalTime, curr.getE_time()) + curr.getService_time();
             } else {
                 prev = getNode(i - 1, pInsert, dInsert, pickup, delivery);
-                arrivalTime = finishServiceTime + DTTable.getSingleInstance().get(new Key(prev.getID(), curr.getID())).getTime();
+                arrivalTime = finishServiceTime + DTTable.getSingleInstance().get(prev.getID(), curr.getID()).getTime();
                 finishServiceTime = Math.max(arrivalTime, curr.getE_time()) + curr.getService_time();
             }
             if (arrivalTime > curr.getL_time()) {

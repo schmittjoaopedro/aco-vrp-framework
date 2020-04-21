@@ -38,12 +38,20 @@ public class DTTable {
         return dtMatrix[key.getStart()][key.getEnd()];
     }
 
+    public Value get(int p1, int p2) {
+        if (p1 > p2) {
+            return dtMatrix[p1][p2];
+        } else {
+            return dtMatrix[p2][p1];
+        }
+    }
+
     public int size() {
         return hashmap.size();
     }
 
     public Value getDTForDepot(int id) {
-        return this.get(new Key(Customers.getSingleInstance().get(0).getID(), id));
+        return this.get(Customers.getSingleInstance().get(0).getID(), id);
     }
 
     public static DTTable getSingleInstance() {

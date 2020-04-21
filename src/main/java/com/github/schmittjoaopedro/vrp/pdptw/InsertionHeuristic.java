@@ -174,16 +174,16 @@ public class InsertionHeuristic {
             value = 2 * DTTable.getSingleInstance().getDTForDepot(u.getID()).getDistance();
         } else if (i.getID() == 0 && j.getID() != 0) {
             value = DTTable.getSingleInstance().getDTForDepot(u.getID()).getDistance()
-                    + DTTable.getSingleInstance().get(new Key(u.getID(), j.getID())).getDistance()
+                    + DTTable.getSingleInstance().get(u.getID(), j.getID()).getDistance()
                     - DTTable.getSingleInstance().getDTForDepot(j.getID()).getDistance();
         } else if (i.getID() != 0 && j.getID() == 0) {
             value = DTTable.getSingleInstance().getDTForDepot(u.getID()).getDistance()
-                    + DTTable.getSingleInstance().get(new Key(u.getID(), i.getID())).getDistance()
+                    + DTTable.getSingleInstance().get(u.getID(), i.getID()).getDistance()
                     - DTTable.getSingleInstance().getDTForDepot(i.getID()).getDistance();
         } else {
-            value = DTTable.getSingleInstance().get(new Key(i.getID(), u.getID())).getDistance()
-                    + DTTable.getSingleInstance().get(new Key(u.getID(), j.getID())).getDistance()
-                    - DTTable.getSingleInstance().get(new Key(i.getID(), j.getID())).getDistance();
+            value = DTTable.getSingleInstance().get(i.getID(), u.getID()).getDistance()
+                    + DTTable.getSingleInstance().get(u.getID(), j.getID()).getDistance()
+                    - DTTable.getSingleInstance().get(i.getID(), j.getID()).getDistance();
         }
         return value;
     }
