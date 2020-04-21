@@ -47,7 +47,7 @@ public class Overall {
         Sb.printSolution();
         double[] cost = Sb.cost();
         double timeSec = ((System.currentTimeMillis() - time) / 1000.0);
-        System.out.println("NV\tTC\tSD\tWT\tCT" + (int) cost[0] + " TC: " + cost[1] + " SD: " + cost[2] + " WT: " + cost[3]);
+        System.out.println("NV\tTC\tSD\tWT\tCT");
         System.out.println((int) cost[0] + "\t" + cost[1] + "\t" + cost[2] + "\t" + cost[3] + "\t" + timeSec);
     }
 
