@@ -8,6 +8,8 @@ import java.io.FileReader;
 
 public class Main {
 
+    /*private static final String[] instances = {"lc101"};*/
+
     private static final String[] instances = {
             "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108",
             "lc109", "lc201", "lc202", "lc203", "lc204", "lc205", "lc206", "lc207",
@@ -21,7 +23,8 @@ public class Main {
     public static void main(String[] args) {
         for (String name : instances) {
             // input problem data
-            System.out.println("Start problem " + name);
+            System.out.println("\n===============================");
+            System.out.println("Starting problem " + name);
             File customers = new File("C:\\projects\\aco-vrp-framework\\src\\main\\resources\\pdp_100\\" + name + ".txt");
             FileReader customersInput;
             BufferedReader customersBR;
@@ -73,7 +76,7 @@ public class Main {
             }
 
             if (Customers.getSingleInstance().size() != 0 && DTTable.getSingleInstance().size() != 0) {
-                Overall overall = new Overall(vp);
+                Overall overall = new Overall(name, vp);
                 overall.run();
             } else {
                 System.out.println("data input error!");

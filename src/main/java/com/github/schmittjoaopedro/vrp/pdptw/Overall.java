@@ -8,8 +8,10 @@ import com.github.schmittjoaopedro.vrp.pdptw.model.VehicleProperty;
 
 public class Overall {
     private VehicleProperty vp;
+    private String name;
 
-    public Overall(VehicleProperty vp) {
+    public Overall(String name, VehicleProperty vp) {
+        this.name = name;
         this.vp = vp;
     }
 
@@ -35,9 +37,10 @@ public class Overall {
                 Sb = Sb_temp;
                 gNoImpro = 0;
                 double[] cost = Sb.cost();
-                System.out.println("gNoImpro = " + gNoImpro);
-                System.out.println("better NV: " + (int) cost[0] + " TC: " + Maths.round(cost[1], 2) + " SD: " + Maths.round(cost[2], 2) + " WT: " + Maths.round(cost[3]));
+                System.out.print("\ngNoImpro = " + gNoImpro);
+                System.out.print("\nbetter NV: " + (int) cost[0] + " TC: " + Maths.round(cost[1], 2) + " SD: " + Maths.round(cost[2], 2) + " WT: " + Maths.round(cost[3]) + " ");
             } else {
+                System.out.print(".");
                 double[] cost = Sb.cost();
                 //System.out.println("gNoImpro = " + gNoImpro);
                 //System.out.println("worse NV: " + (int) cost[0] + " TC: " + Maths.round(cost[1], 2) + " SD: " + Maths.round(cost[2], 2) + " WT: " + Maths.round(cost[3]));
@@ -47,6 +50,7 @@ public class Overall {
         Sb.printSolution();
         double[] cost = Sb.cost();
         double timeSec = ((System.currentTimeMillis() - time) / 1000.0);
+        System.out.println("Problem " + name);
         System.out.println("NV\tTC\tSD\tWT\tCT");
         System.out.println((int) cost[0] + "\t" + cost[1] + "\t" + cost[2] + "\t" + cost[3] + "\t" + timeSec);
     }

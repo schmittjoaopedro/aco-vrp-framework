@@ -2,12 +2,7 @@ package com.github.schmittjoaopedro.vrp.pdptw;
 
 import java.util.Vector;
 
-import com.github.schmittjoaopedro.vrp.pdptw.model.Customer;
-import com.github.schmittjoaopedro.vrp.pdptw.model.Customers;
-import com.github.schmittjoaopedro.vrp.pdptw.model.Route;
-import com.github.schmittjoaopedro.vrp.pdptw.model.Solution;
-import com.github.schmittjoaopedro.vrp.pdptw.model.Tabu;
-import com.github.schmittjoaopedro.vrp.pdptw.model.VehicleProperty;
+import com.github.schmittjoaopedro.vrp.pdptw.model.*;
 
 public class Metaheuristic {
 
@@ -42,7 +37,8 @@ public class Metaheuristic {
         // Obtain a solution Sb from DSL within nPDS(S) U nPDE(S)
         Solution Sb = nf.DLS_PDS_PDE(input);
         // Sb <- Perform a DSL withing NPR(S)
-        Sb = nf.DLS_PDR(Sb, 15); // PDR 15 times
+        //Sb = nf.DLS_PDR(Sb, 15); // PDR 15 times
+        Sb = nf.DLS_PDR(Sb);
         int NoImpr = 0;
         Solution s = Sb;
         double[] currentBestCost = Sb.cost();
@@ -67,7 +63,8 @@ public class Metaheuristic {
             // Sb' <- perform a DSL within nPDS(S') U nPDE(S')
             Solution Sb_temp = nf.DLS_PDS_PDE(s_temp);
             // Sb' <- perform a DSL within nPDR(Sb')
-            Sb_temp = nf.DLS_PDR(Sb_temp, 15); // PDR 15 times
+            //Sb_temp = nf.DLS_PDR(Sb_temp, 15); // PDR 15 times
+            Sb_temp = nf.DLS_PDR(Sb_temp);
 			// If Cost(Sb') < Cost(Sb) then
             if (compareSolutionCost(Sb_temp.cost(), currentBestCost) > 0) {
                 currentBestCost = Sb_temp.cost();
@@ -261,6 +258,7 @@ public class Metaheuristic {
                 break;
             }
         }
+        newSolution.clearAuxData();
         return newSolution;
     }
 }

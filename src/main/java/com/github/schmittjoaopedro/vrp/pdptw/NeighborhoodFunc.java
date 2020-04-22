@@ -1,11 +1,11 @@
 package com.github.schmittjoaopedro.vrp.pdptw;
 
-import java.util.Vector;
-
 import com.github.schmittjoaopedro.vrp.pdptw.model.Customers;
 import com.github.schmittjoaopedro.vrp.pdptw.model.Route;
 import com.github.schmittjoaopedro.vrp.pdptw.model.Solution;
 import com.github.schmittjoaopedro.vrp.pdptw.model.VehicleProperty;
+
+import java.util.Vector;
 
 public class NeighborhoodFunc {
 
@@ -44,7 +44,8 @@ public class NeighborhoodFunc {
         int delivery;
         for (int i = 0; i < s.get(r1Index).size() - 1; i++) {
             pickup = i;
-            if ((delivery = Customers.getSingleInstance().findPair(s.get(r1Index), pickup)) > 0) {
+            delivery = Customers.getSingleInstance().findPair(s.get(r1Index), pickup);
+            if (delivery > 0) {
                 newSolution = s.clone(r1Index, r2Index);
                 if (newSolution.shift(r1Index, r2Index, pickup, delivery, this.vp)) {
                     if (s.size() == newSolution.size() + 1) {
@@ -93,8 +94,9 @@ public class NeighborhoodFunc {
             for (int j = 0; j < s.get(r2Index).size() - 1; j++) {
                 pickup1 = i;
                 pickup2 = j;
-                if ((delivery1 = Customers.getSingleInstance().findPair(s.get(r1Index), pickup1)) > 0
-                        && (delivery2 = Customers.getSingleInstance().findPair(s.get(r2Index), pickup2)) > 0) {
+                delivery1 = Customers.getSingleInstance().findPair(s.get(r1Index), pickup1);
+                delivery2 = Customers.getSingleInstance().findPair(s.get(r2Index), pickup2);
+                if (delivery1 > 0 && delivery2 > 0) {
                     newSolution = s.clone(r1Index, r2Index);
                     if (newSolution.exchange(r1Index, r2Index, pickup1, delivery1, pickup2, delivery2, this.vp)) {
                         moveForwardRecordedRoutes(newSolution, r1Index, r2Index);
@@ -154,6 +156,28 @@ public class NeighborhoodFunc {
         return result;
     }
 
+    // PD-rearrange
+    private Solution PDR_BSF(Solution s) {
+        int pickup, delivery;
+        Solution newSolution;
+        Solution bestSolution = s;
+        for (int routeIndex = 0; routeIndex < s.size(); routeIndex++) { // optimize N routes
+            for (int i = 0; i < s.get(routeIndex).size() - 1; i++) {
+                pickup = i;
+                delivery = Customers.getSingleInstance().findPair(s.get(routeIndex), pickup);
+                if (delivery > 0) {
+                    newSolution = s.clone(routeIndex);
+                    if (newSolution.rearrange(routeIndex, pickup, delivery, this.vp)) {
+                        if (compareSolutionCost(newSolution.cost(), bestSolution.cost()) > 0) {
+                            bestSolution = newSolution;
+                        }
+                    }
+                }
+            }
+        }
+        return bestSolution;
+    }
+
     private Solution findBestNeighbor(Vector<Solution> neighbors) {
         int index = 0;
         double[] currentBestCost = neighbors.get(0).cost();
@@ -207,7 +231,7 @@ public class NeighborhoodFunc {
 
     /**
      * Descent Local Search
-     *
+     * <p>
      * Input: a solution S
      * Output: a local optimal solution Sb
      */
@@ -238,6 +262,19 @@ public class NeighborhoodFunc {
             Solution sNewBest = findBestNeighbor(neighbors);
             if (compareSolutionCost(sNewBest.cost(), currentBestCost) > 0) {
                 currentBestCost = sNewBest.cost();
+                sBest = sNewBest;
+            } else {
+                break;
+            }
+        }
+        return sBest;
+    }
+
+    public Solution DLS_PDR(Solution s) {
+        Solution sBest = s;
+        while (true) {
+            Solution sNewBest = PDR_BSF(s);
+            if (compareSolutionCost(sNewBest.cost(), sBest.cost()) > 0) {
                 sBest = sNewBest;
             } else {
                 break;

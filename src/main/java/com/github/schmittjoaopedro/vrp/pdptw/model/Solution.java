@@ -6,6 +6,8 @@ public class Solution {
 
     private Vector<Route> routes;
     private int recorded;
+    private Eigenvalue eigenvalue;
+    private int saCost;
 
     public Solution() {
         routes = new Vector<Route>();
@@ -79,14 +81,24 @@ public class Solution {
 
     // objective function of solution S in tabu-embedded METROPOLIS PROCEDURE in the simulated annealing algorithm
     public int saCost() {
-        double[] data = cost();
-        int saCost = (int) (data[1] + 0.01 * data[1] * data[3]);
+        if (saCost == -1) {
+            double[] data = cost();
+            saCost = (int) (data[1] + 0.01 * data[1] * data[3]);
+        }
         return saCost;
     }
 
     public Eigenvalue getEigenvalue() {
-        double[] data = cost();
-        return new Eigenvalue((int) data[0], (int) data[1], (int) data[2], (int) data[3]);
+        if (eigenvalue == null) {
+            double[] data = cost();
+            eigenvalue = new Eigenvalue((int) data[0], (int) data[1], (int) data[2], (int) data[3]);
+        }
+        return eigenvalue;
+    }
+
+    public void clearAuxData() {
+        eigenvalue = null;
+        saCost = -1;
     }
 
     // shift
@@ -140,15 +152,13 @@ public class Solution {
         Customer delivery = target.removeAt(j - 1);
 
         // insert
-        return insertPDPair(target, pickup, delivery, vp);
+        return insertPDPairAtBestPosition(target, pickup, delivery, vp);
     }
 
     // find a feasible place to insert pickup-delivery pair
     private boolean insertPDPair(Route targetRoute, Customer pickup, Customer delivery, VehicleProperty vp) {
-
         for (int i = 0; i < targetRoute.size() + 1; i++) {
             for (int j = i; j < targetRoute.size() + 1; j++) {
-
                 if (targetRoute.isInsertionFeasible(pickup, delivery, i, j, vp)) {
                     targetRoute.insertAt(j, delivery);
                     targetRoute.insertAt(i, pickup);
@@ -156,8 +166,30 @@ public class Solution {
                 }
             }
         }
-
         return false;
+    }
+
+    // find the best place to insert pickup-delivery pair
+    private boolean insertPDPairAtBestPosition(Route targetRoute, Customer pickup, Customer delivery, VehicleProperty vp) {
+        int bestPInsertion = -1, bestDInsertion = -1;
+        double bestCost = Double.MAX_VALUE;
+        for (int i = 0; i < targetRoute.size() + 1; i++) {
+            for (int j = i; j < targetRoute.size() + 1; j++) {
+                double newCost = targetRoute.getInsertionCost(pickup, delivery, i, j, vp);
+                if (newCost > 0 && newCost < bestCost) {
+                    bestDInsertion = j;
+                    bestPInsertion = i;
+                    bestCost = newCost;
+                }
+            }
+        }
+        if (bestPInsertion != -1 && bestDInsertion != -1) {
+            targetRoute.insertAt(bestDInsertion, delivery);
+            targetRoute.insertAt(bestPInsertion, pickup);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // objective function of solution S of local search
