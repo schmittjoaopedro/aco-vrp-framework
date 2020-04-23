@@ -193,6 +193,46 @@ public class Route {
         return newDistance;
     }
 
+    // test whether it is feasible to insert into this gap
+    public boolean isFeasible(VehicleProperty vp) {
+        // precedence constraint
+        int size = size();
+
+        // capacity constraint
+        int currentCapacity = 0;
+        for (int i = 0; i < size; i++) {
+            currentCapacity += get(i).getDemand();
+            if (currentCapacity > vp.getCapacity()) {
+                return false;
+            }
+        }
+        // time window constraint
+        double finishServiceTime = 0;
+        double arrivalTime;
+        Customer prev, curr;
+        for (int i = 0; i < size; i++) {
+            curr = get(i);
+            if (i == 0) {
+                arrivalTime = DTTable.getSingleInstance().getDTForDepot(curr.getID()).getTime();
+                finishServiceTime = Math.max(arrivalTime, curr.getE_time()) + curr.getService_time();
+            } else {
+                prev = get(i - 1);
+                arrivalTime = finishServiceTime + DTTable.getSingleInstance().get(prev.getID(), curr.getID()).getTime();
+                finishServiceTime = Math.max(arrivalTime, curr.getE_time()) + curr.getService_time();
+            }
+            if (arrivalTime > curr.getL_time()) {
+                return false;
+            }
+        }
+        // check depot time window
+        curr = get(size - 1);
+        arrivalTime = finishServiceTime + DTTable.getSingleInstance().getDTForDepot(curr.getID()).getTime();
+        if (arrivalTime > Customers.getSingleInstance().get(0).getL_time()) {
+            return false;
+        }
+        return true;
+    }
+
     private Customer getNode(int pos, int pIdx, int dIdx, Customer pickup, Customer delivery) {
         if (pos < pIdx) {
             return get(pos);
