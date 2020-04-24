@@ -8,7 +8,7 @@ import java.io.FileReader;
 
 public class Main {
 
-    private static final String[] instances = {"lc104"};
+    private static final String[] instances = {"lr204"};
 
     /*private static final String[] instances = {
             "lc101", "lc102", "lc103", "lc104", "lc105", "lc106", "lc107", "lc108",

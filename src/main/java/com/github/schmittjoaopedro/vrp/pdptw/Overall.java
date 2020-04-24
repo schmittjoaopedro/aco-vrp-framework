@@ -26,7 +26,6 @@ public class Overall {
         //int K = 5;
         int K = ((20 * vp.getTotalVehicles()) / 3) + 1;
         int gNoImpro = 0;
-        Tabu.getSingleInstance().clear();
         double[] currentBestCost = Sb.cost();
         while (gNoImpro < K) {
             Solution s = Sb;

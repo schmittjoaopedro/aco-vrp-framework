@@ -120,6 +120,8 @@ public class Instance {
         solution.tourCosts = new ArrayList<>(solution.tours.size());
         solution.toVisit = numTasks;
         solution.totalCost = 0.0;
+        solution.totalScheduleDuration = 0.0;
+        solution.totalWaitingTime = 0.0;
         solution.feasible = true;
         solution.visited = new boolean[numNodes];
         solution.removedRequests = new boolean[numRequests];
@@ -128,17 +130,19 @@ public class Instance {
         }
         int[] numNodesByRequest = new int[numRequests];
         int[] parityConstraint = new int[numRequests];
-        Double[] pickupByRequestTime = new Double[numRequests];
-        Double[] deliveryByRequestTime = new Double[numRequests];
+        double[] pickupByRequestTime = new double[numRequests];
+        double[] deliveryByRequestTime = new double[numRequests];
         // For each vehicle
         for (int k = 0; k < solution.tours.size(); k++) {
             solution.tourCosts.add(0.0);
             if (solution.requestIds.get(k).isEmpty()) continue;
             ArrayList<Integer> tour = solution.tours.get(k);
             //Double currentTime = announceTime(tour.get(1));
-            Double currentTime = lastIdleTime(tour.get(1));
-            Double tourCost = 0.0;
-            Double capacity = 0.0;
+            double currentTime = lastIdleTime(tour.get(1));
+            double tourCost = 0.0;
+            double serviceTime = 0.0;
+            double waitingTime = 0.0;
+            double capacity = 0.0;
             Task task;
             int curr, next;
             LinkedList<Integer> attendedRequests = new LinkedList<>();
@@ -153,6 +157,9 @@ public class Instance {
                 solution.visited[curr] = true;
                 tourCost += dist(curr, next);
                 currentTime += dist(curr, next);
+                if (currentTime < twStart(next)) {
+                    waitingTime += twStart(next) - currentTime;
+                }
                 currentTime = Math.max(currentTime, twStart(next));
                 capacity += demand(next);
                 // For precedence and attendance restrictions
@@ -184,6 +191,7 @@ public class Instance {
                     throw new InfeasibleSolutionException("Capacity infeasibility");
                 }
                 currentTime += serviceTime(next);
+                serviceTime += serviceTime(next);
                 // Check if nodes and requests lists are consistent
                 if (curr != 0 && !solution.requestIds.get(k).contains(getTask(curr).requestId)) {
                     solution.feasible = false;
@@ -209,6 +217,8 @@ public class Instance {
             }
             solution.tourCosts.set(k, tourCost);
             solution.totalCost += tourCost;
+            solution.totalWaitingTime += waitingTime;
+            solution.totalScheduleDuration += tourCost + serviceTime + waitingTime;
         }
         // Check that all requests were attended
         if (solution.toVisit != 0) {

@@ -13,12 +13,16 @@ public class SolutionUtils {
         for (int i = 0; i < from.tours.size(); i++) {
             to.tours.add(i, (ArrayList<Integer>) from.tours.get(i).clone());
             to.requestIds.add(i, (ArrayList<Integer>) from.requestIds.get(i).clone());
-            to.tourCosts.add(i, from.tourCosts.get(i));
+            if (from.tourCosts.size() > i) {
+                to.tourCosts.add(i, from.tourCosts.get(i));
+            }
         }
         to.visited = from.visited.clone();
         to.removedRequests = from.removedRequests.clone();
         to.nodeIndexes = from.nodeIndexes.clone();
         to.totalCost = from.totalCost;
+        to.totalWaitingTime = from.totalWaitingTime;
+        to.totalScheduleDuration = from.totalScheduleDuration;
         to.feasible = from.feasible;
         to.maxTime = from.maxTime;
         to.toVisit = from.toVisit;
@@ -44,6 +48,8 @@ public class SolutionUtils {
         solution.removedRequests = new boolean[instance.numRequests];
         solution.nodeIndexes = new Solution.NodeIndex[instance.numNodes];
         solution.totalCost = 0.0;
+        solution.totalScheduleDuration = 0.0;
+        solution.totalWaitingTime = 0.0;
         solution.feasible = false;
         solution.maxTime = 0.0;
         solution.toVisit = instance.numTasks;
@@ -86,6 +92,17 @@ public class SolutionUtils {
             bestSol = sol2;
         }
         return bestSol;
+    }
+
+    public static boolean allRequestsAreAttended(Solution solution) {
+        boolean allAttended = true;
+        for (boolean removed : solution.removedRequests) {
+            if (removed) {
+                allAttended = false;
+                break;
+            }
+        }
+        return allAttended;
     }
 
 }

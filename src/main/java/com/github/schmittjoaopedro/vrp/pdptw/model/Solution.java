@@ -7,7 +7,7 @@ public class Solution {
     private Vector<Route> routes;
     private int recorded;
     private Eigenvalue eigenvalue;
-    private int saCost;
+    private int saCost = -1;
 
     public Solution() {
         routes = new Vector<Route>();

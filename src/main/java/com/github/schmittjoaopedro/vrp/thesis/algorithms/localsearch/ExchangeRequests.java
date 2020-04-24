@@ -9,10 +9,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ExchangeRequests {
 
@@ -83,6 +80,47 @@ public class ExchangeRequests {
         }
         instance.solutionEvaluation(tempSol);
         return tempSol;
+    }
+
+    public void exchange(Solution solution, LinkedList<Solution> neighborhood) {
+        Solution tempSol = SolutionUtils.copy(solution);
+        Request r1, r2;
+        int v1, v2;
+        ArrayList<Integer> t1, t2;
+        RouteTimes rt1, rt2;
+        for (int k = 0; k < tempSol.tours.size(); k++) {
+            tempSol.indexVehicle(k);
+        }
+        for (int i = 0; i < instance.numRequests - 1; i++) { // Process [0, 1, ..., n-1]
+            r1 = instance.requests[i];
+            if (r1.isVehicleRelocatable()) {
+                v1 = tempSol.getVehicle(r1.pickupTask.nodeId);
+                t1 = createTourWithoutRequest(tempSol.tours.get(v1), r1);
+                rt1 = createRouteTimes(t1);
+                for (int j = i + 1; j < instance.numRequests; j++) { // Process [1, 2, ..., n]
+                    r2 = instance.requests[j];
+                    if (r2.isVehicleRelocatable()) {
+                        v2 = tempSol.getVehicle(r2.pickupTask.nodeId);
+                        if (v1 != v2) {
+                            InsertPosition r2Pos = insertionService.calculateBestPosition(t1, r2, rt1);
+                            if (r2Pos.cost < Double.MAX_VALUE) {
+                                t2 = createTourWithoutRequest(tempSol.tours.get(v2), r2);
+                                rt2 = createRouteTimes(t2);
+                                InsertPosition r1Pos = insertionService.calculateBestPosition(t2, r1, rt2);
+                                if (r1Pos.cost < Double.MAX_VALUE) {
+                                    Solution neighbor = SolutionUtils.copy(tempSol);
+                                    neighbor.remove(Arrays.asList(r1.requestId, r2.requestId), instance);
+                                    neighbor.insert(instance, r2.requestId, v1, r2Pos.pickupPos, r2Pos.deliveryPos);
+                                    neighbor.insert(instance, r1.requestId, v2, r1Pos.pickupPos, r1Pos.deliveryPos);
+                                    instance.solutionEvaluation(neighbor);
+                                    neighborhood.add(neighbor);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public ArrayList<Integer> createTourWithoutRequest(ArrayList<Integer> tour, Request request) {

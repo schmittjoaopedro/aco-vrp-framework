@@ -33,6 +33,10 @@ public class Solution {
 
     public double totalCost;
 
+    public double totalScheduleDuration;
+
+    public double totalWaitingTime;
+
     public boolean feasible;
 
     public double maxTime;

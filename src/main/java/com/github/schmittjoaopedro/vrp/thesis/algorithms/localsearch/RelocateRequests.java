@@ -11,6 +11,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 public class RelocateRequests {
@@ -76,6 +77,36 @@ public class RelocateRequests {
         }
         instance.solutionEvaluation(tempSol);
         return tempSol;
+    }
+
+    public void relocate(Solution solution, LinkedList<Solution> neighborhood) {
+        Request request;
+        InsertPosition insertPosition;
+        Solution tempSol = SolutionUtils.createSolution(instance);
+        SolutionUtils.copyFromTo(solution, tempSol);
+        RouteTimes[] routeTimes = new RouteTimes[tempSol.tours.size()];
+        for (int k = 0; k < tempSol.tours.size(); k++) {
+            routeTimes[k] = new RouteTimes(tempSol.tours.get(k), instance);
+            tempSol.indexVehicle(k);
+        }
+        for (Integer requestId = 0; requestId < instance.numRequests; requestId++) {
+            request = instance.requests[requestId];
+            if (request.isVehicleRelocatable()) {
+                int vehicle = tempSol.getVehicle(request.pickupTask.nodeId);
+                for (int k = 0; k < tempSol.tours.size(); k++) {
+                    if (k != vehicle) {
+                        insertPosition = insertionService.calculateBestPosition(tempSol.tours.get(k), request, routeTimes[k]);
+                        if (insertPosition.cost < Double.MAX_VALUE) {
+                            Solution neighbor = SolutionUtils.copy(tempSol);
+                            neighbor.remove(Arrays.asList(requestId), instance);
+                            neighbor.insert(instance, requestId, k, insertPosition.pickupPos, insertPosition.deliveryPos);
+                            instance.solutionEvaluation(neighbor);
+                            neighborhood.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public int getHashCost(InsertPosition insertPosition, Integer vehicle) {
