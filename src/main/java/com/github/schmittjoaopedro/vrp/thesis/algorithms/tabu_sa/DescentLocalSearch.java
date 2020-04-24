@@ -11,8 +11,6 @@ import java.util.LinkedList;
 
 public class DescentLocalSearch {
 
-    private Instance instance;
-
     private RelocateRequests relocateRequests;
 
     private ExchangeRequests exchangeRequests;
@@ -20,7 +18,6 @@ public class DescentLocalSearch {
     private ReArrangeRequests reArrangeRequests;
 
     public DescentLocalSearch(Instance instance) {
-        this.instance = instance;
         this.relocateRequests = new RelocateRequests(instance);
         this.exchangeRequests = new ExchangeRequests(instance);
         this.reArrangeRequests = new ReArrangeRequests(instance);
