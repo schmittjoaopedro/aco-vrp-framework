@@ -21,19 +21,19 @@ public class TabuEmbeddedSaTest {
         pdptw100Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
     }
 
-    //@Test
+    @Test
     public void allTest() throws Exception {
         for (String instance : InstanceUtils.instances_100) {
-            singleExec(instance, 10);
+            singleExec(instance, 30, false);
         }
     }
 
-    //@Test
+    @Test
     public void singleTest() throws Exception {
-        singleExec("lc204", 1);
+        singleExec("lr202", 1, true);
     }
 
-    private void singleExec(String problem, int numTrials) throws Exception {
+    private void singleExec(String problem, int numTrials, boolean print) throws Exception {
         Solution bestSoFar = null;
         long computationTime = 0;
         System.out.println("=======================================");
@@ -41,7 +41,7 @@ public class TabuEmbeddedSaTest {
         for (int i = 0; i < numTrials; i++) {
             Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, problem + ".txt").toFile());
             Overall solver = new Overall(instance, new Random());
-            solver.setPrint(false);
+            solver.setPrint(print);
             solver.run();
             Solution solutionBest = solver.getSolutionBest();
             System.out.println("Trial " + i + " = " + solutionBest.toString());
