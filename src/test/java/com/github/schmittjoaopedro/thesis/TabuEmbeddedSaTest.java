@@ -20,7 +20,7 @@ public class TabuEmbeddedSaTest {
     private static final String pdptw100Directory;
 
     static {
-        pdptw100Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+        pdptw100Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
     }
 
     @Test

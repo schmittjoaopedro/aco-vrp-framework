@@ -45,6 +45,8 @@ public class Instance {
 
     public double currentTime = 0.0;
 
+    public long numEvaluatedFunction = 0;
+
     public double dist(int i, int j) {
         return distances[i][j];
     }
@@ -117,6 +119,7 @@ public class Instance {
     }
 
     public void solutionEvaluation(Solution solution) {
+        numEvaluatedFunction++;
         solution.tourCosts = new ArrayList<>(solution.tours.size());
         solution.toVisit = numTasks;
         solution.totalCost = 0.0;

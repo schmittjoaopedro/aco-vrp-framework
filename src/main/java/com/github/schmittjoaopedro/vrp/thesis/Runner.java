@@ -1,9 +1,12 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.StatisticCalculator;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.IterationCriteria;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.TimeCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
+import com.github.schmittjoaopedro.vrp.thesis.statistic.StatisticCalculator;
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,15 +35,21 @@ public class Runner {
     public static final String HELP = "help";
     public static final String NUM_TRIALS = "numTrials";
     public static final String MAX_ITERATIONS = "maxIterations";
+    public static final String MAX_SECONDS = "maxSeconds";
     public static final String NUM_CPU = "numCpu";
     public static final double NUM_THREADS_PER_RUN = 3.0;
 
     public static void main(String[] args) throws Exception {
         CommandLine commandLine = parseCommandLine(args);
-        if (commandLine.hasOption(INPUT_DIR) && commandLine.hasOption(OUTPUT_DIR) && commandLine.hasOption(NUM_TRIALS) && commandLine.hasOption(MAX_ITERATIONS)) {
+        StopCriteria stopCriteria = null;
+        if (commandLine.hasOption(MAX_ITERATIONS)) {
+            stopCriteria = IterationCriteria.of(Integer.valueOf(commandLine.getOptionValue(MAX_ITERATIONS)));
+        } else if (commandLine.hasOption(MAX_SECONDS)) {
+            stopCriteria = TimeCriteria.of(Integer.valueOf(commandLine.getOptionValue(MAX_SECONDS)) * 1000);
+        }
+        if (commandLine.hasOption(INPUT_DIR) && commandLine.hasOption(OUTPUT_DIR) && commandLine.hasOption(NUM_TRIALS) && stopCriteria != null) {
             String outputDir = commandLine.getOptionValue(OUTPUT_DIR);
             Integer numTrials = Integer.valueOf(commandLine.getOptionValue(NUM_TRIALS));
-            Integer maxIterations = Integer.valueOf(commandLine.getOptionValue(MAX_ITERATIONS));
             Integer numCpus = Integer.valueOf(commandLine.getOptionValue(NUM_CPU));
             File[] instances = getInstances(commandLine.getOptionValue(INPUT_DIR));
             for (double p = 0; p < instances.length; p++) {
@@ -48,19 +57,19 @@ public class Runner {
                 String instanceName = instance.getName().substring(0, instance.getName().lastIndexOf("."));
                 boolean isMultipleTrials = numTrials > 1;
                 if (!isProcessed(outputDir, instanceName) && isMultipleTrials) {
-                    StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
+                    StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName);
                     double numSegments = calculateNumTrialSegments(numCpus, numTrials, commandLine.hasOption(PARALLEL));
                     double trialSegmentSize = numTrials / numSegments;
                     LOGGER.info("Starting to process {}. Active threads {}. Segments {}. Trials per segment {}", instanceName, Thread.activeCount(), numSegments, trialSegmentSize);
                     for (int i = 0; i < numSegments; i++) {
-                        executeThreadPool(commandLine, (int) trialSegmentSize, maxIterations, instance, statisticCalculator, i);
+                        executeThreadPool(commandLine, (int) trialSegmentSize, stopCriteria, instance, statisticCalculator, i);
                     }
                     statisticCalculator.calculateInstanceStatistics();
                     statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
-                } else {
+                } else if (!isMultipleTrials) {
                     LOGGER.info("Starting to process {}.", instanceName);
-                    StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName, maxIterations);
-                    createSampleExecution(instance, maxIterations, commandLine, statisticCalculator, true).run();
+                    StatisticCalculator statisticCalculator = new StatisticCalculator(instanceName);
+                    createSampleExecution(instance, stopCriteria, commandLine, statisticCalculator, true).run();
                     statisticCalculator.calculateInstanceStatistics();
                     statisticCalculator.writeTestResultToCsv(outputDir, true, true, true);
                 }
@@ -74,10 +83,10 @@ public class Runner {
         return Paths.get(outputDir, instanceName + "_bsf.csv").toFile().exists();
     }
 
-    private static void executeThreadPool(CommandLine commandLine, Integer numTrials, Integer maxIterations, File instance, StatisticCalculator statisticCalculator, int segment) throws Exception {
+    private static void executeThreadPool(CommandLine commandLine, Integer numTrials, StopCriteria stopCriteria, File instance, StatisticCalculator statisticCalculator, int segment) throws Exception {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(numTrials);
         for (int i = 0; i < numTrials; i++) {
-            threadPoolExecutor.submit(createSampleExecution(instance, maxIterations, commandLine, statisticCalculator, i == 0));
+            threadPoolExecutor.submit(createSampleExecution(instance, stopCriteria, commandLine, statisticCalculator, i == 0));
         }
         threadPoolExecutor.shutdown();
         LOGGER.info("Active threads {} threads. Segment {}", Thread.activeCount(), segment);
@@ -93,15 +102,15 @@ public class Runner {
     }
 
     private static Runnable createSampleExecution(File instanceFile,
-                                                  Integer maxIterations,
+                                                  StopCriteria stopCriteria,
                                                   CommandLine commandLine,
                                                   StatisticCalculator statisticCalculator,
                                                   boolean logThreadInfo) throws Exception {
         Instance instance = Reader.getInstance(instanceFile);
         long seed = (long) (1000.0 * Math.random());
-        Solver solver = new Solver(instance, new Random(seed), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        Solver solver = new Solver(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
         solver.setPrintConsole(false);
-        solver.enableStatisticsCollector();
+        //solver.enableIterationStatistics();
         if (logThreadInfo) {
             solver.enableThreadInfo();
         }
@@ -117,7 +126,7 @@ public class Runner {
         return () -> {
             solver.init();
             solver.run();
-            statisticCalculator.addStatisticsResult(solver.getStatistic());
+            statisticCalculator.addStatisticsResult(solver.getExperimentStatistics());
         };
     }
 
@@ -142,6 +151,7 @@ public class Runner {
         options.addOption(OUTPUT_DIR, true, "Results output directory");
         options.addOption(NUM_TRIALS, true, "Number of trials by test instance");
         options.addOption(MAX_ITERATIONS, true, "Number of maximum iterations to execute");
+        options.addOption(MAX_SECONDS, true, "Number of maximum seconds to execute");
         options.addOption(NUM_CPU, true, "Num CPU's");
         options.addOption(MOVING_VEHICLE, false, "Enable moving vehicle");
         options.addOption(LOCAL_SEARCH, false, "Enable local search");
