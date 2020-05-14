@@ -108,25 +108,25 @@ public class Runner {
                                                   boolean logThreadInfo) throws Exception {
         Instance instance = Reader.getInstance(instanceFile);
         long seed = (long) (1000.0 * Math.random());
-        Solver solver = new Solver(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
-        solver.setPrintConsole(false);
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.setPrintConsole(false);
         //solver.enableIterationStatistics();
         if (logThreadInfo) {
-            solver.enableThreadInfo();
+            ALNSDPDP.enableThreadInfo();
         }
         if (commandLine.hasOption(LOCAL_SEARCH)) {
-            solver.enableLocalSearch();
+            ALNSDPDP.enableLocalSearch();
         }
         if (commandLine.hasOption(MOVING_VEHICLE)) {
-            solver.enableVehicleControlCenter();
+            ALNSDPDP.enableVehicleControlCenter();
         }
         if (commandLine.hasOption(PARALLEL)) {
-            solver.enableParallelExecution();
+            ALNSDPDP.enableParallelExecution();
         }
         return () -> {
-            solver.init();
-            solver.run();
-            statisticCalculator.addStatisticsResult(solver.getExperimentStatistics());
+            ALNSDPDP.init();
+            ALNSDPDP.run();
+            statisticCalculator.addStatisticsResult(ALNSDPDP.getExperimentStatistics());
         };
     }
 

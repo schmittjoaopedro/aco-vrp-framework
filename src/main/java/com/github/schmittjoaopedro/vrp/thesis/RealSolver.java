@@ -44,12 +44,12 @@ public class RealSolver {
     public void optimize() {
         algTime = System.currentTimeMillis();
         Instance instance = getInstance();
-        Solver solver = new Solver(instance, new Random(1), 10000, true, true, LNSOptimizer.Type.ALNS);
-        solver.setPrintConsole(true);
-        solver.disableCallCenter();
-        solver.init();
-        solver.run();
-        solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(1), 10000, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.setPrintConsole(true);
+        ALNSDPDP.disableCallCenter();
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        solutionBest = ALNSDPDP.getSolutionBest();
         algTime = System.currentTimeMillis() - algTime;
         System.out.println("");
     }

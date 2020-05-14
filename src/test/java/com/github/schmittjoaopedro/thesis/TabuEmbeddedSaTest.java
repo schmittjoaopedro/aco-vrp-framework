@@ -23,7 +23,7 @@ public class TabuEmbeddedSaTest {
         pdptw100Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
     }
 
-    @Test
+    //@Test
     public void allTest() throws Exception {
         for (String instance : InstanceUtils.instances_200) {
             singleExec(instance, 30, false);

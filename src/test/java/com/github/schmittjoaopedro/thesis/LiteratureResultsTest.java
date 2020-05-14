@@ -1,6 +1,6 @@
 package com.github.schmittjoaopedro.thesis;
 
-import com.github.schmittjoaopedro.vrp.thesis.Solver;
+import com.github.schmittjoaopedro.vrp.thesis.ALNS_DPDP;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
@@ -26,10 +26,10 @@ public class LiteratureResultsTest {
     @Test
     public void lc1Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lc103.txt").toFile());
-        Solver solver = new Solver(instance, new Random(5), maxIterations, true, true, LNSOptimizer.Type.ALNS);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(5), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        Solution solutionBest = ALNSDPDP.getSolutionBest();
         assertThat(solutionBest.totalCost).isEqualTo(1035.3499342457624);
         assertThat(solutionBest.tours.size()).isEqualTo(9);
         int idx = 0;
@@ -47,10 +47,10 @@ public class LiteratureResultsTest {
     @Test
     public void lc2Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lc205.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        Solution solutionBest = ALNSDPDP.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(588.8759626534237);
         assertThat(solutionBest.tours.size()).isEqualTo(3);
@@ -63,10 +63,10 @@ public class LiteratureResultsTest {
     @Test
     public void lr1Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lr112.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        Solution solutionBest = ALNSDPDP.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(1003.766997800698);
         assertThat(solutionBest.tours.size()).isEqualTo(9);
@@ -85,10 +85,10 @@ public class LiteratureResultsTest {
     @Test
     public void lr2Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lr209.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        Solution solutionBest = ALNSDPDP.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(930.5857489156436);
         assertThat(solutionBest.tours.size()).isEqualTo(3);
@@ -101,10 +101,10 @@ public class LiteratureResultsTest {
     @Test
     public void lrc1Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lrc105.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        Solution solutionBest = ALNSDPDP.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(1637.6243913700941);
         assertThat(solutionBest.tours.size()).isEqualTo(13);
@@ -127,10 +127,10 @@ public class LiteratureResultsTest {
     @Test
     public void lrc2Test() throws Exception {
         Instance instance = Reader.getInstance(Paths.get(pdptw100Directory, "lrc203.txt").toFile());
-        Solver solver = new Solver(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
-        solver.init();
-        solver.run();
-        Solution solutionBest = solver.getSolutionBest();
+        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(1), maxIterations, true, true, LNSOptimizer.Type.ALNS);
+        ALNSDPDP.init();
+        ALNSDPDP.run();
+        Solution solutionBest = ALNSDPDP.getSolutionBest();
         assertThat(solutionBest.feasible).isTrue();
         assertThat(solutionBest.totalCost).isEqualTo(1089.0676879447258);
         assertThat(solutionBest.tours.size()).isEqualTo(3);
