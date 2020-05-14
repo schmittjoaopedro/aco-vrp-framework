@@ -1,14 +1,17 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.Statistic;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.alns.CostMinimizerALNS;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.alns.VehicleMinimizerALNS;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.lns.CostMinimizerLNS;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.lns.VehicleMinimizerLNS;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.IterationCriteria;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
+import com.github.schmittjoaopedro.vrp.thesis.statistic.ExperimentStatistics;
+import com.github.schmittjoaopedro.vrp.thesis.statistic.Statistic;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +39,7 @@ public class Solver {
 
     private Instance instance;
 
-    private int maxIterations;
+    private StopCriteria stopCriteria;
 
     private LNSOptimizer vehicleMinimizer;
 
@@ -50,29 +53,37 @@ public class Solver {
 
     private VehiclesControlCenter vehiclesControlCenter;
 
-    private int iteration = 1;
-
-    private Statistic statistic;
+    private ExperimentStatistics experimentStatistics;
 
     private RoutePrinter routePrinter;
 
-    private boolean collectStatistics;
+    private boolean collectIterationStatistics = false;
 
     private ThreadPoolExecutor threadPoolExecutor;
 
     private boolean logThreadInfo;
 
+    private int iteration = 1;
+
     public Solver(Instance instance, Random random, int maxIterations, boolean minimizeNv, boolean minimizeTc, LNSOptimizer.Type type) {
         this(instance, random, maxIterations, 90, minimizeNv, minimizeTc, type);
     }
 
+    public Solver(Instance instance, Random random, StopCriteria stopCriteria, boolean minimizeNv, boolean minimizeTc, LNSOptimizer.Type type) {
+        this(instance, random, stopCriteria, 90, minimizeNv, minimizeTc, type);
+    }
+
     public Solver(Instance instance, Random random, int maxIterations, double setupTime, boolean minimizeNv, boolean minimizeTc, LNSOptimizer.Type type) {
+        this(instance, random, IterationCriteria.of(maxIterations), setupTime, minimizeNv, minimizeTc, type);
+    }
+
+    public Solver(Instance instance, Random random, StopCriteria stopCriteria, double setupTime, boolean minimizeNv, boolean minimizeTc, LNSOptimizer.Type type) {
         this.instance = instance;
-        this.maxIterations = maxIterations;
+        this.stopCriteria = stopCriteria;
         createVehicleMinimizer(instance, random, minimizeNv, type);
         createCostMinimizer(instance, random, minimizeTc, type);
         callCenter = new CallCenter(instance, setupTime);
-        statistic = new Statistic(maxIterations, instance);
+        experimentStatistics = new ExperimentStatistics();
     }
 
     private void createCostMinimizer(Instance instance, Random random, boolean minimizeTc, LNSOptimizer.Type type) {
@@ -114,10 +125,11 @@ public class Solver {
 
     public void run() {
         try {
-            long time = System.currentTimeMillis();
-            while (iteration < maxIterations) {
+            long startTime = System.currentTimeMillis();
+            stopCriteria.start();
+            while (stopCriteria.isContinue()) {
                 // Update algorithm time relative to the current iteration
-                updateAlgorithmTime(iteration);
+                updateAlgorithmTime();
                 if (instance.numRequests > 0) {
                     /*
                      * Monitors vehicles visiting clients.
@@ -141,16 +153,17 @@ public class Solver {
                     if (feasibleNV != null && feasibleTC != null && SolutionUtils.getBest(feasibleNV, feasibleTC) == feasibleNV) {
                         costMinimizer.resetToInitialSolution(feasibleNV);
                     }
-                    collectStatistics();
+                    collectIterationStatistics();
                 }
                 iteration++;
+                stopCriteria.update();
             }
-            if (collectStatistics) {
-                statistic.executionTime = System.currentTimeMillis() - time;
-            }
+            experimentStatistics.totalTime = System.currentTimeMillis() - startTime;
+            experimentStatistics.totalIterations = iteration;
+            experimentStatistics.numSolutionsEvaluation = instance.numEvaluatedFunction;
             printVehiclesOperation();
             instance.solutionEvaluation(solutionBest);
-            statistic.solutionBest = solutionBest;
+            experimentStatistics.solutionBest = solutionBest;
             printSolutionBest();
         } finally {
             finishThreads();
@@ -198,30 +211,24 @@ public class Solver {
         }
     }
 
-    private void collectStatistics() {
-        if (collectStatistics) {
-            statistic.global_nv[iteration] = solutionBest.tours.size();
-            statistic.global_tc[iteration] = solutionBest.totalCost;
-            statistic.global_fc[iteration] = solutionBest.feasible ? 1 : 0;
-            if (vehicleMinimizer != null) {
-                statistic.vehicle_minimizer_best_nv[iteration] = vehicleMinimizer.getSolutionBest().tours.size();
-                statistic.vehicle_minimizer_best_tc[iteration] = vehicleMinimizer.getSolutionBest().totalCost;
-                statistic.vehicle_minimizer_local_nv[iteration] = vehicleMinimizer.getSolutionLocal().tours.size();
-                statistic.vehicle_minimizer_local_tc[iteration] = vehicleMinimizer.getSolutionLocal().totalCost;
-                statistic.vehicle_minimizer_temperature[iteration] = vehicleMinimizer.getTemperature();
-            }
-            if (costMinimizer != null) {
-                statistic.cost_minimizer_best_nv[iteration] = costMinimizer.getSolutionBest().tours.size();
-                statistic.cost_minimizer_best_tc[iteration] = costMinimizer.getSolutionBest().totalCost;
-                statistic.cost_minimizer_local_nv[iteration] = costMinimizer.getSolutionLocal().tours.size();
-                statistic.cost_minimizer_local_tc[iteration] = costMinimizer.getSolutionLocal().totalCost;
-                statistic.cost_minimizer_temperature[iteration] = costMinimizer.getTemperature();
-            }
+    private void collectIterationStatistics() {
+        if (collectIterationStatistics) {
+            experimentStatistics.add(
+                    stopCriteria.getScaledTime(),
+                    instance.numEvaluatedFunction,
+                    solutionBest,
+                    vehicleMinimizer.getSolutionBest(),
+                    vehicleMinimizer.getSolutionLocal(),
+                    vehicleMinimizer.getTemperature(),
+                    costMinimizer.getSolutionBest(),
+                    costMinimizer.getSolutionLocal(),
+                    costMinimizer.getTemperature()
+            );
         }
     }
 
-    private void updateAlgorithmTime(double currentTime) {
-        double scaledTime = currentTime / maxIterations;
+    private void updateAlgorithmTime() {
+        double scaledTime = stopCriteria.getScaledTime();
         instance.currentTime = (int) (instance.depot.twEnd - instance.depot.twStart) * scaledTime;
     }
 
@@ -344,12 +351,15 @@ public class Solver {
     public void saveStatistics(File file) {
         try {
             FileUtils.writeStringToFile(file, "iteration,nv,tc\n", "UTF-8", false);
+            FileUtils.writeStringToFile(file, getSummaryResults(), "UTF-8", true);
             StringBuilder iterationStatistics = new StringBuilder();
-            for (int i = 1; i < maxIterations; i++) {
-                iterationStatistics.append(i).append(',').append(statistic.global_nv[i]).append(',').append(statistic.global_tc[i]).append('\n');
+            for (Statistic statistic : experimentStatistics.getStatistics()) {
+                iterationStatistics
+                        .append(statistic.processCompletion).append(',')
+                        .append(statistic.solver_best_nv).append(',')
+                        .append(statistic.solver_best_tc).append('\n');
             }
             FileUtils.writeStringToFile(file, iterationStatistics.toString(), "UTF-8", true);
-            FileUtils.writeStringToFile(file, getSummaryResults(), "UTF-8", true);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -365,12 +375,12 @@ public class Solver {
         routePrinter = new RoutePrinter(instance, folderPath, 1024, 768);
     }
 
-    public void enableStatisticsCollector() {
-        collectStatistics = true;
+    public void enableIterationStatistics() {
+        collectIterationStatistics = true;
     }
 
-    public Statistic getStatistic() {
-        return statistic;
+    public ExperimentStatistics getExperimentStatistics() {
+        return experimentStatistics;
     }
 
     public void enableParallelExecution() {
