@@ -2,7 +2,7 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.stop;
 
 public interface StopCriteria {
 
-    void start();
+    void reset();
 
     void update();
 

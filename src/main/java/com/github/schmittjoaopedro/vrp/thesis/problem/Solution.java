@@ -195,6 +195,10 @@ public class Solution {
                 ", TC = " + StringUtils.leftPad(COST_FORMAT.format(MathUtils.round(totalCost)), 9) + "]";
     }
 
+    public String getTourStr(int idx) {
+        return StringUtils.join(tours.get(idx), ' ');
+    }
+
     protected class NodeIndex {
 
         protected int vehicle;

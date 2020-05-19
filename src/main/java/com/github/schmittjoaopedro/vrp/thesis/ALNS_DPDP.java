@@ -126,7 +126,7 @@ public class ALNS_DPDP {
     public void run() {
         try {
             long startTime = System.currentTimeMillis();
-            stopCriteria.start();
+            stopCriteria.reset();
             while (stopCriteria.isContinue()) {
                 // Update algorithm time relative to the current iteration
                 updateAlgorithmTime();

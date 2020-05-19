@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.tabu_sa;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -30,7 +31,9 @@ public class MetaHeuristic {
 
     private InsertionOperator insertionOperator;
 
-    public MetaHeuristic(double initialTemperature, double coolingRatio, int MSNI, Instance instance, Random random) {
+    private StopCriteria stopCriteria;
+
+    public MetaHeuristic(double initialTemperature, double coolingRatio, int MSNI, Instance instance, Random random, StopCriteria stopCriteria) {
         this.initialTemperature = initialTemperature;
         this.coolingRatio = coolingRatio;
         this.MSNI = MSNI;
@@ -39,6 +42,7 @@ public class MetaHeuristic {
         this.descentLocalSearch = new DescentLocalSearch(instance);
         this.random = random;
         this.insertionOperator = new RegretInsertion(random, instance, (sol, inst) -> 1);
+        this.stopCriteria = stopCriteria;
     }
 
     public Solution tabuEmbeddedSa(Solution solutionBase) {
@@ -49,7 +53,7 @@ public class MetaHeuristic {
         solutionBest = descentLocalSearch.findBestByShiftAndExchange(solutionBest);
         solutionBest = descentLocalSearch.executeReArrange(solutionBest);
         Solution solution = SolutionUtils.copy(solutionBest);
-        while (noImprovements < MSNI) {
+        while (noImprovements < MSNI && stopCriteria.isContinue()) {
             solution = metropolisProcedure(solution);
             solution = reduceVehiclesNumber(solution);
             solution = descentLocalSearch.findBestByShiftAndExchange(solution);

@@ -7,7 +7,7 @@ public class TimeCriteria implements StopCriteria {
     private long maxTime;
 
     @Override
-    public void start() {
+    public void reset() {
         this.startTime = System.currentTimeMillis();
     }
 

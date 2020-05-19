@@ -7,7 +7,7 @@ public class IterationCriteria implements StopCriteria {
     public long maxIterations;
 
     @Override
-    public void start() {
+    public void reset() {
         currentIteration = 1;
     }
 
