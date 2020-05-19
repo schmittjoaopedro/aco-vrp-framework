@@ -39,7 +39,7 @@ public class MetaHeuristic {
         this.MSNI = MSNI;
         this.instance = instance;
         this.tabu = new TABU();
-        this.descentLocalSearch = new DescentLocalSearch(instance);
+        this.descentLocalSearch = new DescentLocalSearch(instance, stopCriteria);
         this.random = random;
         this.insertionOperator = new RegretInsertion(random, instance, (sol, inst) -> 1);
         this.stopCriteria = stopCriteria;
@@ -70,11 +70,11 @@ public class MetaHeuristic {
     }
 
     public Solution metropolisProcedure(Solution solutionBase) {
-        Solution solution = null;
+        Solution solution = SolutionUtils.copy(solutionBase);
         double delta = 0;
         double probability = 0;
         LinkedList<Solution> neighborhood = descentLocalSearch.findNeighborByShiftAndExchange(solutionBase);
-        while (true) {
+        while (true && stopCriteria.isContinue()) {
             // S' <- get a random neighbor of S which is not in tabu set, within nPDS(S') U nPDE(S')
             Collections.shuffle(neighborhood, random);
             while (!neighborhood.isEmpty()) {

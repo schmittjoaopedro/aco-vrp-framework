@@ -4,6 +4,7 @@ import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.IterationCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.TimeCriteria;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.tabu_sa.TABU_SA_DPDP;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.statistic.StatisticCalculator;
@@ -37,6 +38,7 @@ public class Runner {
     public static final String MAX_ITERATIONS = "maxIterations";
     public static final String MAX_SECONDS = "maxSeconds";
     public static final String NUM_CPU = "numCpu";
+    public static final String ALGORITHM = "algorithm";
     public static final double NUM_THREADS_PER_RUN = 3.0;
 
     public static void main(String[] args) throws Exception {
@@ -108,26 +110,41 @@ public class Runner {
                                                   boolean logThreadInfo) throws Exception {
         Instance instance = Reader.getInstance(instanceFile);
         long seed = (long) (1000.0 * Math.random());
-        ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
-        ALNSDPDP.setPrintConsole(false);
-        //solver.enableIterationStatistics();
-        if (logThreadInfo) {
-            ALNSDPDP.enableThreadInfo();
+        String algorithm = commandLine.getOptionValue(ALGORITHM);
+        if (!commandLine.hasOption(ALGORITHM)) {
+            throw new RuntimeException("Not valid algorithm");
         }
-        if (commandLine.hasOption(LOCAL_SEARCH)) {
-            ALNSDPDP.enableLocalSearch();
+        if (algorithm.equals("ALNS")) {
+            ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
+            ALNSDPDP.setPrintConsole(false);
+            //solver.enableIterationStatistics();
+            if (logThreadInfo) {
+                ALNSDPDP.enableThreadInfo();
+            }
+            if (commandLine.hasOption(LOCAL_SEARCH)) {
+                ALNSDPDP.enableLocalSearch();
+            }
+            if (commandLine.hasOption(MOVING_VEHICLE)) {
+                ALNSDPDP.enableVehicleControlCenter();
+            }
+            if (commandLine.hasOption(PARALLEL)) {
+                ALNSDPDP.enableParallelExecution();
+            }
+            return () -> {
+                ALNSDPDP.init();
+                ALNSDPDP.run();
+                statisticCalculator.addStatisticsResult(ALNSDPDP.getExperimentStatistics());
+            };
+        } else if (algorithm.equals("TS_SA")) {
+            TABU_SA_DPDP solver = new TABU_SA_DPDP(instance, new Random(seed), stopCriteria);
+            solver.setPrint(false);
+            return () -> {
+                solver.run();
+                statisticCalculator.addStatisticsResult(solver.getExperimentStatistics());
+            };
+        } else {
+            throw new RuntimeException("Not valid algorithm");
         }
-        if (commandLine.hasOption(MOVING_VEHICLE)) {
-            ALNSDPDP.enableVehicleControlCenter();
-        }
-        if (commandLine.hasOption(PARALLEL)) {
-            ALNSDPDP.enableParallelExecution();
-        }
-        return () -> {
-            ALNSDPDP.init();
-            ALNSDPDP.run();
-            statisticCalculator.addStatisticsResult(ALNSDPDP.getExperimentStatistics());
-        };
     }
 
     private static File[] getInstances(String inputDir) {
@@ -156,6 +173,7 @@ public class Runner {
         options.addOption(MOVING_VEHICLE, false, "Enable moving vehicle");
         options.addOption(LOCAL_SEARCH, false, "Enable local search");
         options.addOption(PARALLEL, false, "Enable algorithm objectives (NV and TC) to execute in parallel");
+        options.addOption(ALGORITHM, true, "Set algorithm (ALNS, TS_SA)");
         options.addOption(HELP, false, "Print help");
         return options;
     }

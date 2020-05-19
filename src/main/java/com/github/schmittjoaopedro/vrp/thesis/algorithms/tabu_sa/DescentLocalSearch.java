@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.tabu_sa;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch.ExchangeRequests;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch.ReArrangeRequests;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch.RelocateRequests;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -17,17 +18,20 @@ public class DescentLocalSearch {
 
     private ReArrangeRequests reArrangeRequests;
 
-    public DescentLocalSearch(Instance instance) {
+    private StopCriteria stopCriteria;
+
+    public DescentLocalSearch(Instance instance, StopCriteria stopCriteria) {
         this.relocateRequests = new RelocateRequests(instance);
         this.exchangeRequests = new ExchangeRequests(instance);
         this.reArrangeRequests = new ReArrangeRequests(instance);
+        this.stopCriteria = stopCriteria;
     }
 
     public Solution findBestByShiftAndExchange(Solution solution) {
         boolean improvement = true;
         Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;
-        while (improvement) {
+        while (improvement && stopCriteria.isContinue()) {
             improvement = false;
             tempSolution = relocateRequests.relocate(tempSolution);
             tempSolution = exchangeRequests.exchange(tempSolution);
@@ -55,7 +59,7 @@ public class DescentLocalSearch {
         boolean improvement = true;
         Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;
-        while (improvement) {
+        while (improvement && stopCriteria.isContinue()) {
             improvement = false;
             tempSolution = reArrangeRequests.reArrange(tempSolution);
             if (SolutionUtils.getBest(improved, tempSolution) == tempSolution) {

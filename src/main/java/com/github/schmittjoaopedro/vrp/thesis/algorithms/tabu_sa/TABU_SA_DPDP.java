@@ -6,6 +6,7 @@ import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.IterationCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.TimeCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -65,9 +66,11 @@ public class TABU_SA_DPDP {
             Solution solutionNew = metaHeuristic.tabuEmbeddedSa(solutionBest);
             if (SolutionUtils.getBest(solutionNew, solutionBest) == solutionNew) {
                 solutionBest = solutionNew;
-                stopCriteria.reset();
+                if (stopCriteria instanceof IterationCriteria) {
+                    stopCriteria.reset();
+                }
                 if (print) {
-                    System.out.println("New best: " + solutionBest);
+                    System.out.println("Thread-" + Thread.currentThread().getId() + " -> " + solutionBest);
                 }
             } else {
                 stopCriteria.update();
@@ -78,9 +81,6 @@ public class TABU_SA_DPDP {
         experimentStatistics.numSolutionsEvaluation = instance.numEvaluatedFunction;
         instance.solutionEvaluation(solutionBest);
         experimentStatistics.solutionBest = solutionBest;
-        if (print) {
-            System.out.println("Best solution found: " + solutionBest);
-        }
     }
 
     public void setPrint(boolean print) {
