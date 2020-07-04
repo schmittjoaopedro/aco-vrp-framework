@@ -115,29 +115,32 @@ public class Runner {
             throw new RuntimeException("Not valid algorithm");
         }
         if (algorithm.equals("ALNS")) {
-            ALNS_DPDP ALNSDPDP = new ALNS_DPDP(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
-            ALNSDPDP.setPrintConsole(false);
+            ALNS_DPDP solver = new ALNS_DPDP(instance, new Random(seed), stopCriteria.copy(), true, true, LNSOptimizer.Type.ALNS);
+            solver.setPrintConsole(false);
             //solver.enableIterationStatistics();
             if (logThreadInfo) {
-                ALNSDPDP.enableThreadInfo();
+                solver.enableThreadInfo();
             }
             if (commandLine.hasOption(LOCAL_SEARCH)) {
-                ALNSDPDP.enableLocalSearch();
+                solver.enableLocalSearch();
             }
             if (commandLine.hasOption(MOVING_VEHICLE)) {
-                ALNSDPDP.enableVehicleControlCenter();
+                solver.enableVehicleControlCenter();
             }
             if (commandLine.hasOption(PARALLEL)) {
-                ALNSDPDP.enableParallelExecution();
+                solver.enableParallelExecution();
             }
             return () -> {
-                ALNSDPDP.init();
-                ALNSDPDP.run();
-                statisticCalculator.addStatisticsResult(ALNSDPDP.getExperimentStatistics());
+                solver.init();
+                solver.run();
+                statisticCalculator.addStatisticsResult(solver.getExperimentStatistics());
             };
         } else if (algorithm.equals("TS_SA")) {
             TABU_SA_DPDP solver = new TABU_SA_DPDP(instance, new Random(seed), stopCriteria);
             solver.setPrint(false);
+            if (commandLine.hasOption(MOVING_VEHICLE)) {
+                solver.enableVehicleControlCenter();
+            }
             return () -> {
                 solver.run();
                 statisticCalculator.addStatisticsResult(solver.getExperimentStatistics());
