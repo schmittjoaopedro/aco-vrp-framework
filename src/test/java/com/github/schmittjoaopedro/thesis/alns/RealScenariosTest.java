@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.thesis;
+package com.github.schmittjoaopedro.thesis.alns;
 
 import com.github.schmittjoaopedro.vrp.thesis.RealSolver;
 import org.junit.Test;

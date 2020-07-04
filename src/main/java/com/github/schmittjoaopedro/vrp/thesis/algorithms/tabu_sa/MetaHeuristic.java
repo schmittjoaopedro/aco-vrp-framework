@@ -2,7 +2,6 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.tabu_sa;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
-import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
@@ -31,29 +30,36 @@ public class MetaHeuristic {
 
     private InsertionOperator insertionOperator;
 
-    private StopCriteria stopCriteria;
+    private Solution solutionBest;
 
-    public MetaHeuristic(double initialTemperature, double coolingRatio, int MSNI, Instance instance, Random random, StopCriteria stopCriteria) {
+    private Solution solution;
+
+    private int noImprovements;
+
+    public MetaHeuristic(double initialTemperature, double coolingRatio, int MSNI, Instance instance, Random random) {
         this.initialTemperature = initialTemperature;
         this.coolingRatio = coolingRatio;
         this.MSNI = MSNI;
         this.instance = instance;
         this.tabu = new TABU();
-        this.descentLocalSearch = new DescentLocalSearch(instance, stopCriteria);
+        this.descentLocalSearch = new DescentLocalSearch(instance);
         this.random = random;
         this.insertionOperator = new RegretInsertion(random, instance, (sol, inst) -> 1);
-        this.stopCriteria = stopCriteria;
     }
 
-    public Solution tabuEmbeddedSa(Solution solutionBase) {
-        Solution solutionBest = SolutionUtils.copy(solutionBase);
-        int noImprovements = 0;
+    public void init(Solution solutionBase) {
+        solutionBest = SolutionUtils.copy(solutionBase);
+        noImprovements = 0;
         temperature = initialTemperature;
         tabu.init(instance);
         solutionBest = descentLocalSearch.findBestByShiftAndExchange(solutionBest);
         solutionBest = descentLocalSearch.executeReArrange(solutionBest);
-        Solution solution = SolutionUtils.copy(solutionBest);
-        while (noImprovements < MSNI && stopCriteria.isContinue()) {
+        solution = SolutionUtils.copy(solutionBest);
+    }
+
+    public boolean next() {
+        boolean executeNext = noImprovements < MSNI;
+        if (executeNext) {
             solution = metropolisProcedure(solution);
             solution = reduceVehiclesNumber(solution);
             solution = descentLocalSearch.findBestByShiftAndExchange(solution);
@@ -66,6 +72,10 @@ public class MetaHeuristic {
                 noImprovements++;
             }
         }
+        return executeNext;
+    }
+
+    public Solution getSolutionBest() {
         return solutionBest;
     }
 
@@ -74,7 +84,7 @@ public class MetaHeuristic {
         double delta = 0;
         double probability = 0;
         LinkedList<Solution> neighborhood = descentLocalSearch.findNeighborByShiftAndExchange(solutionBase);
-        while (true && stopCriteria.isContinue()) {
+        while (true) {
             // S' <- get a random neighbor of S which is not in tabu set, within nPDS(S') U nPDE(S')
             Collections.shuffle(neighborhood, random);
             while (!neighborhood.isEmpty()) {

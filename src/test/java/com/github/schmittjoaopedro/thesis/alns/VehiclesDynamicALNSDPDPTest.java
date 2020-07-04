@@ -1,4 +1,4 @@
-package com.github.schmittjoaopedro.thesis;
+package com.github.schmittjoaopedro.thesis.alns;
 
 import com.github.schmittjoaopedro.vrp.thesis.ALNS_DPDP;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.LNSOptimizer;
