@@ -367,7 +367,7 @@ public class ALNS_DPDP {
 
     public void printVehiclesOperation() {
         if (routePrinter != null && iteration % 5 == 0) {
-            routePrinter.printRoute(instance, solutionBest, iteration);
+            routePrinter.printRoute(instance, solutionBest, stopCriteria);
         }
     }
 

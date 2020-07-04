@@ -1,6 +1,7 @@
 package com.github.schmittjoaopedro.vrp.thesis;
 
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RouteTimes;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.StopCriteria;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
@@ -33,6 +34,8 @@ public class RoutePrinter {
 
     private Color committed = Color.green;
 
+    private int printCounter = 0;
+
     public RoutePrinter(Instance instance, String folderPath, int width, int height) {
         this.folderPath = folderPath;
         this.width = width;
@@ -52,7 +55,7 @@ public class RoutePrinter {
         minY = Math.min(minY, instance.depot.y);
     }
 
-    public void printRoute(Instance instance, Solution solution, int iteration) {
+    public void printRoute(Instance instance, Solution solution, StopCriteria stopCriteria) {
         double margin = 20;
         // Draw html
         try {
@@ -85,7 +88,7 @@ public class RoutePrinter {
                         if (instance.depot.twEnd - distToDepot < instance.currentTime) {
                             color = transition;
                         }
-                        if (iteration == 25000) {
+                        if (!stopCriteria.isContinue()) {
                             color = committed;
                             drawTruck(width, height, margin, maxX, maxY, indexHtml, xCoordTarget, yCoordTarget, xCoordTarget, yCoordTarget, routeTimes.departureTime[i], routeTimes.arrivalTime[i + 1], instance.currentTime);
                         } else if (task.isCommitted()) {
@@ -141,7 +144,7 @@ public class RoutePrinter {
             }
             drawNode(width, height, margin, maxX, maxY, indexHtml, instance.depot.x, instance.depot.y, "black", "0");
             indexHtml.append("\n</svg>");
-            FileUtils.writeStringToFile(Paths.get(folderPath, instance.name + "-" + iteration + ".html").toFile(), indexHtml.toString(), "UTF-8");
+            FileUtils.writeStringToFile(Paths.get(folderPath, instance.name + "-" + printCounter++ + ".html").toFile(), indexHtml.toString(), "UTF-8");
         } catch (IOException e) {
         }
     }

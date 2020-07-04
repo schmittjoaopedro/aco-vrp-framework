@@ -92,5 +92,16 @@ public class VehiclesControlCenter {
                 }
             }
         }
+        for (int k = 0; k < solution.tours.size(); k++) {
+            int numTransition = 0;
+            for (int i = 1; i < solution.tours.get(k).size() - 1; i++) {
+                if (instance.getTask(solution.tours.get(k).get(i)).isTransition()) {
+                    numTransition++;
+                }
+            }
+            if (numTransition > 1) {
+                throw new RuntimeException("More than one task in transition");
+            }
+        }
     }
 }

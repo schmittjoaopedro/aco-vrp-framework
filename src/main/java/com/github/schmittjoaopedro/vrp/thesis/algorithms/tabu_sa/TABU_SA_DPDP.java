@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.tabu_sa;
 
 import com.github.schmittjoaopedro.vrp.thesis.CallCenter;
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
+import com.github.schmittjoaopedro.vrp.thesis.RoutePrinter;
 import com.github.schmittjoaopedro.vrp.thesis.VehiclesControlCenter;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
@@ -42,6 +43,10 @@ public class TABU_SA_DPDP {
 
     private LinkedList<String> logs = new LinkedList<>();
 
+    private RoutePrinter routePrinter;
+    private double lastPrintTime;
+    private double timeThreshold;
+
     public TABU_SA_DPDP(Instance instance, Random random) {
         this(instance, random, IterationCriteria.of(5000));
     }
@@ -73,21 +78,19 @@ public class TABU_SA_DPDP {
             if (instance.numRequests > 0) {
                 // Execute TABU Embedded SA heuristic until no more improvements or no new requests were announced
                 metaHeuristic.init(solutionBest);
-                // Before start the meta-heuristic we tracked the vehicles to guarantee that everything is updated
-                trackOperatingVehicles();
-                while (metaHeuristic.next() && stopCriteria.isContinue() && !attendNewRequests()) {
-                    Solution solutionNew = metaHeuristic.getSolutionBest();
-                    if (SolutionUtils.getBest(solutionNew, solutionBest) == solutionNew) {
-                        solutionBest = solutionNew;
-                        log("New best = " + solutionBest + " at scaled time " + stopCriteria.getScaledTime());
-                    }
-                    stopCriteria.update();
-                    // Because tracking is calculated using the best solution this operation is executed after update the best solution
+                while (metaHeuristic.next() && stopCriteria.isContinue()) {
+                    updateBestSolution();
                     trackOperatingVehicles();
+                    printVehiclesOperation();
+                    stopCriteria.update();
+                    if (attendNewRequests()) {
+                        break;
+                    }
                 }
             }
+            trackOperatingVehicles();
+            printVehiclesOperation();
             stopCriteria.update();
-            //log("Scaled time " + stopCriteria.getScaledTime());
         }
         computationTime = System.currentTimeMillis() - computationTime;
         experimentStatistics.totalTime = computationTime;
@@ -96,6 +99,14 @@ public class TABU_SA_DPDP {
         experimentStatistics.solutionBest = solutionBest;
         compileFinalResult();
         log(finalResult);
+    }
+
+    private void updateBestSolution() {
+        Solution solutionNew = metaHeuristic.getSolutionBest();
+        if (SolutionUtils.getBest(solutionNew, solutionBest) == solutionNew) {
+            solutionBest = solutionNew;
+            log("New best = " + solutionBest + " at scaled time " + stopCriteria.getScaledTime());
+        }
     }
 
     public void setPrint(boolean print) {
@@ -224,5 +235,19 @@ public class TABU_SA_DPDP {
 
     public ExperimentStatistics getExperimentStatistics() {
         return experimentStatistics;
+    }
+
+    public void printVehiclesOperation() {
+        if (routePrinter != null && instance.currentTime >= lastPrintTime + timeThreshold) {
+            routePrinter.printRoute(instance, solutionBest, stopCriteria);
+            lastPrintTime = instance.currentTime;
+        }
+    }
+
+    public void enablePrintOperation(String folderPath, double threshold) {
+        double maxTime = instance.depot.twEnd - instance.depot.twStart;
+        this.timeThreshold = maxTime * threshold;
+        this.lastPrintTime = 0.0;
+        routePrinter = new RoutePrinter(instance, folderPath, 1024, 768);
     }
 }
