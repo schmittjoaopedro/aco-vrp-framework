@@ -3,6 +3,7 @@ package com.github.schmittjoaopedro.vrp.thesis.problem;
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SolutionUtils {
 
@@ -103,6 +104,17 @@ public class SolutionUtils {
             }
         }
         return allAttended;
+    }
+
+    public static boolean isVehicleIdle(Instance instance, Solution solution, int vehicleIdx) {
+        List<Integer> tour = solution.tours.get(vehicleIdx);
+        boolean isEmptyTour = tour.size() == 2; // Contains only depots (origin and destiny)
+        boolean allIdle = true;
+        for (int i = 1; i < tour.size() - 1; i++) {
+            allIdle &= instance.getTask(tour.get(i)).isIdle();
+            if (!allIdle) break;
+        }
+        return isEmptyTour || allIdle;
     }
 
 }

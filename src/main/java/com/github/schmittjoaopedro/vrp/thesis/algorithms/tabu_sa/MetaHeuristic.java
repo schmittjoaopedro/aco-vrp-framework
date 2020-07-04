@@ -136,15 +136,17 @@ public class MetaHeuristic {
         Solution solution = solutionBase;
         Solution solutionNew = SolutionUtils.copy(solutionBase);
         for (int k = 0; k < solutionBase.tours.size(); k++) {
-            solutionNew.remove(solutionBase.requestIds.get(k), instance);
-            SolutionUtils.removeEmptyVehicles(solutionNew);
-            instance.solutionEvaluation(solutionNew);
-            insertionOperator.insert(solutionNew, 0);
-            if (SolutionUtils.allRequestsAreAttended(solutionNew)) {
-                solution = solutionNew;
-                break;
-            } else {
-                solutionNew = SolutionUtils.copy(solutionBase);
+            if (SolutionUtils.isVehicleIdle(instance, solutionBase, k)) {
+                solutionNew.remove(solutionBase.requestIds.get(k), instance);
+                SolutionUtils.removeEmptyVehicles(solutionNew);
+                instance.solutionEvaluation(solutionNew);
+                insertionOperator.insert(solutionNew, 0);
+                if (SolutionUtils.allRequestsAreAttended(solutionNew)) {
+                    solution = solutionNew;
+                    break;
+                } else {
+                    solutionNew = SolutionUtils.copy(solutionBase);
+                }
             }
         }
         return solution;

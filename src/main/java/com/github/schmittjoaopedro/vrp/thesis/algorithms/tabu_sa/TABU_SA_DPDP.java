@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.tabu_sa;
 
 import com.github.schmittjoaopedro.vrp.thesis.CallCenter;
 import com.github.schmittjoaopedro.vrp.thesis.MathUtils;
+import com.github.schmittjoaopedro.vrp.thesis.VehiclesControlCenter;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.InsertionOperator;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.stop.IterationCriteria;
@@ -30,6 +31,10 @@ public class TABU_SA_DPDP {
     private long computationTime;
 
     private boolean print = true;
+
+    private String finalResult = "";
+
+    private VehiclesControlCenter vehiclesControlCenter;
 
     private CallCenter callCenter;
 
@@ -68,13 +73,17 @@ public class TABU_SA_DPDP {
             if (instance.numRequests > 0) {
                 // Execute TABU Embedded SA heuristic until no more improvements or no new requests were announced
                 metaHeuristic.init(solutionBest);
+                // Before start the meta-heuristic we tracked the vehicles to guarantee that everything is updated
+                trackOperatingVehicles();
                 while (metaHeuristic.next() && stopCriteria.isContinue() && !attendNewRequests()) {
-                    stopCriteria.update();
                     Solution solutionNew = metaHeuristic.getSolutionBest();
                     if (SolutionUtils.getBest(solutionNew, solutionBest) == solutionNew) {
                         solutionBest = solutionNew;
                         log("New best = " + solutionBest + " at scaled time " + stopCriteria.getScaledTime());
                     }
+                    stopCriteria.update();
+                    // Because tracking is calculated using the best solution this operation is executed after update the best solution
+                    trackOperatingVehicles();
                 }
             }
             stopCriteria.update();
@@ -85,7 +94,8 @@ public class TABU_SA_DPDP {
         experimentStatistics.numSolutionsEvaluation = instance.numEvaluatedFunction;
         instance.solutionEvaluation(solutionBest);
         experimentStatistics.solutionBest = solutionBest;
-        log(getSummaryResults());
+        compileFinalResult();
+        log(finalResult);
     }
 
     public void setPrint(boolean print) {
@@ -125,6 +135,23 @@ public class TABU_SA_DPDP {
         return newReq;
     }
 
+    /**
+     * Track vehicles operation
+     */
+    private boolean trackOperatingVehicles() {
+        boolean wereVehiclesMoved = false;
+        if (instance.movingVehicle) {
+            // Track moving vehicles
+            wereVehiclesMoved = vehiclesControlCenter.moveVehicle(solutionBest);
+        }
+        return wereVehiclesMoved;
+    }
+
+    public void enableVehicleControlCenter() {
+        vehiclesControlCenter = new VehiclesControlCenter(instance);
+        instance.movingVehicle = true;
+    }
+
     protected void insertNewRequests(Solution solutionBase) {
         Solution solution = copyBaseSolution(solutionBase);
         instance.solutionEvaluation(solution);
@@ -135,7 +162,7 @@ public class TABU_SA_DPDP {
             // If the fleet is insufficient to attend new requests. Add a new vehicle to this operation.
             if (solution.toVisit > 0) {
                 instance.extraVehicles++;
-                solution = SolutionUtils.copy(solutionBase);
+                solution = copyBaseSolution(solutionBase);
             }
         }
         log("Insertion heuristic = " + solution);
@@ -154,7 +181,7 @@ public class TABU_SA_DPDP {
         return newSolution;
     }
 
-    private String getSummaryResults() {
+    public void compileFinalResult() {
         double[] startTimes = new double[solutionBest.tours.size()];
         for (int i = 0; i < startTimes.length; i++) {
             startTimes[i] = instance.lastIdleTime(solutionBest.tours.get(i).get(1));
@@ -177,7 +204,11 @@ public class TABU_SA_DPDP {
         }
         msg += "\nNum. vehicles = " + solutionBest.tours.size();
         msg += "\nTotal cost = " + solutionBest.totalCost;
-        return msg;
+        finalResult = msg;
+    }
+
+    public String getFinalResult() {
+        return finalResult;
     }
 
     private void log(String log) {

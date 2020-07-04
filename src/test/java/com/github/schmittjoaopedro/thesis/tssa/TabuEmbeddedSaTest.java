@@ -77,10 +77,10 @@ public class TabuEmbeddedSaTest {
         int i = 0;
         List logs = new ArrayList(solver.getLogs()); // Convert linked list to array list
         assertThat(logs.get(i++)).isEqualTo("Insertion heuristic = [F = true, NV =   4, TC =    880.87]");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    662.23] at scaled time 0.002");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    647.41] at scaled time 0.003");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    599.83] at scaled time 0.337");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    590.60] at scaled time 0.396");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    662.23] at scaled time 0.001");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    647.41] at scaled time 0.002");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    599.83] at scaled time 0.336");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =    590.60] at scaled time 0.395");
     }
 
     @Test
@@ -102,32 +102,32 @@ public class TabuEmbeddedSaTest {
         int i = 0;
         List logs = new ArrayList(solver.getLogs()); // Convert linked list to array list
         assertThat(logs.get(i++)).isEqualTo("Insertion heuristic = [F = true, NV =   4, TC =   1595.50]");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1252.29] at scaled time 4.0E-4");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1251.14] at scaled time 0.001");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1245.73] at scaled time 0.0012");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1242.96] at scaled time 0.0014");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1231.66] at scaled time 0.0016");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1223.00] at scaled time 0.0032");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1222.09] at scaled time 0.0148");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1388.05] at scaled time 0.0254");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1375.00] at scaled time 0.026");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1370.85] at scaled time 0.0358");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1347.47] at scaled time 0.0712");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1344.88] at scaled time 0.0714");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1307.96] at scaled time 0.072");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1307.36] at scaled time 0.0722");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1305.73] at scaled time 0.0724");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1303.76] at scaled time 0.077");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1283.95] at scaled time 0.0772");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1282.67] at scaled time 0.096");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1282.58] at scaled time 0.1596");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1272.24] at scaled time 0.168");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1267.25] at scaled time 0.6496");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1211.43] at scaled time 0.6532");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1197.18] at scaled time 0.6534");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1078.23] at scaled time 0.656");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1078.18] at scaled time 0.6676");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1072.36] at scaled time 0.7104");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1252.29] at scaled time 2.0E-4");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1251.14] at scaled time 8.0E-4");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1245.73] at scaled time 0.001");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1242.96] at scaled time 0.0012");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1231.66] at scaled time 0.0014");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1223.00] at scaled time 0.003");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   4, TC =   1222.09] at scaled time 0.0146");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1388.05] at scaled time 0.0252");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1375.00] at scaled time 0.0258");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1370.85] at scaled time 0.0356");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1347.47] at scaled time 0.071");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1344.88] at scaled time 0.0712");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1307.96] at scaled time 0.0718");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1307.36] at scaled time 0.072");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1305.73] at scaled time 0.0722");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1303.76] at scaled time 0.0768");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1283.95] at scaled time 0.077");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1282.67] at scaled time 0.0958");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1282.58] at scaled time 0.1594");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1272.24] at scaled time 0.1678");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1267.25] at scaled time 0.6494");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1211.43] at scaled time 0.653");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1197.18] at scaled time 0.6532");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1078.23] at scaled time 0.6558");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1078.18] at scaled time 0.6674");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =   3, TC =   1072.36] at scaled time 0.7102");
     }
 
     @Test
@@ -157,14 +157,14 @@ public class TabuEmbeddedSaTest {
         int i = 0;
         List logs = new ArrayList(solver.getLogs()); // Convert linked list to array list
         assertThat(logs.get(i++)).isEqualTo("Insertion heuristic = [F = true, NV =  17, TC =   1968.06]");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  14, TC =   1571.75] at scaled time 4.0E-4");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  13, TC =   1561.86] at scaled time 0.023");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  13, TC =   1557.37] at scaled time 0.0236");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  13, TC =   1482.41] at scaled time 0.0252");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  12, TC =   1527.34] at scaled time 0.0254");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  12, TC =   1441.24] at scaled time 0.0266");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  12, TC =   1437.14] at scaled time 0.0524");
-        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  11, TC =   1425.53] at scaled time 0.148");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  14, TC =   1571.75] at scaled time 2.0E-4");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  13, TC =   1561.86] at scaled time 0.0228");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  13, TC =   1557.37] at scaled time 0.0234");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  13, TC =   1482.41] at scaled time 0.025");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  12, TC =   1527.34] at scaled time 0.0252");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  12, TC =   1441.24] at scaled time 0.0264");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  12, TC =   1437.14] at scaled time 0.0522");
+        assertThat(logs.get(i++)).isEqualTo("New best = [F = true, NV =  11, TC =   1425.53] at scaled time 0.1478");
     }
 
     //@Test
