@@ -1,0 +1,2 @@
+mean_bsf_nv;sd_bsf_nv;mean_bsf_tc;sd_bsf_tc;mean_bsf_fc;sd_bsf_fc;mean_exec_time;sd_exec_time;mean_total_iterations;sd_solution_evaluations;mean_total_iterations;sd_solution_evaluations;
+30.0;0.0;16879.241871953625;9.229848063203915E-13;1.0;0.0;600008.1333333333;7.384668803225592;29623.133333333335;2885.6384906724847;59297.26666666667;5775.820436919783;
