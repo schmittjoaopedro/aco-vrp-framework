@@ -28,36 +28,27 @@ public class ReArrangeRequests {
     public Solution reArrange(Solution solution) {
         Request request;
         InsertPosition insertPosition;
-        Set<Integer> solutionHashes = new HashSet<>();
         Solution tempSol = SolutionUtils.copy(solution);
         RouteTimes routeTime;
         for (int k = 0; k < tempSol.tours.size(); k++) {
             tempSol.indexVehicle(k);
         }
         ArrayList<Integer> newTour;
-        boolean improvement = true;
-        while (improvement) {
-            improvement = false;
-            for (Integer requestId = 0; requestId < instance.numRequests; requestId++) {
-                request = instance.requests[requestId];
-                if (request.isVehicleRelocatable()) {
-                    int vehicle = tempSol.getVehicle(request.pickupTask.nodeId);
-                    newTour = createTourWithoutRequest(tempSol.tours.get(vehicle), request);
-                    routeTime = new RouteTimes(newTour, instance);
-                    insertPosition = insertionService.calculateBestPosition(newTour, request, routeTime);
-                    if (insertPosition.cost < Double.MAX_VALUE) {
-                        int hash = getHashCost(insertPosition, vehicle);
-                        if (!solutionHashes.contains(hash)) {
-                            solutionHashes.add(hash);
-                            double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
-                            if (insertPosition.cost < removalGain) {
-                                // Update request in vehicle
-                                tempSol.remove(Arrays.asList(requestId), instance);
-                                tempSol.insert(instance, requestId, vehicle, insertPosition.pickupPos, insertPosition.deliveryPos);
-                                tempSol.indexVehicle(vehicle);
-                                improvement = true;
-                            }
-                        }
+        for (Integer requestId = 0; requestId < instance.numRequests; requestId++) {
+            request = instance.requests[requestId];
+            if (request.isVehicleRelocatable()) {
+                int vehicle = tempSol.getVehicle(request.pickupTask.nodeId);
+                newTour = createTourWithoutRequest(tempSol.tours.get(vehicle), request);
+                routeTime = new RouteTimes(newTour, instance);
+                insertPosition = insertionService.calculateBestPosition(newTour, request, routeTime);
+                if (insertPosition.cost < Double.MAX_VALUE) {
+                    int hash = getHashCost(insertPosition, vehicle);
+                    double removalGain = tempSol.calculateRequestRemovalGain(instance, request);
+                    if (insertPosition.cost < removalGain) {
+                        // Update request in vehicle
+                        tempSol.remove(Arrays.asList(requestId), instance);
+                        tempSol.insert(instance, requestId, vehicle, insertPosition.pickupPos, insertPosition.deliveryPos);
+                        tempSol.indexVehicle(vehicle);
                     }
                 }
             }

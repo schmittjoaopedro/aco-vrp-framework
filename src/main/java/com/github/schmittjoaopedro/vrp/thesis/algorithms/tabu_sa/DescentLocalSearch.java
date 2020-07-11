@@ -23,7 +23,7 @@ public class DescentLocalSearch {
         this.reArrangeRequests = new ReArrangeRequests(instance);
     }
 
-    public Solution findBestByShiftAndExchange(Solution solution) {
+    public Solution dslByShiftAndExchange(Solution solution) {
         boolean improvement = true;
         Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;
@@ -51,7 +51,7 @@ public class DescentLocalSearch {
         return neighborhood;
     }
 
-    public Solution executeReArrange(Solution solution) {
+    public Solution dslPairReArrange(Solution solution) {
         boolean improvement = true;
         Solution improved = SolutionUtils.copy(solution);
         Solution tempSolution = improved;

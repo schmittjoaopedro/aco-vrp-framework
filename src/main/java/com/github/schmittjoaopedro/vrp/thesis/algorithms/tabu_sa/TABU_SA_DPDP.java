@@ -174,6 +174,7 @@ public class TABU_SA_DPDP {
             if (solution.toVisit > 0) {
                 instance.extraVehicles++;
                 solution = copyBaseSolution(solutionBase);
+                log("Adding extra vehicle");
             }
         }
         log("Insertion heuristic = " + solution);

@@ -26,6 +26,10 @@ public class RelocateRequests {
     }
 
     public Solution relocate(Solution solution) {
+        return relocate(solution, false);
+    }
+
+    public Solution relocate(Solution solution, boolean stopDLS) {
         int bestVehicle = -1;
         Request request;
         InsertPosition bestInsertion, insertPosition;
@@ -74,6 +78,9 @@ public class RelocateRequests {
                     }
                 }
             }
+            if (stopDLS) {
+                break;
+            }
         }
         instance.solutionEvaluation(tempSol);
         return tempSol;
@@ -100,7 +107,6 @@ public class RelocateRequests {
                             Solution neighbor = SolutionUtils.copy(tempSol);
                             neighbor.remove(Arrays.asList(requestId), instance);
                             neighbor.insert(instance, requestId, k, insertPosition.pickupPos, insertPosition.deliveryPos);
-                            instance.solutionEvaluation(neighbor);
                             neighborhood.add(neighbor);
                         }
                     }

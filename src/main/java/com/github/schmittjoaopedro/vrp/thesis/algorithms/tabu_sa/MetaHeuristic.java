@@ -52,8 +52,8 @@ public class MetaHeuristic {
         noImprovements = 0;
         temperature = initialTemperature;
         tabu.init(instance);
-        solutionBest = descentLocalSearch.findBestByShiftAndExchange(solutionBest);
-        solutionBest = descentLocalSearch.executeReArrange(solutionBest);
+        solutionBest = descentLocalSearch.dslByShiftAndExchange(solutionBest);
+        solutionBest = descentLocalSearch.dslPairReArrange(solutionBest);
         solution = SolutionUtils.copy(solutionBest);
     }
 
@@ -62,8 +62,8 @@ public class MetaHeuristic {
         if (executeNext) {
             solution = metropolisProcedure(solution);
             solution = reduceVehiclesNumber(solution);
-            solution = descentLocalSearch.findBestByShiftAndExchange(solution);
-            solution = descentLocalSearch.executeReArrange(solution);
+            solution = descentLocalSearch.dslByShiftAndExchange(solution);
+            solution = descentLocalSearch.dslPairReArrange(solution);
             if (SolutionUtils.getBest(solution, solutionBest) == solution) {
                 solutionBest = solution;
                 solution = SolutionUtils.copy(solutionBest);
@@ -98,6 +98,7 @@ public class MetaHeuristic {
                 break;
             }
             // \delta <- SACost(S') - SACost(S)
+            instance.solutionEvaluation(solution);
             delta = saCost(solution) - saCost(solutionBase);
             if (delta <= 0) {
                 probability = 1.0;
