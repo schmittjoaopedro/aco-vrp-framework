@@ -1,6 +1,6 @@
 # ACO VRP FRAMEWORK
 
-This repository have implementation of the following metaheuristics and VRP problems:
+This repository contains implementations of the following meta-heuristics for VRP problems:
 
 * VRPTW_ACS for Dynamic Vehicle Routing Problems (DVRPTW) [1]
 * ALNS for Multi-pickup and Delivery Problem with Time Windows (MPDPTW) [2]
