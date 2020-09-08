@@ -25,7 +25,7 @@ As extra, it also has some integrations with:
 
 [3] H. Li and A. Lim, "A metaheuristic for the pickup and delivery problem with time windows," Proceedings 13th IEEE International Conference on Tools with Artificial Intelligence. ICTAI 2001, Dallas, TX, USA, 2001, pp. 160-167, doi: 10.1109/ICTAI.2001.974461.
 
-[4] Bent, R., & Van Hentenryck, P. (2003). A Two-Stage Hybrid Algorithm for Pickup and Delivery Vehicle Routing Problems with Time Windows. In Principles and Practice of Constraint Programming – CP 2003 (pp. 123–137). Springer Berlin Heidelberg. https://doi.org/10.1007/978-3-540-45193-8_9
+[4] Ropke, S., & Pisinger, D. (2006). An Adaptive Large Neighborhood Search Heuristic for the Pickup and Delivery Problem with Time Windows. Transportation Science, 40(4), 455–472. https://doi.org/10.1287/trsc.1050.0135
 
 [5] Own implementation
 
