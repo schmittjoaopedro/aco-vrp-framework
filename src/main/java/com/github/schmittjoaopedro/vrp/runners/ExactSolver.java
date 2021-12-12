@@ -7,12 +7,13 @@ import com.github.schmittjoaopedro.vrp.mpdptw.Solution;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 
 public class ExactSolver {
 
-    private static final String rootDirectory;
+    private static String rootDirectory;
 
     private static String bestSolution = null;
 
@@ -21,7 +22,11 @@ public class ExactSolver {
     private static double bestCost = Double.MAX_VALUE;
 
     static {
-        rootDirectory = Paths.get(ExactSolver.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
+        try {
+            rootDirectory = Paths.get(ExactSolver.class.getClassLoader().getResource("mpdptw").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws IOException {

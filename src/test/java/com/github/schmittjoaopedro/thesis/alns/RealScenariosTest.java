@@ -4,19 +4,24 @@ import com.github.schmittjoaopedro.vrp.thesis.RealSolver;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 public class RealScenariosTest {
 
-    private static final String eletroNacionalScenario;
+    private static String eletroNacionalScenario;
 
-    private static final String transligueDay16Scenario;
+    private static String transligueDay16Scenario;
 
     static {
-        eletroNacionalScenario = Paths.get(RealScenariosTest.class.getClassLoader().getResource("real/eletronacional").getFile().substring(1)).toString();
-        transligueDay16Scenario = Paths.get(RealScenariosTest.class.getClassLoader().getResource("real/transligue/day16").getFile().substring(1)).toString();
+        try {
+            eletroNacionalScenario = Paths.get(RealScenariosTest.class.getClassLoader().getResource("real/eletronacional").toURI()).toString();
+            transligueDay16Scenario = Paths.get(RealScenariosTest.class.getClassLoader().getResource("real/transligue/day16").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

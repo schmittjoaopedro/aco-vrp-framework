@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.aco.SequentialInfeasible;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -14,12 +15,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MPDPTW_MMAS_TEST {
 
-    private static final String rootDirectory;
+    private static String rootDirectory;
 
     private static int seed = 1;
 
     static {
-        rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
+        try {
+            rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

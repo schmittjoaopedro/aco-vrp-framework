@@ -6,6 +6,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
@@ -14,10 +15,14 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class DPDPTW_ALNS_TEST {
 
-    private static final String dpdptw100Directory;
+    private static String dpdptw100Directory;
 
     static {
-        dpdptw100Directory = Paths.get(DPDPTW_ALNS_TEST.class.getClassLoader().getResource("dpdptw_100").getFile().substring(1)).toString();
+        try {
+            dpdptw100Directory = Paths.get(DPDPTW_ALNS_TEST.class.getClassLoader().getResource("dpdptw_100").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

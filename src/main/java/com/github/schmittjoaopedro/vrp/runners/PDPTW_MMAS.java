@@ -5,13 +5,14 @@ import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.Solver;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 public class PDPTW_MMAS {
 
-    private static final String pdptw100Directory;
+    private static String pdptw100Directory;
 
-    private static final String pdptw200Directory;
+    private static String pdptw200Directory;
 
     private static int statisticInterval = 1;
 
@@ -20,8 +21,12 @@ public class PDPTW_MMAS {
     private static int seed = 1;
 
     static {
-        pdptw100Directory = Paths.get(PDPTW_MMAS.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
-        pdptw200Directory = Paths.get(PDPTW_MMAS.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+        try {
+            pdptw100Directory = Paths.get(PDPTW_MMAS.class.getClassLoader().getResource("pdp_100").toURI()).toString();
+            pdptw200Directory = Paths.get(PDPTW_MMAS.class.getClassLoader().getResource("pdp_200").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public void pdptw_100_tasks_test() throws IOException {

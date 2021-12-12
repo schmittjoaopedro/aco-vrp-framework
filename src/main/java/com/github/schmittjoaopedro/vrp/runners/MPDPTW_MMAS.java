@@ -8,12 +8,13 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class MPDPTW_MMAS {
 
-    private static final String rootDirectory;
+    private static String rootDirectory;
 
     private static int statisticInterval = 10;
 
@@ -22,7 +23,11 @@ public class MPDPTW_MMAS {
     private static int seed = 1;
 
     static {
-        rootDirectory = Paths.get(MPDPTW_MMAS.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
+        try {
+            rootDirectory = Paths.get(MPDPTW_MMAS.class.getClassLoader().getResource("mpdptw").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws IOException {

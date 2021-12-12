@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
@@ -17,13 +18,17 @@ public class PDPTW_ALNS_TEST {
 
     int maxIterations = 10000;
 
-    private static final String pdptw100Directory;
+    private static String pdptw100Directory;
 
-    private static final String pdptw200Directory;
+    private static String pdptw200Directory;
 
     static {
-        pdptw100Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
-        pdptw200Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+        try {
+            pdptw100Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_100").toURI()).toString();
+            pdptw200Directory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_200").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

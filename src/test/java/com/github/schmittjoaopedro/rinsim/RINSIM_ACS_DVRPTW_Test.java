@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.dvrptwacs.LoggerOutput;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RINSIM_ACS_DVRPTW_Test {
 
-    private static final String rootDirectory;
+    private static String rootDirectory;
 
     static {
-        rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dvrptw").getFile().substring(1)).toString();
+        try {
+            rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dvrptw").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

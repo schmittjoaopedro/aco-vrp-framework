@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import org.junit.Test;
 
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -18,10 +19,14 @@ public class DynamicTSSADPDPTest {
 
     private static int maxIterations = 25000;
 
-    private static final String dpdptw100Directory;
+    private static String dpdptw100Directory;
 
     static {
-        dpdptw100Directory = Paths.get(DynamicTSSADPDPTest.class.getClassLoader().getResource("dpdptw_100").getFile().substring(1)).toString();
+        try {
+            dpdptw100Directory = Paths.get(DynamicTSSADPDPTest.class.getClassLoader().getResource("dpdptw_100").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.github.schmittjoaopedro.vrp.thesis.utils.InstanceUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.junit.Test;
 
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,14 @@ public class TabuEmbeddedSaTest {
 
     private static int maxIterations = 25000;
 
-    private static final String pdptw100Directory;
+    private static String pdptw100Directory;
 
     static {
-        pdptw100Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
+        try {
+            pdptw100Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_100").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

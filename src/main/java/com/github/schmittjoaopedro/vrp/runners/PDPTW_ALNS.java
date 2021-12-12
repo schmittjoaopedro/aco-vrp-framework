@@ -5,6 +5,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.ProblemInstance;
 import com.github.schmittjoaopedro.vrp.mpdptw.alns.ALNS;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Random;
 
@@ -12,35 +13,39 @@ public class PDPTW_ALNS {
 
     private static int maxIterations = 25000;
 
-    private static final String pdptw100Directory;
+    private static String pdptw100Directory;
 
-    private static final String pdptw200Directory;
+    private static String pdptw200Directory;
 
-    private static final String pdptw400Directory;
+    private static String pdptw400Directory;
 
-    private static final String pdptw600Directory;
+    private static String pdptw600Directory;
 
-    private static final String pdptw800Directory;
+    private static String pdptw800Directory;
 
-    private static final String pdptw1000Directory;
+    private static String pdptw1000Directory;
 
-    private static final String dpdptw100Directory;
+    private static String dpdptw100Directory;
 
-    private static final String dpdptw200Directory;
+    private static String dpdptw200Directory;
 
-    private static final String dpdptw400Directory;
+    private static String dpdptw400Directory;
 
     static {
-        pdptw100Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
-        pdptw200Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
-        pdptw400Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_400").getFile().substring(1)).toString();
-        pdptw600Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_600").getFile().substring(1)).toString();
-        pdptw800Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_800").getFile().substring(1)).toString();
-        pdptw1000Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdptw1000").getFile().substring(1)).toString();
+        try {
+            pdptw100Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_100").toURI()).toString();
+            pdptw200Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_200").toURI()).toString();
+            pdptw400Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_400").toURI()).toString();
+            pdptw600Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_600").toURI()).toString();
+            pdptw800Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdp_800").toURI()).toString();
+            pdptw1000Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("pdptw1000").toURI()).toString();
 
-        dpdptw100Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/100-tasks").getFile().substring(1)).toString();
-        dpdptw200Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/200-tasks").getFile().substring(1)).toString();
-        dpdptw400Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/400-tasks").getFile().substring(1)).toString();
+            dpdptw100Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/100-tasks").toURI()).toString();
+            dpdptw200Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/200-tasks").toURI()).toString();
+            dpdptw400Directory = Paths.get(PDPTW_ALNS.class.getClassLoader().getResource("dpdptw/400-tasks").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public void pdptw_100_tasks_test() throws IOException {

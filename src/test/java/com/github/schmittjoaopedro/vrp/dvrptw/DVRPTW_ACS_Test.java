@@ -4,20 +4,25 @@ import com.github.schmittjoaopedro.vrp.dvrptwacs.Solver;
 import com.github.schmittjoaopedro.vrp.dvrptwacs.LoggerOutput;
 import org.junit.Test;
 
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DVRPTW_ACS_Test {
 
-    private static final String rootDirectory;
+    private static String rootDirectory;
 
     private static boolean discreteTime = true;
 
     private static boolean printLog = false;
 
     static {
-        rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dvrptw").getFile().substring(1)).toString();
+        try {
+            rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dvrptw").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

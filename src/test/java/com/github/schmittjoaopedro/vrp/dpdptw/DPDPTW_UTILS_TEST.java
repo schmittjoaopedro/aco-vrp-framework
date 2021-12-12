@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
@@ -17,10 +18,14 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class DPDPTW_UTILS_TEST {
 
-    private static final String dpdptw400Directory;
+    private static String dpdptw400Directory;
 
     static {
-        dpdptw400Directory = Paths.get(DPDPTW_ALNS_TEST.class.getClassLoader().getResource("dpdptw_400").getFile().substring(1)).toString();
+        try {
+            dpdptw400Directory = Paths.get(DPDPTW_ALNS_TEST.class.getClassLoader().getResource("dpdptw_400").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

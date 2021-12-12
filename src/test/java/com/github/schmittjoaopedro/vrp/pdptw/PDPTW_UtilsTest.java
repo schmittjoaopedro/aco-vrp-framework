@@ -9,21 +9,26 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PDPTW_UtilsTest {
 
-    private static final String staticRootDirectory;
+    private static String staticRootDirectory;
 
 
-    private static final String dynamicRootDirectory;
+    private static String dynamicRootDirectory;
 
 
     static {
-        staticRootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_100").getFile().substring(1)).toString();
-        dynamicRootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dpdptw_100").getFile().substring(1)).toString();
+        try {
+            staticRootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("pdp_100").toURI()).toString();
+            dynamicRootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("dpdptw_100").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -340,7 +345,7 @@ public class PDPTW_UtilsTest {
     @Ignore
     public void instanceGeneratorTest() throws Exception {
         String problem = "pdp_1000";
-        String path = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource(problem).getFile().substring(1)).toString();;
+        String path = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource(problem).toURI()).toString();;
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
         for (File file : listOfFiles) {

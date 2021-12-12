@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import org.junit.Test;
 
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Random;
 
@@ -16,10 +17,14 @@ public class StaticNvMinimizerTest {
 
     private static int maxIterations = 25000;
 
-    private static final String pdptw200Directory;
+    private static String pdptw200Directory;
 
     static {
-        pdptw200Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_200").getFile().substring(1)).toString();
+        try {
+            pdptw200Directory = Paths.get(StaticNvMinimizerTest.class.getClassLoader().getResource("pdp_200").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

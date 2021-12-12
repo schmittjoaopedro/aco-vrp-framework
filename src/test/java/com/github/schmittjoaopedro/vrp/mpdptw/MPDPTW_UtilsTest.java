@@ -5,6 +5,7 @@ import com.github.schmittjoaopedro.vrp.mpdptw.operators.*;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MPDPTW_UtilsTest {
 
-    private static final String rootDirectory;
+    private static String rootDirectory;
 
     static {
-        rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").getFile().substring(1)).toString();
+        try {
+            rootDirectory = Paths.get(DVRPTW_ACS_Test.class.getClassLoader().getResource("mpdptw").toURI()).toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
