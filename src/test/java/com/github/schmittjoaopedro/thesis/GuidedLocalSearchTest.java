@@ -81,15 +81,27 @@ public class GuidedLocalSearchTest {
 
         Solution solutionBest = guidedEjectionSearch.deleteRoute(initialSolution);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1919.50, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1828.02, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(16);
         assertThat(solutionBest.requestIds.size()).isEqualTo(16);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1826.30, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1914.86, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(15);
         assertThat(solutionBest.requestIds.size()).isEqualTo(15);
+
+        solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(1871.09, Offset.offset(0.01));
+        assertThat(solutionBest.tours.size()).isEqualTo(14);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(14);
+
+        solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
+        assertThat(solutionBest.feasible).isTrue();
+        assertThat(solutionBest.totalCost).isEqualTo(1649.86, Offset.offset(0.01));
+        assertThat(solutionBest.tours.size()).isEqualTo(13);
+        assertThat(solutionBest.requestIds.size()).isEqualTo(13);
     }
 
     private Solution createInitialSolution(Instance instance, Random random) {
