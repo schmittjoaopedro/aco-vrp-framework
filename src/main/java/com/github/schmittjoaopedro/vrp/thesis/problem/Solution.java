@@ -199,6 +199,10 @@ public class Solution {
         return StringUtils.join(tours.get(idx), ' ');
     }
 
+    public String getReqStr(int idx) {
+        return StringUtils.join(requestIds.get(idx), ' ');
+    }
+
     protected class NodeIndex {
 
         protected int vehicle;

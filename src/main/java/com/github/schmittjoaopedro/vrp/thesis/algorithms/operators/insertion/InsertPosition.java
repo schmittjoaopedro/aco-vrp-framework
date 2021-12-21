@@ -8,4 +8,6 @@ public class InsertPosition {
 
     public int deliveryPos = 0;
 
+    public int vehicle = -1;
+
 }
