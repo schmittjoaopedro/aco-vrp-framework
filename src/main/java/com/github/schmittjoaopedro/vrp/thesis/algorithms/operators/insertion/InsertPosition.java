@@ -10,4 +10,6 @@ public class InsertPosition {
 
     public int vehicle = -1;
 
+    public int requestId = -1;
+
 }

@@ -2,11 +2,10 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
-import com.github.schmittjoaopedro.vrp.thesis.problem.Task;
+import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class NeighborhoodService {
 
@@ -16,6 +15,62 @@ public class NeighborhoodService {
 
     public NeighborhoodService(Instance instance) {
         this.instance = instance;
+    }
+
+    public List<InsertPosition> searchRelocateNeighborhood(Solution solution, int requestId, int vehicleIdx) {
+        int numVehicles = solution.tours.size();
+        Request request = instance.requests[requestId];
+        List<InsertPosition> neighborhood = new ArrayList<>();
+        ArrayList<Integer> tour = new ArrayList<>(solution.tours.get(vehicleIdx));
+        solution.tours.get(vehicleIdx).remove(Integer.valueOf(request.pickupTask.nodeId));
+        solution.tours.get(vehicleIdx).remove(Integer.valueOf(request.deliveryTask.nodeId));
+        for (int v = 0; v < numVehicles; v++) {
+            List<InsertPosition> vehicleNeighborhood = searchFeasibleNeighborhood(solution.tours.get(v), request, new RouteTimes(solution.tours.get(v), instance));
+            for (InsertPosition neighbor : vehicleNeighborhood) neighbor.vehicle = v;
+            neighborhood.addAll(vehicleNeighborhood);
+        }
+        solution.tours.set(vehicleIdx, tour);
+        return neighborhood;
+    }
+
+    public List<Pair<InsertPosition, InsertPosition>> searchExchangeNeighborhood(Solution solution, int requestId, int vehicleIdx) {
+        int numVehicles = solution.tours.size();
+        Request req1 = instance.requests[requestId];
+        List<Pair<InsertPosition, InsertPosition>> neighborhood = new ArrayList<>();
+        ArrayList<Integer> tour1 = new ArrayList<>(solution.tours.get(vehicleIdx));
+        tour1.remove(Integer.valueOf(req1.pickupTask.nodeId));
+        tour1.remove(Integer.valueOf(req1.deliveryTask.nodeId));
+        RouteTimes routeTimes1 = new RouteTimes(tour1, instance);
+        for (int v = 0; v < numVehicles; v++) {
+            if (vehicleIdx != v) {
+                for (int r = 0; r < solution.requestIds.get(v).size(); r++) {
+                    Request req2 = instance.requests[solution.requestIds.get(v).get(r)];
+                    List<InsertPosition> r2Neighborhood = searchFeasibleNeighborhood(tour1, req2, routeTimes1);
+                    if (!r2Neighborhood.isEmpty()) {
+                        ArrayList<Integer> tour2 = new ArrayList<>(solution.tours.get(v));
+                        tour2.remove(Integer.valueOf(req2.pickupTask.nodeId));
+                        tour2.remove(Integer.valueOf(req2.deliveryTask.nodeId));
+                        List<InsertPosition> r1Neighborhood = searchFeasibleNeighborhood(tour2, req1, new RouteTimes(tour2, instance));
+                        if (!r1Neighborhood.isEmpty()) {
+                            for (InsertPosition r1Neighbor : r1Neighborhood) {
+                                for (InsertPosition r2Neighbor : r2Neighborhood) {
+                                    r1Neighbor.vehicle = v;
+                                    r1Neighbor.requestId = req1.requestId;
+                                    r2Neighbor.vehicle = vehicleIdx;
+                                    r2Neighbor.requestId = req2.requestId;
+                                    neighborhood.add(Pair.of(r1Neighbor, r2Neighbor));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return neighborhood;
+    }
+
+    public List<InsertPosition> searchFeasibleNeighborhood(ArrayList<Integer> route, Request request, RouteTimes routeTimes) {
+        return searchFeasibleNeighborhood(route, request, routeTimes, null);
     }
 
     public List<InsertPosition> searchFeasibleNeighborhood(ArrayList<Integer> route, Request request, RouteTimes routeTimes, boolean[] ignoreRequests) {
@@ -29,7 +84,7 @@ public class NeighborhoodService {
             for (int i = 1; i < route.size(); ++i) { // Ignore depot
                 swapPositions(newRoute, i, i - 1); // Advance current pickup one position
                 currNode = route.get(i);
-                if (instance.isDepot(currNode) || !ignoreRequests[instance.getTask(currNode).requestId]) {
+                if (instance.isDepot(currNode) || ignoreRequests == null || !ignoreRequests[instance.getTask(currNode).requestId]) {
                     boolean isInTimeToVisit = instance.lastIdleTime(pickupNode) <= routeTimes.departureTime[prevIdx]; // Already know request when we departure from previous node
                     boolean isIdleNode = instance.isDepot(currNode) || instance.getTask(currNode).isIdle();
                     if (isIdleNode && isInTimeToVisit) {
@@ -45,7 +100,7 @@ public class NeighborhoodService {
                             }
                             isValidSlackTime = delay <= routeTimes.waitingTime[i] + routeTimes.slackTime[i] + ep;
                             if (isValidSlackTime) {
-                                RouteTimes newRouteTimes = new RouteTimes(newRoute, instance, ignoreRequests);
+                                RouteTimes newRouteTimes = ignoreRequests == null ? new RouteTimes(newRoute, instance) : new RouteTimes(newRoute, instance, ignoreRequests);
                                 List<InsertPosition> deliveryPositions = calculateBestDeliveryPosition(newRoute, request.deliveryTask.nodeId, i + 1, totalAmount + instance.demand(pickupNode), newRouteTimes, ignoreRequests);
                                 for (InsertPosition deliveryPosition : deliveryPositions) {
                                     InsertPosition insertPosition = new InsertPosition();
@@ -108,7 +163,7 @@ public class NeighborhoodService {
         List<InsertPosition> insertPositions = new LinkedList<>();
         for (int i = startPos; i < newRoute.size(); ++i) {
             currNode = newRoute.get(i);
-            if (instance.isDepot(currNode) || !ignoreRequests[instance.getTask(currNode).requestId]) {
+            if (instance.isDepot(currNode) || ignoreRequests == null || !ignoreRequests[instance.getTask(currNode).requestId]) {
                 cost = instance.dist(prevNode, node) + instance.dist(node, currNode) - instance.dist(prevNode, currNode);
                 arrivalTime = routeTimes.startTime[prevIdx] + instance.serviceTime(prevNode) + instance.dist(prevNode, node);
                 waitTime = Math.max(0., instance.twStart(node) - arrivalTime);

@@ -7,6 +7,8 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -22,7 +24,7 @@ public class GuidedEjectionSearch {
 
     private NeighborhoodService neighborhoodService;
 
-    private int iRand = 1;
+    private int iRand = 100;
 
     private double pEx = 0.5;
 
@@ -47,8 +49,12 @@ public class GuidedEjectionSearch {
         for (int i = 0; i < instance.numRequests; i++) {
             penaltyCounters[i] = 1;
         }
+        double iter = 0;
+        double pertCt = 0;
+        double pertEf = 0;
         // while EP != NULL or termination condition is not met do
         while (!ejectionPool.isEmpty() || hasTimePassedOver(startTime)) {
+            String log = "Iteration " + iter++;
             // Select and remove request h_in from EP with the LIFO strategy
             Request request = instance.requests[ejectionPool.pop()];
             // if N_insert != NULL then
@@ -61,11 +67,11 @@ public class GuidedEjectionSearch {
             // end if
             }
             // if h_in cannot be inserted in σ then
+            EjectedSolution bestEjectedSolution = null;
             if (neighborhood.isEmpty()) {
                 // Set p[h_in] := p[h_in] + 1
                 penaltyCounters[request.requestId] = penaltyCounters[request.requestId] + 1;
                 // Select σ' ∈ N_ej(h_in, σ) such that P_sum = p[h_out_1 + ... + h_out_k] is minimized
-                EjectedSolution bestEjectedSolution = null;
                 List<EjectedSolution> ejectionNeighborhood = findNeighborhoodWithEjection(request, solution, penaltyCounters);
                 Collections.shuffle(ejectionNeighborhood, random);
                 for (EjectedSolution currentEjectedSolution : ejectionNeighborhood) {
@@ -87,8 +93,19 @@ public class GuidedEjectionSearch {
                 } else {
                     ejectionPool.push(request.requestId);
                 }
+                log += ", pool size: " + ejectionPool.size();
                 // σ := Perturb(σ)
+                double costBefore = solution.totalCost;
                 solution = perturb(solution);
+                pertCt++;
+                if (Math.abs(costBefore - solution.totalCost) > 0.01) pertEf++;
+                log += ", perturb: (" + String.format("%.2f", (pertEf / pertCt) * 100.0) + ") " + String.format("%d %.2f", solution.tours.size(), (costBefore - solution.totalCost));
+                if (bestEjectedSolution != null) {
+                    log += ", best eject: " + bestEjectedSolution.penaltySum;
+                }
+                if (iter % 1000 == 0) {
+                    System.out.println(log);
+                }
             // end if
             }
         // end while
@@ -179,36 +196,34 @@ public class GuidedEjectionSearch {
     private Solution perturb(Solution solutionBase) {
         Solution solution = SolutionUtils.copy(solutionBase);
         int numVehicles = solution.tours.size();
-        boolean[] ignoreRequests = getIgnoredRequests(solution);
-
         for (int i = 0; i < iRand; i++) {
-            List<InsertPosition> neighborhood = new ArrayList<>();
-
-            // Relocate
             int vehicleIdx = random.nextInt(numVehicles);
             int requestIdx = random.nextInt(solution.requestIds.get(vehicleIdx).size());
-            Request relocateRequest = instance.requests[solution.requestIds.get(vehicleIdx).get(requestIdx)];
-            ArrayList<Integer> tour = new ArrayList<>(solution.tours.get(vehicleIdx));
-            solution.tours.get(vehicleIdx).remove(Integer.valueOf(relocateRequest.pickupTask.nodeId));
-            solution.tours.get(vehicleIdx).remove(Integer.valueOf(relocateRequest.deliveryTask.nodeId));
-            for (int v = 0; v < numVehicles; v++) {
-                List<InsertPosition> vehicleNeighborhood = neighborhoodService.searchFeasibleNeighborhood(
-                        solution.tours.get(v), relocateRequest, new RouteTimes(solution.tours.get(v), instance, ignoreRequests), ignoreRequests);
-                for (InsertPosition neighbor : vehicleNeighborhood) neighbor.vehicle = v;
-                neighborhood.addAll(vehicleNeighborhood);
-            }
-            solution.tours.set(vehicleIdx, tour);
-
-            if (neighborhood.size() > 0) {
-                InsertPosition selectedPosition = neighborhood.get(random.nextInt(neighborhood.size()));
-                solution.remove(Collections.singletonList(relocateRequest.requestId), instance);
-                solution.insert(instance, relocateRequest.requestId, selectedPosition.vehicle, selectedPosition.pickupPos, selectedPosition.deliveryPos);
+            Request selectedRequest = instance.requests[solution.requestIds.get(vehicleIdx).get(requestIdx)];
+            if (random.nextDouble() < pEx) {
+                List<Pair<InsertPosition, InsertPosition>> neighborhood = neighborhoodService.searchExchangeNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
+                if (neighborhood.size() > 0) {
+                    Pair<InsertPosition, InsertPosition> exchange = neighborhood.get(random.nextInt(neighborhood.size()));
+                    InsertPosition r1Insert = exchange.getLeft();
+                    InsertPosition r2Insert = exchange.getRight();
+                    solution.remove(Arrays.asList(r1Insert.requestId, r2Insert.requestId), instance);
+                    solution.insert(instance, r1Insert.requestId, r1Insert.vehicle, r1Insert.pickupPos, r1Insert.deliveryPos);
+                    solution.insert(instance, r2Insert.requestId, r2Insert.vehicle, r2Insert.pickupPos, r2Insert.deliveryPos);
+                } else {
+                    break;
+                }
             } else {
-                break;
+                List<InsertPosition> neighborhood = neighborhoodService.searchRelocateNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
+                if (neighborhood.size() > 0) {
+                    InsertPosition selectedPosition = neighborhood.get(random.nextInt(neighborhood.size()));
+                    solution.remove(Collections.singletonList(selectedRequest.requestId), instance);
+                    solution.insert(instance, selectedRequest.requestId, selectedPosition.vehicle, selectedPosition.pickupPos, selectedPosition.deliveryPos);
+                } else {
+                    break;
+                }
             }
         }
         instance.solutionEvaluation(solution);
-
         return solution;
     }
 
@@ -218,13 +233,4 @@ public class GuidedEjectionSearch {
         int penaltySum;
     }
 
-    private boolean[] getIgnoredRequests(Solution solution) {
-        boolean[] ignoreRequests = new boolean[instance.requests.length];
-        for (int reqId = 0; reqId < instance.requests.length; reqId++) {
-            ignoreRequests[reqId] = true;
-        }
-        solution.requestIds.forEach(requestIds ->
-                requestIds.forEach(requestId -> ignoreRequests[requestId] = false));
-        return ignoreRequests;
-    }
 }
