@@ -50,11 +50,14 @@ public class GuidedEjectionSearch {
             penaltyCounters[i] = 1;
         }
         double iter = 0;
-        double pertCt = 0;
+        double ejecCt = 0;
         double pertEf = 0;
+        double penaSm = 0;
+        double poolSz = 0;
+        double nei1Sz = 0;
+        double nei2Sz = 0;
         // while EP != NULL or termination condition is not met do
         while (!ejectionPool.isEmpty() || hasTimePassedOver(startTime)) {
-            String log = "Iteration " + iter++;
             // Select and remove request h_in from EP with the LIFO strategy
             Request request = instance.requests[ejectionPool.pop()];
             // if N_insert != NULL then
@@ -64,6 +67,7 @@ public class GuidedEjectionSearch {
                 InsertPosition insertPosition = neighborhood.get(random.nextInt(neighborhood.size()));
                 solution.insert(instance, request.requestId, insertPosition.vehicle, insertPosition.pickupPos, insertPosition.deliveryPos);
                 solution.indexVehicle(insertPosition.vehicle);
+                nei1Sz += neighborhood.size();
             // end if
             }
             // if h_in cannot be inserted in σ then
@@ -93,20 +97,31 @@ public class GuidedEjectionSearch {
                 } else {
                     ejectionPool.push(request.requestId);
                 }
-                log += ", pool size: " + ejectionPool.size();
                 // σ := Perturb(σ)
                 double costBefore = solution.totalCost;
                 solution = perturb(solution);
-                pertCt++;
+
+                ejecCt++;
+                nei2Sz += ejectionNeighborhood.size();
                 if (Math.abs(costBefore - solution.totalCost) > 0.01) pertEf++;
-                log += ", perturb: (" + String.format("%.2f", (pertEf / pertCt) * 100.0) + ") " + String.format("%d %.2f", solution.tours.size(), (costBefore - solution.totalCost));
+                poolSz += ejectionPool.size();
                 if (bestEjectedSolution != null) {
-                    log += ", best eject: " + bestEjectedSolution.penaltySum;
-                }
-                if (iter % 1000 == 0) {
-                    System.out.println(log);
+                    penaSm += bestEjectedSolution.penaltySum;
                 }
             // end if
+            }
+            iter++;
+            if (iter % 100 == 0) {
+                String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
+                log += ", NV: " + solution.tours.size();
+                log += ", avg eject: " + StringUtils.leftPad(String.format("%.2f", (ejecCt / 100.0)), 6, ' ');
+                log += ", avg pool: " + StringUtils.leftPad(String.format("%.2f", (poolSz / ejecCt)), 6, ' ');
+                log += ", avg penalty: " + StringUtils.leftPad(String.format("%.2f", (penaSm / ejecCt)), 6, ' ');
+                log += ", avg perturb: " + StringUtils.leftPad(String.format("%.2f", (pertEf / ejecCt)), 6, ' ');
+                log += ", n1 size: " + StringUtils.leftPad(nei1Sz+"", 10, ' ');
+                log += ", n2 size: " + StringUtils.leftPad(nei2Sz+"", 10, ' ');
+                System.out.println(log);
+                ejecCt = pertEf = poolSz = penaSm = nei1Sz = nei2Sz = 0;
             }
         // end while
         }
@@ -196,11 +211,12 @@ public class GuidedEjectionSearch {
     private Solution perturb(Solution solutionBase) {
         Solution solution = SolutionUtils.copy(solutionBase);
         int numVehicles = solution.tours.size();
+        boolean runEx = true, runRl = true;
         for (int i = 0; i < iRand; i++) {
             int vehicleIdx = random.nextInt(numVehicles);
             int requestIdx = random.nextInt(solution.requestIds.get(vehicleIdx).size());
             Request selectedRequest = instance.requests[solution.requestIds.get(vehicleIdx).get(requestIdx)];
-            if (random.nextDouble() < pEx) {
+            if (random.nextDouble() < pEx && runEx) {
                 List<Pair<InsertPosition, InsertPosition>> neighborhood = neighborhoodService.searchExchangeNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
                 if (neighborhood.size() > 0) {
                     Pair<InsertPosition, InsertPosition> exchange = neighborhood.get(random.nextInt(neighborhood.size()));
@@ -209,18 +225,23 @@ public class GuidedEjectionSearch {
                     solution.remove(Arrays.asList(r1Insert.requestId, r2Insert.requestId), instance);
                     solution.insert(instance, r1Insert.requestId, r1Insert.vehicle, r1Insert.pickupPos, r1Insert.deliveryPos);
                     solution.insert(instance, r2Insert.requestId, r2Insert.vehicle, r2Insert.pickupPos, r2Insert.deliveryPos);
+                    runEx = runRl = true;
                 } else {
-                    break;
+                    runEx = false;
                 }
-            } else {
+            } else if (runRl) {
                 List<InsertPosition> neighborhood = neighborhoodService.searchRelocateNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
                 if (neighborhood.size() > 0) {
                     InsertPosition selectedPosition = neighborhood.get(random.nextInt(neighborhood.size()));
                     solution.remove(Collections.singletonList(selectedRequest.requestId), instance);
                     solution.insert(instance, selectedRequest.requestId, selectedPosition.vehicle, selectedPosition.pickupPos, selectedPosition.deliveryPos);
+                    runEx = runRl = true;
                 } else {
-                    break;
+                    runRl = false;
                 }
+            }
+            if (!runEx && !runRl) {
+                break;
             }
         }
         instance.solutionEvaluation(solution);
