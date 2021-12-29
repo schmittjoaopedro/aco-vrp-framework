@@ -90,8 +90,10 @@ public class GuidedLocalSearchTest {
         GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 3);
 
         while (solutionBest.tours.size() > 94) {
+            long time = System.currentTimeMillis();
             solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
             System.out.println(solutionBest);
+            System.out.println("Total time (m): " + (System.currentTimeMillis() - time) / 1000.0 / 60.0);
         }
     }
 

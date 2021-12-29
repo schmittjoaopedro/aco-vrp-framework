@@ -2,8 +2,6 @@ package com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion;
 
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
-import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -15,58 +13,6 @@ public class NeighborhoodService {
 
     public NeighborhoodService(Instance instance) {
         this.instance = instance;
-    }
-
-    public List<InsertPosition> searchRelocateNeighborhood(Solution solution, int requestId, int vehicleIdx) {
-        int numVehicles = solution.tours.size();
-        Request request = instance.requests[requestId];
-        List<InsertPosition> neighborhood = new ArrayList<>();
-        ArrayList<Integer> tour = new ArrayList<>(solution.tours.get(vehicleIdx));
-        solution.tours.get(vehicleIdx).remove(Integer.valueOf(request.pickupTask.nodeId));
-        solution.tours.get(vehicleIdx).remove(Integer.valueOf(request.deliveryTask.nodeId));
-        for (int v = 0; v < numVehicles; v++) {
-            List<InsertPosition> vehicleNeighborhood = searchFeasibleNeighborhood(solution.tours.get(v), request, new RouteTimes(solution.tours.get(v), instance));
-            for (InsertPosition neighbor : vehicleNeighborhood) neighbor.vehicle = v;
-            neighborhood.addAll(vehicleNeighborhood);
-        }
-        solution.tours.set(vehicleIdx, tour);
-        return neighborhood;
-    }
-
-    public List<Pair<InsertPosition, InsertPosition>> searchExchangeNeighborhood(Solution solution, int requestId, int vehicleIdx) {
-        int numVehicles = solution.tours.size();
-        Request req1 = instance.requests[requestId];
-        List<Pair<InsertPosition, InsertPosition>> neighborhood = new ArrayList<>();
-        ArrayList<Integer> tour1 = new ArrayList<>(solution.tours.get(vehicleIdx));
-        tour1.remove(Integer.valueOf(req1.pickupTask.nodeId));
-        tour1.remove(Integer.valueOf(req1.deliveryTask.nodeId));
-        RouteTimes routeTimes1 = new RouteTimes(tour1, instance);
-        for (int v = 0; v < numVehicles; v++) {
-            if (vehicleIdx != v) {
-                for (int r = 0; r < solution.requestIds.get(v).size(); r++) {
-                    Request req2 = instance.requests[solution.requestIds.get(v).get(r)];
-                    List<InsertPosition> r2Neighborhood = searchFeasibleNeighborhood(tour1, req2, routeTimes1);
-                    if (!r2Neighborhood.isEmpty()) {
-                        ArrayList<Integer> tour2 = new ArrayList<>(solution.tours.get(v));
-                        tour2.remove(Integer.valueOf(req2.pickupTask.nodeId));
-                        tour2.remove(Integer.valueOf(req2.deliveryTask.nodeId));
-                        List<InsertPosition> r1Neighborhood = searchFeasibleNeighborhood(tour2, req1, new RouteTimes(tour2, instance));
-                        if (!r1Neighborhood.isEmpty()) {
-                            for (InsertPosition r1Neighbor : r1Neighborhood) {
-                                for (InsertPosition r2Neighbor : r2Neighborhood) {
-                                    r1Neighbor.vehicle = v;
-                                    r1Neighbor.requestId = req1.requestId;
-                                    r2Neighbor.vehicle = vehicleIdx;
-                                    r2Neighbor.requestId = req2.requestId;
-                                    neighborhood.add(Pair.of(r1Neighbor, r2Neighbor));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return neighborhood;
     }
 
     public List<InsertPosition> searchFeasibleNeighborhood(ArrayList<Integer> route, Request request, RouteTimes routeTimes) {
