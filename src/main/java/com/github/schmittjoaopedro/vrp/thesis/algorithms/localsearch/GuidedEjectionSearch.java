@@ -112,7 +112,7 @@ public class GuidedEjectionSearch {
                 log += ", avg perturb: " + StringUtils.leftPad(String.format("%.2f", (pertEf / ejecCt)), 6, ' ');
                 log += ", n1 size: " + StringUtils.leftPad(nei1Sz+"", 10, ' ');
                 log += ", n2 size: " + StringUtils.leftPad(nei2Sz+"", 10, ' ');
-                System.out.println(log);
+                //System.out.println(log);
                 ejecCt = pertEf = poolSz = penaSm = nei1Sz = nei2Sz = 0;
             }
         }
