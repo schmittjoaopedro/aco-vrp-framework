@@ -1,0 +1,448 @@
+C:\Java\jdk-14.0.2+12-x64\bin\java.exe -ea -Didea.test.cyclic.buffer.size=1048576 "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\lib\idea_rt.jar=54938:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\bin" -Dfile.encoding=UTF-8 -classpath "C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\lib\idea_rt.jar;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\plugins\junit\lib\junit5-rt.jar;C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2021.2.3\plugins\junit\lib\junit-rt.jar;C:\projects\aco-vrp-framework\target\test-classes;C:\projects\aco-vrp-framework\target\classes;C:\Users\joao_\.m2\repository\org\json\json\20190722\json-20190722.jar;C:\Users\joao_\.m2\repository\junit\junit\4.12\junit-4.12.jar;C:\Users\joao_\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\joao_\.m2\repository\org\assertj\assertj-core\3.10.0\assertj-core-3.10.0.jar;C:\Users\joao_\.m2\repository\org\apache\commons\commons-csv\1.7\commons-csv-1.7.jar;C:\Users\joao_\.m2\repository\commons-io\commons-io\2.5\commons-io-2.5.jar;C:\Users\joao_\.m2\repository\org\apache\commons\commons-lang3\3.7\commons-lang3-3.7.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-scenario-util\4.4.6\rinsim-scenario-util-4.4.6.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-pdptw\4.4.6\rinsim-pdptw-4.4.6.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-core\4.4.6\rinsim-core-4.4.6.jar;C:\Users\joao_\.m2\repository\net\openhft\affinity\3.0.1\affinity-3.0.1.jar;C:\Users\joao_\.m2\repository\net\java\dev\jna\jna\4.1.0\jna-4.1.0.jar;C:\Users\joao_\.m2\repository\net\java\dev\jna\jna-platform\4.1.0\jna-platform-4.1.0.jar;C:\Users\joao_\.m2\repository\org\kohsuke\jetbrains\annotations\9.0\annotations-9.0.jar;C:\Users\joao_\.m2\repository\com\google\guava\guava\24.1-android\guava-24.1-android.jar;C:\Users\joao_\.m2\repository\org\checkerframework\checker-compat-qual\2.0.0\checker-compat-qual-2.0.0.jar;C:\Users\joao_\.m2\repository\com\google\errorprone\error_prone_annotations\2.1.3\error_prone_annotations-2.1.3.jar;C:\Users\joao_\.m2\repository\com\google\j2objc\j2objc-annotations\1.1\j2objc-annotations-1.1.jar;C:\Users\joao_\.m2\repository\org\codehaus\mojo\animal-sniffer-annotations\1.14\animal-sniffer-annotations-1.14.jar;C:\Users\joao_\.m2\repository\org\slf4j\slf4j-api\1.7.21\slf4j-api-1.7.21.jar;C:\Users\joao_\.m2\repository\joda-time\joda-time\2.10.13\joda-time-2.10.13.jar;C:\Users\joao_\.m2\repository\com\google\code\gson\gson\2.8.0\gson-2.8.0.jar;C:\Users\joao_\.m2\repository\org\jscience\jscience\4.3.1\jscience-4.3.1.jar;C:\Users\joao_\.m2\repository\org\javolution\javolution\5.2.3\javolution-5.2.3.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-event\4.4.6\rinsim-event-4.4.6.jar;C:\Users\joao_\.m2\repository\com\google\guava\guava-testlib\24.1-android\guava-testlib-24.1-android.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-ui\4.4.6\rinsim-ui-4.4.6.jar;C:\Users\joao_\.m2\repository\org\eclipse\swt\org.eclipse.swt.win32.win32.x86_64\4.5.2\org.eclipse.swt.win32.win32.x86_64-4.5.2.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-test-util\4.4.6\rinsim-test-util-4.4.6-tests.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-fsm\4.4.6\rinsim-fsm-4.4.6.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-geom\4.4.6\rinsim-geom-4.4.6.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-event\4.4.6\rinsim-event-4.4.6-tests.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-cli\4.4.6\rinsim-cli-4.4.6.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-io\4.4.6\rinsim-io-4.4.6.jar;C:\Users\joao_\.m2\repository\com\github\rinde\rinsim-scenario\4.4.6\rinsim-scenario-4.4.6.jar;C:\Users\joao_\.m2\repository\com\google\code\findbugs\jsr305\3.0.2\jsr305-3.0.2.jar;C:\Users\joao_\.m2\repository\commons-cli\commons-cli\1.4\commons-cli-1.4.jar;C:\Users\joao_\.m2\repository\org\apache\commons\commons-math3\3.6.1\commons-math3-3.6.1.jar;C:\Users\joao_\.m2\repository\org\apache\logging\log4j\log4j-core\2.12.1\log4j-core-2.12.1.jar;C:\Users\joao_\.m2\repository\org\apache\logging\log4j\log4j-api\2.12.1\log4j-api-2.12.1.jar" com.intellij.rt.junit.JUnitStarter -ideVersion5 -junit4 com.github.schmittjoaopedro.thesis.GuidedLocalSearchTest,runAllTest
+Running LR1_10_5
+[F = true, NV =  79, TC =  82517.05]
+Total time (m): 0.0056
+[F = true, NV =  78, TC =  81014.88]
+Total time (m): 0.006733333333333333
+[F = true, NV =  77, TC =  86007.44]
+Total time (m): 0.014933333333333333
+[F = true, NV =  76, TC =  81960.37]
+Total time (m): 0.012966666666666666
+[F = true, NV =  75, TC =  81112.15]
+Total time (m): 0.008700000000000001
+[F = true, NV =  74, TC =  80993.37]
+Total time (m): 0.008733333333333334
+[F = true, NV =  73, TC =  80768.35]
+Total time (m): 0.005483333333333334
+[F = true, NV =  72, TC =  80647.02]
+Total time (m): 0.0057333333333333325
+[F = true, NV =  71, TC =  77831.63]
+Total time (m): 0.012766666666666667
+[F = true, NV =  70, TC =  78449.55]
+Total time (m): 0.016016666666666665
+[F = true, NV =  69, TC =  78062.26]
+Total time (m): 0.01575
+[F = true, NV =  68, TC =  75784.73]
+Total time (m): 0.00635
+[F = true, NV =  67, TC =  75910.98]
+Total time (m): 0.009733333333333333
+[F = true, NV =  66, TC =  74389.24]
+Total time (m): 0.03873333333333333
+[F = true, NV =  65, TC =  74469.78]
+Total time (m): 0.01235
+[F = true, NV =  64, TC =  73673.62]
+Total time (m): 0.30516666666666664
+[F = true, NV =  63, TC =  73114.01]
+Total time (m): 0.34755
+[F = true, NV =  62, TC =  72462.30]
+Total time (m): 0.76125
+[F = true, NV =  61, TC =  71390.32]
+Total time (m): 0.7414833333333333
+[F = true, NV =  60, TC =  70023.15]
+Total time (m): 4.8641
+[F = true, NV =  59, TC =  70793.20]
+Total time (m): 14.708983333333332
+Running LR1_10_6
+[F = true, NV =  68, TC =  77665.77]
+Total time (m): 0.002483333333333333
+[F = true, NV =  67, TC =  80509.46]
+Total time (m): 0.0034
+[F = true, NV =  66, TC =  82336.89]
+Total time (m): 0.009699999999999999
+[F = true, NV =  65, TC =  79846.87]
+Total time (m): 0.004316666666666667
+[F = true, NV =  64, TC =  80119.65]
+Total time (m): 0.007033333333333333
+[F = true, NV =  63, TC =  78625.46]
+Total time (m): 0.006483333333333333
+[F = true, NV =  62, TC =  78208.01]
+Total time (m): 0.01305
+[F = true, NV =  61, TC =  75475.80]
+Total time (m): 0.028866666666666665
+[F = true, NV =  60, TC =  75416.62]
+Total time (m): 0.008933333333333333
+[F = true, NV =  59, TC =  74426.44]
+Total time (m): 0.010883333333333333
+[F = true, NV =  58, TC =  73028.79]
+Total time (m): 0.022683333333333333
+[F = true, NV =  57, TC =  73530.73]
+Total time (m): 0.03326666666666667
+[F = true, NV =  56, TC =  71781.43]
+Total time (m): 0.014333333333333333
+[F = true, NV =  55, TC =  69841.89]
+Total time (m): 0.05371666666666666
+[F = true, NV =  54, TC =  69449.40]
+Total time (m): 0.12010000000000001
+[F = true, NV =  53, TC =  67955.66]
+Total time (m): 0.04203333333333333
+[F = true, NV =  52, TC =  68932.45]
+Total time (m): 0.25933333333333336
+[F = true, NV =  51, TC =  64668.21]
+Total time (m): 0.3861166666666667
+[F = true, NV =  50, TC =  67384.11]
+Total time (m): 0.5066333333333334
+[F = true, NV =  49, TC =  66692.17]
+Total time (m): 0.68155
+[F = true, NV =  48, TC =  64850.00]
+Total time (m): 4.2416
+Running LR1_10_9
+[F = true, NV =  66, TC =  74516.12]
+Total time (m): 0.002766666666666667
+[F = true, NV =  65, TC =  73781.12]
+Total time (m): 0.00295
+[F = true, NV =  64, TC =  74286.83]
+Total time (m): 0.0063
+[F = true, NV =  63, TC =  73542.83]
+Total time (m): 0.006
+[F = true, NV =  62, TC =  72680.64]
+Total time (m): 0.010233333333333334
+[F = true, NV =  61, TC =  71686.25]
+Total time (m): 0.007383333333333334
+[F = true, NV =  60, TC =  71914.16]
+Total time (m): 0.0191
+[F = true, NV =  59, TC =  70503.76]
+Total time (m): 0.007416666666666667
+[F = true, NV =  58, TC =  69648.77]
+Total time (m): 0.026333333333333334
+[F = true, NV =  57, TC =  69754.06]
+Total time (m): 0.025116666666666666
+[F = true, NV =  56, TC =  67484.57]
+Total time (m): 0.03358333333333333
+[F = true, NV =  55, TC =  66677.27]
+Total time (m): 0.0069166666666666664
+[F = true, NV =  54, TC =  65473.41]
+Total time (m): 0.043366666666666664
+[F = true, NV =  53, TC =  65040.76]
+Total time (m): 0.14291666666666666
+[F = true, NV =  52, TC =  64484.08]
+Total time (m): 0.26371666666666665
+[F = true, NV =  51, TC =  63528.69]
+Total time (m): 0.7588
+[F = true, NV =  50, TC =  62301.44]
+Total time (m): 2.779116666666667
+[F = true, NV =  49, TC =  61376.79]
+Total time (m): 2.7151666666666667
+Running LR1_10_10
+[F = true, NV =  53, TC =  67667.01]
+Total time (m): 0.0032
+[F = true, NV =  52, TC =  67720.50]
+Total time (m): 0.006500000000000001
+[F = true, NV =  51, TC =  68479.93]
+Total time (m): 0.013666666666666666
+[F = true, NV =  50, TC =  65294.78]
+Total time (m): 0.011233333333333335
+[F = true, NV =  49, TC =  63350.57]
+Total time (m): 0.014016666666666667
+[F = true, NV =  48, TC =  62736.38]
+Total time (m): 0.021716666666666665
+[F = true, NV =  47, TC =  62640.28]
+Total time (m): 0.01605
+[F = true, NV =  46, TC =  62367.43]
+Total time (m): 0.014316666666666667
+[F = true, NV =  45, TC =  59524.08]
+Total time (m): 0.044366666666666665
+[F = true, NV =  44, TC =  58352.65]
+Total time (m): 0.04783333333333333
+[F = true, NV =  43, TC =  58821.51]
+Total time (m): 0.20681666666666668
+[F = true, NV =  42, TC =  58046.62]
+Total time (m): 0.18978333333333333
+[F = true, NV =  41, TC =  56404.54]
+Total time (m): 0.34626666666666667
+[F = true, NV =  40, TC =  55300.05]
+Total time (m): 1.3715333333333333
+[F = true, NV =  39, TC =  53410.43]
+Total time (m): 4.103766666666667
+Running LR2_10_2
+[F = true, NV =  22, TC = 100800.37]
+Total time (m): 0.010433333333333333
+[F = true, NV =  21, TC = 100930.40]
+Total time (m): 0.015816666666666666
+[F = true, NV =  20, TC = 104175.42]
+Total time (m): 0.056749999999999995
+[F = true, NV =  19, TC = 100037.75]
+Total time (m): 0.09688333333333334
+[F = true, NV =  18, TC =  98407.08]
+Total time (m): 0.06651666666666667
+[F = true, NV =  17, TC =  95640.23]
+Total time (m): 0.27118333333333333
+[F = true, NV =  16, TC =  93460.42]
+Total time (m): 0.47591666666666665
+[F = true, NV =  15, TC =  86459.08]
+Total time (m): 0.58535
+[F = true, NV =  14, TC =  83902.52]
+Total time (m): 8.970699999999999
+Running LR2_10_6
+[F = true, NV =  19, TC =  73675.02]
+Total time (m): 6.666666666666667E-5
+[F = true, NV =  18, TC = 102371.29]
+Total time (m): 0.04041666666666666
+[F = true, NV =  17, TC =  97282.56]
+Total time (m): 0.06828333333333333
+[F = true, NV =  16, TC =  95865.25]
+Total time (m): 0.11943333333333334
+[F = true, NV =  15, TC =  92265.12]
+Total time (m): 0.11036666666666667
+[F = true, NV =  14, TC =  86679.58]
+Total time (m): 0.3406666666666667
+[F = true, NV =  13, TC =  80386.63]
+Total time (m): 0.5376666666666666
+[F = true, NV =  12, TC =  75054.49]
+Total time (m): 0.9934
+[F = true, NV =  11, TC =  71202.32]
+Total time (m): 13.4872
+Running LRC1_10_3
+[F = true, NV =  67, TC =  63691.19]
+Total time (m): 7.166666666666666E-4
+[F = true, NV =  66, TC =  81442.48]
+Total time (m): 0.0091
+[F = true, NV =  65, TC =  84182.96]
+Total time (m): 0.0037833333333333334
+[F = true, NV =  64, TC =  81384.71]
+Total time (m): 0.0032
+[F = true, NV =  63, TC =  79234.84]
+Total time (m): 0.006483333333333333
+[F = true, NV =  62, TC =  80151.18]
+Total time (m): 0.0032333333333333333
+[F = true, NV =  61, TC =  78831.89]
+Total time (m): 0.003483333333333333
+[F = true, NV =  60, TC =  77473.81]
+Total time (m): 0.0014333333333333331
+[F = true, NV =  59, TC =  77148.75]
+Total time (m): 0.028316666666666667
+[F = true, NV =  58, TC =  74431.66]
+Total time (m): 0.02
+[F = true, NV =  57, TC =  75471.02]
+Total time (m): 0.014116666666666666
+[F = true, NV =  56, TC =  71877.63]
+Total time (m): 0.11043333333333334
+[F = true, NV =  55, TC =  69731.43]
+Total time (m): 0.20786666666666667
+[F = true, NV =  54, TC =  71829.45]
+Total time (m): 0.25106666666666666
+[F = true, NV =  53, TC =  69892.33]
+Total time (m): 2.325
+Running LRC1_10_5
+[F = true, NV =  91, TC =  83328.72]
+Total time (m): 0.008583333333333333
+[F = true, NV =  90, TC =  82734.31]
+Total time (m): 6.0E-4
+[F = true, NV =  89, TC =  81544.11]
+Total time (m): 0.0049499999999999995
+[F = true, NV =  88, TC =  80884.63]
+Total time (m): 0.0044
+[F = true, NV =  87, TC =  81355.12]
+Total time (m): 0.0025666666666666667
+[F = true, NV =  86, TC =  79081.56]
+Total time (m): 0.009133333333333334
+[F = true, NV =  85, TC =  80391.79]
+Total time (m): 0.0172
+[F = true, NV =  84, TC =  80478.93]
+Total time (m): 0.0022
+[F = true, NV =  83, TC =  76078.38]
+Total time (m): 0.013699999999999999
+[F = true, NV =  82, TC =  77740.98]
+Total time (m): 0.0138
+[F = true, NV =  81, TC =  77376.47]
+Total time (m): 0.011783333333333333
+[F = true, NV =  80, TC =  74713.46]
+Total time (m): 0.02723333333333333
+[F = true, NV =  79, TC =  75984.42]
+Total time (m): 0.01865
+[F = true, NV =  78, TC =  75123.74]
+Total time (m): 0.12761666666666666
+[F = true, NV =  77, TC =  76511.26]
+Total time (m): 0.2512666666666667
+[F = true, NV =  76, TC =  73946.70]
+Total time (m): 0.20351666666666668
+[F = true, NV =  75, TC =  72193.48]
+Total time (m): 0.2649666666666667
+[F = true, NV =  74, TC =  71380.71]
+Total time (m): 1.0289166666666667
+[F = true, NV =  73, TC =  72315.77]
+Total time (m): 1.2007333333333332
+[F = true, NV =  72, TC =  69533.69]
+Total time (m): 4.73595
+Running LRC1_10_6
+[F = true, NV =  89, TC =  78592.77]
+Total time (m): 0.0033666666666666667
+[F = true, NV =  88, TC =  77472.49]
+Total time (m): 0.002616666666666667
+[F = true, NV =  87, TC =  77386.67]
+Total time (m): 0.00105
+[F = true, NV =  86, TC =  76585.62]
+Total time (m): 0.0045000000000000005
+[F = true, NV =  85, TC =  75198.42]
+Total time (m): 0.0049
+[F = true, NV =  84, TC =  73964.82]
+Total time (m): 0.0016333333333333334
+[F = true, NV =  83, TC =  72298.00]
+Total time (m): 0.007833333333333333
+[F = true, NV =  82, TC =  71599.40]
+Total time (m): 0.017266666666666666
+[F = true, NV =  81, TC =  70760.58]
+Total time (m): 0.0014
+[F = true, NV =  80, TC =  73212.96]
+Total time (m): 0.017366666666666666
+[F = true, NV =  79, TC =  70859.11]
+Total time (m): 0.008116666666666666
+[F = true, NV =  78, TC =  73304.53]
+Total time (m): 0.022733333333333335
+[F = true, NV =  77, TC =  71796.70]
+Total time (m): 0.03411666666666667
+[F = true, NV =  76, TC =  66831.53]
+Total time (m): 0.041216666666666665
+[F = true, NV =  75, TC =  70677.70]
+Total time (m): 0.050083333333333334
+[F = true, NV =  74, TC =  68527.55]
+Total time (m): 0.10425
+[F = true, NV =  73, TC =  67820.12]
+Total time (m): 0.009833333333333333
+[F = true, NV =  72, TC =  65534.50]
+Total time (m): 0.09286666666666667
+[F = true, NV =  71, TC =  66440.82]
+Total time (m): 0.3385666666666667
+[F = true, NV =  70, TC =  63854.77]
+Total time (m): 0.38708333333333333
+[F = true, NV =  69, TC =  65395.15]
+Total time (m): 1.0660666666666667
+[F = true, NV =  68, TC =  65674.57]
+Total time (m): 2.1265
+Running LRC1_10_7
+[F = true, NV =  82, TC =  72607.76]
+Total time (m): 0.0027833333333333334
+[F = true, NV =  81, TC =  71632.92]
+Total time (m): 0.0031166666666666665
+[F = true, NV =  80, TC =  73185.77]
+Total time (m): 3.5E-4
+[F = true, NV =  79, TC =  70726.34]
+Total time (m): 0.005849999999999999
+[F = true, NV =  78, TC =  73384.68]
+Total time (m): 0.004883333333333333
+[F = true, NV =  77, TC =  72239.61]
+Total time (m): 0.0021333333333333334
+[F = true, NV =  76, TC =  71963.25]
+Total time (m): 0.006383333333333334
+[F = true, NV =  75, TC =  70299.28]
+Total time (m): 0.018333333333333333
+[F = true, NV =  74, TC =  67427.86]
+Total time (m): 0.0053
+[F = true, NV =  73, TC =  69356.01]
+Total time (m): 0.019
+[F = true, NV =  72, TC =  65932.45]
+Total time (m): 0.02733333333333333
+[F = true, NV =  71, TC =  67734.66]
+Total time (m): 0.046900000000000004
+[F = true, NV =  70, TC =  67908.48]
+Total time (m): 0.07886666666666667
+[F = true, NV =  69, TC =  66999.71]
+Total time (m): 0.010983333333333335
+[F = true, NV =  68, TC =  64936.08]
+Total time (m): 0.09095
+[F = true, NV =  67, TC =  64467.99]
+Total time (m): 0.05585
+[F = true, NV =  66, TC =  66413.88]
+Total time (m): 0.0608
+[F = true, NV =  65, TC =  66106.50]
+Total time (m): 0.22718333333333335
+[F = true, NV =  64, TC =  62490.97]
+Total time (m): 0.24065
+[F = true, NV =  63, TC =  61909.87]
+Total time (m): 0.6141833333333333
+[F = true, NV =  62, TC =  63521.33]
+Total time (m): 0.44135
+[F = true, NV =  61, TC =  60578.14]
+Total time (m): 1.67495
+Running LRC1_10_8
+[F = true, NV =  72, TC =  70408.81]
+Total time (m): 0.0071333333333333335
+[F = true, NV =  71, TC =  69580.98]
+Total time (m): 0.0062
+[F = true, NV =  70, TC =  70693.56]
+Total time (m): 0.011333333333333334
+[F = true, NV =  69, TC =  68342.38]
+Total time (m): 0.004166666666666667
+[F = true, NV =  68, TC =  70837.42]
+Total time (m): 0.00445
+[F = true, NV =  67, TC =  66470.92]
+Total time (m): 0.02196666666666667
+[F = true, NV =  66, TC =  69035.06]
+Total time (m): 0.029500000000000002
+[F = true, NV =  65, TC =  67381.78]
+Total time (m): 0.052050000000000006
+[F = true, NV =  64, TC =  67019.13]
+Total time (m): 0.041183333333333336
+[F = true, NV =  63, TC =  63655.69]
+Total time (m): 0.052083333333333336
+[F = true, NV =  62, TC =  64907.85]
+Total time (m): 0.07993333333333334
+[F = true, NV =  61, TC =  63357.92]
+Total time (m): 0.07125000000000001
+[F = true, NV =  60, TC =  62885.78]
+Total time (m): 0.2637333333333333
+[F = true, NV =  59, TC =  60398.97]
+Total time (m): 0.31501666666666667
+[F = true, NV =  58, TC =  60700.14]
+Total time (m): 0.6598666666666666
+[F = true, NV =  57, TC =  59224.34]
+Total time (m): 2.51105
+[F = true, NV =  56, TC =  60876.40]
+Total time (m): 3.1593500000000003
+Running LRC1_10_10
+[F = true, NV =  64, TC =  66187.13]
+Total time (m): 0.009000000000000001
+[F = true, NV =  63, TC =  64971.51]
+Total time (m): 0.005633333333333334
+[F = true, NV =  62, TC =  66236.11]
+Total time (m): 0.004783333333333333
+[F = true, NV =  61, TC =  63820.41]
+Total time (m): 0.00865
+[F = true, NV =  60, TC =  62968.98]
+Total time (m): 0.005583333333333333
+[F = true, NV =  59, TC =  61744.38]
+Total time (m): 0.012066666666666667
+[F = true, NV =  58, TC =  62413.32]
+Total time (m): 0.00785
+[F = true, NV =  57, TC =  61478.35]
+Total time (m): 0.031566666666666666
+[F = true, NV =  56, TC =  59986.46]
+Total time (m): 0.030683333333333333
+[F = true, NV =  55, TC =  56948.61]
+Total time (m): 0.050383333333333336
+[F = true, NV =  54, TC =  58997.77]
+Total time (m): 0.05055
+[F = true, NV =  53, TC =  59826.43]
+Total time (m): 0.08355
+[F = true, NV =  52, TC =  57055.46]
+Total time (m): 0.1011
+[F = true, NV =  51, TC =  55727.64]
+Total time (m): 0.39348333333333335
+[F = true, NV =  50, TC =  56777.09]
+Total time (m): 0.67465
+[F = true, NV =  49, TC =  56078.95]
+Total time (m): 3.0357166666666666
+[F = true, NV =  48, TC =  54795.58]
+Total time (m): 15.620183333333333
+Running LRC2_10_5
+[F = true, NV =  26, TC =  86362.00]
+Total time (m): 0.025516666666666667
+[F = true, NV =  25, TC =  83581.63]
+Total time (m): 0.03306666666666667
+[F = true, NV =  24, TC =  82589.23]
+Total time (m): 0.02733333333333333
+[F = true, NV =  23, TC =  84439.65]
+Total time (m): 0.033883333333333335
+[F = true, NV =  22, TC =  82798.30]
+Total time (m): 0.006849999999999999
+[F = true, NV =  21, TC =  80883.96]
+Total time (m): 0.11548333333333334
+[F = true, NV =  20, TC =  76166.64]
+Total time (m): 0.35391666666666666
+[F = true, NV =  19, TC =  76361.84]
+Total time (m): 0.0979
+[F = true, NV =  18, TC =  73008.76]
+Total time (m): 2.20415
+[F = true, NV =  17, TC =  70421.12]
+Total time (m): 8.087533333333333
+
+Process finished with exit code 0

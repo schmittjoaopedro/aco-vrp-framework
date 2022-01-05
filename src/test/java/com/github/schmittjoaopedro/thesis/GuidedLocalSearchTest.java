@@ -114,7 +114,73 @@ public class GuidedLocalSearchTest {
 
     @Test
     public void runAllTest() throws Exception {
-        //optimize("LR1_10_5", 59);
+        //optimize("LC1_10_2", 94);
+        /*
+        Running LC1_10_2
+        [F = true, NV = 104, TC =  67410.64]
+        Total time (m): 0.018733333333333334
+        [F = true, NV = 103, TC =  64818.38]
+        Total time (m): 0.0052
+        [F = true, NV = 102, TC =  66028.30]
+        Total time (m): 0.15751666666666667
+        [F = true, NV = 101, TC =  67370.31]
+        Total time (m): 0.21256666666666665
+        [F = true, NV = 100, TC =  65039.99]
+        Total time (m): 0.2833333333333333
+        [F = true, NV =  99, TC =  64287.22]
+        Total time (m): 0.34473333333333334
+        [F = true, NV =  98, TC =  62656.22]
+        Total time (m): 0.34773333333333334
+        [F = true, NV =  97, TC =  63341.35]
+        Total time (m): 0.6886833333333333
+        [F = true, NV =  96, TC =  60446.50]
+        Total time (m): 1.6785999999999999
+        [F = true, NV =  95, TC =  60202.97]
+        Total time (m): 2.25425
+        [F = true, NV =  94, TC =  60054.30]
+        Total time (m): 5.977016666666667
+         */
+
+        //optimize("LC1_10_3", 80);
+        /*
+        Running LC1_10_3
+        [F = true, NV =  96, TC =  65341.27]
+        Total time (m): 0.0014
+        [F = true, NV =  95, TC =  68517.72]
+        Total time (m): 0.009433333333333332
+        [F = true, NV =  94, TC =  67266.52]
+        Total time (m): 0.05755
+        [F = true, NV =  93, TC =  67024.69]
+        Total time (m): 0.013433333333333334
+        [F = true, NV =  92, TC =  65372.61]
+        Total time (m): 0.016933333333333335
+        [F = true, NV =  91, TC =  63814.18]
+        Total time (m): 0.0351
+        [F = true, NV =  90, TC =  63247.85]
+        Total time (m): 0.015183333333333333
+        [F = true, NV =  89, TC =  62048.02]
+        Total time (m): 0.18845
+        [F = true, NV =  88, TC =  61830.92]
+        Total time (m): 0.33785000000000004
+        [F = true, NV =  87, TC =  59608.41]
+        Total time (m): 0.26799999999999996
+        [F = true, NV =  86, TC =  57882.09]
+        Total time (m): 0.33081666666666665
+        [F = true, NV =  85, TC =  57102.37]
+        Total time (m): 0.4374
+        [F = true, NV =  84, TC =  55315.03]
+        Total time (m): 0.6763666666666667
+        [F = true, NV =  83, TC =  54910.54]
+        Total time (m): 1.2423333333333335
+        [F = true, NV =  82, TC =  54307.66]
+        Total time (m): 1.1329166666666666
+        [F = true, NV =  81, TC =  53069.42]
+        Total time (m): 4.841433333333333
+        [F = true, NV =  80, TC =  50876.02]
+        Total time (m): 7.53885
+         */
+
+        optimize("LR1_10_5", 59);
         /*
         Running LR1_10_5
         [F = true, NV =  79, TC =  78310.47]
@@ -161,7 +227,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 19.176483333333334
          */
 
-        //optimize("LR1_10_6", 48);
+        optimize("LR1_10_6", 48);
         /*
         Running LR1_10_6
         [F = true, NV =  68, TC =  74591.74]
@@ -208,7 +274,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 16.941366666666667
          */
 
-        //optimize("LR1_10_9", 49);
+        optimize("LR1_10_9", 49);
         /*
         Running LR1_10_9
         [F = true, NV =  66, TC =  72762.50]
@@ -249,7 +315,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 10.975566666666667
          */
 
-        //optimize("LR1_10_10", 39);
+        optimize("LR1_10_10", 39);
         /*
         Running LR1_10_10
         [F = true, NV =  53, TC =  68985.21]
@@ -284,7 +350,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 15.1201
          */
 
-        //optimize("LR2_10_2", 14);
+        optimize("LR2_10_2", 14);
         /*
         Running LR2_10_2
         [F = true, NV =  22, TC =  93422.10]
@@ -307,7 +373,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 139.90756666666667
          */
 
-        //optimize("LR2_10_6", 11);
+        optimize("LR2_10_6", 11);
         /*
         Running LR2_10_6
         [F = true, NV =  19, TC =  73675.02]
@@ -330,10 +396,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 113.23575000000001
          */
 
-        //optimize("LRC1_10_1", 82);
-        /* IllegalArgumentException: bound must be positive */
-
-        //optimize("LRC1_10_3", 53);
+        optimize("LRC1_10_3", 53);
         /*
         Running LRC1_10_3
         [F = true, NV =  67, TC =  64525.32]
@@ -368,7 +431,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 6.0562000000000005
          */
 
-        //optimize("LRC1_10_5", 72);
+        optimize("LRC1_10_5", 72);
         /*
         Running LRC1_10_5
         [F = true, NV =  91, TC =  84165.38]
@@ -413,7 +476,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 19.290166666666668
          */
 
-        //optimize("LRC1_10_6", 68);
+        optimize("LRC1_10_6", 68);
         /*
         Running LRC1_10_6
         [F = true, NV =  89, TC =  69392.10]
@@ -462,7 +525,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 7.00185
          */
 
-        //optimize("LRC1_10_7", 61);
+        optimize("LRC1_10_7", 61);
         /*
         Running LRC1_10_7
         [F = true, NV =  82, TC =  68089.18]
@@ -511,7 +574,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 7.121283333333333
          */
 
-        //optimize("LRC1_10_8", 56);
+        optimize("LRC1_10_8", 56);
         /*
         Running LRC1_10_8
         [F = true, NV =  72, TC =  71162.24]
@@ -550,10 +613,7 @@ public class GuidedLocalSearchTest {
         Total time (m): 14.1037
          */
 
-        //optimize("LRC1_10_9", 53);
-        /* java.lang.IllegalArgumentException: bound must be positive */
-
-        //optimize("LRC1_10_10", 48);
+        optimize("LRC1_10_10", 48);
         /*
         Running LRC1_10_10
         [F = true, NV =  64, TC =  65861.90]
@@ -590,35 +650,9 @@ public class GuidedLocalSearchTest {
         Total time (m): 12.268416666666667
         [F = true, NV =  48, TC =  53665.57]
         Total time (m): 22.623566666666665
-        Running LRC2_10_4
-        [F = true, NV =  17, TC =  58994.51]
-        Total time (m): 0.0060999999999999995
-        [F = true, NV =  16, TC =  79838.30]
-        Total time (m): 0.06381666666666667
-        [F = true, NV =  15, TC =  91997.40]
-        Total time (m): 4.523516666666667
-        [F = true, NV =  14, TC =  86520.39]
-        Total time (m): 3.9230666666666663
          */
 
-        //optimize("LRC2_10_4", 11);
-        /*
-        Running LRC2_10_4
-        [F = true, NV =  17, TC =  58994.51]
-        Total time (m): 0.0060999999999999995
-        [F = true, NV =  16, TC =  79838.30]
-        Total time (m): 0.06381666666666667
-        [F = true, NV =  15, TC =  91997.40]
-        Total time (m): 4.523516666666667
-        [F = true, NV =  14, TC =  86520.39]
-        Total time (m): 3.9230666666666663
-        [F = true, NV =  13, TC =  79557.58]
-        Total time (m): 10.522416666666667
-        [F = true, NV =  12, TC =  73645.22]
-        Total time (m): 62.740916666666664
-         */
-
-        //optimize("LRC2_10_5", 17);
+        optimize("LRC2_10_5", 17);
         /*
         Running LRC2_10_5
         [F = true, NV =  26, TC =  92296.58]
@@ -642,6 +676,30 @@ public class GuidedLocalSearchTest {
         [F = true, NV =  17, TC =  66809.22]
         Total time (m): 53.406333333333336
          */
+
+        //optimize("LRC1_10_1", 82);
+        /* IllegalArgumentException: bound must be positive */
+
+        //optimize("LRC1_10_9", 53);
+        /* java.lang.IllegalArgumentException: bound must be positive */
+
+        //optimize("LRC2_10_4", 11);
+        /*
+        Running LRC2_10_4
+        [F = true, NV =  17, TC =  58994.51]
+        Total time (m): 0.0060999999999999995
+        [F = true, NV =  16, TC =  79838.30]
+        Total time (m): 0.06381666666666667
+        [F = true, NV =  15, TC =  91997.40]
+        Total time (m): 4.523516666666667
+        [F = true, NV =  14, TC =  86520.39]
+        Total time (m): 3.9230666666666663
+        [F = true, NV =  13, TC =  79557.58]
+        Total time (m): 10.522416666666667
+        [F = true, NV =  12, TC =  73645.22]
+        Total time (m): 62.740916666666664
+         */
+
     }
 
     public void optimize(String fileName, int numMin) throws Exception {
@@ -649,7 +707,7 @@ public class GuidedLocalSearchTest {
         System.out.println("Running " + fileName);
         Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, fileName + ".txt").toFile());
         Solution solutionBest = createInitialSolution(instance, random);
-        GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 3);
+        GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2, 1800);
 
         while (solutionBest.tours.size() > numMin) {
             long time = System.currentTimeMillis();

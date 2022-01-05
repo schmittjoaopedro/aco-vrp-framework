@@ -36,6 +36,14 @@ public class GuidedEjectionSearch {
         this.kMax = kMax;
     }
 
+    public GuidedEjectionSearch(Instance instance, Random random, int kMax, int maxTimeInSec) {
+        this.instance = instance;
+        this.random = random;
+        this.neighborhoodService = new NeighborhoodService(instance);
+        this.maxTimeInSec = maxTimeInSec;
+        this.kMax = kMax;
+    }
+
     public Solution deleteRoute(Solution solutionBase) {
         Solution solution = SolutionUtils.copy(solutionBase);
         long startTime = System.currentTimeMillis();
@@ -104,7 +112,7 @@ public class GuidedEjectionSearch {
             }
             iter++;
             if (iter % 100 == 0) {
-                String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
+                /*String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
                 log += ", NV: " + solution.tours.size();
                 log += ", avg eject: " + StringUtils.leftPad(String.format("%.2f", (ejecCt / 100.0)), 6, ' ');
                 log += ", avg pool: " + StringUtils.leftPad(String.format("%.2f", (poolSz / ejecCt)), 6, ' ');
@@ -112,7 +120,7 @@ public class GuidedEjectionSearch {
                 log += ", avg perturb: " + StringUtils.leftPad(String.format("%.2f", (pertEf / ejecCt)), 6, ' ');
                 log += ", n1 size: " + StringUtils.leftPad(nei1Sz+"", 10, ' ');
                 log += ", n2 size: " + StringUtils.leftPad(nei2Sz+"", 10, ' ');
-                System.out.println(log);
+                System.out.println(log);*/
                 ejecCt = pertEf = poolSz = penaSm = nei1Sz = nei2Sz = 0;
             }
         }
