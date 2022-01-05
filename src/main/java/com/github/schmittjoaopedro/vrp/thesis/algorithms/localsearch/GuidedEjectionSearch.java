@@ -112,7 +112,7 @@ public class GuidedEjectionSearch {
                 log += ", avg perturb: " + StringUtils.leftPad(String.format("%.2f", (pertEf / ejecCt)), 6, ' ');
                 log += ", n1 size: " + StringUtils.leftPad(nei1Sz+"", 10, ' ');
                 log += ", n2 size: " + StringUtils.leftPad(nei2Sz+"", 10, ' ');
-                //System.out.println(log);
+                System.out.println(log);
                 ejecCt = pertEf = poolSz = penaSm = nei1Sz = nei2Sz = 0;
             }
         }
@@ -164,7 +164,7 @@ public class GuidedEjectionSearch {
         List<EjectedSolution> ejectedSolutions = new ArrayList<>();
         boolean[] ignoreRequests = new boolean[instance.numRequests];
         for (int v = 0; v < solution.tours.size(); v++) {
-            lexicographicSearch(ejectedSolutions, solution, request, v, penaltyCounters, ignoreRequests, 0, Math.min(kMax, solution.requestIds.get(v).size()));
+            lexicographicSearch(ejectedSolutions, solution, request, v, penaltyCounters, ignoreRequests, 0, 0, Math.min(kMax, solution.requestIds.get(v).size()));
         }
         // Consider the eject of request itself as part of neighborhood
         EjectedSolution ejectedSolution = new EjectedSolution();
@@ -175,28 +175,30 @@ public class GuidedEjectionSearch {
     }
 
     private void lexicographicSearch(List<EjectedSolution> ejectedSolutions, Solution solution, Request request, int vehicle,
-                                     int[] penaltyCounters, boolean[] ignoreRequests, int reqIdx, int maxIdx) {
-        ArrayList<Integer> route = solution.tours.get(vehicle);
-        ArrayList<Integer> requestIds = solution.requestIds.get(vehicle);
-        ignoreRequests[requestIds.get(reqIdx)] = true;
-        RouteTimes routeTime = new RouteTimes(route, instance, ignoreRequests);
-        List<InsertPosition> insertPositions = neighborhoodService.searchFeasibleNeighborhood(route, request, routeTime, ignoreRequests);
-        for (InsertPosition insertPosition : insertPositions) {
-            insertPosition.vehicle = vehicle;
-            EjectedSolution ejectedSolution = new EjectedSolution();
-            ejectedSolution.insertPosition = insertPosition;
-            for (Integer reqId : requestIds) {
-                if (ignoreRequests[reqId]) {
-                    ejectedSolution.ejectedRequests.add(reqId);
-                    ejectedSolution.penaltySum += penaltyCounters[reqId];
+                                     int[] penaltyCounters, boolean[] ignoreRequests, int startIdx, int kCurr, int kMax) {
+        if (kCurr < kMax) {
+            ArrayList<Integer> route = solution.tours.get(vehicle);
+            ArrayList<Integer> requestIds = solution.requestIds.get(vehicle);
+            for (int r = startIdx; r < requestIds.size(); r++) {
+                ignoreRequests[requestIds.get(r)] = true;
+                RouteTimes routeTime = new RouteTimes(route, instance, ignoreRequests);
+                List<InsertPosition> insertPositions = neighborhoodService.searchFeasibleNeighborhood(route, request, routeTime, ignoreRequests);
+                for (InsertPosition insertPosition : insertPositions) {
+                    insertPosition.vehicle = vehicle;
+                    EjectedSolution ejectedSolution = new EjectedSolution();
+                    ejectedSolution.insertPosition = insertPosition;
+                    for (Integer reqId : requestIds) {
+                        if (ignoreRequests[reqId]) {
+                            ejectedSolution.ejectedRequests.add(reqId);
+                            ejectedSolution.penaltySum += penaltyCounters[reqId];
+                        }
+                    }
+                    ejectedSolutions.add(ejectedSolution);
                 }
+                lexicographicSearch(ejectedSolutions, solution, request, vehicle, penaltyCounters, ignoreRequests, r + 1, kCurr + 1, kMax);
+                ignoreRequests[requestIds.get(r)] = false;
             }
-            ejectedSolutions.add(ejectedSolution);
         }
-        for (int r = reqIdx + 1; r < maxIdx; r++) {
-            lexicographicSearch(ejectedSolutions, solution, request, vehicle, penaltyCounters, ignoreRequests, r, maxIdx);
-        }
-        ignoreRequests[requestIds.get(reqIdx)] = false;
     }
 
     private Solution perturb(Solution solutionBase) {
