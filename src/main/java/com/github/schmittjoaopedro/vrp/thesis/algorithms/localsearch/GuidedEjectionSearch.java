@@ -7,7 +7,6 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -59,7 +58,7 @@ public class GuidedEjectionSearch {
             penaltyCounters[i] = 1;
         }
         // while EP != NULL or termination condition is not met do
-        while (!ejectionPool.isEmpty() || hasTimePassedOver(startTime)) {
+        while (!ejectionPool.isEmpty() && hasTime(startTime)) {
             // Select and remove request h_in from EP with the LIFO strategy
             Request request = instance.requests[ejectionPool.pop()];
             // if N_insert != NULL then
@@ -143,12 +142,12 @@ public class GuidedEjectionSearch {
         return removedRequests;
     }
 
-    private boolean hasTimePassedOver(long startTime) {
+    private boolean hasTime(long startTime) {
         if (maxTimeInSec > 0) {
             long currentTime = System.currentTimeMillis();
-            return (currentTime - startTime) > maxTimeInSec * 1000;
+            return (currentTime - startTime) < maxTimeInSec * 1000;
         } else {
-            return false;
+            return true;
         }
     }
 
