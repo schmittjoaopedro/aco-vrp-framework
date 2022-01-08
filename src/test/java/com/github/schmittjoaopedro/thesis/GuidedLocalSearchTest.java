@@ -45,7 +45,7 @@ public class GuidedLocalSearchTest {
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1583.85, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1725.37, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(9);
         assertThat(solutionBest.requestIds.size()).isEqualTo(9);
     }
@@ -64,25 +64,25 @@ public class GuidedLocalSearchTest {
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(2036.94, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1947.09, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(16);
         assertThat(solutionBest.requestIds.size()).isEqualTo(16);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1943.36, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1862.62, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(15);
         assertThat(solutionBest.requestIds.size()).isEqualTo(15);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1771.31, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1763.40, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(14);
         assertThat(solutionBest.requestIds.size()).isEqualTo(14);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1634.23, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1708.24, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(13);
         assertThat(solutionBest.requestIds.size()).isEqualTo(13);
     }
@@ -117,7 +117,7 @@ public class GuidedLocalSearchTest {
         }
     }
 
-    @Test
+    //@Test
     public void runAllTest() throws Exception {
         //String instanceName = "LC1_10_2";
         for (String instanceName : InstanceUtils.instances_1000) {
