@@ -7,6 +7,7 @@ import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Request;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Solution;
 import com.github.schmittjoaopedro.vrp.thesis.problem.SolutionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -46,7 +47,7 @@ public class GuidedEjectionSearch {
     public Solution deleteRoute(Solution solutionBase) {
         Solution solution = SolutionUtils.copy(solutionBase);
         long startTime = System.currentTimeMillis();
-        double iter = 0, ejecCt = 0, pertEf = 0, penaSm = 0, poolSz = 0, nei1Sz = 0, nei2Sz = 0;
+        double iter = 0, ejecCt = 0, penaSm = 0, poolSz = 0;
         // Select and remove a route randomly from σ
         List<Integer> randomRoute = removeRandomRoute(solution);
         // Initialize EP (ejection pool) with the requests in the removed route
@@ -68,7 +69,6 @@ public class GuidedEjectionSearch {
                 InsertPosition insertPosition = neighborhood.get(random.nextInt(neighborhood.size()));
                 solution.insert(instance, request.requestId, insertPosition.vehicle, insertPosition.pickupPos, insertPosition.deliveryPos);
                 solution.indexVehicle(insertPosition.vehicle);
-                nei1Sz += neighborhood.size();
             }
             // if h_in cannot be inserted in σ then
             EjectedSolution bestEjectedSolution = null;
@@ -76,13 +76,7 @@ public class GuidedEjectionSearch {
                 // Set p[h_in] := p[h_in] + 1
                 penaltyCounters[request.requestId] = penaltyCounters[request.requestId] + 1;
                 // Select σ' ∈ N_ej(h_in, σ) such that P_sum = p[h_out_1 + ... + h_out_k] is minimized
-                List<EjectedSolution> ejectionNeighborhood = findNeighborhoodWithEjection(request, solution, penaltyCounters);
-                Collections.shuffle(ejectionNeighborhood, random);
-                for (EjectedSolution currentEjectedSolution : ejectionNeighborhood) {
-                    if (bestEjectedSolution == null || currentEjectedSolution.penaltySum < bestEjectedSolution.penaltySum) {
-                        bestEjectedSolution = currentEjectedSolution;
-                    }
-                }
+                bestEjectedSolution = findBestInsertWithEjection(request, solution, penaltyCounters);
                 if (bestEjectedSolution.insertPosition != null) {
                     // Update σ := σ'
                     InsertPosition insertPosition = bestEjectedSolution.insertPosition;
@@ -98,12 +92,9 @@ public class GuidedEjectionSearch {
                     ejectionPool.push(request.requestId);
                 }
                 // σ := Perturb(σ)
-                double costBefore = solution.totalCost;
                 solution = perturb(solution);
 
                 ejecCt++;
-                nei2Sz += ejectionNeighborhood.size();
-                if (Math.abs(costBefore - solution.totalCost) > 0.01) pertEf++;
                 poolSz += ejectionPool.size();
                 if (bestEjectedSolution != null) {
                     penaSm += bestEjectedSolution.penaltySum;
@@ -111,16 +102,12 @@ public class GuidedEjectionSearch {
             }
             iter++;
             if (iter % 100 == 0) {
-                /*String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
-                log += ", NV: " + solution.tours.size();
+                String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
                 log += ", avg eject: " + StringUtils.leftPad(String.format("%.2f", (ejecCt / 100.0)), 6, ' ');
                 log += ", avg pool: " + StringUtils.leftPad(String.format("%.2f", (poolSz / ejecCt)), 6, ' ');
                 log += ", avg penalty: " + StringUtils.leftPad(String.format("%.2f", (penaSm / ejecCt)), 6, ' ');
-                log += ", avg perturb: " + StringUtils.leftPad(String.format("%.2f", (pertEf / ejecCt)), 6, ' ');
-                log += ", n1 size: " + StringUtils.leftPad(nei1Sz+"", 10, ' ');
-                log += ", n2 size: " + StringUtils.leftPad(nei2Sz+"", 10, ' ');
-                System.out.println(log);*/
-                ejecCt = pertEf = poolSz = penaSm = nei1Sz = nei2Sz = 0;
+                System.out.println(log);
+                ejecCt = poolSz = penaSm = 0;
             }
         }
         // if EP != NULL then Restore σ to the input state
@@ -167,21 +154,24 @@ public class GuidedEjectionSearch {
         return neighborhood;
     }
 
-    private List<EjectedSolution> findNeighborhoodWithEjection(Request request, Solution solution, int[] penaltyCounters) {
-        List<EjectedSolution> ejectedSolutions = new ArrayList<>();
+    private EjectedSolution findBestInsertWithEjection(Request request, Solution solution, int[] penaltyCounters) {
+        List<EjectedSolution> ejectedSolutions = new LinkedList<>();
         boolean[] ignoreRequests = new boolean[instance.numRequests];
-        for (int v = 0; v < solution.tours.size(); v++) {
-            lexicographicSearch(ejectedSolutions, solution, request, v, penaltyCounters, ignoreRequests, 0, 0, Math.min(kMax, solution.requestIds.get(v).size()));
-        }
         // Consider the eject of request itself as part of neighborhood
         EjectedSolution ejectedSolution = new EjectedSolution();
         ejectedSolution.insertPosition = null;
         ejectedSolution.penaltySum = penaltyCounters[request.requestId];
         ejectedSolutions.add(ejectedSolution);
-        return ejectedSolutions;
+
+        BestEjectedSolution bestEjectedSolution = new BestEjectedSolution();
+        bestEjectedSolution.ejectedSolution = ejectedSolution;
+        for (int v = 0; v < solution.tours.size(); v++) {
+            lexicographicSearch(bestEjectedSolution, solution, request, v, penaltyCounters, ignoreRequests, 0, 0, Math.min(kMax, solution.requestIds.get(v).size()));
+        }
+        return bestEjectedSolution.ejectedSolution;
     }
 
-    private void lexicographicSearch(List<EjectedSolution> ejectedSolutions, Solution solution, Request request, int vehicle,
+    private void lexicographicSearch(BestEjectedSolution bestEjectedSolutions, Solution solution, Request request, int vehicle,
                                      int[] penaltyCounters, boolean[] ignoreRequests, int startIdx, int kCurr, int kMax) {
         if (kCurr < kMax) {
             ArrayList<Integer> route = solution.tours.get(vehicle);
@@ -190,7 +180,9 @@ public class GuidedEjectionSearch {
                 ignoreRequests[requestIds.get(r)] = true;
                 RouteTimes routeTime = new RouteTimes(route, instance, ignoreRequests);
                 List<InsertPosition> insertPositions = neighborhoodService.searchFeasibleNeighborhood(route, request, routeTime, ignoreRequests);
-                for (InsertPosition insertPosition : insertPositions) {
+                boolean foundBest = false;
+                if (!insertPositions.isEmpty()) {
+                    InsertPosition insertPosition = insertPositions.get(0);
                     insertPosition.vehicle = vehicle;
                     EjectedSolution ejectedSolution = new EjectedSolution();
                     ejectedSolution.insertPosition = insertPosition;
@@ -200,9 +192,15 @@ public class GuidedEjectionSearch {
                             ejectedSolution.penaltySum += penaltyCounters[reqId];
                         }
                     }
-                    ejectedSolutions.add(ejectedSolution);
+                    if (bestEjectedSolutions.ejectedSolution == null ||
+                            ejectedSolution.penaltySum < bestEjectedSolutions.ejectedSolution.penaltySum) {
+                        bestEjectedSolutions.ejectedSolution = ejectedSolution;
+                        foundBest = true;
+                    }
                 }
-                lexicographicSearch(ejectedSolutions, solution, request, vehicle, penaltyCounters, ignoreRequests, r + 1, kCurr + 1, kMax);
+                if (!foundBest) {
+                    lexicographicSearch(bestEjectedSolutions, solution, request, vehicle, penaltyCounters, ignoreRequests, r + 1, kCurr + 1, kMax);
+                }
                 ignoreRequests[requestIds.get(r)] = false;
             }
         }
@@ -300,6 +298,10 @@ public class GuidedEjectionSearch {
             }
         }
         return neighborhood;
+    }
+
+    private class BestEjectedSolution {
+        EjectedSolution ejectedSolution;
     }
 
     private class EjectedSolution {

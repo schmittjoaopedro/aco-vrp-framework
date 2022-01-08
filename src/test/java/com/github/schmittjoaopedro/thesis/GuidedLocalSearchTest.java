@@ -2,6 +2,7 @@ package com.github.schmittjoaopedro.thesis;
 
 import com.github.schmittjoaopedro.thesis.alns.StaticNvMinimizerTest;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch.GuidedEjectionSearch;
+import com.github.schmittjoaopedro.vrp.thesis.algorithms.localsearch.LocalSearch;
 import com.github.schmittjoaopedro.vrp.thesis.algorithms.operators.insertion.RegretInsertion;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Instance;
 import com.github.schmittjoaopedro.vrp.thesis.problem.Reader;
@@ -45,7 +46,7 @@ public class GuidedLocalSearchTest {
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1725.37, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1733.00, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(9);
         assertThat(solutionBest.requestIds.size()).isEqualTo(9);
     }
@@ -64,25 +65,25 @@ public class GuidedLocalSearchTest {
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1947.09, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1842.13, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(16);
         assertThat(solutionBest.requestIds.size()).isEqualTo(16);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1862.62, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1805.56, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(15);
         assertThat(solutionBest.requestIds.size()).isEqualTo(15);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1763.40, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1722.38, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(14);
         assertThat(solutionBest.requestIds.size()).isEqualTo(14);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1708.24, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1639.88, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(13);
         assertThat(solutionBest.requestIds.size()).isEqualTo(13);
     }
@@ -119,29 +120,30 @@ public class GuidedLocalSearchTest {
 
     //@Test
     public void runAllTest() throws Exception {
-        //String instanceName = "LC1_10_2";
         for (String instanceName : InstanceUtils.instances_1000) {
-            Random random = new Random(1);
-            File logFile = Paths.get("results", "GES", instanceName + ".csv").toFile();
+            Random random = new Random();
             System.out.println("Running " + instanceName);
-            FileUtils.write(logFile, "feasible,number of vehicles,total cost,time millis\n", "UTF-8", false);
+            write(instanceName, "feasible,number of vehicles,total cost,time millis\n");
             Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, instanceName + ".txt").toFile());
             long time = System.currentTimeMillis();
             Solution solutionBest = createInitialSolution(instance, random);
-            FileUtils.write(logFile, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", "UTF-8", true);
-            GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2, 300);
+            write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n");
+            GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2, 600);
             int currNV = Integer.MAX_VALUE;
             while (solutionBest.feasible && solutionBest.tours.size() < currNV) {
                 currNV = solutionBest.tours.size();
                 solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
-                FileUtils.write(logFile, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", "UTF-8", true);
+                write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n");
+                solutionBest = new LocalSearch(instance).applyImprovement(solutionBest);
+                write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n");
             }
         }
+    }
 
-        /*
-         Running LRC2_10_4
-         java.lang.IllegalArgumentException: bound must be positive
-         */
+    private void write(String instanceName, String line) throws Exception {
+        File logFile = Paths.get("results", "GES", instanceName + ".csv").toFile();
+        FileUtils.write(logFile, line, "UTF-8", false);
+        //System.out.print(line);
     }
 
     private Solution createInitialSolution(Instance instance, Random random) {
