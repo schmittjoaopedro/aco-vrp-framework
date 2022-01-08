@@ -214,34 +214,36 @@ public class GuidedEjectionSearch {
         boolean runEx = true, runRl = true;
         for (int i = 0; i < iRand; i++) {
             int vehicleIdx = random.nextInt(numVehicles);
-            int requestIdx = random.nextInt(solution.requestIds.get(vehicleIdx).size());
-            Request selectedRequest = instance.requests[solution.requestIds.get(vehicleIdx).get(requestIdx)];
-            if (random.nextDouble() < pEx && runEx) {
-                List<Pair<InsertPosition, InsertPosition>> neighborhood = searchExchangeNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
-                if (neighborhood.size() > 0) {
-                    Pair<InsertPosition, InsertPosition> exchange = neighborhood.get(random.nextInt(neighborhood.size()));
-                    InsertPosition r1Insert = exchange.getLeft();
-                    InsertPosition r2Insert = exchange.getRight();
-                    solution.remove(Arrays.asList(r1Insert.requestId, r2Insert.requestId), instance);
-                    solution.insert(instance, r1Insert.requestId, r1Insert.vehicle, r1Insert.pickupPos, r1Insert.deliveryPos);
-                    solution.insert(instance, r2Insert.requestId, r2Insert.vehicle, r2Insert.pickupPos, r2Insert.deliveryPos);
-                    runEx = runRl = true;
-                } else {
-                    runEx = false;
+            if (solution.requestIds.get(vehicleIdx).size() > 0) {
+                int requestIdx = random.nextInt(solution.requestIds.get(vehicleIdx).size());
+                Request selectedRequest = instance.requests[solution.requestIds.get(vehicleIdx).get(requestIdx)];
+                if (random.nextDouble() < pEx && runEx) {
+                    List<Pair<InsertPosition, InsertPosition>> neighborhood = searchExchangeNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
+                    if (neighborhood.size() > 0) {
+                        Pair<InsertPosition, InsertPosition> exchange = neighborhood.get(random.nextInt(neighborhood.size()));
+                        InsertPosition r1Insert = exchange.getLeft();
+                        InsertPosition r2Insert = exchange.getRight();
+                        solution.remove(Arrays.asList(r1Insert.requestId, r2Insert.requestId), instance);
+                        solution.insert(instance, r1Insert.requestId, r1Insert.vehicle, r1Insert.pickupPos, r1Insert.deliveryPos);
+                        solution.insert(instance, r2Insert.requestId, r2Insert.vehicle, r2Insert.pickupPos, r2Insert.deliveryPos);
+                        runEx = runRl = true;
+                    } else {
+                        runEx = false;
+                    }
+                } else if (runRl) {
+                    List<InsertPosition> neighborhood = searchRelocateNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
+                    if (neighborhood.size() > 0) {
+                        InsertPosition selectedPosition = neighborhood.get(random.nextInt(neighborhood.size()));
+                        solution.remove(Collections.singletonList(selectedRequest.requestId), instance);
+                        solution.insert(instance, selectedRequest.requestId, selectedPosition.vehicle, selectedPosition.pickupPos, selectedPosition.deliveryPos);
+                        runEx = runRl = true;
+                    } else {
+                        runRl = false;
+                    }
                 }
-            } else if (runRl) {
-                List<InsertPosition> neighborhood = searchRelocateNeighborhood(solution, selectedRequest.requestId, vehicleIdx);
-                if (neighborhood.size() > 0) {
-                    InsertPosition selectedPosition = neighborhood.get(random.nextInt(neighborhood.size()));
-                    solution.remove(Collections.singletonList(selectedRequest.requestId), instance);
-                    solution.insert(instance, selectedRequest.requestId, selectedPosition.vehicle, selectedPosition.pickupPos, selectedPosition.deliveryPos);
-                    runEx = runRl = true;
-                } else {
-                    runRl = false;
+                if (!runEx && !runRl) {
+                    break;
                 }
-            }
-            if (!runEx && !runRl) {
-                break;
             }
         }
         instance.solutionEvaluation(solution);

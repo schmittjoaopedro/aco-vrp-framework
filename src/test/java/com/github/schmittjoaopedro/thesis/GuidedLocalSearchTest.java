@@ -120,7 +120,7 @@ public class GuidedLocalSearchTest {
     @Test
     public void runAllTest() throws Exception {
         //String instanceName = "LC1_10_2";
-        for (String instanceName : new String[] { "LRC2_10_5", "LRC2_10_6", "LRC2_10_7", "LRC2_10_10" }) {
+        for (String instanceName : InstanceUtils.instances_1000) {
             Random random = new Random(1);
             File logFile = Paths.get("results", "GES", instanceName + ".csv").toFile();
             System.out.println("Running " + instanceName);
