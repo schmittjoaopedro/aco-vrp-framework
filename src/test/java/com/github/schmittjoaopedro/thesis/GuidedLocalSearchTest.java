@@ -120,7 +120,7 @@ public class GuidedLocalSearchTest {
     @Test
     public void runAllTest() throws Exception {
         //String instanceName = "LC1_10_2";
-        for (String instanceName : InstanceUtils.instances_1000) {
+        for (String instanceName : new String[] { "LRC2_10_5", "LRC2_10_6", "LRC2_10_7", "LRC2_10_10" }) {
             Random random = new Random(1);
             File logFile = Paths.get("results", "GES", instanceName + ".csv").toFile();
             System.out.println("Running " + instanceName);
@@ -128,18 +128,20 @@ public class GuidedLocalSearchTest {
             Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, instanceName + ".txt").toFile());
             long time = System.currentTimeMillis();
             Solution solutionBest = createInitialSolution(instance, random);
-            long totalTime = System.currentTimeMillis() - time;
-            FileUtils.write(logFile, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + totalTime + "\n", "UTF-8", true);
-            GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2, 60);
+            FileUtils.write(logFile, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", "UTF-8", true);
+            GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2, 300);
             int currNV = Integer.MAX_VALUE;
             while (solutionBest.feasible && solutionBest.tours.size() < currNV) {
                 currNV = solutionBest.tours.size();
-                time = System.currentTimeMillis();
                 solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
-                totalTime = System.currentTimeMillis() - time;
-                FileUtils.write(logFile, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + totalTime + "\n", "UTF-8", true);
+                FileUtils.write(logFile, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", "UTF-8", true);
             }
         }
+
+        /*
+         Running LRC2_10_4
+         java.lang.IllegalArgumentException: bound must be positive
+         */
     }
 
     private Solution createInitialSolution(Instance instance, Random random) {
