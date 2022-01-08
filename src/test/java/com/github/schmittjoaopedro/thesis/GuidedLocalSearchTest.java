@@ -123,26 +123,26 @@ public class GuidedLocalSearchTest {
         for (String instanceName : InstanceUtils.instances_1000) {
             Random random = new Random();
             System.out.println("Running " + instanceName);
-            write(instanceName, "feasible,number of vehicles,total cost,time millis\n");
+            write(instanceName, "feasible,number of vehicles,total cost,time millis\n", false);
             Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, instanceName + ".txt").toFile());
             long time = System.currentTimeMillis();
             Solution solutionBest = createInitialSolution(instance, random);
-            write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n");
+            write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", true);
             GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2, 600);
             int currNV = Integer.MAX_VALUE;
             while (solutionBest.feasible && solutionBest.tours.size() < currNV) {
                 currNV = solutionBest.tours.size();
                 solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
-                write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n");
+                write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", true);
                 solutionBest = new LocalSearch(instance).applyImprovement(solutionBest);
-                write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n");
+                write(instanceName, solutionBest.feasible + "," + solutionBest.tours.size() + "," + solutionBest.totalCost + "," + (System.currentTimeMillis() - time) + "\n", true);
             }
         }
     }
 
-    private void write(String instanceName, String line) throws Exception {
+    private void write(String instanceName, String line, boolean append) throws Exception {
         File logFile = Paths.get("results", "GES", instanceName + ".csv").toFile();
-        FileUtils.write(logFile, line, "UTF-8", false);
+        FileUtils.write(logFile, line, "UTF-8", append);
         //System.out.print(line);
     }
 

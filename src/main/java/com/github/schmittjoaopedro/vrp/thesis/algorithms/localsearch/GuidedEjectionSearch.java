@@ -102,12 +102,12 @@ public class GuidedEjectionSearch {
             }
             iter++;
             if (iter % 100 == 0) {
-                String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
+                /*String log = "It " + StringUtils.leftPad("" + iter, 10, ' ');
                 log += ", avg eject: " + StringUtils.leftPad(String.format("%.2f", (ejecCt / 100.0)), 6, ' ');
                 log += ", avg pool: " + StringUtils.leftPad(String.format("%.2f", (poolSz / ejecCt)), 6, ' ');
                 log += ", avg penalty: " + StringUtils.leftPad(String.format("%.2f", (penaSm / ejecCt)), 6, ' ');
                 System.out.println(log);
-                ejecCt = poolSz = penaSm = 0;
+                ejecCt = poolSz = penaSm = 0;*/
             }
         }
         // if EP != NULL then Restore σ to the input state
