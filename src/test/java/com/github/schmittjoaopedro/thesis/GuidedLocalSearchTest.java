@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -46,7 +47,7 @@ public class GuidedLocalSearchTest {
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1733.00, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1576.55, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(9);
         assertThat(solutionBest.requestIds.size()).isEqualTo(9);
     }
@@ -65,30 +66,30 @@ public class GuidedLocalSearchTest {
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1842.13, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1864.85, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(16);
         assertThat(solutionBest.requestIds.size()).isEqualTo(16);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1805.56, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1856.88, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(15);
         assertThat(solutionBest.requestIds.size()).isEqualTo(15);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1722.38, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1698.69, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(14);
         assertThat(solutionBest.requestIds.size()).isEqualTo(14);
 
         solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
         assertThat(solutionBest.feasible).isTrue();
-        assertThat(solutionBest.totalCost).isEqualTo(1639.88, Offset.offset(0.01));
+        assertThat(solutionBest.totalCost).isEqualTo(1540.87, Offset.offset(0.01));
         assertThat(solutionBest.tours.size()).isEqualTo(13);
         assertThat(solutionBest.requestIds.size()).isEqualTo(13);
     }
 
-    //@Test
+    @Test
     public void lc1_10_2_Test() throws Exception {
         Random random = new Random(1);
         Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, "LC1_10_2.txt").toFile());
@@ -106,11 +107,11 @@ public class GuidedLocalSearchTest {
     //@Test
     public void lc1_10_3_Test() throws Exception {
         Random random = new Random(1);
-        Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, "LC1_10_3.txt").toFile());
+        Instance instance = Reader.getInstance(Paths.get(pdptw1000Directory, "LC1_10_4.txt").toFile());
         Solution solutionBest = createInitialSolution(instance, random);
-        GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 3);
+        GuidedEjectionSearch guidedEjectionSearch = new GuidedEjectionSearch(instance, random, 2);
 
-        while (solutionBest.tours.size() > 80) {
+        while (solutionBest.tours.size() > 73) {
             long time = System.currentTimeMillis();
             solutionBest = guidedEjectionSearch.deleteRoute(solutionBest);
             System.out.println(solutionBest);
@@ -121,6 +122,9 @@ public class GuidedLocalSearchTest {
     //@Test
     public void runAllTest() throws Exception {
         for (String instanceName : InstanceUtils.instances_1000) {
+            if (Files.exists(Path.of("results", "GES", instanceName + ".csv"))) {
+                continue;
+            }
             Random random = new Random();
             System.out.println("Running " + instanceName);
             write(instanceName, "feasible,number of vehicles,total cost,time millis\n", false);

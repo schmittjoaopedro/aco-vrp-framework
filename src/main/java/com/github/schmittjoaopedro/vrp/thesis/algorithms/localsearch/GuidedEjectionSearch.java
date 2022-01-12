@@ -24,7 +24,7 @@ public class GuidedEjectionSearch {
 
     private NeighborhoodService neighborhoodService;
 
-    private int iRand = 100;
+    private int iRand = 10;
 
     private double pEx = 0.5;
 
@@ -155,50 +155,53 @@ public class GuidedEjectionSearch {
     }
 
     private EjectedSolution findBestInsertWithEjection(Request request, Solution solution, int[] penaltyCounters) {
-        List<EjectedSolution> ejectedSolutions = new LinkedList<>();
+        BestEjectedSolution bestEjectedSolution = new BestEjectedSolution();
         boolean[] ignoreRequests = new boolean[instance.numRequests];
-        // Consider the eject of request itself as part of neighborhood
+        // Consider the ejection of request itself as part of neighborhood
         EjectedSolution ejectedSolution = new EjectedSolution();
         ejectedSolution.insertPosition = null;
         ejectedSolution.penaltySum = penaltyCounters[request.requestId];
-        ejectedSolutions.add(ejectedSolution);
-
-        BestEjectedSolution bestEjectedSolution = new BestEjectedSolution();
         bestEjectedSolution.ejectedSolution = ejectedSolution;
-        for (int v = 0; v < solution.tours.size(); v++) {
-            lexicographicSearch(bestEjectedSolution, solution, request, v, penaltyCounters, ignoreRequests, 0, 0, Math.min(kMax, solution.requestIds.get(v).size()));
+        // Lexicographic search
+        int k = 1;
+        while (k <= kMax) {
+            for (int v = 0; v < solution.tours.size(); v++) {
+                lexicographicSearch(bestEjectedSolution, solution, request, v, penaltyCounters, ignoreRequests, 0, 1, Math.min(k, solution.requestIds.get(v).size()));
+            }
+            boolean hasFoundDifferentSolution = bestEjectedSolution.ejectedSolution != ejectedSolution;
+            if (hasFoundDifferentSolution) {
+                break;
+            } else {
+                k++;
+            }
         }
         return bestEjectedSolution.ejectedSolution;
     }
 
     private void lexicographicSearch(BestEjectedSolution bestEjectedSolutions, Solution solution, Request request, int vehicle,
                                      int[] penaltyCounters, boolean[] ignoreRequests, int startIdx, int kCurr, int kMax) {
-        if (kCurr < kMax) {
+        if (kCurr <= kMax) {
             ArrayList<Integer> route = solution.tours.get(vehicle);
             ArrayList<Integer> requestIds = solution.requestIds.get(vehicle);
             for (int r = startIdx; r < requestIds.size(); r++) {
                 ignoreRequests[requestIds.get(r)] = true;
-                RouteTimes routeTime = new RouteTimes(route, instance, ignoreRequests);
-                List<InsertPosition> insertPositions = neighborhoodService.searchFeasibleNeighborhood(route, request, routeTime, ignoreRequests);
-                boolean foundBest = false;
-                if (!insertPositions.isEmpty()) {
-                    InsertPosition insertPosition = insertPositions.get(0);
-                    insertPosition.vehicle = vehicle;
-                    EjectedSolution ejectedSolution = new EjectedSolution();
-                    ejectedSolution.insertPosition = insertPosition;
-                    for (Integer reqId : requestIds) {
-                        if (ignoreRequests[reqId]) {
-                            ejectedSolution.ejectedRequests.add(reqId);
-                            ejectedSolution.penaltySum += penaltyCounters[reqId];
+                if (kCurr == kMax) {
+                    List<InsertPosition> insertPositions = neighborhoodService.searchFeasibleNeighborhood(route, request, new RouteTimes(route, instance, ignoreRequests), ignoreRequests);
+                    if (!insertPositions.isEmpty()) {
+                        EjectedSolution ejectedSolution = new EjectedSolution();
+                        ejectedSolution.insertPosition = insertPositions.get(0);
+                        ejectedSolution.insertPosition.vehicle = vehicle;
+                        for (Integer reqId : requestIds) {
+                            if (ignoreRequests[reqId]) {
+                                ejectedSolution.ejectedRequests.add(reqId);
+                                ejectedSolution.penaltySum += penaltyCounters[reqId];
+                            }
+                        }
+                        if (ejectedSolution.penaltySum < bestEjectedSolutions.ejectedSolution.penaltySum) {
+                            bestEjectedSolutions.ejectedSolution = ejectedSolution;
                         }
                     }
-                    if (bestEjectedSolutions.ejectedSolution == null ||
-                            ejectedSolution.penaltySum < bestEjectedSolutions.ejectedSolution.penaltySum) {
-                        bestEjectedSolutions.ejectedSolution = ejectedSolution;
-                        foundBest = true;
-                    }
-                }
-                if (!foundBest) {
+                } else {
                     lexicographicSearch(bestEjectedSolutions, solution, request, vehicle, penaltyCounters, ignoreRequests, r + 1, kCurr + 1, kMax);
                 }
                 ignoreRequests[requestIds.get(r)] = false;
